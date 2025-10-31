@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# IDE and Editor Files
+.vscode/
+.idea/
+.qodo/
+
+# Project Private Directories
+Architecture/
+DHS Program/
+External Data/
+pm2.5*/
+Requirments/
+Proposal & Papers/
+
+# Virtual environments
+.venv
