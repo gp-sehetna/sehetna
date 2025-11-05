@@ -1,3 +1,4 @@
+import os
 import re
 import pandas as pd
 import pyreadstat
@@ -57,3 +58,21 @@ class StataCompiler:
 
     def __str__(self):
         return f"StataCompiler(labels={self.labels}, var_labels={self.labels_var})"
+
+
+if __name__ == "__main__":
+    grandparent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    base = os.path.join(grandparent_dir, "DHS Program", "SPA", "EGAN5IDTSP")
+    
+    file_name = "EGAN5IFLSP"
+    dta_file_path = os.path.join(base, f"{file_name}.DTA")
+    do_file_path = os.path.join(base, f"{file_name}.DO")
+
+    compiler = StataCompiler(
+        dta_path=dta_file_path,
+        do_path=do_file_path
+    )
+
+    df = compiler.compile()
+    print(df[compiler.labels_var["Governorate"]].unique())
+    print(df[compiler.labels_var["Provider asked about Any PRIOR STILLBIRTH(S)"]].unique())
