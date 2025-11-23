@@ -19,5 +19,8 @@ pm2.5*/
 Requirments/
 Papers/
 
+# Data files
+server/resources/data/*
+
 # Virtual environments
 .venv

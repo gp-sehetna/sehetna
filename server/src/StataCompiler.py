@@ -1,3 +1,4 @@
+import json
 import os
 import re
 import pandas as pd
@@ -61,8 +62,8 @@ class StataCompiler:
 
 
 if __name__ == "__main__":
-    grandparent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    base = os.path.join(grandparent_dir, "DHS Program", "SPA", "EGAN5IDTSP")
+    grandgrandparent_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    base = os.path.join(grandgrandparent_dir, "DHS Program", "SPA", "EGAN5IDTSP")
     
     file_name = "EGAN5IFLSP"
     dta_file_path = os.path.join(base, f"{file_name}.DTA")
@@ -74,5 +75,11 @@ if __name__ == "__main__":
     )
 
     df = compiler.compile()
-    print(df[compiler.labels_var["Governorate"]].unique())
-    print(df[compiler.labels_var["Provider asked about Any PRIOR STILLBIRTH(S)"]].unique())
+    # print(df.head())
+    
+    # data = list(compiler.labels_var.keys())
+    
+    # with open("labels_var_keys.json", "w") as f:
+    #     json.dump(data, f, indent=4)
+        
+    # print(df[compiler.labels_var["Provider asked about Any PRIOR STILLBIRTH(S)"]].unique())
