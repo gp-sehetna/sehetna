@@ -1,4 +1,4 @@
-from typing import Dict, List, Literal, Tuple
+from modeling.types import BreakPointsDict
 
 """
 Module-level docstring for Constants.py
@@ -125,10 +125,6 @@ NO2_BREAKPOINTS = [
     (1250, float("inf"), 301, 500),
 ]
 
-Pollutants = Literal["o3_8h", "o3_1h", "pm25", "pm10", "co", "so2", "no2"]
-BreakPoint = List[Tuple[float, float, int, int]]
-BreakPointsDict = Dict[Pollutants, BreakPoint]
-
 # 2. Unified Breakpoints Dictionary
 BREAKPOINTS: BreakPointsDict = {
     "o3_8h": O3_8H_BREAKPOINTS,
@@ -140,20 +136,8 @@ BREAKPOINTS: BreakPointsDict = {
     "no2": NO2_BREAKPOINTS,
 }
 
+if __name__ == "__main__":
+    from pprint import pprint
 
-# 3. AQI Conversion Function
-def pollutant_to_aqi(breakpoints: BreakPoint, value: float) -> float:
-    for c_low, c_high, aqi_low, aqi_high in breakpoints:
-        if c_low <= value <= c_high:
-            if c_high == float("inf"):
-                return aqi_low
-            return ((aqi_high - aqi_low) / (c_high - c_low)) * (value - c_low) + aqi_low
-    return float("nan")
-
-
-# Compute Overall AQI from all pollutants
-def compute_overall_aqi(values_dict: Dict[Pollutants, float]) -> float:
-    aqi_values = []
-    for pollutant, value in values_dict.items():
-        aqi_values.append(pollutant_to_aqi(BREAKPOINTS[pollutant], value))
-    return max(aqi_values)  # EPA rule: overall AQI = max individual AQI
+    print("\nAir Quality Index (AQI) Breakpoints:\n")
+    pprint(BREAKPOINTS)

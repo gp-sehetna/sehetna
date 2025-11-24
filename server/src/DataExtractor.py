@@ -5,7 +5,9 @@ import kagglehub
 from kagglehub import KaggleDatasetAdapter
 import pandas as pd
 from matplotlib import pyplot as plt
-from Constants import BREAKPOINTS, pollutant_to_aqi
+
+from modeling.constants.aqi import BREAKPOINTS
+from modeling.helpers.aqi import pollutant_to_aqi
 
 pd.set_option("display.max_columns", None)
 # pd.set_option('display.max_rows', None)
@@ -40,13 +42,13 @@ def main():
     df.loc[:, "aqi_pm"] = df.loc[:, "pm25_ugm3"].apply(
         lambda val: pollutant_to_aqi(BREAKPOINTS["pm25"], val)
     )
-    print("\n".join(df['country_code'].unique().tolist()))
-    print("\n")
-    print("\n".join(df['income_level'].unique().tolist()))
+    # print("\n".join(df['country_code'].unique().tolist()))
+    # print("\n")
+    # print("\n".join(df['income_level'].unique().tolist()))
     # print(df[invalid_aqi][['pm25_ugm3', 'air_quality_index']].describe().T)
     
-    plot(df)
     print(df[["aqi_pm", "air_quality_index", "pm25_ugm3"]].describe().T)
+    plot(df)
 
     # great_pm_conc = df["pm25_ugm3"] >= 150
     # print(df[great_pm_conc][["pm25_ugm3", "air_quality_index"]].describe().T)
