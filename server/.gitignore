@@ -1,0 +1,9 @@
+# Data files
+resources/data/*
+!resources/data/main.csv
+
+# Virtual environments
+.venv/
+
+# Environment files
+.env

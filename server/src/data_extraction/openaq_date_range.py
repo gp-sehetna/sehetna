@@ -1,3 +1,9 @@
+"""
+*[USED]
+Extracts air quality data from OpenAQ for a specified list of countries,
+optimize location selection based on longest date range.
+"""
+
 import requests
 import boto3
 import gzip
@@ -11,12 +17,12 @@ import pandas as pd
 # -------------------------
 # CONFIGURATION
 # -------------------------
-API_KEY = "65e9fb48f54f1a36865d75b9246aabddecf6ed509fd30c4b067bb042d32ea03d"
-BUCKET = "openaq-data-archive"
-BASE_API_URL = "https://api.openaq.org/v3/locations"
+API_KEY = os.getenv("_OPENAQ_API_KEY")
+BUCKET = os.getenv("_OPENAQ_BUCKET")
+LOCATIONS_API_URL = os.path.join(os.getenv("_OPENAQ_BASE_API_URL"), "v3/locations")
 
 # Output Configuration
-OUTPUT_FILE = "./country_data/AirQuality_Combined.csv"
+OUTPUT_FILE = "./country_data/25_countries_air.csv"
 os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
 
 # 1. Target Indicators (Map generic name to allowed Parameter IDs)
@@ -91,7 +97,7 @@ def calculate_duration_days(start_str, end_str):
 # STEP 1: Get Metadata
 # -------------------------------------------------------
 def get_all_locations_metadata(country_id):
-    url = f"{BASE_API_URL}?countries_id={country_id}&limit=1000"
+    url = f"{LOCATIONS_API_URL}?countries_id={country_id}&limit=1000"
     headers = {"X-API-Key": API_KEY}
     print(f"Fetching metadata for country_id={country_id} ...")
 

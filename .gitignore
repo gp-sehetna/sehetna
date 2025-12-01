@@ -19,9 +19,3 @@ pm2.5*/
 Requirments/
 Papers/
 
-# Data files
-server/resources/data/*
-!server/resources/data/main.csv
-
-# Virtual environments
-.venv
