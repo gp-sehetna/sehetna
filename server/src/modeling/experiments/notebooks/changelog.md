@@ -35,6 +35,20 @@
 
 ---
 
+## [1.2] Feature Engineering Enhancements | 01-12-2025
+
+### Added
+- Further enhancements to feature engineering techniques
+
+#### Feature Engineering
+- Advanced interaction features using polynomial combinations
+- Additional lag features for extended time series analysis
+- Focus on completing the pipeline for feature engineering.
+
+**Contributors:** *mohamed-hussien*
+
+---
+
 ## [Unreleased]
 
 ### Added
