@@ -21,6 +21,7 @@ Papers/
 
 # Data files
 server/resources/data/*
+!server/resources/data/main.csv
 
 # Virtual environments
 .venv

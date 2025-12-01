@@ -8,10 +8,12 @@ from matplotlib import pyplot as plt
 
 from modeling.constants.aqi import BREAKPOINTS
 from modeling.helpers.aqi import pollutant_to_aqi
+from modeling.helpers.merge import fuzzy_merge
 
 pd.set_option("display.max_columns", None)
 # pd.set_option('display.max_rows', None)
 pd.set_option("display.width", 80 * 2)
+
 
 def get_data(file_path: str, save_path: str):
     # Load the latest version
@@ -35,20 +37,29 @@ def main():
     script_path = os.path.abspath(__file__)
     src_path = os.path.dirname(script_path)
     server_path = os.path.dirname(src_path)
-    save_path = os.path.join(server_path, "resources", "data", file_path)
+    data_path = os.path.join(server_path, "resources", "data")
+    save_path = os.path.join(data_path , file_path)
     df = get_data(file_path, save_path)
 
     invalid_aqi = ~df["air_quality_index"].between(0, 500)
     df.loc[:, "aqi_pm"] = df.loc[:, "pm25_ugm3"].apply(
         lambda val: pollutant_to_aqi(BREAKPOINTS["pm25"], val)
     )
-    # print("\n".join(df['country_code'].unique().tolist()))
+    
+    uhs_service_df = pd.read_csv(os.path.join(data_path, "UHC service coverage index.csv"))
+    uhs_merged_df = fuzzy_merge(df, uhs_service_df, "country_name", "GEO_NAME_SHORT")
+    
+    print(uhs_merged_df.info())
+    uhs_merged_df.to_csv(os.path.join(data_path, "main.csv"), index=False)
+    # merged_df.to_csv(os.path.join(data_path, "merged_aqi_uhs.csv"), index=False)
+    
+    # print("\n".join(df["country_name"].unique().tolist()))
     # print("\n")
     # print("\n".join(df['income_level'].unique().tolist()))
     # print(df[invalid_aqi][['pm25_ugm3', 'air_quality_index']].describe().T)
-    
-    print(df[["aqi_pm", "air_quality_index", "pm25_ugm3"]].describe().T)
-    plot(df)
+
+    # print(df[["aqi_pm", "air_quality_index", "pm25_ugm3"]].describe().T)
+    # plot(df)
 
     # great_pm_conc = df["pm25_ugm3"] >= 150
     # print(df[great_pm_conc][["pm25_ugm3", "air_quality_index"]].describe().T)
