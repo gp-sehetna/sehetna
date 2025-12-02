@@ -49,6 +49,15 @@
 
 ---
 
+## [1.3] Feature Engineering - Was Missing | 2-12-2025
+
+### Edit
+- Restored Year and Date columns into the final dataframe.
+
+**Contributors:** *abdelrahman-hussien*
+
+---
+
 ## [Unreleased]
 
 ### Added
