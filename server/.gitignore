@@ -1,6 +1,7 @@
 # Data files
 resources/data/*
 !resources/data/main.csv
+!resources/data/df_processed.csv
 
 # Virtual environments
 .venv/

@@ -19,7 +19,7 @@
 
 ---
 
-## [1.1] Feature Engineering Phase | 01-12-2025
+## [2.0] Feature Engineering Phase | 01-12-2025
 
 ### Added
 - Focus on feature engineering through interactions and lag features
@@ -35,7 +35,7 @@
 
 ---
 
-## [1.2] Feature Engineering Enhancements | 01-12-2025
+## [2.1] Feature Engineering Enhancements | 01-12-2025
 
 ### Added
 - Further enhancements to feature engineering techniques
@@ -49,12 +49,22 @@
 
 ---
 
-## [1.3] Feature Engineering - Was Missing | 2-12-2025
+## [2.2] Feature Engineering - Was Missing | 2-12-2025
 
 ### Edit
 - Restored Year and Date columns into the final dataframe.
 
 **Contributors:** *abdelrahman-hussien*
+
+---
+
+## [2.3] Target Scaling | 7-12-2025
+
+### Added
+- Engineered a `country_id` column for country embedding purposes.
+- Applied Scaling to the target variables.
+
+**Contributors:** *mohamed-hussien*
 
 ---
 
