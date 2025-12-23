@@ -68,6 +68,41 @@
 
 ---
 
+## [3.0] Modelling Pipeline | 23-12-2025
+
+### Added
+- Complete modelling pipeline with training, validation, and testing phases.
+
+#### Modelling
+- Train-val-test split based on temporal data using K-Fold Leave One-Or-More-Year(s)-Out Cross-Validation.
+- Sliding Window (sequence) + Country Embeddings Dataset with shape (batch_size, sequence_length, num_features).
+- Implemented logging and experiment tracking and Hyperparameter tuning (Bayesian Optimization) using wandb.
+- Model evaluation using RMSE, MAE, and R² metrics.
+- Integrated model checkpointing for loading and saving best models
+
+#### Model Architecture
+```py
+LSTMCountryEmbeddings(
+  (country_embed): Embedding(25, 32)
+  (lstm): LSTM(72, 328, batch_first=True)
+  (first_act): SiLU()
+  (second_act): ReLU()
+  (head): Sequential(
+    (0): Linear(in_features=328, out_features=256, bias=True)
+    (1): SiLU()
+    (2): Dropout(p=0.3896575033867235, inplace=False)
+    (3): Linear(in_features=256, out_features=64, bias=True)
+    (4): ReLU()
+    (5): Dropout(p=0.06679236165100515, inplace=False)
+    (6): Linear(in_features=64, out_features=5, bias=True)
+  )
+)
+```
+
+**Contributors:** *mohamed-hussien*, *abdelrahman-hussien*
+
+---
+
 ## [Unreleased]
 
 ### Added
