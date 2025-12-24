@@ -51,15 +51,12 @@ class PredictionRequest(BaseModel):
     )
     country_id: int = Field(..., description="Country ID for prediction")
 
-
 class PredictionResult(BaseModel):
     respiratory_disease_rate: float
     cardio_mortality_rate: float
     vector_disease_risk_score: float
     waterborne_disease_incidents: float
     heat_related_admissions: float
-
-
 
 class PredictionResponse(BaseModel):
     predictions: PredictionResult

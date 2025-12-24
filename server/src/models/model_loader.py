@@ -1,7 +1,6 @@
 import torch
 import joblib
 import pickle
-from pathlib import Path
 import logging
 
 
@@ -9,12 +8,13 @@ logger = logging.getLogger(__name__)
 
 class ModelLoader:
     def __init__(self):
-        self.model = None
+        self.model: torch.nn.Module = None
         self.pipeline = None
         self.y_scaler = None
         self.feature_names = None
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         logger.info(f"Using device: {self.device}")
+        
     # Load model
     def load_model(self, path: str):
        
@@ -36,33 +36,24 @@ class ModelLoader:
         except Exception as e:
             logger.error(f"Error loading y_scaler: {e}")
             raise
+        
+    def load_pipeline(self, path: str):
+        """Load preprocessing pipeline"""
+        try:
+            self.pipeline = joblib.load(path)
+            logger.info(f"Loaded pipeline from {path}")
+        except Exception as e:
+            logger.error(f"Error loading pipeline: {e}")
+            raise
 
     def load_feature_names(self, path: str):
         """Load feature names for proper ordering"""
         try:
-            with open(path, 'rb') as f:
-                self.feature_names = pickle.load(f)
+            self.feature_names = joblib.load(path)
             logger.info(f"Loaded feature names from {path}")
         except Exception as e:
             logger.error(f"Error loading feature names: {e}")
             raise
-
-
-    def get_model(self):
-        return self.model
-    
-    def get_pipeline(self):
-        return self.pipeline
-    
-    def get_y_scaler(self):
-        return self.y_scaler
-    
-    def get_feature_names(self):
-        return self.feature_names
-    
-    def get_device(self):
-        return self.device
-    
 
 # Global instance
 model_loader = ModelLoader()

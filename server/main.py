@@ -3,9 +3,9 @@ from fastapi import FastAPI , HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from app.schema.request_response import PredictionRequest, PredictionResponse
-from app.models.model_loader import model_loader
-from app.models.predictor import Predictor
+from src.schema.request_response import PredictionRequest, PredictionResponse
+from src.models.model_loader import model_loader
+from src.models.predictor import Predictor
 from config import settings
 
 
@@ -18,9 +18,10 @@ async def lifespan(app: FastAPI):
     logger.info("Loading ML artifacts...")
     try:
         model_loader.load_model(settings.MODEL_PATH)
-        model_loader.load_preprocessing_pipeline(settings.PIPELINE_PATH)
+        model_loader.load_pipeline(settings.PIPELINE_PATH)
         model_loader.load_y_scaler(settings.Y_SCALER_PATH)
         model_loader.load_feature_names(settings.FEATURE_NAMES_PATH)
+        
         logger.info("All artifacts loaded successfully")
     except Exception as e:
         logger.error(f"Error loading artifacts: {e}")
@@ -30,13 +31,13 @@ async def lifespan(app: FastAPI):
     
     logger.info("Shutting down...")
 
-fast_app = FastAPI(
+app = FastAPI(
     title=settings.APP_NAME,
     version=settings.VERSION,
     lifespan=lifespan
 )
 
-fast_app.add_middleware(
+app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
@@ -44,7 +45,7 @@ fast_app.add_middleware(
     allow_headers=["*"],
 )
 
-@fast_app.get("/")
+@app.get("/")
 async def root():
     return {
         "message": "Climate Health Prediction Service",
@@ -52,16 +53,16 @@ async def root():
         "status": "running"
     } 
 
-@fast_app.get("/health")
+@app.get("/health")
 async def health_check():
     return {
         "status": "healthy",
-        "model_loaded": model_loader.get_model() is not None,
-        "pipeline_loaded": model_loader.get_pipeline() is not None
+        "model_loaded": model_loader.model is not None,
+        "pipeline_loaded": model_loader.pipeline is not None
     }
 
 
-@fast_app.post("/predict", response_model=PredictionResponse)
+@app.post("/predict", response_model=PredictionResponse)
 async def predict(request: PredictionRequest):
     """
     Make health outcome predictions based on climate and health data.
@@ -82,15 +83,13 @@ async def predict(request: PredictionRequest):
         logger.error(f"Prediction error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
-
-@fast_app.get("/info")
+@app.get("/info")
 async def model_info():
     """Get information about the model configuration"""
     return {
         "seq_len": settings.SEQ_LEN,
         "batch_size": settings.BATCH_SIZE,
-        "device": str(model_loader.get_device()),
+        "device": str(model_loader.device),
         "targets": [
             "respiratory_disease_rate",
             "cardio_mortality_rate",

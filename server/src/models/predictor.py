@@ -2,13 +2,13 @@ import torch
 import pandas as pd
 import numpy as np
 
-from torch.utils.data import DataLoader , TensorDataset
+from torch.utils.data import DataLoader
 from torch.cuda.amp import autocast
 from typing import List , Dict
 import logging
-from app.models.model_loader import model_loader
-from app.models.dataset import ClimateHealthDataset
-from app.schema.request_response import HealthDataInput , PredictionResult
+from src.models.model_loader import model_loader
+from src.models.dataset import ClimateHealthDataset
+from src.schema.request_response import HealthDataInput, PredictionResult
 
 
 logger = logging.getLogger(__name__)
@@ -20,11 +20,6 @@ class Predictor:
 
         # Convert to DataFrame
         df = pd.DataFrame([d.dict() for d in data])
-
-        # Get pipeline
-        pipeline = model_loader.get_pipeline()
-        feature_names = model_loader.get_feature_names()
-        
 
         # Define target columns (not needed for prediction but required for pipeline)
         target_columns = [
@@ -44,10 +39,10 @@ class Predictor:
         X = df.drop(columns=target_columns, errors='ignore')
 
         # Apply preprocessing pipeline
-        X_processed_array = pipeline.transform(X)
+        X_processed_array = model_loader.pipeline.transform(X)
         X_processed = pd.DataFrame(
             X_processed_array, 
-            columns=feature_names,
+            columns=model_loader.feature_names,
             index=df.index
         )
 
@@ -89,23 +84,18 @@ class Predictor:
             # Create dataloader
             dataloader = DataLoader(dataset, batch_size=1, shuffle=False)
 
-            # Get model and device
-            model = model_loader.get_model()
-            device = model_loader.get_device()
-            y_scaler = model_loader.get_y_scaler()
-            
             # Make predictions
-            model.eval()
+            model_loader.model.eval()
             all_preds = []
 
         
             with torch.no_grad():
-                for X_num, country_tensor, y in dataloader:
-                    X_num = X_num.to(device)
-                    country_tensor = country_tensor.to(device)
+                for X_num, country_tensor, _ in dataloader:
+                    X_num = X_num.to(model_loader.device)
+                    country_tensor = country_tensor.to(model_loader.device)
                     
-                    with autocast(device.type):
-                        preds = model(X_num, country_tensor)
+                    with autocast(model_loader.device.type):
+                        preds = model_loader.model(X_num, country_tensor)
                     
                     all_preds.append(preds.detach().cpu())
             
@@ -114,7 +104,7 @@ class Predictor:
 
             # Inverse transform predictions
             pred_numpy = final_pred.numpy()
-            pred_original_scale = y_scaler.inverse_transform(pred_numpy)
+            pred_original_scale = model_loader.y_scaler.inverse_transform(pred_numpy)
 
             # Get the last prediction (most recent)
             last_prediction = pred_original_scale[-1]    
@@ -133,7 +123,7 @@ class Predictor:
                 "seq_len": seq_len,
                 "country_id": country_id,
                 "prediction_date": df_country['date'].max().strftime('%Y-%m-%d'),
-                "device": str(device)
+                "device": str(model_loader.device)
             }
 
             return {
