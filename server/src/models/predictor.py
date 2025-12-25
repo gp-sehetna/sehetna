@@ -60,7 +60,7 @@ class Predictor:
     
 
     @staticmethod
-    def predict(data: List[HealthDataInput], country_id: int, seq_len: int = 12) -> Dict:
+    def predict(data: List[HealthDataInput], country_id: int, seq_len: int = 24) -> Dict:
         """Make prediction using the model"""
 
         try:    

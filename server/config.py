@@ -13,8 +13,8 @@ class Settings(BaseSettings):
     FEATURE_NAMES_PATH: str = "./src/modeling/saved-models/feature_names.joblib"
     
     # Model configuration
-    SEQ_LEN: int = 12  # Sequence length for temporal data
-    BATCH_SIZE: int = 32
+    SEQ_LEN: int = 24
+    BATCH_SIZE: int = 128
     
     class Config:
         env_file = ".env"

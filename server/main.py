@@ -14,41 +14,20 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: Load all artifacts
-    logger.info("Loading ML artifacts...")
-    try:
-        model_loader.load_model(settings.MODEL_PATH)
-        model_loader.load_pipeline(settings.PIPELINE_PATH)
-        model_loader.load_y_scaler(settings.Y_SCALER_PATH)
-        model_loader.load_feature_names(settings.FEATURE_NAMES_PATH)
-        
-        logger.info("All artifacts loaded successfully")
-    except Exception as e:
-        logger.error(f"Error loading artifacts: {e}")
-        raise
+    model_loader(settings)
     
     yield
     
     logger.info("Shutting down...")
 
-app = FastAPI(
-    title=settings.APP_NAME,
-    version=settings.VERSION,
-    lifespan=lifespan
-)
+app = FastAPI(title=settings.APP_NAME, version=settings.VERSION, lifespan=lifespan)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 @app.get("/")
 async def root():
     return {
-        "message": "Climate Health Prediction Service",
+        "message": "Sehetna Services API is running.",
         "version": settings.VERSION,
         "status": "running"
     } 
@@ -64,16 +43,8 @@ async def health_check():
 
 @app.post("/predict", response_model=PredictionResponse)
 async def predict(request: PredictionRequest):
-    """
-    Make health outcome predictions based on climate and health data.
-    Requires sequential data (minimum seq_len records) for the specified country.
-    """
     try:
-        result = Predictor.predict(
-            data=request.data,
-            country_id=request.country_id,
-            seq_len=settings.SEQ_LEN
-        )
+        result = Predictor.predict(data=request.data, country_id=request.country_id, seq_len=settings.SEQ_LEN)
         
         return PredictionResponse(**result)
 

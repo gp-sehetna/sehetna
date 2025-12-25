@@ -3,6 +3,8 @@ import joblib
 import pickle
 import logging
 
+from server.config import Settings
+
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +16,20 @@ class ModelLoader:
         self.feature_names = None
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         logger.info(f"Using device: {self.device}")
+        
+    def __call__(self, settings: Settings):
+        logger.info("Loading ML artifacts...")
+        
+        try:
+            self.load_model(settings.MODEL_PATH)
+            self.load_pipeline(settings.PIPELINE_PATH)
+            self.load_y_scaler(settings.Y_SCALER_PATH)
+            self.load_feature_names(settings.FEATURE_NAMES_PATH)
+            
+            logger.info("All artifacts loaded successfully")
+        except Exception as e:
+            logger.error(f"Error loading artifacts: {e}")
+            raise
         
     # Load model
     def load_model(self, path: str):
