@@ -2,7 +2,7 @@
 
 ## [1.0] Preprocessing Pipeline | 27-11-2025
 
-### Added
+### Add
 - Complete pipeline for data processing and feature engineering
 
 #### Data Preprocessing
@@ -21,7 +21,7 @@
 
 ## [2.0] Feature Engineering Phase | 01-12-2025
 
-### Added
+### Add
 - Focus on feature engineering through interactions and lag features
 
 #### Feature Engineering
@@ -37,7 +37,7 @@
 
 ## [2.1] Feature Engineering Enhancements | 01-12-2025
 
-### Added
+### Add
 - Further enhancements to feature engineering techniques
 
 #### Feature Engineering
@@ -60,7 +60,7 @@
 
 ## [2.3] Target Scaling | 7-12-2025
 
-### Added
+### Add
 - Engineered a `country_id` column for country embedding purposes.
 - Applied Scaling to the target variables.
 
@@ -68,9 +68,23 @@
 
 ---
 
+## [2.4.1] Adjusted Preprocessing flow and outlier handling per country | 27-12-2025
+
+### Add
+- (20) 2-lagged features through STL Target Decomposition.
+
+### Edit
+- Preprocessing wasn't focusing on each country's data separately.
+- Outlier removal and Scaling per country instead of mixing everything.
+- Imputed missing values using KNN Imputer.
+
+**Contributors:** *mohamed-hussien*
+
+---
+
 ## [3.0] Modelling Pipeline | 23-12-2025
 
-### Added
+### Add
 - Complete modelling pipeline with training, validation, and testing phases.
 
 #### Modelling
@@ -105,10 +119,10 @@ LSTMCountryEmbeddings(
 
 ## [Unreleased]
 
-### Added
+### Add
 - [Describe new features]
 
-### Changed
+### Edit
 - [Describe modifications]
 
 ### Fixed
