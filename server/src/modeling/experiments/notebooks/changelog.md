@@ -82,6 +82,16 @@
 
 ---
 
+## [2.4.2] Fixed Pipeline features | 27-12-2025
+
+### Edit
+- Make use of ColumnTransformer for preprocessing.
+- Fixed X Scaling.
+
+**Contributors:** *mohamed-hussien*
+
+---
+
 ## [3.0] Modelling Pipeline | 23-12-2025
 
 ### Add
