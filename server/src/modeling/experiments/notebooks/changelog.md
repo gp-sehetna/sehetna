@@ -127,6 +127,72 @@ LSTMCountryEmbeddings(
 
 ---
 
+## [4.0] Modelling Pipeline | 29-12-2025
+
+### Add
+- PatchTST Model
+
+#### Modelling
+- Used PatchTST with prediction length.
+- Included new features (targets history) and updated preprocessing pipeline accordingly.
+- Achieved significant performance (Overall Macro RMSE: 0.8055) improvements over previous LSTM model (check results in the notebook for more details).
+
+#### Model Architecture
+```py
+PatchTST(
+  (model): PatchTSTForPrediction(
+    (model): PatchTSTModel(
+      (scaler): PatchTSTScaler(
+        (scaler): PatchTSTStdScaler()
+      )
+      (patchifier): PatchTSTPatchify()
+      (masking): Identity()
+      (encoder): PatchTSTEncoder(
+        (embedder): PatchTSTEmbedding(
+          (input_embedding): Linear(in_features=6, out_features=128, bias=True)
+        )
+        (positional_encoder): PatchTSTPositionalEncoding(
+          (positional_dropout): Identity()
+        )
+        (layers): ModuleList(
+          (0-2): 3 x PatchTSTEncoderLayer(
+            (self_attn): PatchTSTAttention(
+              (k_proj): Linear(in_features=128, out_features=128, bias=True)
+              (v_proj): Linear(in_features=128, out_features=128, bias=True)
+              (q_proj): Linear(in_features=128, out_features=128, bias=True)
+              (out_proj): Linear(in_features=128, out_features=128, bias=True)
+            )
+            (dropout_path1): Identity()
+            (norm_sublayer1): PatchTSTBatchNorm(
+              (batchnorm): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+            (ff): Sequential(
+              (0): Linear(in_features=128, out_features=512, bias=True)
+              (1): GELUActivation()
+              (2): Identity()
+              (3): Linear(in_features=512, out_features=128, bias=True)
+            )
+            (dropout_path3): Identity()
+            (norm_sublayer3): PatchTSTBatchNorm(
+              (batchnorm): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+        )
+      )
+    )
+    (head): PatchTSTPredictionHead(
+      (flatten): Flatten(start_dim=2, end_dim=-1)
+      (projection): Linear(in_features=128, out_features=1, bias=True)
+      (dropout): Identity()
+    )
+  )
+)
+```
+
+**Contributors:** *abdelrahman-hussien*
+
+---
+
 ## [Unreleased]
 
 ### Add
