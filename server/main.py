@@ -28,7 +28,7 @@ _app = FastAPI(
     description="Sehetna Services API\nProvides health risk predictions based on climate data.",
     contact={"name": "Sehetna Team", "email": "mohamedhussien.asu@gmail.com"},
     version=settings.VERSION,
-    lifespan=lifespan,
+    lifespan=lifespan, # Not working correctly
 )
 
 
