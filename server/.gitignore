@@ -7,4 +7,4 @@ resources/data/*
 .venv/
 
 # Environment files
-.env
+.env*

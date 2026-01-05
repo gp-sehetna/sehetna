@@ -4,7 +4,6 @@ from datetime import date
 
 
 class HealthDataInput(BaseModel):
-    """Single health data record input"""
     date: str = Field(..., description="Date in YYYY-MM-DD format")
     country_code: str
     country_name: str
@@ -35,16 +34,8 @@ class HealthDataInput(BaseModel):
     drought_indicator: int = 0
     flood_indicator: int = 0
     extreme_weather_events: int = 0
-    
-    # Lagged features (optional, can be calculated)
-    pm25_ugm3_lag_1w: Optional[float] = None
-    pm25_ugm3_lag_2w: Optional[float] = None
-    pm25_ugm3_lag_4w: Optional[float] = None
-    temp_lag_1w: Optional[float] = None
-    temp_lag_2w: Optional[float] = None
 
 class PredictionRequest(BaseModel):
-    """Request containing sequence of health data"""
     data: List[HealthDataInput] = Field(
         ..., 
         description="Sequential health data (minimum seq_len records for same country)"
