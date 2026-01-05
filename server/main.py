@@ -20,7 +20,7 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    logger.debug("Shutting down...")
+    logger.info("Shutting down...")
 
 
 _app = FastAPI(
@@ -96,6 +96,6 @@ async def check_model_configuration():
     }
 
 
-app = VersionedFastAPI(_app, version_format="{major}", prefix_format="/api/v{major}")
+app = VersionedFastAPI(_app, version_format="{major}", prefix_format="/api/{major}")
 
 ## To run the app use: fastapi dev "server\main.py" or fastapi dev "main.py"
