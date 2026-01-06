@@ -10,7 +10,7 @@ from .config import settings
 from fastapi_versioning import VersionedFastAPI
 
 
-logging.basicConfig(level=settings.log_level)
+logging.basicConfig(level=settings.log_level, force=True)
 logger = logging.getLogger(__name__)
 
 
@@ -20,24 +20,26 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    logger.info("Shutting down...")
+    logger.info(f"Shutting down! {app.title}")
 
 
-_app = FastAPI(
-    title=settings.APP_NAME,
+app = VersionedFastAPI(
+    FastAPI(title=settings.APP_NAME),
+    version_format="{major}",
+    prefix_format="/api/{major}",
     description="Sehetna Services API\nProvides health risk predictions based on climate data.",
     contact={"name": "Sehetna Team", "email": "mohamedhussien.asu@gmail.com"},
     version=settings.VERSION,
-    lifespan=lifespan, # Not working correctly
+    lifespan=lifespan,
 )
 
 
-@_app.exception_handler(Exception)
+@app.exception_handler(Exception)
 async def validation_exception_handler(request, exc):
     return await request_validation_exception_handler(request, exc)
 
 
-@_app.get("/")
+@app.get("/")
 async def root():
     return {
         "message": "Sehetna Services API is running.",
@@ -47,7 +49,7 @@ async def root():
     }
 
 
-@_app.get("/check")
+@app.get("/check")
 async def health_check():
     return {
         "status": (
@@ -60,7 +62,7 @@ async def health_check():
     }
 
 
-@_app.post("/predict", response_model=PredictionResponse)
+@app.post("/predict", response_model=PredictionResponse)
 async def predict(request: PredictionRequest):
     result = Predictor.predict(
         data=request.data, country_id=request.country_id, seq_len=settings.SEQ_LEN
@@ -69,7 +71,7 @@ async def predict(request: PredictionRequest):
     return PredictionResponse(**result)
 
 
-@_app.get("/info")
+@app.get("/info")
 async def model_info():
     """Get information about the model configuration"""
     return {
@@ -84,8 +86,9 @@ async def model_info():
             "heat_related_admissions",
         ],
     }
-    
-@_app.get("/model")
+
+
+@app.get("/model")
 async def check_model_configuration():
     return {
         "default_name": settings.MODEL_NAME,
@@ -95,7 +98,5 @@ async def check_model_configuration():
         "feature_names": settings.FEATURE_NAMES_PATH,
     }
 
-
-app = VersionedFastAPI(_app, version_format="{major}", prefix_format="/api/{major}")
 
 ## To run the app use: fastapi dev "server\main.py" or fastapi dev "main.py"
