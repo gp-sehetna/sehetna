@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@theme {
+  /* ================= Primary ================= */
+  --color-primary-100: #ffe6d7;
+  --color-primary-200: #ffae81;
+  --color-primary-300: #ff752a;
+  --color-primary-400: #ff5c02;
+  --color-primary-500: #f05500;
+  --color-primary-600: #c54600;
+  --color-primary-700: #8d3200;
+  --color-primary-800: #561e00;
+  --color-primary: var(--color-primary-400);
+
+  /* ================= Secondary ================= */
+  --color-secondary-100: #ece4ff;
+  --color-secondary-200: #c0a5ff;
+  --color-secondary-300: #8c5aff;
+  --color-secondary-400: #601bff;
+  --color-secondary-500: #4d00ff;
+  --color-secondary: var(--color-secondary-500);
+
+  /* ================= Neutral ================= */
+  --color-neutral-100: #ffffff;
+  --color-neutral-200: #e8e8e8;
+  --color-neutral-300: #d2d2d2;
+  --color-neutral-400: #bbbbbb;
+  --color-neutral-500: #a4a4a4;
+  --color-neutral-600: #8e8e8e;
+  --color-neutral-700: #777777;
+  --color-neutral-800: #606060;
+  --color-neutral-900: #4a4a4a;
+  --color-neutral-1000: #222222;
+
+  /* ================= Green ================= */
+  --color-green-100: #83eb90;
+  --color-green-200: #1fc24c;
+  --color-green-300: #1a903b;
+  --color-green: var(--color-green-300);
+
+  /* ================= Yellow ================= */
+  --color-yellow-100: #ffdb43;
+  --color-yellow-200: #ea9e06;
+  --color-yellow: var(--color-yellow-100);
+
+  /* ================= Orange ================= */
+  --color-orange-100: #ffe6d7;
+  --color-orange-200: #ffae81;
+  --color-orange-300: #ff752a;
+  --color-orange-400: #ff5c02;
+  --color-orange-500: #f05500;
+  --color-orange: var(--color-orange-400);
+
+  /* ================= Base ================= */
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
