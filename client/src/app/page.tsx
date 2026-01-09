@@ -1,21 +1,34 @@
+import { Flex } from "antd";
+import AppLink from "../components/ui/AppLink";
 
-
+type LinkType = { 
+  linkName: string,
+  linkHref: string
+}
 export default function Home() {
+  const links : LinkType[]  = [
+    {linkName:"Methodology", linkHref:"/methodology"},
+    {linkName:"Data Explore", linkHref:"/exploreData"},
+    {linkName:"Profile", linkHref:"/profile"},
+    {linkName:"Support", linkHref:"/support"},
+    {linkName:"login", linkHref:"/login"},
+    {linkName:"signup", linkHref:"/signup"},
+  ]
   return (
-    <div className="m-5 space-y-5">
-
-      {/* This doesn't work */}
-      <h1 className="font-heading text-3xl bg-green">
-        Space Grotesk Heading
-      </h1>
-
-      <p className="font-body  text-secondary-500">Plus Jakarta Body</p>
-
-      {/* This works */}
-      <div className=" bg-primary text-white p-4">Primary</div>
-      <div className="text-secondary-500">Secondary</div>
-      <div className="text-neutral-900">Neutral</div>
-      <div className=" text-green-300">Green</div>
+    <div className=" h-screen">
+      <Flex className=" flex-col items-center justify-center h-full gap-2">
+        <div className=" font-bold text-3xl ">Home page</div>
+        
+        <Flex className=" gap-2">
+          {
+            links.map(({linkName, linkHref}:LinkType) => (
+              <AppLink href={linkHref} variant="button" type="primary" size="middle">
+                {linkName}
+              </AppLink>
+            ))
+          }
+        </Flex>
+      </Flex>
     </div>
   );
 }

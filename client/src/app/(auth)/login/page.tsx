@@ -1,7 +1,8 @@
+import PageCenter from "@/src/components/ui/PageCenter"
 
 const LoginPage = () => {
   return (
-    <div>LoginPage</div>
+    <PageCenter children="Login Page" />
   )
 }
 
