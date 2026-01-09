@@ -2,12 +2,12 @@ import logging
 from fastapi import FastAPI
 from fastapi.exception_handlers import request_validation_exception_handler
 from contextlib import asynccontextmanager
+from fastapi_versioning import VersionedFastAPI
 
 from .src.schema.request_response import PredictionRequest, PredictionResponse
 from .src.models.model_loader import model_loader
 from .src.models.predictor import Predictor
 from .config import settings
-from fastapi_versioning import VersionedFastAPI
 
 
 logging.basicConfig(level=settings.log_level, force=True)
@@ -16,9 +16,15 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    model_loader(settings)
-
+    logger.info("=== Starting FastAPI app ===")
+    try:
+        model_loader(settings)
+        logger.info("Model and pipeline loaded successfully")
+    except Exception as e:
+        logger.exception("Failed to load model/pipeline")
+        raise e
     yield
+    logger.info("=== Shutting down FastAPI app ===")    
 
     logger.info(f"Shutting down! {app.title}")
 
@@ -95,7 +101,8 @@ async def check_model_configuration():
         "model": settings.MODEL_PATH,
         "pipeline": settings.PIPELINE_PATH,
         "y_scaler": settings.Y_SCALER_PATH,
-        "feature_names": settings.FEATURE_NAMES_PATH,
+        "country_to_idx": settings.COUNTRY_TO_IDX_PATH,
+        "idx_to_country": settings.IDX_TO_COUNTRY_PATH
     }
 
 

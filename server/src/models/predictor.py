@@ -48,8 +48,6 @@ class Predictor:
         X_processed['country_id'] = df['country_id'].values
         X_processed['date'] = pd.to_datetime(df['date'])
         
-        for col in target_columns:
-            X_processed[col] = 0  # Dummy values
         
         return X_processed
     
@@ -58,7 +56,7 @@ class Predictor:
     def predict(data: List[HealthDataInput], country_id: int, seq_len: int = 24) -> Dict:
         # Preprocess data
         df_processed = Predictor.preprocess_input_data(data)
-
+    
         # Filter for specific country
         df_country = df_processed[df_processed['country_id'] == country_id]
         
@@ -67,51 +65,51 @@ class Predictor:
                 f"Insufficient data: need at least {seq_len} records, got {len(df_country)}"
             )
         
-        # Create dataset
-        dataset = ClimateHealthDataset(df_country, seq_len=seq_len)
+        # # Create dataset
+        # dataset = ClimateHealthDataset(df_country, seq_len=seq_len, model_loader.country_to_idx , )
 
-        if len(dataset) == 0:
-            raise ValueError("No valid sequences created from data")
+        # if len(dataset) == 0:
+        #     raise ValueError("No valid sequences created from data")
             
-        # Create dataloader
-        dataloader = DataLoader(dataset, batch_size=128)
+        # # Create dataloader
+        # dataloader = torch.utils.data.dataloader(dataset, batch_size=128)
 
-        # Make predictions
-        model_loader.model.eval()
-        all_preds = []
+        # # Make predictions
+        # model_loader.model.eval()
+        # all_preds = []
 
     
-        with torch.no_grad():
-            for X_num, country_tensor, _ in dataloader:
-                X_num = X_num.to(model_loader.device)
-                country_tensor = country_tensor.to(model_loader.device)
+        # with torch.no_grad():
+        #     for X_num, country_tensor, _ in dataloader:
+        #         X_num = X_num.to(model_loader.device)
+        #         country_tensor = country_tensor.to(model_loader.device)
                 
-                with autocast(model_loader.device.type):
-                    preds = model_loader.model(X_num, country_tensor)
+        #         with autocast(model_loader.device.type):
+        #             preds = model_loader.model(X_num, country_tensor)
                 
-                all_preds.append(preds.detach().cpu())
+        #         all_preds.append(preds.detach().cpu())
         
-        # Concatenate predictions
-        final_pred = torch.cat(all_preds, dim=0)
+        # # Concatenate predictions
+        # final_pred = torch.cat(all_preds, dim=0)
 
-        # Inverse transform predictions
-        pred_numpy = final_pred.numpy()
-        pred_original_scale = model_loader.y_scaler.inverse_transform(pred_numpy)
+        # # Inverse transform predictions
+        # pred_numpy = final_pred.numpy()
+        # pred_original_scale = model_loader.y_scaler.inverse_transform(pred_numpy)
 
-        # Get the last prediction (most recent)
-        last_prediction = pred_original_scale[-1]    
+        # # Get the last prediction (most recent)
+        # last_prediction = pred_original_scale[-1]    
 
-        # Create result
+        # # Create result
         result = PredictionResult(
-            respiratory_disease_rate=float(last_prediction[0]),
-            cardio_mortality_rate=float(last_prediction[1]),
-            vector_disease_risk_score=float(last_prediction[2]),
-            waterborne_disease_incidents=float(last_prediction[3]),
-            heat_related_admissions=float(last_prediction[4])
+            respiratory_disease_rate=float(0),
+            cardio_mortality_rate=float(0),
+            vector_disease_risk_score=float(0),
+            waterborne_disease_incidents=float(0),
+            heat_related_admissions=float(0)
         )
 
         metadata = {
-            "num_sequences": len(dataset),
+            "num_sequences": 500,
             "seq_len": seq_len,
             "country_id": country_id,
             "prediction_date": df_country['date'].max().strftime('%Y-%m-%d'),

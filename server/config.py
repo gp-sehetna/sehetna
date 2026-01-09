@@ -9,17 +9,18 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 class PathSettings(BaseSettings):
     # Paths
     ARCHIVE_DIR: str = os.path.join(BASE_DIR, "src/models/archives")
-    MODEL_NAME: str = "[model-0o2w5wtd-v0]-lstm"
-
+    MODEL_NAME: str = "4.0V"
+    # Base archive directory
+    MODEL_FILE: str = "[model-nvefcg0z-v0]-patch-tst-model.pkl"
     @computed_field
     @property
     def MODEL_PATH(self) -> str:
-        return os.path.join(self.ARCHIVE_DIR, self.MODEL_NAME, "model.pkl")
+        return os.path.join(self.ARCHIVE_DIR, self.MODEL_NAME, self.MODEL_FILE)
 
     @computed_field
     @property
     def PIPELINE_PATH(self) -> str:
-        return os.path.join(self.ARCHIVE_DIR, self.MODEL_NAME, "feature_pipeline.joblib")
+        return os.path.join(self.ARCHIVE_DIR, self.MODEL_NAME, "feature_pipeline_abdo.joblib")
 
     @computed_field
     @property
@@ -28,9 +29,13 @@ class PathSettings(BaseSettings):
 
     @computed_field
     @property
-    def FEATURE_NAMES_PATH(self) -> str:
-        return os.path.join(self.ARCHIVE_DIR, self.MODEL_NAME, "feature_names.joblib")
+    def COUNTRY_TO_IDX_PATH(self) -> str:
+        return os.path.join(self.ARCHIVE_DIR, self.MODEL_NAME, "country_to_idx.joblib")
 
+    @computed_field
+    @property
+    def IDX_TO_COUNTRY_PATH(self) -> str:
+        return os.path.join(self.ARCHIVE_DIR, self.MODEL_NAME, "idx_to_country.joblib")
 
 class Settings(PathSettings):
     APP_NAME: str = "Sehetna App"
@@ -40,7 +45,7 @@ class Settings(PathSettings):
     log_level: int | str | None
 
     # Model configuration
-    SEQ_LEN: int = 24
+    SEQ_LEN: int = 8
     BATCH_SIZE: int = 128
 
     model_config = SettingsConfigDict(env_file=".env")
