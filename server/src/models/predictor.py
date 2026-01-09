@@ -96,20 +96,15 @@ class Predictor:
         # pred_numpy = final_pred.numpy()
         # pred_original_scale = model_loader.y_scaler.inverse_transform(pred_numpy)
 
-        # # Get the last prediction (most recent)
+        # Get the last prediction (most recent)
         # last_prediction = pred_original_scale[-1]    
 
-        # # Create result
-        result = PredictionResult(
-            respiratory_disease_rate=float(0),
-            cardio_mortality_rate=float(0),
-            vector_disease_risk_score=float(0),
-            waterborne_disease_incidents=float(0),
-            heat_related_admissions=float(0)
-        )
+        # Create result List[PredictionResult]
+        results = []
+        # for i in range(pred_original_scale.shape[0]):
+        #     results.append(PredictionResult(*pred_original_scale[i]))
 
         metadata = {
-            "num_sequences": 500,
             "seq_len": seq_len,
             "country_id": country_id,
             "prediction_date": df_country['date'].max().strftime('%Y-%m-%d'),
@@ -117,7 +112,7 @@ class Predictor:
         }
 
         return {
-            "predictions": result,
+            "predictions": results,
             "metadata": metadata
         }
         
