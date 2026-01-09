@@ -127,6 +127,56 @@ LSTMCountryEmbeddings(
 
 ---
 
+## [3.1] New Model Architecture | 09-01-2026
+
+### Add
+- A Multi-CNN Encoder with BiLSTM & BiGRU model architecture.
+
+### Edit
+#### Preprocessing
+- Enhanced preprocessing pipeline code structure for better readability and maintainability.
+- Scaled target variables & unscale predictions accordingly.
+
+#### Splitting
+- Apply proper pipeline fitting only on training data to avoid data leakage.
+
+#### Feature Selection
+- MultiTaskElasticNetCV & L2-norm aggregation
+- Permutation importance using Random Forest: **ONLY to validate**.
+
+#### Model Architecture
+```py
+CNN_BiGRU_BILSTM_Model(
+  (country_embed): Embedding(25, 4)
+  (cnn): TemporalCNNEncoder(
+    (layers): ModuleList(
+      (0): TemporalCNNBlock(
+        (block): Sequential(
+          (0): Conv1d(16, 32, kernel_size=(3,), stride=(1,), padding=(1,))
+          (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+          (3): Dropout(p=0.06422203337487818, inplace=False)
+        )
+      )
+    )
+  )
+  (bigru): GRU(32, 64, num_layers=3, batch_first=True, dropout=0.06422203337487818, bidirectional=True)
+  (bilstm): LSTM(128, 96, batch_first=True, dropout=0.06422203337487818, bidirectional=True)
+  (head): Sequential(
+    (0): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+    (1): Linear(in_features=192, out_features=96, bias=True)
+    (2): ReLU()
+    (3): Linear(in_features=96, out_features=32, bias=True)
+    (4): ReLU()
+    (5): Linear(in_features=32, out_features=5, bias=True)
+  )
+)
+```
+
+**Contributors:** *mohamed-hussien*
+
+---
+
 ## [4.0] Modelling Pipeline | 29-12-2025
 
 ### Add
@@ -191,6 +241,27 @@ PatchTST(
 
 **Contributors:** *abdelrahman-hussien*
 
+---
+
+## [5.0] LightGBM Model for User Scenario – Simulation mode | 09-01-2026
+
+### Add
+- Implemented LightGBM model for time series point prediction NOT forecasting.
+
+#### Modelling
+- Used Temporal Cross-Validation Ensemble Technique.
+- Achieved significant performance (Overall Macro RMSE: ~0.615)
+
+### Edit
+- Remove preprocessing & FE pipeline (Scaling, Imputation) as LightGBM can handle raw data.
+- Remove country embeddings and sequence data structure.
+
+### Notes
+- **SHOULD** update feature engineering to include important features only according to feature selection process.
+- Further hyperparameter tuning can be done to improve performance.
+- Different features should be used for those targets: cardio_mortality_rate, waterborne_disease_incidents as they have the lowest performance.
+
+**Contributors:** *mohamed-hussien*
 ---
 
 ## [Unreleased]
