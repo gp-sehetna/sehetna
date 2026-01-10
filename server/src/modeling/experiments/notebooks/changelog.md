@@ -262,6 +262,26 @@ PatchTST(
 - Different features should be used for those targets: cardio_mortality_rate, waterborne_disease_incidents as they have the lowest performance.
 
 **Contributors:** *mohamed-hussien*
+
+---
+
+## [5.1] LightGBM Preprocessing Adjustments – Simulation mode | 09-01-2026
+
+### Add
+- Feature Engineering processing for LightGBM model.
+
+#### Modelling
+- Better significant performance (Overall Macro RMSE: ~0.604)
+
+### Edit
+- Swap processes preprocessing & FE pipeline
+
+### Notes
+- Hybrid models should be levereged to improve performance e.g., GAM + LightGBM.
+- Different features should be used for those targets: cardio_mortality_rate, waterborne_disease_incidents as they have the lowest performance.
+
+**Contributors:** *mohamed-hussien*
+
 ---
 
 ## [Unreleased]
