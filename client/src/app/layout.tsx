@@ -10,7 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Use spaceGrotesk class only on headings */}
         <div className={spaceGrotesk.className}>
           {children}
-        </div>y
+        </div>
       </body>
     </html>
   );
