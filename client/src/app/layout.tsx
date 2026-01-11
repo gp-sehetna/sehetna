@@ -1,5 +1,5 @@
 import "./globals.css";
-import {plusJakarta, spaceGrotesk} from "@/src/config/fonts"
+import { plusJakarta, spaceGrotesk } from "@/src/fonts/fonts"
 
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -10,7 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Use spaceGrotesk class only on headings */}
         <div className={spaceGrotesk.className}>
           {children}
-        </div>
+        </div>y
       </body>
     </html>
   );
