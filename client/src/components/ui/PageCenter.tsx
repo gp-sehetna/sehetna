@@ -1,8 +1,8 @@
 
-const PageCenter = ({children} : {children: React.ReactNode}) => {
+const PageCenter = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className=" h-screen text-primary  font-bold text-xl w-full flex items-center justify-center">
-        {children}
+    <div className=" h-screen font-bold text-3xl w-full flex items-center justify-center">
+      {children}
     </div>
   )
 }

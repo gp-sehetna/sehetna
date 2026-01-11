@@ -1,9 +1,9 @@
 import PageCenter from "@/src/components/ui/PageCenter"
 
-const page = () => {
+const DataExplorerPage = () => {
   return (
     <PageCenter children="Data Explorer Page" />
   )
 }
 
-export default page
+export default DataExplorerPage

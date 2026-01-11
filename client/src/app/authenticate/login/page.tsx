@@ -1,9 +1,9 @@
 import PageCenter from "@/src/components/ui/PageCenter"
 
-const LoginPage = () => {
+const LogInPage = () => {
   return (
     <PageCenter children="Login Page" />
   )
 }
 
-export default LoginPage
+export default LogInPage

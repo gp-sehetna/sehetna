@@ -1,9 +1,9 @@
 import PageCenter from "@/src/components/ui/PageCenter"
 
-const page = () => {
+const MethodologyPage = () => {
   return (
-    <PageCenter children="Mehtodology Page" />
+    <PageCenter children="Methodology Page" />
   )
 }
 
-export default page
+export default MethodologyPage

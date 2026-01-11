@@ -1,10 +1,7 @@
 "use client";
 
-import { Button } from "antd";
-import type { ButtonProps } from "antd";
-import clsx from "clsx";
 
-type AppButtonProps = ButtonProps & {
+type AppButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   className?: string;
 };
 
@@ -13,9 +10,9 @@ export default function AppButton({
   ...props
 }: AppButtonProps) {
   return (
-    <Button
+    <button
       {...props}
-      className={clsx(className)}
+      className={className}
     />
   );
 }
