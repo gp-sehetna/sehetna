@@ -1,9 +1,15 @@
+import AppButton from "../components/ui/AppButton";
+import AppInput from "../components/ui/AppInput";
 import AppLink from "../components/ui/AppLink";
+import Flex from "../components/ui/Flex";
+import Heading from "../components/ui/Heading";
+import { HeadingSizes } from "../components/ui/types";
+import WideButton from "../components/ui/WideButton";
 
 type LinkType = {
-  linkName: string,
-  linkHref: string
-}
+  linkName: string;
+  linkHref: string;
+};
 export default function Home() {
   const links: LinkType[] = [
     { linkName: "Log In", linkHref: "/authenticate/login" },
@@ -14,19 +20,78 @@ export default function Home() {
     { linkName: "Data Explorer", linkHref: "/data-explorer" },
     { linkName: "Methodology", linkHref: "/methodology" },
     { linkName: "Help & Support", linkHref: "/support" },
-  ]
+  ];
   return (
-    <div className="h-screen flex flex-col justify-center gap-4">
-      <div className="font-bold flex justify-center text-3xl">Home page</div>
-      <div className="flex justify-center gap-6 text-sm">
-        {
-          links.map(({ linkName, linkHref }: LinkType) => (
-            <AppLink key={linkName} href={linkHref} variant="button" type="primary" size="middle">
-              {linkName}
-            </AppLink>
-          ))
-        }
-      </div>
+    <div className=" h-screen flex w-full items-center justify-center flex-col">
+      <Flex className="px-10 w-full">
+        <div className="border-2 w-full border-dashed border-primary p-6 hover:p-12 hover:rounded-none trans flex gap-3 flex-col rounded-lg">
+          <Flex direction="col">
+            <Heading size={2} color="black">
+              Headings
+            </Heading>
+            <Flex direction="col">
+              {[1, 2, 3, 4, 5, 6].map((i: any) => (
+                <Heading key={i} size={i}>
+                  Heading {i}
+                </Heading>
+              ))}
+            </Flex>
+          </Flex>
+        </div>
+        <Flex direction="col">
+
+          
+
+          <div className="border-2 w-full border-dashed border-primary p-6 hover:p-12 hover:rounded-none trans flex gap-3 flex-col rounded-lg">
+            <Flex direction="col">
+              <Heading size={2} color="black">
+                Buttons
+              </Heading>
+              <Flex>
+                <AppButton variant="primary">Primary Button</AppButton>
+                <AppButton variant="secondary">Secondary Button</AppButton>
+                <AppButton variant="outline">Outline Button</AppButton>
+              </Flex>
+            </Flex>
+          </div>
+
+          <div className="border-2 border-dashed border-primary p-6 hover:p-12 hover:rounded-none trans flex gap-3 flex-col rounded-lg">
+            <Flex direction="col">
+              <Heading size={2} color="black">
+                Auth Buttons
+              </Heading>
+              <Flex direction="col">
+                <WideButton variant="outline" content="Outline Button" />
+                <WideButton variant="black" content="Black Button" />
+                <WideButton variant="gradient" content="Gradient Button" />
+              </Flex>
+            </Flex>
+          </div>
+        </Flex>
+        <div className="border-2 w-full border-dashed border-primary p-6 hover:p-12 hover:rounded-none trans flex gap-3 flex-col rounded-lg">
+            <Flex direction="col">
+              <Heading size={2} color="black">
+                Inputs
+              </Heading>
+              <Flex direction="col">
+                <AppInput label="User Name" placeholder="Enter Your Name..." type="text"  />
+                <AppInput label="Password" placeholder="**********" type="password"  />
+              </Flex>
+            </Flex>
+          </div>
+      </Flex>
     </div>
   );
+}
+{
+  /* <div className="flex space-x-2">
+        
+          {
+            links.map(({ linkName, linkHref }: LinkType) => (
+              <AppLink key={linkName} href={linkHref} variant="button" type="primary" size="middle">
+                {linkName}
+              </AppLink>
+            ))
+          }
+        </div> */
 }

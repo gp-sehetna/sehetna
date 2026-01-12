@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 @theme {
   /* ================= Primary ================= */
   --color-primary-100: #ffe6d7;
@@ -56,3 +57,9 @@
   --foreground: #171717;
 }
 
+
+@layer base { 
+  .trans { 
+    @apply transition-all duration-150
+  }
+}
