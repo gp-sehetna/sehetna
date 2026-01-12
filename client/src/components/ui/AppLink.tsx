@@ -30,6 +30,7 @@ export default function AppLink({
 
   return (
     <Link href={href}>
+      
       {children}
     </Link>
   );
