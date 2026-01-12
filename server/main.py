@@ -4,7 +4,7 @@ from fastapi.exception_handlers import request_validation_exception_handler
 from contextlib import asynccontextmanager
 from fastapi_versioning import VersionedFastAPI
 
-from .src.schema.request_response import PredictionRequest, PredictionResponse
+from .src.schema.request_response import PredictionRequest, PredictionResponse, SetupSimulateInputs
 from .src.models.model_loader import model_loader
 from .src.models.predictor import Predictor
 from .config import settings
@@ -21,8 +21,7 @@ async def lifespan(app: FastAPI):
         model_loader(settings)
         logger.info("Model and pipeline loaded successfully")
     except Exception as e:
-        logger.exception("Failed to load model/pipeline")
-        raise e
+        logger.critical("Failed to load model/pipeline")
     yield
     logger.info("=== Shutting down FastAPI app ===")    
 
@@ -76,6 +75,13 @@ async def predict(request: PredictionRequest):
 
     return PredictionResponse(**result)
 
+@app.post("/simulate", response_model=PredictionResponse)
+async def simulate(request: PredictionRequest):
+    result = Predictor.simulate(
+        data=request.data, country_id=request.country_id, seq_len=settings.SEQ_LEN
+    )
+
+    return PredictionResponse(**result)
 
 @app.get("/info")
 async def model_info():
@@ -97,12 +103,7 @@ async def model_info():
 @app.get("/model")
 async def check_model_configuration():
     return {
-        "default_name": settings.MODEL_NAME,
-        "model": settings.MODEL_PATH,
-        "pipeline": settings.PIPELINE_PATH,
-        "y_scaler": settings.Y_SCALER_PATH,
-        "country_to_idx": settings.COUNTRY_TO_IDX_PATH,
-        "idx_to_country": settings.IDX_TO_COUNTRY_PATH
+        "default_name": settings.archive_name,
     }
 
 

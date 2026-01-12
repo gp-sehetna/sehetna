@@ -8,34 +8,18 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class PathSettings(BaseSettings):
     # Paths
-    ARCHIVE_DIR: str = os.path.join(BASE_DIR, "src/models/archives")
-    MODEL_NAME: str = "4.0V"
+    archive_dir: str = os.path.join(BASE_DIR, "src/models/archives")
+    archive_name: str = "[modelling_phase_v5]-lgbm_fold_ensemble"
     # Base archive directory
-    MODEL_FILE: str = "[model-nvefcg0z-v0]-patch-tst-model.pkl"
     @computed_field
     @property
-    def MODEL_PATH(self) -> str:
-        return os.path.join(self.ARCHIVE_DIR, self.MODEL_NAME, self.MODEL_FILE)
+    def model_path(self) -> str:
+        return os.path.join(self.archive_dir, self.archive_name, "model.joblib")
 
     @computed_field
     @property
-    def PIPELINE_PATH(self) -> str:
-        return os.path.join(self.ARCHIVE_DIR, self.MODEL_NAME, "feature_pipeline_abdo.joblib")
-
-    @computed_field
-    @property
-    def Y_SCALER_PATH(self) -> str:
-        return os.path.join(self.ARCHIVE_DIR, self.MODEL_NAME, "y_scaler.joblib")
-
-    @computed_field
-    @property
-    def COUNTRY_TO_IDX_PATH(self) -> str:
-        return os.path.join(self.ARCHIVE_DIR, self.MODEL_NAME, "country_to_idx.joblib")
-
-    @computed_field
-    @property
-    def IDX_TO_COUNTRY_PATH(self) -> str:
-        return os.path.join(self.ARCHIVE_DIR, self.MODEL_NAME, "idx_to_country.joblib")
+    def pipeline_path(self) -> str:
+        return os.path.join(self.archive_dir, self.archive_name, "pipeline.joblib")
 
 class Settings(PathSettings):
     APP_NAME: str = "Sehetna App"
