@@ -6,10 +6,12 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
 class PathSettings(BaseSettings):
     # Paths
-    archive_dir: str = os.path.join(BASE_DIR, "src/models/archives")
+    archive_dir: str = os.path.join(BASE_DIR, "src", "models", "archives")
     archive_name: str = "[modelling_phase_v5]-lgbm_fold_ensemble"
+
     # Base archive directory
     @computed_field
     @property
@@ -20,6 +22,7 @@ class PathSettings(BaseSettings):
     @property
     def pipeline_path(self) -> str:
         return os.path.join(self.archive_dir, self.archive_name, "pipeline.joblib")
+
 
 class Settings(PathSettings):
     APP_NAME: str = "Sehetna App"
