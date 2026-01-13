@@ -1,67 +1,105 @@
 import pandas as pd
-
-from typing import List , Dict
+import numpy as np
+from typing import Dict
 import logging
+
 from .model_loader import model_loader
-from ..schema.request_response import HealthDataInput
+from ..utils.feature_computer import FeatureComputer
+from ..schema.request_response import HealthDataInput , PredictionResult
 
 
 logger = logging.getLogger(__name__)
 
 class Predictor:
-    @staticmethod 
-    def preprocess_input_data(d: HealthDataInput) -> pd.DataFrame:
-        """Convert input data to DataFrame and apply preprocessing"""
-
-        # Convert to DataFrame
-        df = pd.DataFrame([d.__dict__])
-
-        # Define target columns (not needed for prediction but required for pipeline)
-        target_columns = [
-            'respiratory_disease_rate',
-            'cardio_mortality_rate',
-            'vector_disease_risk_score',
-            'waterborne_disease_incidents',
-            'heat_related_admissions'
-        ]
-
-        # Add dummy targets if not present
-        for col in target_columns:
-            if col not in df.columns:
-                df[col] = 0
-
-        # Prepare features
-        X = df.drop(columns=target_columns, errors='ignore')
-
-        # Apply preprocessing pipeline
-        X_processed = model_loader.pipeline.transform(X)
-
-        # Fill any NaN values
-        X_processed.fillna(-1, inplace=True)
-        
-        # Add back identifiers and targets
-        X_processed['country_id'] = df['country_id'].values
-        X_processed['date'] = pd.to_datetime(df['date'])
-        
-        
-        return X_processed
-    
-
     @staticmethod
-    def predict(data: List[HealthDataInput], country_id: int, seq_len: int = 24) -> Dict:
-        # Preprocess data
-        df_processed = Predictor.preprocess_input_data(data)
-        results = []
+    def predict(user_input: HealthDataInput) -> Dict:
+        try:
+            # Convert Pydantic model to dict
+            input_dict = user_input.dict()
 
-        metadata = {
-            "seq_len": seq_len,
-            "country_id": country_id,
-            "prediction_date": df_processed['date'].max().strftime('%Y-%m-%d'),
-            "device": str(model_loader.device)
-        }
+             # Compute all features
+            df_complete = FeatureComputer.compute_all_features(input_dict)
+            
+            logger.info(f"Computed features: {df_complete.shape}")
 
-        return {
-            "predictions": results,
-            "metadata": metadata
-        }
+            # Apply preprocessing pipeline
+            pipeline = model_loader.get_pipeline()
+            
+            # Add dummy target columns (required by pipeline)
+            targets = model_loader.get_targets()
+            for target in targets:
+                df_complete[target] = 0.0
+
+            # Transform
+            df_processed = pipeline.transform(df_complete)
+            
+            logger.info(f"After pipeline: {df_processed.shape}")
+            
+            # Get required features for model
+            # The model expects specific features based on training
+            # Extract them from processed dataframe
+            model = model_loader.get_model()
+
+            # Get feature names expected by model (from first estimator)
+            try:
+                expected_features = model.estimators_[0].feature_name_
+            except:
+                # If feature names not available, use all numeric columns
+                expected_features = df_processed.select_dtypes(include=[np.number]).columns.tolist()
+
+
+            # Ensure all expected features exist
+            X_pred = df_processed[expected_features] if all(f in df_processed.columns for f in expected_features) else df_processed.select_dtypes(include=[np.number])
+            
+            # Step 4: Make prediction
+            predictions = model.predict(X_pred)
+            
+            # Extract predictions (single row)
+            pred_values = predictions[0]
+
+            # Create result
+            result = PredictionResult(
+                respiratory_disease_rate=float(pred_values[0]),
+                cardio_mortality_rate=float(pred_values[1]),
+                vector_disease_risk_score=float(pred_values[2]),
+                waterborne_disease_incidents=float(pred_values[3]),
+                heat_related_admissions=float(pred_values[4])
+            )
+
+            # Prepare metadata
+            lat, lon = FeatureComputer.get_coordinates(
+                input_dict['country_code'],
+                input_dict.get('latitude'),
+                input_dict.get('longitude')
+            )
+
+            metadata = {
+                "model_type": "LightGBM MultiOutputRegressor",
+                "n_features": X_pred.shape[1],
+                "coordinates_used": {"latitude": lat, "longitude": lon},
+                "date_processed": str(input_dict['date'])
+            }
+
+            # Show some computed features
+            computed_features = {
+                "temp_squared": float(df_complete['temp_squared'].iloc[0]),
+                "temp_anomaly_celsius": float(df_complete['temp_anomaly_celsius'].iloc[0]),
+                "pollution_vulnerability": float(df_complete['pollution_vulnerability'].iloc[0]),
+                "pm25_temp_interaction": float(df_complete['pm25_temp_interaction'].iloc[0]),
+                "is_tropical": int(df_complete['is_tropical'].iloc[0]),
+                "distance_to_equator": float(df_complete['distance_to_equator'].iloc[0]),
+            }
+
+            return {
+                "country_code": input_dict['country_code'],
+                "date": str(input_dict['date']),
+                "predictions": result,
+                "metadata": metadata,
+                "computed_features": computed_features
+            }
+
         
+
+        except Exception as e:
+            logger.error(f"Prediction error: {e}")
+            raise

@@ -81,8 +81,16 @@ class PredictionResult(BaseModel):
     waterborne_disease_incidents: float
     heat_related_admissions: float
 
-class PredictionResponse(BaseModel):
+class SimulationResponse(BaseModel):
+    country_code: str
+    date: str
     predictions: PredictionResult
-    metadata: Dict[str, Any]
+    metadata: dict
+    computed_features: dict  # Show what was computed
+
+class HealthCheckResponse(BaseModel):
+    status: str
+    model_loaded: bool
+    pipeline_loaded: bool
 
     
