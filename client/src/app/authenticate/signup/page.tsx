@@ -1,7 +1,7 @@
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
 import Flex from "@/components/ui/Flex"
-import AppLink from "@/components/ui/GlobalComponents/AppLink"
-import Divider from "@/components/ui/GlobalComponents/Divider"
+import AppLink from "@/components/ui/GlobalControls/AppLink"
+import Divider from "@/components/ui/GlobalControls/Divider"
 import WideButton from "@/components/ui/WideButton"
 import { LogIn } from "lucide-react"
 import Image from "next/image"
@@ -33,7 +33,7 @@ const SignUpPage = () => {
             <WideButton size={btnSize} variant="gradient">
               Sign up with email address
             </WideButton>
-            <p className="text-xs w-75">
+            <p className="text-xs font-extralight w-75">
               By signing up, you agree to the&thinsp;
               <AppLink href="#Terms">Terms of Service</AppLink>&thinsp;
               and&thinsp;

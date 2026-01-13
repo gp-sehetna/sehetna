@@ -1,4 +1,5 @@
 import "@/app/globals.css"
+import Footer from "@/components/ui/GlobalComponents/Footers/Footer";
 
 export default function AuthenticationLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -17,9 +18,7 @@ export default function AuthenticationLayout({ children }: { children: React.Rea
                     />
                 </div>
 
-                <footer className="py-2 border-t border-gray-300 text-center text-sm text-muted-foreground">
-                    <p>footer</p>
-                </footer>
+                <Footer className="hidden md:flex" variant="simple" />
             </div>
         </>
 

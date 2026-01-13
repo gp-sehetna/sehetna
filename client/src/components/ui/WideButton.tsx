@@ -12,7 +12,7 @@ type WideButtonProps = {
 };
 
 const baseStyles =
-  "w-[396px] sm:w-[488px] py-2 sm:py-3 flex items-center justify-center font-thin rounded-full  base-transition cursor-pointer";
+  "w-[396px] sm:w-[488px] py-2 sm:py-3 flex items-center justify-center font-light rounded-full base-transition cursor-pointer";
 
 const variants = {
   outline: clsx("bg-neutral-100 border border-neutral-1000", "hover:bg-neutral-200", "active:bg-neutral-300"),
@@ -32,6 +32,6 @@ export default function WideButton({
   return (
     <Button size={size} onClick={onClick} className={clsx(baseStyles, variants[variant])}>
       {children}
-    </Button>
+    </ Button>
   );
 }

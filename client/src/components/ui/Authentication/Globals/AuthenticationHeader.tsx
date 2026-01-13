@@ -1,6 +1,6 @@
 "use client";
 import Flex from "../../Flex";
-import Logo from "../../GlobalComponents/Logo";
+import Logo from "../../GlobalControls/Logo";
 import { ReactNode } from "react";
 
 type AuthenticationHeaderProps = {
