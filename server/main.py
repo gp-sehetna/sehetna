@@ -14,36 +14,10 @@ from .config import settings
 logging.basicConfig(level=settings.log_level, force=True)
 logger = logging.getLogger(__name__)
 
-
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     logger.info("=== Starting FastAPI app ===")
-#     try:
-#         model_loader.load_model(settings.MODEL_PATH)
-#         model_loader.load_pipeline(settings.PIPELINE_PATH)
-#         logger.info("Model and pipeline loaded successfully")
-#     except Exception as e:
-#         logger.critical("Failed to load model/pipeline")
-#     yield
-#     logger.info("=== Shutting down FastAPI app ===")    
-
-#     logger.info(f"Shutting down! {app.title}")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("=== Starting FastAPI app ===")
-    try:
-        model_loader.load_model(settings.MODEL_PATH)
-        logger.info("Model loaded successfully")
-    except Exception as e:
-        logger.critical("Failed to load model")
-    try:
-        model_loader.load_pipeline(settings.PIPELINE_PATH)
-        logger.info("Pipeline loaded successfully")
-    except Exception as e:
-        logger.critical("Failed to load Pipeline")
+    model_loader(settings)
     yield
-    logger.info("=== Shutting down FastAPI app ===")    
-
     logger.info(f"Shutting down! {app.title}")
 
 
@@ -92,8 +66,8 @@ async def root():
 async def health_check():
     return HealthCheckResponse(
         status="healthy",
-        model_loaded=model_loader.get_model() is not None,
-        pipeline_loaded=model_loader.get_pipeline() is not None
+        model_loaded=model_loader.model is not None,
+        pipeline_loaded=model_loader.pipeline is not None
     )
 
 @app.post("/simulate", response_model=SimulationResponse)
@@ -112,7 +86,7 @@ async def model_info():
     """Get information about the model and required inputs"""
     return {
         "model_type": "LightGBM MultiOutputRegressor",
-        "targets": model_loader.get_targets(),
+        "targets": model_loader.targets,
         "required_inputs": {
             "date": "YYYY-MM-DD",
             "country_code": "3-letter country code (e.g., USA, CHN)",
