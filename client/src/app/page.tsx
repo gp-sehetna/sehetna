@@ -1,8 +1,10 @@
+
 import AppInput from "../components/ui/AppInput";
 import Flex from "../components/ui/Flex";
 import Heading from "../components/ui/Heading";
 import WideButton from "../components/ui/WideButton";
 import { Button } from "@/components/ui/shadcn/button";
+import MapView from "@/components/maplibre/MyMap";
 
 // type LinkType = {
 //   linkName: string;
@@ -22,7 +24,7 @@ export default function Home() {
   // ];
   return (
     <div className=" h-screen flex w-full items-center justify-center flex-col">
-      <Flex className="px-10 w-full">
+      {/* <Flex className="px-10 w-full">
         <div className="border-2 w-full border-dashed border-primary p-6 hover:p-12 hover:rounded-none base-transition flex gap-3 flex-col rounded-lg">
           <Flex direction="col">
             <Heading size={2} color="black">
@@ -66,18 +68,20 @@ export default function Home() {
             </Flex>
           </div>
         </Flex>
-        <div className="border-2 w-full border-dashed border-primary p-6 hover:p-12 hover:rounded-none base-transition flex gap-3 flex-col rounded-lg">
-          <Flex direction="col">
-            <Heading size={2} color="black">
+        </Flex> */}
+        {/* <div className="border-2 w-full border-dashed border-primary p-6 hover:p-12 hover:rounded-none base-transition flex gap-3 flex-col rounded-lg"> */}
+          {/* <Flex direction="col"> */}
+            {/* <Heading size={2} color="black">
               Inputs
-            </Heading>
-            <Flex direction="col">
-              <AppInput label="User Name" placeholder="Enter Your Name..." type="text" />
-              <AppInput label="Password" placeholder="**********" type="password" />
-            </Flex>
-          </Flex>
-        </div>
-      </Flex>
+            </Heading> */}
+              {/* <AppInput label="User Name" placeholder="Enter Your Name..." type="text" /> */}
+              {/* <AppInput label="Password"   type="password" /> */}
+            {/* <Flex direction="col">
+            </Flex> */}
+          {/* </Flex> */}
+        {/* </div> */}
+      
+      <MapView />
     </div>
   );
 }
