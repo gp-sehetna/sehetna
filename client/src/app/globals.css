@@ -1,94 +1,82 @@
 @import "tailwindcss";
 @import "../assets/css/main.css";
-@tailwind utilities;
 
- /* To Use Clamp it!: mobileFontSize, desktopFontSize, viewportMin, viewportMax, and baseFontSize. */
+/* To Use Clamp it!: mobileFontSize, desktopFontSize, viewportMin, viewportMax, and baseFontSize. */
 
 @theme {
-  /* ================= Primary ================= */
-  --color-primary-100: #ffe6d7;
-  --color-primary-200: #ffae81;
-  --color-primary-300: #ff752a;
-  --color-primary-400: #ff5c02;
-  --color-primary-500: #f05500;
-  --color-primary-600: #c54600;
-  --color-primary-700: #8d3200;
-  --color-primary-800: #561e00;
+    --heading-font: "Space Grotesk", sans-serif;
+    --body-font: "Plus Jakarta Sans", sans-serif;
 
-  --color-primary-alpha-10: rgba(255, 92, 2, 0.1);
-  --color-primary-alpha-50: rgba(255, 92, 2, 0.5);
+    /* ================= Primary ================= */
+    --color-primary-100: #ffe6d7;
+    --color-primary-200: #ffae81;
+    --color-primary-300: #ff752a;
+    --color-primary-400: #ff5c02;
+    --color-primary-500: #f05500;
+    --color-primary-600: #c54600;
+    --color-primary-700: #8d3200;
+    --color-primary-800: #561e00;
 
-  --color-primary: var(--color-primary-400);
+    --color-primary: var(--color-primary-400);
 
-  /* ================= Secondary ================= */
-  --color-secondary-100: #ece4ff;
-  --color-secondary-200: #c0a5ff;
-  --color-secondary-300: #8c5aff;
-  --color-secondary-400: #601bff;
-  --color-secondary-500: #4d00ff;
-  --color-secondary-600: #4600e7;
-  --color-secondary-700: #3500ae;
-  --color-secondary-800: #20006a;
+    /* ================= Secondary ================= */
+    --color-secondary-100: #ece4ff;
+    --color-secondary-200: #c0a5ff;
+    --color-secondary-300: #8c5aff;
+    --color-secondary-400: #601bff;
+    --color-secondary-500: #4d00ff;
+    --color-secondary-600: #4600e7;
+    --color-secondary-700: #3500ae;
+    --color-secondary-800: #20006a;
 
-  --color-secondary-alpha-10: rgba(77, 0, 255, 0.1);
-  --color-secondary-alpha-50: rgba(77, 0, 255, 0.5);
+    --color-secondary: var(--color-secondary-500);
 
-  --color-secondary: var(--color-secondary-500);
+    /* ================= Neutral ================= */
+    --color-neutral-100: #ffffff;
+    --color-neutral-200: #e8e8e8;
+    --color-neutral-300: #d2d2d2;
+    --color-neutral-400: #bbbbbb;
+    --color-neutral-500: #a4a4a4;
+    --color-neutral-600: #8e8e8e;
+    --color-neutral-700: #777777;
+    --color-neutral-800: #606060;
+    --color-neutral-900: #4a4a4a;
+    --color-neutral-1000: #222222;
 
-  /* ================= Neutral ================= */
-  --color-neutral-100: #ffffff;
-  --color-neutral-200: #e8e8e8;
-  --color-neutral-300: #d2d2d2;
-  --color-neutral-400: #bbbbbb;
-  --color-neutral-500: #a4a4a4;
-  --color-neutral-600: #8e8e8e;
-  --color-neutral-700: #777777;
-  --color-neutral-800: #606060;
-  --color-neutral-900: #4a4a4a;
-  --color-neutral-1000: #222222;
+    --color-neutral-alpha-10: rgba(51, 51, 51, 0.1);
 
-  --color-neutral-alpha-10: rgba(51, 51, 51, 0.1);
+    /* ================= Danger ================= */
+    --color-danger-100: #fb3748;
+    --color-danger-200: #d00416;
 
-  /* ================= Danger ================= */
-  --color-danger-100: #fb3748;
-  --color-danger-200: #d00416;
+    --color-danger: var(--color-danger-100);
 
-  --color-danger-alpha-10: rgba(251, 55, 72, 0.1);
+    /* ================= Warning ================= */
+    --color-warning-100: #ffdb43;
+    --color-warning-200: #ea9e06;
 
-  --color-danger: var(--color-danger-100);
+    --color-warning: var(--color-warning-100);
 
-  /* ================= Warning ================= */
-  --color-warning-100: #ffdb43;
-  --color-warning-200: #ea9e06;
+    /* ================= Success ================= */
+    --color-success-100: #83eb90;
+    --color-success-200: #1fc24c;
+    --color-success-300: #1a903b;
 
-  --color-warning-alpha-10: rgba(255, 219, 67, 0.1);
+    --color-success: var(--color-success-300);
 
-  --color-warning: var(--color-warning-100);
+    /* ================= Info (Blue) ================= */
+    --color-info-100: #dbeafe;
+    --color-info-200: #3b82f6;
 
-  /* ================= Success ================= */
-  --color-success-100: #83eb90;
-  --color-success-200: #1fc24c;
-  --color-success-300: #1a903b;
+    --color-info: var(--color-info-200);
 
-  --color-success-alpha-10: rgba(31, 193, 107, 0.1);
-
-  --color-success: var(--color-success-300);
-
-  /* ================= Info (Blue) ================= */
-  --color-info-100: #dbeafe;
-  --color-info-200: #3b82f6;
-
-  --color-info-alpha-10: rgba(59, 130, 246, 0.1);
-
-  --color-info: var(--color-info-200);
-
-  /* ================= Base ================= */
-  --background: #ffffff;
-  --foreground: #171717;
+    /* ================= Base ================= */
+    --background: #ffffff;
+    --foreground: #171717;
 }
 
 @layer base {
-  .base-transition {
-    @apply transition-all duration-300
-  }
+    .base-transition {
+        @apply transition-all duration-300;
+    }
 }

@@ -1,6 +1,6 @@
-import clsx from "clsx";
-import { HeadingType } from "../../types/ui/Global";
-import { spaceGrotesk } from "@/fonts/fonts";
+import clsx from "clsx"
+import { HeadingType } from "../../types/ui/Global"
+import { spaceGrotesk } from "@/fonts/fonts"
 
 // const headingSizes = {
 //   1: "text-[36px] leading-[42px] lg:text-[48px] lg:leading-[60px]",
@@ -12,28 +12,28 @@ import { spaceGrotesk } from "@/fonts/fonts";
 // };
 
 export default function Heading({
-  children,
-  as = "h1",
-  size = 1,
-  color = "primary",
-  className,
+    children,
+    as = "h1",
+    size = 1,
+    color = "primary",
+    className,
 }: HeadingType) {
-  const Component = as;
+    const Component = as
 
-  return (
-    <>
-      <h4
-        className={clsx(
-          "font-bold",
-          spaceGrotesk.className,
-          color === "primary" && "text-primary",
-          color === "black" && "text-black",
-          color === "secondary" && "text-secondary",
-          className
-        )}
-      >
-        {children}
-      </h4>
-    </>
-  );
+    return (
+        <>
+            <h4
+                className={clsx(
+                    "font-bold",
+                    spaceGrotesk.className,
+                    color === "primary" && "text-primary",
+                    color === "black" && "text-black",
+                    color === "secondary" && "text-secondary",
+                    className
+                )}
+            >
+                {children}
+            </h4>
+        </>
+    )
 }

@@ -12,9 +12,8 @@ const BaseAuthentication = ({
     title,
     subtitle,
     children,
-    OtherOptionsComponent
+    OtherOptionsComponent,
 }: BaseAuthenticationProps) => {
-
     return (
         <div className="flex flex-col gap-8">
             <AuthenticationHeader title={title} subtitle={subtitle} />

@@ -1,48 +1,48 @@
 @property --angle {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 170deg;
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 170deg;
 }
 
 @property --pos1 {
-  syntax: '<percentage>';
-  inherits: false;
-  initial-value: 20%;
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 20%;
 }
 
 @property --pos2 {
-  syntax: '<percentage>';
-  inherits: false;
-  initial-value: 70%;
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 70%;
 }
 
 .special-gradient {
-  --angle: 170deg;
-  --pos1: 20%;
-  --pos2: 70%;
-  
-  /* Use var(--angle) here */
-  background-image: linear-gradient(
-    var(--angle), 
-    var(--color-secondary) var(--pos1), 
-    #E74767 var(--pos2), 
-    var(--color-primary) 100%
-  );
-  
-  transition: 
-    --angle 0.7s ease, 
-    --pos1 0.7s ease, 
-    --pos2 0.7s ease;
+    --angle: 170deg;
+    --pos1: 20%;
+    --pos2: 70%;
+
+    /* Use var(--angle) here */
+    background-image: linear-gradient(
+        var(--angle),
+        var(--color-secondary) var(--pos1),
+        #e74767 var(--pos2),
+        var(--color-primary) 100%
+    );
+
+    transition:
+        --angle 0.7s ease,
+        --pos1 0.7s ease,
+        --pos2 0.7s ease;
 }
 
 .special-gradient:hover {
-  --angle: 190deg;
-  --pos1: 0%;
-  --pos2: 50%;
+    --angle: 190deg;
+    --pos1: 0%;
+    --pos2: 50%;
 }
 
 .special-gradient:active {
-  --angle: 190deg;
-  --pos1: 0%;
-  --pos2: 90%;
+    --angle: 190deg;
+    --pos1: 0%;
+    --pos2: 90%;
 }
