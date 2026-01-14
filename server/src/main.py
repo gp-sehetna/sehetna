@@ -9,8 +9,6 @@ from src.core.exceptions import AppException
 from src.routers import inference, root_router
 
 logging.basicConfig(level=settings.log_level, force=True)
-logger = logging.getLogger(__name__)
-
 
 app = FastAPI(
     title=settings.APP_NAME,
