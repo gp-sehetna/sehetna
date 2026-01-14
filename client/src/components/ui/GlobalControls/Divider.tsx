@@ -7,13 +7,13 @@ type DividerProps = {
     className?: string
 }
 
-const Divider = ({ vertical = false, children, className = "" }: DividerProps) => {
+const Divider = ({ vertical = false, children, className }: DividerProps) => {
     if (!children) {
         if (!vertical) {
             return (
                 <div
                     data-component="divider"
-                    className={cn("shrink-0 bg-neutral-200", "h-px w-full", className)}
+                    className={cn("shrink-0 bg-neutral-200", "h-px w-fit", className)}
                 />
             )
         }

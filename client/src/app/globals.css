@@ -98,7 +98,6 @@
 
     /* ================= Others ================= */
     --default-ring-color: --alpha(var(--color-secondary) / 10%);
-
 }
 
 @theme inline {
@@ -123,5 +122,15 @@
     ::backdrop,
     ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
+    }
+
+    p {
+        font-size: var(--text-base);
+        line-height: var(--text-base--line-height);
+    }
+
+    ::selection {
+        background-color: --alpha(var(--color-primary-400) / 5%);
+        color: var(--color-secondary-300);
     }
 }

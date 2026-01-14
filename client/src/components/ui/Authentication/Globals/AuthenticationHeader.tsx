@@ -10,9 +10,9 @@ type AuthenticationHeaderProps = {
 
 export default function AuthenticationHeader({ title, subtitle }: AuthenticationHeaderProps) {
     return (
-        <Flex direction="col" gap={4}>
+        <Flex direction="col" gap={4} className="items-center sm:items-start">
             <Logo />
-            <Flex direction="col" gap={1}>
+            <Flex direction="col" gap={1} className="items-center sm:items-start">
                 {title}
                 {subtitle}
             </Flex>

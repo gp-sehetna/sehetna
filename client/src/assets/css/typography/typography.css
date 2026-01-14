@@ -37,7 +37,3 @@ h6 {
     font-size: clamp(1rem, calc(0.75rem + 0.667vw), 1.25rem); /* min: 16px, max: 20px */
     line-height: clamp(1.333rem, calc(1rem + 0.667vw), 1.667rem); /* min: 16px, max: 20px */
 }
-
-p {
-    font-size: var(--text-base);
-}

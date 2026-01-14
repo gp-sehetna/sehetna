@@ -8,11 +8,11 @@ type WideButtonProps = {
     variant: "outline" | "gradient" | "black"
     size?: ButtonSize
     children?: React.ReactNode
-    onClick?: () => void
+    // onClick?: () => void
 }
 
 const baseStyles =
-    "w-[396px] sm:w-[488px] py-2 sm:py-3 flex items-center justify-center font-light rounded-full base-transition cursor-pointer"
+    "w-full sm:w-[488px] flex items-center justify-center py-3 font-light rounded-full base-transition cursor-pointer"
 
 const variants = {
     outline: cn(
@@ -29,9 +29,9 @@ const variants = {
     gradient: cn("special-gradient base-transition border-none text-neutral-100"),
 }
 
-export default function WideButton({ variant, size, onClick, children }: WideButtonProps) {
+export default function WideButton({ variant, size, children }: WideButtonProps) {
     return (
-        <Button size={size} onClick={onClick} className={cn(baseStyles, variants[variant])}>
+        <Button size={size} className={cn(baseStyles, variants[variant])}>
             {children}
         </Button>
     )
