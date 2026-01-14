@@ -1,30 +1,15 @@
 import logging
-from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src import settings
+from src import lifespan, settings
 from src.core.error_handlers import app_exception_handler, unhandled_exception_handler
 from src.core.exceptions import AppException
-from src.models import loader
-from src.models.helpers.mixins import *
 from src.routers import inference, root_router
 
 logging.basicConfig(level=settings.log_level, force=True)
 logger = logging.getLogger(__name__)
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    import __main__
-
-    __main__.FeatureEngineerMixin = FeatureEngineerMixin
-    __main__.CountryIQRCapper = CountryIQRCapper
-    __main__.SelectiveStandardScaler = SelectiveStandardScaler
-
-    loader(settings)
-    yield
 
 
 app = FastAPI(

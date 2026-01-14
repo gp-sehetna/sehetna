@@ -43,11 +43,6 @@ class Settings(_Settings):
 
     @computed_field
     @property
-    def idx_to_countries_path(self) -> str:
-        return os.path.join(self.__archive_dir, "shared", "idx_to_countries.joblib")
-
-    @computed_field
-    @property
     def country_to_id_path(self) -> str:
         return os.path.join(self.__archive_dir, "shared", "country_to_id.joblib")
 
