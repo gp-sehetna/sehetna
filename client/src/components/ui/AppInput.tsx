@@ -3,6 +3,8 @@
 import { useState } from "react";
 import clsx from "clsx";
 import { Eye, EyeOff } from "lucide-react";
+import Flex from "./Flex";
+import AppLink from "./GlobalControls/AppLink";
 
 type InputFieldProps = {
   label?: string;
@@ -22,19 +24,22 @@ export default function AppInput({
   const isPassword = type === "password";
 
   return (
-    <div className="flex flex-col gap-2 w-full">
-      {label && (
-        <label className="text-sm text-neutral-700 font-medium">
-          {label}
-        </label>
-      )}
+    <Flex direction="col" gap={1} className="w-full">
+      <Flex className=" w-full justify-between items-center px-2">
+        {label && <label className="text-neutral-700 ">{label}</label>}
+        {isPassword && (
+          <AppLink href={"#ForgetPasswordPage"} hoverEffect={false} className="underline text-xs hover:text-neutral-900 base-transition text-[#666666]">
+            Forget Password?
+          </AppLink>
+        )}
+      </Flex>
 
       <div className="relative">
         <input
           type={isPassword && showPassword ? "text" : type}
-          placeholder={placeholder}
+          placeholder={isPassword ? "********" : placeholder}
           className={clsx(
-            "w-full rounded-full px-5 py-3",
+            "w-full rounded-[20px] px-5 py-3",
             "border border-neutral-300",
             "bg-white text-neutral-900",
             "placeholder:text-neutral-400",
@@ -49,12 +54,16 @@ export default function AppInput({
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+            className="absolute right-4 top-1/2 cursor-pointer -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
           >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            {showPassword ? (
+              <EyeOff size={18} className=" scale-x-[-1]" />
+            ) : (
+              <Eye size={18} />
+            )}
           </button>
         )}
       </div>
-    </div>
+    </Flex>
   );
 }

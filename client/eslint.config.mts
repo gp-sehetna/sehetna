@@ -6,7 +6,9 @@ import { Linter } from "eslint";
 const customRules: Linter.Config = {
   rules: {
     // To allow using children prop directly in TSX
-    "react/no-children-prop": "off"
+    "react/no-children-prop": "off",
+
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }
 

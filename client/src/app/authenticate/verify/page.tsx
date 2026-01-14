@@ -1,5 +1,5 @@
 "use client"
-import PageCenter from "@/src/components/ui/PageCenter"
+import PageCenter from "@/components/ui/PageCenter"
 import { useSearchParams } from "next/navigation"
 import { useRouter } from "next/navigation"
 

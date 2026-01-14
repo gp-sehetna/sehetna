@@ -1,5 +1,8 @@
 @import "tailwindcss";
+@import "../assets/css/main.css";
+@tailwind utilities;
 
+ /* To Use Clamp it!: mobileFontSize, desktopFontSize, viewportMin, viewportMax, and baseFontSize. */
 
 @theme {
   /* ================= Primary ================= */
@@ -11,6 +14,10 @@
   --color-primary-600: #c54600;
   --color-primary-700: #8d3200;
   --color-primary-800: #561e00;
+
+  --color-primary-alpha-10: rgba(255, 92, 2, 0.1);
+  --color-primary-alpha-50: rgba(255, 92, 2, 0.5);
+
   --color-primary: var(--color-primary-400);
 
   /* ================= Secondary ================= */
@@ -19,6 +26,13 @@
   --color-secondary-300: #8c5aff;
   --color-secondary-400: #601bff;
   --color-secondary-500: #4d00ff;
+  --color-secondary-600: #4600e7;
+  --color-secondary-700: #3500ae;
+  --color-secondary-800: #20006a;
+
+  --color-secondary-alpha-10: rgba(77, 0, 255, 0.1);
+  --color-secondary-alpha-50: rgba(77, 0, 255, 0.5);
+
   --color-secondary: var(--color-secondary-500);
 
   /* ================= Neutral ================= */
@@ -33,33 +47,54 @@
   --color-neutral-900: #4a4a4a;
   --color-neutral-1000: #222222;
 
-  /* ================= Green ================= */
-  --color-green-100: #83eb90;
-  --color-green-200: #1fc24c;
-  --color-green-300: #1a903b;
-  --color-green: var(--color-green-300);
+  --color-neutral-alpha-10: rgba(51, 51, 51, 0.1);
 
-  /* ================= Yellow ================= */
-  --color-yellow-100: #ffdb43;
-  --color-yellow-200: #ea9e06;
-  --color-yellow: var(--color-yellow-100);
+  /* ================= Danger ================= */
+  --color-danger-100: #fb3748;
+  --color-danger-200: #d00416;
 
-  /* ================= Orange ================= */
-  --color-orange-100: #ffe6d7;
-  --color-orange-200: #ffae81;
-  --color-orange-300: #ff752a;
-  --color-orange-400: #ff5c02;
-  --color-orange-500: #f05500;
-  --color-orange: var(--color-orange-400);
+  --color-danger-alpha-10: rgba(251, 55, 72, 0.1);
+
+  --color-danger: var(--color-danger-100);
+
+  /* ================= Warning ================= */
+  --color-warning-100: #ffdb43;
+  --color-warning-200: #ea9e06;
+
+  --color-warning-alpha-10: rgba(255, 219, 67, 0.1);
+
+  --color-warning: var(--color-warning-100);
+
+  /* ================= Success ================= */
+  --color-success-100: #83eb90;
+  --color-success-200: #1fc24c;
+  --color-success-300: #1a903b;
+
+  --color-success-alpha-10: rgba(31, 193, 107, 0.1);
+
+  --color-success: var(--color-success-300);
+
+  /* ================= Info (Blue) ================= */
+  --color-info-100: #dbeafe;
+  --color-info-200: #3b82f6;
+
+  --color-info-alpha-10: rgba(59, 130, 246, 0.1);
+
+  --color-info: var(--color-info-200);
 
   /* ================= Base ================= */
   --background: #ffffff;
   --foreground: #171717;
 }
 
-
-@layer base { 
-  .trans { 
-    @apply transition-all duration-150
+@layer base {
+  .base-transition {
+    @apply transition-all duration-300
+  }
+  .maplibregl-popup-content {
+    @apply bg-transparent! shadow-none! p-0! rounded-none!;
+  }
+  .maplibregl-popup-tip {
+    @apply hidden!;
   }
 }
