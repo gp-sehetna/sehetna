@@ -1,3 +1,3 @@
-from src.models.model_loader import ModelLoader
+from src.models.loader import ModelLoader
 
-model_loader = ModelLoader()
+loader = ModelLoader()

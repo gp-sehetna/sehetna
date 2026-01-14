@@ -198,7 +198,6 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
-    { name = "fastapi-versioning" },
     { name = "lightgbm" },
     { name = "numpy" },
     { name = "pandas" },
@@ -221,7 +220,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.127.0" },
-    { name = "fastapi-versioning", specifier = ">=0.10.0" },
     { name = "lightgbm", specifier = ">=4.6.0" },
     { name = "numpy", specifier = ">=2.3.4" },
     { name = "pandas", specifier = ">=2.3.3" },
@@ -305,19 +303,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/51/5d/3b33438de35521fab4968b232caa9a4bd568a5078f2b2dfb7bb8a4528603/fastapi_cloud_cli-0.8.0.tar.gz", hash = "sha256:cf07c502528bfd9e6b184776659f05d9212811d76bbec9fbb6bf34bed4c7456f", size = 30257, upload-time = "2025-12-23T12:08:33.904Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/dd/8e/abb95ef59e91bb5adaa2d18fbf9ea70fd524010bb03f406a2dd2a4775ef9/fastapi_cloud_cli-0.8.0-py3-none-any.whl", hash = "sha256:e9f40bee671d985fd25d7a5409b56d4f103777bf8a0c6d746ea5fbf97a8186d9", size = 22306, upload-time = "2025-12-23T12:08:32.68Z" },
-]
-
-[[package]]
-name = "fastapi-versioning"
-version = "0.10.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "fastapi" },
-    { name = "starlette" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/e0/d9/0e81a2680c960b84b3f5b8c434259ad5f7731737be27b5bee0cb6d7b796f/fastapi_versioning-0.10.0.tar.gz", hash = "sha256:5c18ea4e9ae1afd39c9e5bed1c240bf1cabdc75217579af78249ccb651c7b5b5", size = 3945, upload-time = "2021-08-24T17:06:35.416Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/2b/5a/d393ce89b402d104c2c3df09b83df222ad7d2307dc7f34010acd6cd56f50/fastapi_versioning-0.10.0-py3-none-any.whl", hash = "sha256:afe0ad7a56383b884c399341260bd3301b40e5a1cf9f6dc4211a349489087e1b", size = 4868, upload-time = "2021-08-24T17:06:33.454Z" },
 ]
 
 [[package]]

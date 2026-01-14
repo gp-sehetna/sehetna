@@ -17,9 +17,3 @@ class RootResponse(BaseModel):
     version: str
     status: str
     description: str
-
-
-class HealthCheckResponse(BaseModel):
-    status: str
-    model_loaded: bool
-    pipeline_loaded: bool
