@@ -7,7 +7,7 @@ export function AuthenticationField() {
     return (
         <>
             <Field className="gap-1">
-                <FieldLabel className="text-xs text-neutral-500 font-bold px-3" htmlFor="email">
+                <FieldLabel className="px-3 text-xs font-bold text-neutral-500" htmlFor="email">
                     Email Address
                 </FieldLabel>
                 <InputGroup rounded="xxl">

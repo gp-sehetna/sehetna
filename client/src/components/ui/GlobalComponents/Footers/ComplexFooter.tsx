@@ -4,7 +4,7 @@ type ComplexFooterProps = {
 
 export default function ComplexFooter({}: ComplexFooterProps) {
     return (
-        <footer className="py-2 border-t border-gray-300 text-center text-sm text-muted-foreground">
+        <footer className="text-muted-foreground border-t border-gray-300 py-2 text-center text-sm">
             Complex
         </footer>
     )

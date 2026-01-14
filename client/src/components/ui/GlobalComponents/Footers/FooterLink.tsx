@@ -9,7 +9,7 @@ type FooterLinkProps = {
 export default function FooterLink({ href, children }: FooterLinkProps) {
     return (
         <AppLink
-            className="text-neutral-700 text-xs base-transition hover:text-neutral-1000"
+            className="base-transition hover:text-neutral-1000 text-xs text-neutral-700"
             href={href}
         >
             {children}

@@ -7,7 +7,7 @@ import { LogIn } from "lucide-react"
 const SignUpRawPage = () => {
     const title = <h3>Create your account</h3>
     const subtitle = (
-        <p className="text-neutral-600 text-md">Enter your email address to continue</p>
+        <p className="text-md text-neutral-600">Enter your email address to continue</p>
     )
     return (
         <>

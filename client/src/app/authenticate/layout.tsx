@@ -4,12 +4,12 @@ import Footer from "@/components/ui/GlobalComponents/Footers/Footer"
 export default function AuthenticationLayout({ children }: { children: React.ReactNode }) {
     return (
         <>
-            <div className="min-h-screen flex flex-col">
+            <div className="flex min-h-screen flex-col">
                 <div className="flex flex-2">
-                    <main className="p-4 md:p-20 flex flex-1 md:items-center">{children}</main>
+                    <main className="flex flex-1 p-4 md:items-center md:p-20">{children}</main>
 
                     <div
-                        className="hidden md:block min-w-xs bg-cover bg-right rounded-tl-[64px]"
+                        className="hidden min-w-xs rounded-tl-[64px] bg-cover bg-right md:block"
                         style={{
                             backgroundImage: "url('/Authentication Gradient.png')",
                         }}

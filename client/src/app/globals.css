@@ -73,10 +73,21 @@
     /* ================= Base ================= */
     --background: #ffffff;
     --foreground: #171717;
+
+    /* ================= Others ================= */
+    --default-ring-color: --alpha(var(--color-secondary) / 10%);
 }
 
 @layer base {
     .base-transition {
         @apply transition-all duration-300;
+    }
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
     }
 }

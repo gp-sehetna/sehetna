@@ -10,11 +10,11 @@ export default function SimpleFooter({ className }: SimpleFooterProps) {
     return (
         <footer
             className={cn(
-                "flex justify-center items-center py-3 border-t border-gray-300 text-sm text-muted-foreground",
+                "text-muted-foreground flex items-center justify-center border-t border-gray-300 py-3 text-sm",
                 className
             )}
         >
-            <div className="flex justify-evenly w-3/4">
+            <div className="flex w-3/4 justify-evenly">
                 <FooterLink href="#AboutUs">About Us</FooterLink>
                 <FooterLink href="#Methodology">Methodology</FooterLink>
                 <FooterLink href="#Terms">Terms of Service</FooterLink>

@@ -31,7 +31,7 @@ const SignUpPage = () => {
                         <WideButton size={btnSize} variant="gradient">
                             Sign up with email address
                         </WideButton>
-                        <p className="text-xs font-extralight w-75">
+                        <p className="w-75 text-xs font-extralight">
                             By signing up, you agree to the&thinsp;
                             <AppLink href="#Terms">Terms of Service</AppLink>&thinsp; and&thinsp;
                             <AppLink href="#PrivacyPolicy">Privacy Policy</AppLink>,

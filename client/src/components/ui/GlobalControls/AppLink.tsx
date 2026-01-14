@@ -21,7 +21,7 @@ export default function AppLink({
             href={href}
             className={cn(
                 "relative",
-                "after:absolute after:left-0 after:bottom-0",
+                "after:absolute after:bottom-0 after:left-0",
                 "after:h-[0.5px] after:w-full after:bg-current",
                 "after:origin-center after:scale-x-0",
                 "after:transition-transform after:duration-300 after:ease-out",

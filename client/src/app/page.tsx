@@ -21,9 +21,9 @@ export default function Home() {
     //   { linkName: "Help & Support", linkHref: "/support" },
     // ];
     return (
-        <div className=" h-screen flex w-full items-center justify-center flex-col">
-            <Flex className="px-10 w-full">
-                <div className="border-2 w-full border-dashed border-primary p-6 hover:p-12 hover:rounded-none base-transition flex gap-3 flex-col rounded-lg">
+        <div className="flex h-screen w-full flex-col items-center justify-center">
+            <Flex className="w-full px-10">
+                <div className="border-primary base-transition flex w-full flex-col gap-3 rounded-lg border-2 border-dashed p-6 hover:rounded-none hover:p-12">
                     <Flex direction="col">
                         <Heading size={2} color="black">
                             Headings
@@ -39,7 +39,7 @@ export default function Home() {
                     </Flex>
                 </div>
                 <Flex direction="col">
-                    <div className="border-2 w-full border-dashed border-primary p-6 hover:p-12 hover:rounded-none base-transition flex gap-3 flex-col rounded-lg">
+                    <div className="border-primary base-transition flex w-full flex-col gap-3 rounded-lg border-2 border-dashed p-6 hover:rounded-none hover:p-12">
                         <Flex direction="col">
                             <Heading size={2} color="black">
                                 Buttons
@@ -52,7 +52,7 @@ export default function Home() {
                         </Flex>
                     </div>
 
-                    <div className="border-2 border-dashed border-primary p-6 hover:p-12 hover:rounded-none base-transition flex gap-3 flex-col rounded-lg">
+                    <div className="border-primary base-transition flex flex-col gap-3 rounded-lg border-2 border-dashed p-6 hover:rounded-none hover:p-12">
                         <Flex direction="col">
                             <Heading size={2} color="black">
                                 Auth Buttons
@@ -65,7 +65,7 @@ export default function Home() {
                         </Flex>
                     </div>
                 </Flex>
-                <div className="border-2 w-full border-dashed border-primary p-6 hover:p-12 hover:rounded-none base-transition flex gap-3 flex-col rounded-lg">
+                <div className="border-primary base-transition flex w-full flex-col gap-3 rounded-lg border-2 border-dashed p-6 hover:rounded-none hover:p-12">
                     <Flex direction="col">
                         <Heading size={2} color="black">
                             Inputs
