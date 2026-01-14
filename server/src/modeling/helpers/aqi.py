@@ -1,6 +1,3 @@
-
-
-from typing import Dict
 from modeling.constants.aqi import BREAKPOINTS
 from modeling.types import BreakPoint, Pollutants
 
@@ -15,7 +12,7 @@ def pollutant_to_aqi(breakpoints: BreakPoint, value: float) -> float:
 
 
 # Compute Overall AQI from all pollutants
-def compute_overall_aqi(values_dict: Dict[Pollutants, float]) -> float:
+def compute_overall_aqi(values_dict: dict[Pollutants, float]) -> float:
     aqi_values = []
     for pollutant, value in values_dict.items():
         aqi_values.append(pollutant_to_aqi(BREAKPOINTS[pollutant], value))

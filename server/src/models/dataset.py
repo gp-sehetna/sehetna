@@ -1,13 +1,14 @@
 import torch
 from torch.utils.data import Dataset
 
+
 class ClimateHealthDataset(Dataset):
     def __init__(self, df, seq_len, countries_ids, features, targets):
         self.seq_len = seq_len
         self.samples = []
 
-        if 'country_id' not in df.columns:
-            df['country_id'] = df['country_name'].map(countries_ids)
+        if "country_id" not in df.columns:
+            df["country_id"] = df["country_name"].map(countries_ids)
 
         for c_id, country_df in df.groupby("country_id"):
             X = country_df[features].values.astype("float32")
@@ -28,7 +29,3 @@ class ClimateHealthDataset(Dataset):
         y = torch.from_numpy(sample["y"]).float()
 
         return X_num, country_id, y
-
-    
-
-  

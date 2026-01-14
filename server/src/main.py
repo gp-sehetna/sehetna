@@ -1,21 +1,21 @@
 import logging
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.exception_handlers import request_validation_exception_handler
 from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi_versioning import VersionedFastAPI
 
-from .src.schema import (
+from src import settings
+from src.modeling.helpers.mixins import *
+from src.models import model_loader
+from src.models.predictor import Predictor
+from src.schema import (
     HealthCheckResponse,
-    RootResponse,
     PredictionRequest,
+    RootResponse,
     SimulationResponse,
 )
-from .src.models.model_loader import model_loader
-from .src.models.predictor import Predictor
-from .config import settings
-from .src.modeling.helpers.mixins import *
-
 
 logging.basicConfig(level=settings.log_level, force=True)
 logger = logging.getLogger(__name__)
@@ -63,9 +63,7 @@ async def root():
 @app.get("/check", response_model=HealthCheckResponse)
 async def health_check():
     return HealthCheckResponse(
-        status=(
-            "healthy" if model_loader.model and model_loader.pipeline else "unhealthy"
-        ),
+        status=("healthy" if model_loader.model and model_loader.pipeline else "unhealthy"),
         model_loaded=model_loader.model is not None,
         pipeline_loaded=model_loader.pipeline is not None,
     )
@@ -87,4 +85,4 @@ app = VersionedFastAPI(
     lifespan=lifespan,
 )
 
-## To run the app use: fastapi dev "server\main.py" or fastapi dev "main.py"
+## To run the app use: fastapi dev "src\main.py" or fastapi dev "main.py"

@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field
-from typing import Annotated
 from datetime import date
+from typing import Annotated
+
+from pydantic import BaseModel, Field
 
 __all__ = ["PredictionResult", "PredictionRequest", "SimulationResponse", "HealthDataInput"]
 

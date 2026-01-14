@@ -1,12 +1,13 @@
-import pandas as pd
-import numpy as np
 import logging
 
-from .model_loader import model_loader
-from ..schema import HealthDataInput, PredictionResult
+import numpy as np
+import pandas as pd
 
+from src.models import model_loader
+from src.schema import HealthDataInput, PredictionResult
 
 logger = logging.getLogger(__name__)
+
 
 class Predictor:
     @staticmethod
@@ -14,7 +15,7 @@ class Predictor:
         df = pd.DataFrame([user_input.__dict__])
         df_processed = model_loader.pipeline.transform(df)
         X_pred = df_processed[model_loader.features]
-        
+
         # Model here is a list of multiple MultiOutput LGBM regressors
         # so we need to average their predictions (ensembling)
         predictions = np.mean([m.predict(X_pred) for m in model_loader.model], axis=0)
@@ -25,5 +26,5 @@ class Predictor:
             cardio_mortality_rate=float(_values[1]),
             vector_disease_risk_score=float(_values[2]),
             waterborne_disease_incidents=float(_values[3]),
-            heat_related_admissions=float(_values[4])
+            heat_related_admissions=float(_values[4]),
         )

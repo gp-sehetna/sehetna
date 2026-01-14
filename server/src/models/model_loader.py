@@ -1,13 +1,18 @@
-import joblib
 import logging
+import os
+
+import joblib
+import pandas as pd
+from sklearn.pipeline import Pipeline
+from torch import nn
+
+from src.config import Settings
 
 logger = logging.getLogger(__name__)
 
 
 class ModelLoader:
     def __init__(self):
-        self.model = None
-        self.pipeline = None
         self.features = [
             "temp_squared",
             "pm25_ugm3",
@@ -41,26 +46,32 @@ class ModelLoader:
             "heat_related_admissions",
         ]
 
-    def __call__(self, settings):
-        try:
-            self.load_model(settings.model_path)
-            logger.info("Model loaded successfully")
-        except Exception as e:
-            logger.critical("Failed to load model", exc_info=e)
-        try:
-            self.load_pipeline(settings.pipeline_path)
-            logger.info("Pipeline loaded successfully")
-        except Exception as e:
-            logger.critical("Failed to load Pipeline", exc_info=e)
+    def __call__(self, settings: Settings):
+        self.load_model(settings.model_path)
+        self.load_country_to_id(settings.country_to_id_path)
+        self.load_id_to_country(settings.id_to_country_path)
+        self.load_pipeline(settings.pipeline_path)
+
+        data_df = pd.read_csv(os.path.join(settings.data_path, "25_countries_main.csv"))
+        data_df["country_id"] = data_df["country_name"].map(self.countries_to_idx)
+        self.fit_pipeline(data_df)
+
+    def load_country_to_id(self, path: str):
+        self.countries_to_idx = joblib.load(path)
+        logger.info("Loaded countries to index mapping")
+
+    def load_id_to_country(self, path: str):
+        self.idx_to_countries = joblib.load(path)
+        logger.info("Loaded index to countries mapping")
 
     def load_model(self, path: str):
-        self.model = joblib.load(path)
-        logger.info(f"Loaded LightGBM model")
+        self.model: nn.Module = joblib.load(path)
+        logger.info("Loaded model")
 
     def load_pipeline(self, path: str):
-        self.pipeline = joblib.load(path)
-        logger.info(f"Loaded pipeline")
+        self.pipeline: Pipeline = joblib.load(path)
+        logger.info("Loaded pipeline")
 
-
-# Global instance
-model_loader = ModelLoader()
+    def fit_pipeline(self, data_df: pd.DataFrame):
+        self.pipeline.fit(data_df)
+        logger.info("Fitted pipeline")

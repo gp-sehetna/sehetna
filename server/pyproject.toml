@@ -1,7 +1,42 @@
+[tool.ruff]
+target-version = "py312"
+line-length = 128
+
+# Enable only useful, low-noise rules
+select = [
+    "E",  # pycodestyle errors
+    "F",  # pyflakes
+    "I",  # import sorting
+    "B",  # bugbear (real issues)
+    "UP", # pyupgrade
+]
+
+# Ignore noisy / annoying rules
+ignore = [
+    "F405", # name may be undefined, or defined from star imports
+    "F403", # from module import * (common in __init__.py)
+    "E501", # line length (Black handles this)
+    "B008", # function calls in defaults (FastAPI common)
+    "B905", # strict zip() (rarely useful)
+]
+
+# Allow unused variables starting with _
+dummy-variable-rgx = "^_"
+
+[tool.ruff.lint]
+fixable = ["ALL"]
+
+[tool.black]
+line-length = 128
+target-version = ["py312"]
+skip-string-normalization = false
+preview = false
+
 [project]
 name = "enviornment-impact"
 version = "0.1.0"
-description = "Add your description here"
+description = "A FastAPI application for predicting health outcomes based on environmental data."
+authors = [{ name = "Mohamed Hussien", email = "mohamedhussien.asu@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -19,3 +54,6 @@ dependencies = [
     "uvicorn>=0.40.0",
     "lightgbm>=4.6.0",
 ]
+
+[dependency-groups]
+dev = ["black>=25.12.0", "ruff>=0.14.11"]
