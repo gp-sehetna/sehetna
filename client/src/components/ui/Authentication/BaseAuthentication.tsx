@@ -3,9 +3,9 @@ import { ReactNode } from "react"
 import Flex from "../Flex"
 
 type BaseAuthenticationProps = {
-    title: ReactNode;
-    subtitle: ReactNode;
-    children?: ReactNode;
+    title: ReactNode
+    subtitle: ReactNode
+    children?: ReactNode
 }
 
 const BaseAuthentication = ({ title, subtitle, children }: BaseAuthenticationProps) => {
