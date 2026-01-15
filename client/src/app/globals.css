@@ -88,6 +88,9 @@
 }
 
 @layer base {
+  .glassy { 
+    @apply bg-white/30 backdrop-blur-xl shadow-xl
+  }
   .base-transition {
     @apply transition-all duration-300
   }
