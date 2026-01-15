@@ -2,7 +2,7 @@ import { AuthenticationField } from "@/components/ui/Authentication/Authenticati
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
 import Flex from "@/components/ui/Flex"
 import WideButton from "@/components/ui/WideButton"
-import { LogIn } from "lucide-react"
+import { LogIn, Mail } from "lucide-react"
 
 const SignUpRawPage = () => {
     const title = <h3>Create your account</h3>
@@ -12,7 +12,15 @@ const SignUpRawPage = () => {
     return (
         <>
             <BaseAuthentication title={title} subtitle={subtitle}>
-                <AuthenticationField />
+                <AuthenticationField
+                    name="Email Address"
+                    htmlFor="email"
+                    id="email"
+                    type="email"
+                    placeholder="abc@example.com"
+                    required
+                    icon={<Mail />}
+                />
                 <WideButton variant="black">Continue</WideButton>
 
                 <Flex direction="col" gap={4}>

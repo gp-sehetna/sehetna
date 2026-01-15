@@ -12,7 +12,7 @@ type WideButtonProps = {
 }
 
 const baseStyles =
-    "w-full sm:w-[488px] flex items-center justify-center py-3 font-light rounded-full base-transition cursor-pointer"
+    "w-full flex items-center justify-center py-3 font-light rounded-full base-transition cursor-pointer"
 
 const variants = {
     outline: cn(
