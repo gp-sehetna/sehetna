@@ -16,7 +16,6 @@ const customRules: Linter.Config = {
 
 const eslintConfig = defineConfig([
     ...nextVitals,
-    prettier,
     ...nextTs,
     // Override default ignores of eslint-config-next.
     globalIgnores([
@@ -27,6 +26,7 @@ const eslintConfig = defineConfig([
         "next-env.d.ts",
     ]),
     customRules,
+    prettier,
 ])
 
 export default eslintConfig
