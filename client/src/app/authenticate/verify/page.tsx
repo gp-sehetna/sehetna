@@ -26,7 +26,7 @@ const VerifyPage = () => {
     const subtitle = <p className="text-md text-neutral-600">Mail could be flagged as spam</p>
     return (
         <>
-            <BaseAuthentication className="sm:items-center" title={title} subtitle={subtitle}>
+            <BaseAuthentication className="md:items-center" title={title} subtitle={subtitle}>
                 <p className="text-center text-sm">
                     We&apos;ve sent you a passcode.
                     <br /> Please check your inbox at a******************@g****.com.

@@ -1,17 +1,10 @@
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
+import GoogleIcon from "@/components/ui/Authentication/Globals/GoogleIcon"
 import Flex from "@/components/ui/Flex"
 import AppLink from "@/components/ui/GlobalControls/AppLink"
 import Divider from "@/components/ui/GlobalControls/Divider"
 import WideButton from "@/components/ui/WideButton"
 import { LogIn } from "lucide-react"
-import Image from "next/image"
-
-type GoogleIconProps = {
-    size?: number
-}
-const GoogleIcon = ({ size = 16 }: GoogleIconProps) => {
-    return <Image width={size} height={size} alt="Google logo" src="/Google.svg" />
-}
 
 const SignUpPage = () => {
     const title = <p>Start your journey</p>

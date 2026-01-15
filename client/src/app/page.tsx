@@ -1,4 +1,3 @@
-import AppInput from "../components/ui/AppInput"
 import Flex from "../components/ui/Flex"
 import Heading from "../components/ui/Heading"
 import WideButton from "../components/ui/WideButton"
@@ -70,14 +69,6 @@ export default function Home() {
                         <Heading size={2} color="black">
                             Inputs
                         </Heading>
-                        <Flex direction="col">
-                            <AppInput
-                                label="User Name"
-                                placeholder="Enter Your Name..."
-                                type="text"
-                            />
-                            <AppInput label="Password" placeholder="**********" type="password" />
-                        </Flex>
                     </Flex>
                 </div>
             </Flex>

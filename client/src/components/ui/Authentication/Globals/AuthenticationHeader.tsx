@@ -16,9 +16,9 @@ export default function AuthenticationHeader({
     className,
 }: AuthenticationHeaderProps) {
     return (
-        <Flex direction="col" gap={4} className={cn("items-center sm:items-start", className)}>
+        <Flex direction="col" gap={4} className={cn("items-center md:items-start", className)}>
             <Logo />
-            <Flex direction="col" gap={1} className={cn("items-center sm:items-start", className)}>
+            <Flex direction="col" gap={1} className={cn("items-center md:items-start", className)}>
                 {title}
                 {subtitle}
             </Flex>

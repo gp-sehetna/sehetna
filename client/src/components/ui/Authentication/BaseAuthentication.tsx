@@ -12,7 +12,11 @@ type BaseAuthenticationProps = {
 
 const BaseAuthentication = ({ title, subtitle, className, children }: BaseAuthenticationProps) => {
     return (
-        <Flex direction="col" gap={8} className={cn("items-center sm:items-start", className)}>
+        <Flex
+            direction="col"
+            gap={8}
+            className={cn("items-center md:items-start lg:w-lg", className)}
+        >
             <AuthenticationHeader className={className} title={title} subtitle={subtitle} />
             {children}
         </Flex>

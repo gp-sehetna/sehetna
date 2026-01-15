@@ -12,17 +12,18 @@ const SignUpRawPage = () => {
     return (
         <>
             <BaseAuthentication title={title} subtitle={subtitle}>
-                <AuthenticationField
-                    name="Email Address"
-                    htmlFor="email"
-                    id="email"
-                    type="email"
-                    placeholder="abc@example.com"
-                    required
-                    icon={<Mail />}
-                />
+                <Flex direction="col" gap={4}>
+                    <AuthenticationField
+                        name="Email Address"
+                        htmlFor="email"
+                        id="email"
+                        type="email"
+                        placeholder="abc@example.com"
+                        required
+                        prependInnerIcon={<Mail />}
+                    />
+                </Flex>
                 <WideButton variant="black">Continue</WideButton>
-
                 <Flex direction="col" gap={4}>
                     <p className="text-xs">Aleady have an account?</p>
                     <WideButton size="lg" variant="outline">

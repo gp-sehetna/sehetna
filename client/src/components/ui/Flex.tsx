@@ -3,7 +3,7 @@ import { ReactNode } from "react"
 
 type FlexProps = {
     children: ReactNode
-    direction?: "row" | "col"
+    direction?: "row" | "col" | "wrap"
     gap?: number
     className?: string
 }
@@ -26,8 +26,8 @@ const Flex = ({ direction = "row", gap = 0, children, className }: FlexProps) =>
     return (
         <div
             className={cn(
-                "flex w-full sm:w-auto",
-                direction === "row" ? "flex-row" : "flex-col",
+                "flex w-full",
+                direction === "row" ? "flex-row" : direction === "col" ? "flex-col" : "flex-wrap",
                 gaps[gap],
                 className
             )}

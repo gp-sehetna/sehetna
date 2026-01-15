@@ -6,12 +6,12 @@ export default function AuthenticationLayout({ children }: { children: React.Rea
         <>
             <div className="flex min-h-screen flex-col">
                 <div className="flex flex-2 overflow-hidden">
-                    <main className="m-4 flex flex-1 items-center justify-center sm:justify-start sm:p-20">
+                    <main className="m-8 flex flex-1 items-center justify-center md:justify-start md:p-20">
                         {children}
                     </main>
 
                     <div
-                        className="hidden min-w-xs -skew-x-6 rounded-tl-[64px] bg-cover bg-right sm:block"
+                        className="hidden min-w-2xs -skew-x-6 rounded-tl-[64px] bg-cover bg-right lg:block"
                         style={{
                             backgroundImage: "url('/Authentication Gradient.png')",
                         }}
