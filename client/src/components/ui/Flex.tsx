@@ -8,9 +8,32 @@ type FlexProps = {
     className?: string
 }
 
-const Flex = ({ direction = "row", children, gap = 0, className }: FlexProps) => {
-    const flexAndGap = `flex flex-${direction} gap-${gap}`
-    return <div className={cn(flexAndGap, `w-full sm:w-auto`, className)}>{children}</div>
-}
+const gaps = [
+    "gap-0",
+    "gap-1",
+    "gap-2",
+    "gap-3",
+    "gap-4",
+    "gap-5",
+    "gap-6",
+    "gap-7",
+    "gap-8",
+    "gap-9",
+    "gap-10",
+]
 
+const Flex = ({ direction = "row", gap = 0, children, className }: FlexProps) => {
+    return (
+        <div
+            className={cn(
+                "flex w-full sm:w-auto",
+                direction === "row" ? "flex-row" : "flex-col",
+                gaps[gap],
+                className
+            )}
+        >
+            {children}
+        </div>
+    )
+}
 export default Flex
