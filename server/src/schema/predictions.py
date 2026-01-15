@@ -1,24 +1,13 @@
+import json
 from datetime import date
 from typing import Annotated
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 __all__ = ["PredictionResult", "PredictionRequest", "SimulationResponse", "HealthDataInput"]
 
-# class SetupSimulateInputs(BaseModel):
-#     """Validate Date in a specific window"""
-#     date: Annotated[date, Field(description="Date in YYYY-MM-DD format")]
-#     country_code: str | None = None
-#     latitude: float | None = None
-#     longitude: float | None = None
-
-#     """Validate input should have country_code or (longitude and latitude) together"""
-#     @model_validator(mode="after")
-#     def check_location_info(cls, model):
-#         if model.country_code is None:
-#             if model.latitude is None or model.longitude is None:
-#                 raise ValueError("Either country_code or both latitude and longitude must be provided.")
-#         return model
+with open("src/schema/examples/prediction_request.json") as f:
+    prediction_request_examples = json.load(f)
 
 
 class HealthDataInput(BaseModel):
@@ -44,6 +33,8 @@ class PredictionRequest(BaseModel):
         ...,
         description="Feature input values for prediction.",
     )
+
+    model_config = ConfigDict(json_schema_extra={"examples": prediction_request_examples})
 
 
 class PredictionResult(BaseModel):
