@@ -106,21 +106,24 @@ class FeatureEngineerMixin(BaseEstimator, TransformerMixin):
         # Add missing columns with safe defaults
         for col in self.expected_columns_:
             if col not in X_copy.columns:
-                X_copy[col] = 0
+                if col in {"income_level", "region", "country_name"}:
+                    X_copy[col] = ""
+                    continue
+                X_copy[col] = -1
 
         X_copy = X_copy.drop(columns=["month", "week"], errors="ignore")
         X_copy.fillna(X_copy.mean(numeric_only=True), inplace=True)
-        X_copy.fillna(0, inplace=True)
-        X_copy["spatial_lag_temp_anomaly"] = 0
+
+        if "spatial_lag_temp_anomaly" not in X_copy.columns:
+            X_copy["spatial_lag_temp_anomaly"] = -1
+
+        # Convert categorical columns to strings
+        X_copy["income_level"] = X_copy["income_level"].astype("string")
+        X_copy["region"] = X_copy["region"].astype("string")
 
         self.feature_names_ = X_copy.columns.tolist()
 
         return X_copy
-
-    def get_feature_names_out(self, input_features=None):
-        if input_features is None:
-            input_features = self.feature_names_
-        return self.feature_names_
 
 
 class CountryIQRCapper(BaseEstimator, TransformerMixin):
@@ -183,11 +186,6 @@ class CountryIQRCapper(BaseEstimator, TransformerMixin):
 
         return _X
 
-    def get_feature_names_out(self, input_features=None):
-        if input_features is None:
-            input_features = self.feature_names_
-        return input_features
-
 
 class SelectiveStandardScaler(BaseEstimator, TransformerMixin):
     def __init__(self, exclude_cols=None, drop_excluded=False):
@@ -217,6 +215,3 @@ class SelectiveStandardScaler(BaseEstimator, TransformerMixin):
             X_copy = X_copy[self.scale_cols_]
 
         return X_copy
-
-    def get_feature_names_out(self, input_features=None):
-        return np.array(self.feature_names_out_)

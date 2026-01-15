@@ -50,8 +50,8 @@ class PredictionResult(BaseModel):
     respiratory_disease_rate: float
     cardio_mortality_rate: float
     vector_disease_risk_score: float
-    waterborne_disease_incidents: float
-    heat_related_admissions: float
+    waterborne_disease_incidents: int
+    heat_related_admissions: int
 
 
 class SimulationResponse(BaseModel):

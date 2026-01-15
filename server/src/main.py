@@ -2,11 +2,14 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sklearn import set_config
 
 from src import lifespan, settings
 from src.core.error_handlers import app_exception_handler, unhandled_exception_handler
 from src.core.exceptions import AppException
 from src.routers import inference, root_router
+
+set_config(transform_output="pandas")
 
 logging.basicConfig(level=settings.log_level, force=True)
 

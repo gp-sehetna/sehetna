@@ -17,7 +17,7 @@ class _Settings(BaseSettings):
     BATCH_SIZE: int = 128
 
     # Paths
-    resources_path: str
+    resources_path: str = "E:\\Applications\\projects\\Sehetna Organization\\sehetna\\server\\resources"
 
     model_config = SettingsConfigDict(env_file=".env")
 
@@ -28,28 +28,28 @@ class Settings(_Settings):
 
     @computed_field
     @property
-    def __archive_dir(self) -> str:
+    def archive_dir(self) -> str:
         return os.path.join(self.resources_path, "archives")
 
     @computed_field
     @property
     def model_path(self) -> str:
-        return os.path.join(self.__archive_dir, self.__archive_name, "model.joblib")
+        return os.path.join(self.archive_dir, self.__archive_name, "model.joblib")
 
     @computed_field
     @property
     def pipeline_path(self) -> str:
-        return os.path.join(self.__archive_dir, self.__archive_name, "pipeline.joblib")
+        return os.path.join(self.archive_dir, self.__archive_name, "pipeline.joblib")
 
     @computed_field
     @property
     def country_to_id_path(self) -> str:
-        return os.path.join(self.__archive_dir, "shared", "country_to_id.joblib")
+        return os.path.join(self.archive_dir, "shared", "country_to_id.joblib")
 
     @computed_field
     @property
     def id_to_country_path(self) -> str:
-        return os.path.join(self.__archive_dir, "shared", "id_to_country.joblib")
+        return os.path.join(self.archive_dir, "shared", "id_to_country.joblib")
 
     @computed_field
     @property

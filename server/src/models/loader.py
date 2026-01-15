@@ -1,10 +1,7 @@
 import logging
-import os
 
 import joblib
-import pandas as pd
 from sklearn.pipeline import Pipeline
-from torch import nn
 
 from src.config import Settings
 
@@ -52,26 +49,18 @@ class ModelLoader:
         self.load_id_to_country(settings.id_to_country_path)
         self.load_pipeline(settings.pipeline_path)
 
-        data_df = pd.read_csv(os.path.join(settings.data_path, "25_countries_main.csv"))
-        data_df["country_id"] = data_df["country_name"].map(self.countries_to_idx)
-        self.fit_pipeline(data_df)
-
     def load_country_to_id(self, path: str):
-        self.countries_to_idx = joblib.load(path)
+        self.countries_to_idx: dict[str, int] = joblib.load(path)
         logger.info("Loaded countries to index mapping")
 
     def load_id_to_country(self, path: str):
-        self.idx_to_countries = joblib.load(path)
+        self.idx_to_countries: dict[int, str] = joblib.load(path)
         logger.info("Loaded index to countries mapping")
 
     def load_model(self, path: str):
-        self.model: nn.Module = joblib.load(path)
+        self.model = joblib.load(path)
         logger.info("Loaded model")
 
     def load_pipeline(self, path: str):
         self.pipeline: Pipeline = joblib.load(path)
         logger.info("Loaded pipeline")
-
-    def fit_pipeline(self, data_df: pd.DataFrame):
-        self.pipeline.fit(data_df)
-        logger.info("Fitted pipeline")

@@ -11,4 +11,4 @@ router = APIRouter()
 @router.post("/simulate", response_model=SimulationResponse)
 async def simulate(input_data: PredictionRequest):
     result = Predictor.simulate(input_data.data)
-    return SimulationResponse(result)
+    return SimulationResponse(predictions=result)

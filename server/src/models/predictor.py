@@ -25,6 +25,6 @@ class Predictor:
             respiratory_disease_rate=float(_values[0]),
             cardio_mortality_rate=float(_values[1]),
             vector_disease_risk_score=float(_values[2]),
-            waterborne_disease_incidents=float(_values[3]),
-            heat_related_admissions=float(_values[4]),
+            waterborne_disease_incidents=round(_values[3]),
+            heat_related_admissions=round(_values[4]),
         )

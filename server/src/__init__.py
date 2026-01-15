@@ -5,19 +5,12 @@ from fastapi import FastAPI
 
 from src.config import DevelopmentSettings, ProductionSettings, Settings
 from src.models import loader
-from src.models.helpers.mixins import *
 
 __all__ = ["get_settings", "lifespan"]
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    import __main__
-
-    __main__.FeatureEngineerMixin = FeatureEngineerMixin
-    __main__.CountryIQRCapper = CountryIQRCapper
-    __main__.SelectiveStandardScaler = SelectiveStandardScaler
-
     loader(settings)
     yield
 
