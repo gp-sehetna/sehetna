@@ -3,10 +3,16 @@
 import { useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import bbox from "@turf/bbox";
+import centroid from "@turf/centroid";
+import { createRoot } from "react-dom/client";
+import CountryPopup from "./CountryPopup";
 
 export default function MapView() {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
+  const markerRef = useRef<maplibregl.Marker | null>(null);
+  const popupRef = useRef<maplibregl.Popup | null>(null);
 
   useEffect(() => {
     if (!mapContainer.current || mapRef.current) return;
@@ -58,16 +64,76 @@ export default function MapView() {
         layers: ["countries-fill"],
       });
 
-      if (!features.length) {
-        console.log("Clicked outside any country");
-        return;
-      }
-      console.log(features);
-      const country = features[0];
+      if (!features.length) return;
 
-      console.log("Country feature:", country);
-      console.log("Country name:", country.properties?.NAME);
-      console.log("ISO :", country.properties?.ADM0_A3);
+      const country = features[0];
+      const center = centroid(country).geometry.coordinates as [number, number];
+
+      // Add / move marker
+      if (!markerRef.current) {
+        markerRef.current = new maplibregl.Marker({ color: "#ef4444" })
+          .setLngLat(e.lngLat)
+          .addTo(map);
+      } else {
+        markerRef.current.setLngLat(e.lngLat);
+      }
+
+      // Zoom to country bounds
+      if (country.geometry) {
+        const bounds = bbox(country); // [minX, minY, maxX, maxY]
+
+        map.fitBounds(
+          [
+            [bounds[0], bounds[1]],
+            [bounds[2], bounds[3]],
+          ],
+          {
+            padding: 100,
+            duration: 800,
+            maxZoom: 6,
+          }
+        );
+      }
+
+      // Remove previous popup
+      popupRef.current?.remove();
+
+      // Create container
+      const popupContainer = document.createElement("div");
+
+      // Render React component
+      const { NAME, ADM0_A3 } = country.properties ?? {};
+      const root = createRoot(popupContainer);
+      const closePopup = () => {
+        popupRef.current?.remove();
+        root.unmount();
+      };
+
+      root.render(
+        <CountryPopup
+          name={country.properties?.NAME}
+          iso={country.properties?.ADM0_A3}
+          onClose={closePopup}
+        />
+      );
+      root.render(<CountryPopup name={NAME} iso={ADM0_A3} onClose={closePopup} />);
+
+      // Create MapLibre popup
+      popupRef.current = new maplibregl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+        offset: 20,
+      })
+        .setLngLat(center)
+        .setDOMContent(popupContainer)
+        .addTo(map);
+
+      console.log(features);
+      console.log("Country:", country.properties?.NAME);
+      console.log("ISO:", country.properties?.ADM0_A3);
+      popupRef.current?.on("close", () => {
+        root.unmount();
+      });
     });
 
     return () => {
