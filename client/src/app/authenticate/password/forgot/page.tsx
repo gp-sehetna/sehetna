@@ -17,8 +17,7 @@ const ForgotPasswordPage = () => {
                 <Flex direction="col" gap={6}>
                     <AuthenticationField
                         name="Email Address"
-                        htmlFor="email"
-                        id="email"
+                        id="forgot-password-email"
                         type="email"
                         placeholder="Enter your email address"
                         required

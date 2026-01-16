@@ -15,7 +15,6 @@ const SignUpRawPage = () => {
                 <Flex direction="col" gap={4}>
                     <AuthenticationField
                         name="Email Address"
-                        htmlFor="email"
                         id="email"
                         type="email"
                         placeholder="abc@example.com"
