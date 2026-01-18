@@ -17,7 +17,7 @@ class _Settings(BaseSettings):
     BATCH_SIZE: int = 128
 
     # Paths
-    resources_path: str = "E:\\Applications\\projects\\Sehetna Organization\\sehetna\\server\\resources"
+    resources_path: str
 
     model_config = SettingsConfigDict(env_file=".env")
 
