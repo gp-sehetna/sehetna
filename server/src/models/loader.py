@@ -3,7 +3,7 @@ import logging
 import joblib
 from sklearn.pipeline import Pipeline
 
-from src.config import Settings
+from config import Settings
 
 logger = logging.getLogger(__name__)
 

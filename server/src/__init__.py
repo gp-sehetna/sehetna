@@ -1,9 +1,10 @@
 import os
 from contextlib import asynccontextmanager
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 
-from src.config import DevelopmentSettings, ProductionSettings, Settings
+from config import DevelopmentSettings, ProductionSettings, Settings
 from src.models import loader
 
 __all__ = ["get_settings", "lifespan"]
@@ -24,5 +25,7 @@ def get_settings():
     EnvironmentSettings = environments.get(state, DevelopmentSettings)
     return EnvironmentSettings()
 
+
+load_dotenv()
 
 settings = get_settings()
