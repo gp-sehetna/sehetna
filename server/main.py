@@ -14,10 +14,10 @@ set_config(transform_output="pandas")
 logging.basicConfig(level=settings.log_level, force=True)
 
 app = FastAPI(
-    title=settings.APP_NAME,
+    title=settings.app_name,
     description="Sehetna Services API\nProvides health risk predictions based on climate data.",
     contact={"name": "Sehetna Team", "email": "mohamedhussien.asu@gmail.com"},
-    version=settings.VERSION,
+    version=settings.version,
     lifespan=lifespan,
 )
 

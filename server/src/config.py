@@ -6,10 +6,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class _Settings(BaseSettings):
-    APP_NAME: str = "Sehetna App"
-    VERSION: str = "1.0"
-    HOST: str = "0.0.0.0"
-    PORT: int = 5000
+    app_name: str = "Sehetna App"
+    version: str = "1.0"
+    env_state: str
     log_level: int | str | None
 
     # Model configuration

@@ -11,7 +11,7 @@ root_router = APIRouter()
 async def root():
     return RootResponse(
         message="Climate Health Simulation API",
-        version=settings.VERSION,
+        version=settings.version,
         status="running",
         description="Predict health outcomes with minimal climate data input",
     )
