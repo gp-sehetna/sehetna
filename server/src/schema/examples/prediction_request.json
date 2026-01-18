@@ -1,0 +1,19 @@
+[
+	{
+		"data": {
+			"date": "2023-04-01",
+			"country_code": "EGY",
+			"latitude": 26.82,
+			"longitude": 30.8,
+			"gdp_per_capita_usd": 120000,
+			"temperature_celsius": 25.5,
+			"pm25_ugm3": 32.21,
+			"precipitation_mm": 3.1,
+			"aqi_pm": 142.25,
+			"healthcare_access_index": 32.1,
+			"food_security_index": 36,
+			"heat_wave_days": 0,
+			"flood_indicator": 0
+		}
+	}
+]
