@@ -13,6 +13,7 @@ export default function MapView() {
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markerRef = useRef<maplibregl.Marker | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
+  const hoveredIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!mapContainer.current || mapRef.current) return;
@@ -20,6 +21,11 @@ export default function MapView() {
     const map = new maplibregl.Map({
       container: mapContainer.current,
       style: "https://demotiles.maplibre.org/style.json",
+      // style: "https://tiles.openfreemap.org/styles/liberty",
+      // style: "https://tiles.openfreemap.org/styles/dark",
+      // style: "https://tiles.openfreemap.org/styles/bright",
+      // style: "/data/toner.json",
+
       center: [31.2357, 30.0444],
       zoom: 5,
     });
@@ -31,6 +37,7 @@ export default function MapView() {
         map.addSource("countries", {
           type: "geojson",
           data: "/data/countries.json",
+          promoteId: "ADM0_A3",
         });
       }
 
@@ -40,7 +47,12 @@ export default function MapView() {
           type: "fill",
           source: "countries",
           paint: {
-            "fill-color": "#94a3b8",
+            "fill-color": [
+              "case",
+              ["boolean", ["feature-state", "hover"], false],
+              "#38bdf8", // hover color
+              "#94a3b8", // default color
+            ],
             "fill-opacity": 0.6,
           },
         });
@@ -91,7 +103,7 @@ export default function MapView() {
             padding: 100,
             duration: 800,
             maxZoom: 6,
-          }
+          },
         );
       }
 
@@ -114,9 +126,11 @@ export default function MapView() {
           name={country.properties?.NAME}
           iso={country.properties?.ADM0_A3}
           onClose={closePopup}
-        />
+        />,
       );
-      root.render(<CountryPopup name={NAME} iso={ADM0_A3} onClose={closePopup} />);
+      root.render(
+        <CountryPopup name={NAME} iso={ADM0_A3} onClose={closePopup} />,
+      );
 
       // Create MapLibre popup
       popupRef.current = new maplibregl.Popup({
