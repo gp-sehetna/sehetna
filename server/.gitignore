@@ -8,3 +8,5 @@ resources/data/*
 
 # Environment files
 .env*
+
+web.config
