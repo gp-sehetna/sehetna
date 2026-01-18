@@ -8,6 +8,7 @@ __all__ = ["root_router"]
 root_router = APIRouter()
 
 
+@root_router.post("/", response_model=RootResponse)
 async def root():
     return RootResponse(
         message="Climate Health Simulation API",
