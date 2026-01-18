@@ -1,10 +1,9 @@
-
 const PageCenter = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="h-screen font-bold text-3xl w-full flex items-center justify-center">
-      {children}
-    </div>
-  )
+    return (
+        <div className="flex h-screen w-full items-center justify-center text-3xl font-bold">
+            {children}
+        </div>
+    )
 }
 
 export default PageCenter

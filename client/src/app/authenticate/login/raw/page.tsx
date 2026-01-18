@@ -1,8 +1,44 @@
-import PageCenter from "@/components/ui/PageCenter"
+"use client"
+
+import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
+import AuthenticationPasswordInput from "@/components/ui/Authentication/AuthenticationPasswordInput"
+import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
+import Flex from "@/components/ui/Flex"
+import WideButton from "@/components/ui/WideButton"
+import { Mail, LogIn } from "lucide-react"
 
 const LoginRawPage = () => {
+    const title = <h3>Log In with your email</h3>
+    const subtitle = <p className="text-md text-neutral-600">Enter your credentials</p>
+    const forgotPasswordButton = <p className="cursor-pointer text-xs">Forgot password?</p>
     return (
-        <PageCenter children="Log In Raw Page" />
+        <>
+            <BaseAuthentication title={title} subtitle={subtitle}>
+                <Flex direction="col" gap={4}>
+                    <AuthenticationField
+                        name="Email Address"
+                        id="email"
+                        type="email"
+                        placeholder="Enter your email address"
+                        required
+                        prependInnerIcon={<Mail />}
+                    />
+                    <AuthenticationPasswordInput
+                        id="login-password"
+                        name="Password"
+                        inlineOptions={forgotPasswordButton}
+                    />
+                </Flex>
+                <WideButton variant="black">Log In</WideButton>
+                <Flex direction="col" gap={4}>
+                    <p className="text-xs">Don&apos;t have an account?</p>
+                    <WideButton size="lg" variant="outline">
+                        <LogIn />
+                        Sign Up
+                    </WideButton>
+                </Flex>
+            </BaseAuthentication>
+        </>
     )
 }
 

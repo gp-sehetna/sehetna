@@ -1,26 +1,25 @@
 import AuthenticationHeader from "@/components/ui/Authentication/Globals/AuthenticationHeader"
 import { ReactNode } from "react"
+import Flex from "../Flex"
+import { cn } from "@/lib/utils"
 
 type BaseAuthenticationProps = {
     title: ReactNode
     subtitle: ReactNode
+    className?: string
     children?: ReactNode
-    OtherOptionsComponent?: ReactNode
 }
 
-const BaseAuthentication = ({
-    title,
-    subtitle,
-    children,
-    OtherOptionsComponent
-}: BaseAuthenticationProps) => {
-
+const BaseAuthentication = ({ title, subtitle, className, children }: BaseAuthenticationProps) => {
     return (
-        <div className="flex flex-col gap-8">
-            <AuthenticationHeader title={title} subtitle={subtitle} />
+        <Flex
+            direction="col"
+            gap={8}
+            className={cn("items-center md:items-start lg:w-lg", className)}
+        >
+            <AuthenticationHeader className={className} title={title} subtitle={subtitle} />
             {children}
-            {OtherOptionsComponent}
-        </div>
+        </Flex>
     )
 }
 

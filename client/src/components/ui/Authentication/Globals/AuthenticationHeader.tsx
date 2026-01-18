@@ -1,23 +1,24 @@
-"use client";
-import Flex from "../../Flex";
-import Logo from "../../GlobalControls/Logo";
-import { ReactNode } from "react";
+"use client"
+import { cn } from "@/lib/utils"
+import Flex from "../../Flex"
+import Logo from "../../GlobalControls/Logo"
+import { ReactNode } from "react"
 
 type AuthenticationHeaderProps = {
-    title: ReactNode,
-    subtitle: ReactNode,
-
+    title: ReactNode
+    subtitle: ReactNode
+    className?: string
 }
 
 export default function AuthenticationHeader({
     title,
-    subtitle
+    subtitle,
+    className,
 }: AuthenticationHeaderProps) {
-
     return (
-        <Flex direction="col" gap={4}>
+        <Flex direction="col" gap={4} className={cn("items-center md:items-start", className)}>
             <Logo />
-            <Flex direction="col" gap={1}>
+            <Flex direction="col" gap={1} className={cn("items-center md:items-start", className)}>
                 {title}
                 {subtitle}
             </Flex>

@@ -1,5 +1,5 @@
-import ComplexFooter from "./ComplexFooter";
-import SimpleFooter from "./SimpleFooter";
+import ComplexFooter from "./ComplexFooter"
+import SimpleFooter from "./SimpleFooter"
 
 type FooterProps = {
     variant?: "default" | "simple"
@@ -8,8 +8,10 @@ type FooterProps = {
 
 export default function Footer({ variant = "default", className }: FooterProps) {
     switch (variant) {
-        case "simple": return <SimpleFooter className={className} />
+        case "simple":
+            return <SimpleFooter className={className} />
 
-        default: return <ComplexFooter />
+        default:
+            return <ComplexFooter />
     }
 }

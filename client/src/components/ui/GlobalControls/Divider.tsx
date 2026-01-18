@@ -7,35 +7,55 @@ type DividerProps = {
     className?: string
 }
 
-const Divider = ({ vertical = false, children, className = "" }: DividerProps) => {
+const Divider = ({ vertical = false, children, className }: DividerProps) => {
     if (!children) {
         if (!vertical) {
             return (
-                <div data-component="divider" className={cn("bg-neutral-200 shrink-0", "h-px w-full", className)} />
+                <div
+                    data-component="divider"
+                    className={cn("shrink-0 bg-neutral-200", "h-px w-fit", className)}
+                />
             )
         }
         return (
-            <div data-component="divider" className={cn("bg-neutral-200 shrink-0", "w-px h-1/2", className)} />
+            <div
+                data-component="divider"
+                className={cn("shrink-0 bg-neutral-200", "h-1/2 w-px", className)}
+            />
         )
     }
     if (!vertical) {
         return (
-            <div data-component="divider" className={cn("relative flex items-center gap-4 text-sm text-neutral-500", "w-full", className,)} >
+            <div
+                data-component="divider"
+                className={cn(
+                    "relative flex items-center gap-4 text-sm text-neutral-500",
+                    "w-full",
+                    className
+                )}
+            >
                 <DividerDecoration side="left" />
 
-                <span className="bg-neutral-200 h-px flex-1" />
+                <span className="h-px flex-1 bg-neutral-200" />
                 <span className="text-sm whitespace-nowrap">{children}</span>
-                <span className="bg-neutral-200 h-px flex-1" />
+                <span className="h-px flex-1 bg-neutral-200" />
 
                 <DividerDecoration side="right" />
             </div>
         )
     }
     return (
-        <div data-component="divider" className={cn("flex items-center gap-4 text-sm text-neutral-500", "flex-col h-full", className)} >
-            <span className="bg-neutral-200 h-full w-px" />
-            <span className="font-bold text-xs whitespace-nowrap">{children}</span>
-            <span className="bg-neutral-200 h-full w-px" />
+        <div
+            data-component="divider"
+            className={cn(
+                "flex items-center gap-4 text-sm text-neutral-500",
+                "h-full flex-col",
+                className
+            )}
+        >
+            <span className="h-full w-px bg-neutral-200" />
+            <span className="text-xs font-bold whitespace-nowrap">{children}</span>
+            <span className="h-full w-px bg-neutral-200" />
         </div>
     )
 }
