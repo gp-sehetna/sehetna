@@ -112,6 +112,9 @@
 }
 
 @layer base {
+    .glassy {
+        @apply bg-white/30 shadow-xl backdrop-blur-xl;
+    }
     .base-transition {
         @apply transition-all duration-300;
     }
@@ -132,5 +135,12 @@
     ::selection {
         background-color: --alpha(var(--color-primary-400) / 5%);
         color: var(--color-secondary-300);
+    }
+
+    .maplibregl-popup-content {
+        @apply bg-transparent! shadow-none! p-0! rounded-none!;
+    }
+    .maplibregl-popup-tip {
+        @apply hidden!;
     }
 }
