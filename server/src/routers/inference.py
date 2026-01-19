@@ -5,7 +5,7 @@ from src.schema.predictions import PredictionRequest, SimulationResponse
 
 __all__ = ["router"]
 
-router = APIRouter()
+router = APIRouter(prefix="/api", tags=["inference"])
 
 
 @router.post("/simulate", response_model=SimulationResponse)
