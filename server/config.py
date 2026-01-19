@@ -1,19 +1,25 @@
 import logging
 import os
+from typing import Literal
 
 from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class _Settings(BaseSettings):
+    # App info
     app_name: str = "Sehetna App"
     version: str = "1.0"
-    env_state: str
+    env_state: Literal["development", "production"]
     log_level: int | str | None
 
-    # Model configuration
-    SEQ_LEN: int = 8
-    BATCH_SIZE: int = 128
+    # Team info
+    team_name: str = "Sehetna Team"
+    team_email: str = "dexter.kuhn63@gmail.com"
+    description: str = """\
+Sehetna Services API
+Provides health risk predictions based on climate data.\
+"""
 
     # Paths
     resources_path: str
