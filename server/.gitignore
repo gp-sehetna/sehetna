@@ -9,4 +9,7 @@ resources/data/*
 # Environment files
 .env*
 
+logs/
+startup.bat
+
 web.config
