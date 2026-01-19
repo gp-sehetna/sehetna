@@ -13,6 +13,7 @@ async def root():
     return RootResponse(
         message="Climate Health Simulation API",
         version=settings.version,
+        state=settings.env_state,
         status="running",
         description="Predict health outcomes with minimal climate data input",
     )

@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from src.schema.predictions import HealthDataInput, PredictionRequest, PredictionResult, SimulationResponse
 
@@ -17,3 +17,4 @@ class RootResponse(BaseModel):
     version: str
     status: str
     description: str
+    model_config = ConfigDict(extra="allow")
