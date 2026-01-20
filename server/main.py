@@ -1,6 +1,7 @@
 import logging
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sklearn import set_config
 
 from src import lifespan, settings
@@ -22,6 +23,15 @@ app = FastAPI(
 
 app.add_exception_handler(Exception, unhandled_exception_handler)
 app.add_exception_handler(AppException, app_exception_handler)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(root_router)
 app.include_router(inference.router)
 
