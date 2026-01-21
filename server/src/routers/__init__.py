@@ -5,7 +5,7 @@ from src.schema import RootResponse
 
 __all__ = ["root_router"]
 
-root_router = APIRouter(prefix="/api", tags=["root"])
+root_router = APIRouter(tags=["root"])
 
 
 @root_router.get("/", response_model=RootResponse)

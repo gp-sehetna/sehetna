@@ -15,6 +15,7 @@ logging.basicConfig(level=settings.log_level, force=True)
 
 app = FastAPI(
     title=settings.app_name,
+    root_path="/ai",
     description=settings.description,
     contact={"name": settings.team_name, "email": settings.team_email},
     version=settings.version,
