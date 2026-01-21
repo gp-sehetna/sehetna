@@ -5,6 +5,8 @@
 
 @theme {
     --font-*: initial;
+    --color-neutral-*: initial;
+
     --font-heading: "Space Grotesk", sans-serif;
     --font-body: "Plus Jakarta Sans", sans-serif;
 
@@ -113,7 +115,7 @@
 
 @layer base {
     .glassy {
-        @apply bg-white/30 shadow-xl backdrop-blur-xl;
+        @apply border border-neutral-100 bg-white/30 shadow-xl backdrop-blur-sm;
     }
     .base-transition {
         @apply transition-all duration-300;
@@ -138,7 +140,7 @@
     }
 
     .maplibregl-popup-content {
-        @apply bg-transparent! shadow-none! p-0! rounded-none!;
+        @apply rounded-none! bg-transparent! p-0! shadow-none!;
     }
     .maplibregl-popup-tip {
         @apply hidden!;
