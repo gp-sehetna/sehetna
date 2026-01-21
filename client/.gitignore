@@ -19,6 +19,8 @@
 
 # production
 /build
+/logs
+web.config
 
 # misc
 .DS_Store
