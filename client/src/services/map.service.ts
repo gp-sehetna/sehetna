@@ -8,15 +8,13 @@ interface Prediction {
     heat_related_admissions: number
 }
 
-interface PredictionsResponse {
+interface PredsRes {
     predictions: Prediction
 }
 
 export const MapService = {
     getMapPredictions: async (payload: any) => {
-        const { predictions } = await api
-            .post<PredictionsResponse>("ai/simulate", { json: payload })
-            .json()
+        const { predictions } = await api.post<PredsRes>("ai/simulate", { json: payload }).json()
         return predictions
     },
 }

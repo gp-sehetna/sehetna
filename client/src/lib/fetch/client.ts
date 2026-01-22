@@ -10,6 +10,7 @@ const api = ky.create({
     hooks: {
         beforeRequest: [
             (req, opts, state) => {
+                // TODO: Add auth token
                 req.headers.set("Authorization", `Bearer access_token`)
                 console.log("Request:", req.method, req.url)
                 return req
