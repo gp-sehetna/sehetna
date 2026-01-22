@@ -1,5 +1,6 @@
 import {
     Info,
+    LogIn,
     LucideProps,
     Map,
     ShieldCheck,
@@ -60,7 +61,9 @@ const AppSidebar = () => {
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </Flex>
-                    <div className="mt-auto">img</div>
+                    <div className="mt-auto">
+                        <LogIn />
+                    </div>
                 </SidebarGroup>
             </SidebarContent>
         </Sidebar>
