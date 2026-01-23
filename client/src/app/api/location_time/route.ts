@@ -1,14 +1,16 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { fetchWeatherApi } from "openmeteo"
+import { errorResponse, successResponse } from "@/lib/utils/response/api.response"
 
 type AggregateType = "avg" | "sum"
-type WeeklyAirData = {
+
+type QueryParams = {
+    lat: number
+    lng: number
     date: string
-    pm2_5: number | null
-    us_aqi_pm2_5: number | null
 }
 
-type WeeklyWeatherData = {
+type WeeklyEnvironmentData = {
     date: string
     latitude: number
     longitude: number
@@ -16,6 +18,48 @@ type WeeklyWeatherData = {
     aqi_pm: number
     temperature_celsius: number | null
     precipitation_mm: number | null
+}
+
+function parseQueryParams(request: NextRequest): QueryParams | NextResponse {
+    const params = request.nextUrl.searchParams
+
+    const lat = Number(params.get("lat"))
+    const lng = Number(params.get("lng"))
+    const date = params.get("date")
+
+    if (!lat || !lng || !date) {
+        return errorResponse("Invalid query parameters", 400)
+    }
+
+    return { lat, lng, date }
+}
+
+function buildMeteoParams(
+    { lat, lng, date }: QueryParams,
+    options: { hourly?: string[]; daily?: string[] }
+) {
+    return {
+        latitude: lat,
+        longitude: lng,
+        start_date: date,
+        end_date: "2026-01-23", // TODO: derive dynamically (+7 days)
+        timezone: "auto",
+        ...options,
+    }
+}
+
+function buildTimes(
+    start: number,
+    end: number,
+    interval: number,
+    utcOffsetSeconds: number
+): Date[] {
+    const length = (end - start) / interval
+
+    return Array.from({ length }, (_, i) => {
+        const timestamp = start + i * interval + utcOffsetSeconds
+        return new Date(timestamp * 1000)
+    })
 }
 
 function aggregateWeekly<T extends Record<string, number[]>>(
@@ -50,85 +94,82 @@ function aggregateWeekly<T extends Record<string, number[]>>(
     return result
 }
 
-const createMeteoParams = ({ hourly, daily }: { hourly?: string[]; daily?: string[] }) => ({
-    latitude: 52.52,
-    longitude: 13.41,
-    ...(hourly && { hourly }),
-    ...(daily && { daily }),
-    start_date: "2024-01-15",
-    end_date: "2024-01-28",
-    timezone: "auto",
-})
-
-export const GET = async () => {
-    const airParams = createMeteoParams({
-        hourly: ["pm2_5", "us_aqi_pm2_5"],
-    })
-
+async function fetchWeeklyAirData(query: QueryParams) {
     const url = "https://air-quality-api.open-meteo.com/v1/air-quality"
-    const responses = await fetchWeatherApi(url, airParams)
-    const response = responses[0]
+    const [response] = await fetchWeatherApi(
+        url,
+        buildMeteoParams(query, {
+            hourly: ["pm2_5", "us_aqi_pm2_5"],
+        })
+    )
 
     const hourly = response.hourly()!
-
-    const utcOffsetSeconds = response.utcOffsetSeconds()
-
-    const times: Date[] = Array.from(
-        { length: (Number(hourly.timeEnd()) - Number(hourly.time())) / hourly.interval() },
-        (_, i) =>
-            new Date((Number(hourly.time()) + i * hourly.interval() + utcOffsetSeconds) * 1000)
+    const times = buildTimes(
+        Number(hourly.time()),
+        Number(hourly.timeEnd()),
+        hourly.interval(),
+        response.utcOffsetSeconds()
     )
 
     const pm2_5 = Array.from(hourly.variables(0)?.valuesArray() ?? [])
     const us_aqi_pm2_5 = Array.from(hourly.variables(1)?.valuesArray() ?? [])
 
-    const weeklyAir: WeeklyAirData[] = aggregateWeekly(times, { pm2_5, us_aqi_pm2_5 }, 24, {
-        pm2_5: "avg",
-        us_aqi_pm2_5: "avg",
-    })
+    return {
+        latitude: response.latitude(),
+        longitude: response.longitude(),
+        weekly: aggregateWeekly(times, { pm2_5, us_aqi_pm2_5 }, 24, {
+            pm2_5: "avg",
+            us_aqi_pm2_5: "avg",
+        }),
+    }
+}
 
-    // -----------
-    const weatherParams = createMeteoParams({ daily: ["temperature_2m_mean", "rain_sum"] })
+async function fetchWeeklyWeatherData(query: QueryParams) {
+    const url = "https://archive-api.open-meteo.com/v1/archive"
+    const [response] = await fetchWeatherApi(
+        url,
+        buildMeteoParams(query, {
+            daily: ["temperature_2m_mean", "rain_sum"],
+        })
+    )
 
-    const weatherUrl = "https://archive-api.open-meteo.com/v1/archive"
-    const weatherResponses = await fetchWeatherApi(weatherUrl, weatherParams)
-    const weatherResponse = weatherResponses[0]
-
-    const utcOffsetSecondsWeather = weatherResponse.utcOffsetSeconds()
-    const daily = weatherResponse.daily()!
-    const weatherTimes = Array.from(
-        { length: (Number(daily.timeEnd()) - Number(daily.time())) / daily.interval() },
-        (_, i) =>
-            new Date((Number(daily.time()) + i * daily.interval() + utcOffsetSecondsWeather) * 1000)
+    const daily = response.daily()!
+    const times = buildTimes(
+        Number(daily.time()),
+        Number(daily.timeEnd()),
+        daily.interval(),
+        response.utcOffsetSeconds()
     )
 
     const temperatures = Array.from(daily.variables(0)?.valuesArray() ?? [])
-
     const rain = Array.from(daily.variables(1)?.valuesArray() ?? [])
 
-    const weeklyWeather = aggregateWeekly<{
-        temperatures: number[]
-        rain: number[]
-    }>(weatherTimes, { temperatures, rain }, 1, {
+    return aggregateWeekly(times, { temperatures, rain }, 1, {
         temperatures: "avg",
         rain: "avg",
     })
+}
 
-    const mergedWeekly: WeeklyWeatherData[] = weeklyAir.map((airWeek, i) => {
-        const weatherWeek = weeklyWeather[i]
+export const GET = async (request: NextRequest) => {
+    const query = parseQueryParams(request)
+    if (query instanceof NextResponse) return query
+
+    const air = await fetchWeeklyAirData(query)
+    const weather = await fetchWeeklyWeatherData(query)
+
+    const merged: WeeklyEnvironmentData[] = air.weekly.map((airWeek, i) => {
+        const weatherWeek = weather[i]
 
         return {
             date: airWeek.date,
-            latitude: response.latitude(),
-            longitude: response.longitude(),
-
+            latitude: air.latitude,
+            longitude: air.longitude,
             pm25_ugm3: airWeek.pm2_5 ?? 0,
             aqi_pm: airWeek.us_aqi_pm2_5 ?? 0,
-
             temperature_celsius: weatherWeek?.temperatures ?? null,
             precipitation_mm: weatherWeek?.rain ?? null,
         }
     })
 
-    return NextResponse.json({ weeklyData: mergedWeekly })
+    return successResponse({ data: merged }, 200)
 }
