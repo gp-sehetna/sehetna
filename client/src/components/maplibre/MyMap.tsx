@@ -7,6 +7,7 @@ import bbox from "@turf/bbox"
 import centroid from "@turf/centroid"
 import { createRoot } from "react-dom/client"
 import CountryPopup from "./CountryPopup"
+import { MapService } from "@/services/map.service"
 
 export default function MapView() {
     const mapContainer = useRef<HTMLDivElement | null>(null)
@@ -71,7 +72,24 @@ export default function MapView() {
             }
         })
 
-        map.on("click", (e) => {
+        map.on("click", async (e) => {
+            await MapService.getMapPredictions({
+                data: {
+                    aqi_pm: 142.25,
+                    country_code: "EGY",
+                    date: "2023-04-01",
+                    flood_indicator: 0,
+                    food_security_index: 36,
+                    gdp_per_capita_usd: 120000,
+                    healthcare_access_index: 32.1,
+                    heat_wave_days: 0,
+                    latitude: 26.82,
+                    longitude: 30.8,
+                    pm25_ugm3: 32.21,
+                    precipitation_mm: 3.1,
+                    temperature_celsius: 25.5,
+                },
+            })
             const features = map.queryRenderedFeatures(e.point, {
                 layers: ["countries-fill"],
             })
