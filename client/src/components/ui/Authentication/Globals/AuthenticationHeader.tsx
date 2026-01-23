@@ -1,5 +1,5 @@
 "use client"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/cn"
 import Flex from "../../Flex"
 import Logo from "../../GlobalControls/Logo"
 import { ReactNode } from "react"

@@ -1,6 +1,6 @@
 import { ZodType } from "zod"
-import { BadRequestException } from "../utils/error.response"
-import { INextRequestWithBody } from "../utils/types/request.next"
+import { BadRequestException } from "../utils/response/error.response"
+import { INextRequestWithBody } from "../types/request.next"
 
 // type KeyReqType = keyof NextRequest // 'body' | 'params' | 'query' | 'file'
 // type SchemaType = Partial<Record<KeyReqType, ZodType>>
@@ -36,7 +36,7 @@ export const validation = (schema: SchemaType) => {
                 })
             }
 
-            req.validatedBody = body;
+            req.validatedBody = body
         }
 
         // Validate query

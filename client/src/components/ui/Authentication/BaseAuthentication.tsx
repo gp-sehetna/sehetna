@@ -1,7 +1,7 @@
 import AuthenticationHeader from "@/components/ui/Authentication/Globals/AuthenticationHeader"
 import { ReactNode } from "react"
 import Flex from "../Flex"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/cn"
 
 type BaseAuthenticationProps = {
     title: ReactNode

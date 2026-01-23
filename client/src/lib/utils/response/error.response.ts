@@ -15,6 +15,3 @@ export class BadRequestException extends ApplicationException {
         super(message, 400, cause)
     }
 }
-
-
-

@@ -1,5 +1,5 @@
 "use client"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/cn"
 import { Url } from "next/dist/shared/lib/router/router"
 //* Simple Link, used in footer for example
 

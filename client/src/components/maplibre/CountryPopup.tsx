@@ -1,6 +1,5 @@
 import { X } from "lucide-react"
 import Flex from "../ui/Flex"
-import Heading from "../ui/Heading"
 import { Button } from "../ui/shadcn/button"
 
 type MapPopupType = { name: string; iso: string; onClose: () => void }
@@ -15,7 +14,7 @@ export default function CountryPopup({ name, iso, onClose }: MapPopupType) {
             >
                 <X size={24} />
             </Button>
-            <Heading size={5}>{name}</Heading>
+            <h5>{name}</h5>
             <p className="text-xs text-slate-500">ISO: {iso}</p>
         </Flex>
     )
