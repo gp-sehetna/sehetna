@@ -2,23 +2,28 @@ import { NextResponse } from "next/server"
 import { fetchWeatherApi } from "openmeteo"
 
 type AggregateType = "avg" | "sum"
+type WeeklyAirData = {
+    date: string
+    pm2_5: number | null
+    us_aqi_pm2_5: number | null
+}
+
 type WeeklyWeatherData = {
-    aqi_pm: number
-    country_code: string
     date: string
     latitude: number
     longitude: number
-    pm25_ugm3: 0
-    precipitation_mm: number
-    temperature_celsius: number
+    pm25_ugm3: number
+    aqi_pm: number
+    temperature_celsius: number | null
+    precipitation_mm: number | null
 }
 
-function aggregateWeekly(
+function aggregateWeekly<T extends Record<string, number[]>>(
     times: Date[],
-    series: Record<string, number[]>,
+    series: T,
     samplesPerDay: number,
-    reducers: Record<string, AggregateType>
-) {
+    reducers: Record<keyof T, AggregateType>
+): ({ date: string } & Record<keyof T, number | null>)[] {
     const samplesPerWeek = samplesPerDay * 7
     const result: any[] = []
 
@@ -35,11 +40,8 @@ function aggregateWeekly(
                 continue
             }
 
-            if (reducers[key] === "sum") {
-                week[key] = slice.reduce((a, b) => a + b, 0)
-            } else {
-                week[key] = slice.reduce((a, b) => a + b, 0) / slice.length
-            }
+            const sum = slice.reduce((a, b) => a + b, 0)
+            week[key] = reducers[key] === "sum" ? sum : sum / slice.length
         }
 
         result.push(week)
@@ -80,7 +82,7 @@ export const GET = async () => {
     const pm2_5 = Array.from(hourly.variables(0)?.valuesArray() ?? [])
     const us_aqi_pm2_5 = Array.from(hourly.variables(1)?.valuesArray() ?? [])
 
-    const weeklyAir = aggregateWeekly(times, { pm2_5, us_aqi_pm2_5 }, 24, {
+    const weeklyAir: WeeklyAirData[] = aggregateWeekly(times, { pm2_5, us_aqi_pm2_5 }, 24, {
         pm2_5: "avg",
         us_aqi_pm2_5: "avg",
     })
@@ -100,48 +102,31 @@ export const GET = async () => {
             new Date((Number(daily.time()) + i * daily.interval() + utcOffsetSecondsWeather) * 1000)
     )
 
-    const temperatures = daily.variables(0)!.valuesArray()
-    const rain = daily.variables(1)!.valuesArray()
+    const temperatures = Array.from(daily.variables(0)?.valuesArray() ?? [])
 
-    const WEEK_DAYS = 7
-    const weeklyData: WeeklyWeatherData[] = []
+    const rain = Array.from(daily.variables(1)?.valuesArray() ?? [])
 
-    for (let i = 0; i < weatherTimes.length; i += WEEK_DAYS) {
-        const tempSlice = temperatures!.slice(i, i + WEEK_DAYS)
-        const rainSlice = rain!.slice(i, i + WEEK_DAYS)
+    const weeklyWeather = aggregateWeekly<{
+        temperatures: number[]
+        rain: number[]
+    }>(weatherTimes, { temperatures, rain }, 1, {
+        temperatures: "avg",
+        rain: "avg",
+    })
 
-        const avgTemp = tempSlice.reduce((a, b) => a + b, 0) / (tempSlice.length || 1)
-
-        const totalRain = rainSlice.reduce((a, b) => a + b, 0)
-
-        weeklyData.push({
-            aqi_pm: 0,
-            country_code: "EGY",
-            date: weatherTimes[i]?.toISOString().split("T")[0] ?? "",
-            // flood_indicator: 0,
-            // food_security_index: 0,
-            // gdp_per_capita_usd: 0,
-            // healthcare_access_index: 0,
-            // heat_wave_days: 0, // for each country -> unique threshold
-            latitude: response.latitude(),
-            longitude: response.longitude(),
-            pm25_ugm3: 0,
-            precipitation_mm: Number(totalRain.toFixed(2)),
-            temperature_celsius: Number(avgTemp.toFixed(2)),
-        })
-    }
-
-    const mergedWeekly = weeklyAir.map((airWeek, i) => {
-        const weatherWeek = weeklyData[i] || {}
+    const mergedWeekly: WeeklyWeatherData[] = weeklyAir.map((airWeek, i) => {
+        const weatherWeek = weeklyWeather[i]
 
         return {
             date: airWeek.date,
-            pm2_5: airWeek.pm2_5,
-            us_aqi_pm2_5: airWeek.us_aqi_pm2_5,
-            temperature_celsius: weatherWeek.temperature_celsius ?? null,
-            precipitation_mm: weatherWeek.precipitation_mm ?? null,
-            latitude: airWeek.latitude, // or weatherWeek.latitude
-            longitude: airWeek.longitude, // or weatherWeek.longitude
+            latitude: response.latitude(),
+            longitude: response.longitude(),
+
+            pm25_ugm3: airWeek.pm2_5 ?? 0,
+            aqi_pm: airWeek.us_aqi_pm2_5 ?? 0,
+
+            temperature_celsius: weatherWeek?.temperatures ?? null,
+            precipitation_mm: weatherWeek?.rain ?? null,
         }
     })
 
