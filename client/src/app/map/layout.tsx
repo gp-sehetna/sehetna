@@ -1,4 +1,4 @@
-import AppSidebar from "@/components/ui/shadcn/AppSidebar"
+import AppSidebar from "@/components/ui/GlobalComponents/SideBars/CompactSidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/shadcn/sidebar"
 
 const MapLayout = ({ children }: { children: React.ReactNode }) => {

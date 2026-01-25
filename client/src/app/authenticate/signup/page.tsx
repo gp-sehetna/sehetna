@@ -3,7 +3,7 @@ import GoogleIcon from "@/components/ui/Authentication/Globals/GoogleIcon"
 import Flex from "@/components/ui/Flex"
 import AppLink from "@/components/ui/GlobalControls/AppLink"
 import Divider from "@/components/ui/GlobalControls/Divider"
-import WideButton from "@/components/ui/WideButton"
+import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import { LogIn } from "lucide-react"
 
 const SignUpPage = () => {

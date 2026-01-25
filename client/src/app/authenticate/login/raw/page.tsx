@@ -4,7 +4,7 @@ import { AuthenticationField } from "@/components/ui/Authentication/Authenticati
 import AuthenticationPasswordInput from "@/components/ui/Authentication/AuthenticationPasswordInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
 import Flex from "@/components/ui/Flex"
-import WideButton from "@/components/ui/WideButton"
+import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import { Mail, LogIn } from "lucide-react"
 
 const LoginRawPage = () => {

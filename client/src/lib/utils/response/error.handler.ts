@@ -1,17 +1,34 @@
-import { errorResponse } from "./api.response"
+import { NextRequest, NextResponse } from "next/server"
+import { errorResponse, successResponse } from "./api.response"
+import { ApplicationException } from "./error.response"
 
-export const handleErrors = (error: unknown) => {
-    let statusCode = 500
-    let message = "Internal server error"
-    let details: any = null
+type AppResponse<T = any> = Promise<NextResponse<T>> | NextResponse<T> | T
 
-    if (error instanceof Error) {
-        message = error.message
-        if ("statusCode" in error) {
-            statusCode = (error as any).statusCode
-            details = (error as any).cause ?? null
+// Handler that takes no arguments
+type HandlerNoArgs<T = any> = () => AppResponse<T>
+
+// Handler that takes NextRequest and optional additional args
+type HandlerWithRequest<T = any, Args extends any[] = any[]> = (
+    req: NextRequest,
+    ...args: Args
+) => AppResponse<T>
+
+type Handler<T = any, Args extends any[] = any[]> = HandlerNoArgs<T> | HandlerWithRequest<T, Args>
+
+export function globalErrorHandler<T = any, Args extends any[] = any[]>(handler: Handler<T, Args>) {
+    return async (req?: NextRequest, ...args: Args): Promise<NextResponse> => {
+        try {
+            // Call handler with all available arguments
+            const result = await handler(req as any, ...args)
+
+            if (result instanceof NextResponse) return result
+            return successResponse(result)
+        } catch (err: unknown) {
+            if (err instanceof ApplicationException) {
+                return errorResponse(err.message, err.status, err.err_details)
+            }
+            console.error("Unhandled API error: ", err)
+            return errorResponse("Unhandled API error", 500)
         }
     }
-
-    return errorResponse(message, statusCode, details)
 }

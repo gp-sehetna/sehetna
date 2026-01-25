@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { fetchWeatherApi } from "openmeteo"
-import { errorResponse, successResponse } from "@/lib/utils/response/api.response"
+import { OPEN_METEO_AIR_QUALITY, OPEN_METEO_HISTORICAL_WEATHER } from "@/lib/config/urls"
+import { globalErrorHandler } from "@/lib/utils/response/error.handler"
+import { BadRequestException } from "@/lib/utils/response/error.response"
 
 type AggregateType = "avg" | "sum"
 
@@ -28,9 +30,9 @@ function parseQueryParams(request: NextRequest): QueryParams | NextResponse {
     const date = params.get("date")
 
     if (!lat || !lng || !date) {
-        return errorResponse("Invalid query parameters", 400)
+        const details = Object.fromEntries(params.entries())
+        throw new BadRequestException("Invalid query parameters", details)
     }
-
     return { lat, lng, date }
 }
 
@@ -48,16 +50,11 @@ function buildMeteoParams(
     }
 }
 
-function buildTimes(
-    start: number,
-    end: number,
-    interval: number,
-    utcOffsetSeconds: number
-): Date[] {
+function buildTimes(start: number, end: number, interval: number, utcOffsetSecs: number): Date[] {
     const length = (end - start) / interval
 
     return Array.from({ length }, (_, i) => {
-        const timestamp = start + i * interval + utcOffsetSeconds
+        const timestamp = start + i * interval + utcOffsetSecs
         return new Date(timestamp * 1000)
     })
 }
@@ -95,12 +92,9 @@ function aggregateWeekly<T extends Record<string, number[]>>(
 }
 
 async function fetchWeeklyAirData(query: QueryParams) {
-    const url = "https://air-quality-api.open-meteo.com/v1/air-quality"
     const [response] = await fetchWeatherApi(
-        url,
-        buildMeteoParams(query, {
-            hourly: ["pm2_5", "us_aqi_pm2_5"],
-        })
+        OPEN_METEO_AIR_QUALITY,
+        buildMeteoParams(query, { hourly: ["pm2_5", "us_aqi_pm2_5"] })
     )
 
     const hourly = response.hourly()!
@@ -125,12 +119,9 @@ async function fetchWeeklyAirData(query: QueryParams) {
 }
 
 async function fetchWeeklyWeatherData(query: QueryParams) {
-    const url = "https://archive-api.open-meteo.com/v1/archive"
     const [response] = await fetchWeatherApi(
-        url,
-        buildMeteoParams(query, {
-            daily: ["temperature_2m_mean", "rain_sum"],
-        })
+        OPEN_METEO_HISTORICAL_WEATHER,
+        buildMeteoParams(query, { daily: ["temperature_2m_mean", "rain_sum"] })
     )
 
     const daily = response.daily()!
@@ -150,7 +141,7 @@ async function fetchWeeklyWeatherData(query: QueryParams) {
     })
 }
 
-export const GET = async (request: NextRequest) => {
+export const GET = globalErrorHandler(async (request: NextRequest) => {
     const query = parseQueryParams(request)
     if (query instanceof NextResponse) return query
 
@@ -171,5 +162,5 @@ export const GET = async (request: NextRequest) => {
         }
     })
 
-    return successResponse({ data: merged }, 200)
-}
+    return { data: merged }
+})
