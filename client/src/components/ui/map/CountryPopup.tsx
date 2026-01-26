@@ -1,6 +1,6 @@
 import { X } from "lucide-react"
-import Flex from "../ui/Flex"
-import { Button } from "../ui/shadcn/button"
+import Flex from "../Flex"
+import { Button } from "../shadcn/button"
 
 type MapPopupType = { name: string; iso: string; onClose: () => void }
 

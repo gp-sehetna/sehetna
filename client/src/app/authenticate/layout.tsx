@@ -57,7 +57,7 @@ export default function AuthenticationLayout({ children }: { children: React.Rea
                     <div
                         className="hidden min-w-2xs -skew-x-6 rounded-tl-[64px] bg-cover bg-right lg:block"
                         style={{
-                            backgroundImage: "url('/Authentication Gradient.png')",
+                            backgroundImage: "url('/images/Authentication Gradient.png')",
                         }}
                     />
                 </div>

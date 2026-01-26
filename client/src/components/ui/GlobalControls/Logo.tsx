@@ -5,5 +5,5 @@ type LogoProps = {
 }
 
 export default function Logo({ size = 48 }: LogoProps) {
-    return <Image width={size} height={size} alt="Sehetna" src="/Branding/Logo/sehetna-logo.png" />
+    return <Image width={size} height={size} alt="Sehetna" src="/branding/logo/sehetna-logo.png" />
 }

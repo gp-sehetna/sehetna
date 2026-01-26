@@ -1,4 +1,4 @@
-import MapView from "@/components/maplibre/MapView"
+import MapView from "@/components/ui/map/MapView"
 
 const MapPage = () => {
     return (
