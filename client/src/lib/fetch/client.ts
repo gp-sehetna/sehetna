@@ -9,7 +9,7 @@ const api = ky.create({
     },
     hooks: {
         beforeRequest: [
-            (req, opts, state) => {
+            (req) => {
                 // TODO: Add auth token
                 req.headers.set("Authorization", `Bearer access_token`)
                 console.log("Request:", req.method, req.url)
@@ -19,7 +19,7 @@ const api = ky.create({
         // Handle error responses globally
         afterResponse: [
             // Unauthorized handler
-            (req, opts, res, state) => {
+            (req, opts, res) => {
                 if (res.status !== 401) return res
 
                 // optional: refresh token logic & retry original request

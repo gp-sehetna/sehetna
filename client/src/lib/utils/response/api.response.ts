@@ -5,5 +5,8 @@ export const successResponse = (data: any, status = 200, message = undefined) =>
 }
 
 export const errorResponse = (message: string, status = 400, err_details?: unknown) => {
-    return NextResponse.json({ success: false, message, err_details }, { status })
+    return NextResponse.json(
+        { success: false, status_code: status, message, err_details },
+        { status }
+    )
 }

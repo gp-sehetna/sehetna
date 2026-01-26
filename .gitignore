@@ -12,11 +12,6 @@ wheels/
 .qodo/
 
 # Project Private Directories
-Architecture/
-DHS Program/
-External Data/
-pm2.5*/
-Requirments/
-Papers/
 papers/
+Other Files/
 
