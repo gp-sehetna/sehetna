@@ -1,6 +1,8 @@
 "use client"
 
 import { weekService } from "@/features/environment/week/week.service"
+import { BadRequestException } from "@/shared/http/errors"
+import logger from "@/shared/logger"
 import bbox from "@turf/bbox"
 import centroid from "@turf/centroid"
 import maplibregl from "maplibre-gl"
@@ -73,26 +75,22 @@ export default function MapView() {
         })
 
         map.on("click", async (e) => {
-            await weekService.simulate({
-                data: {
-                    aqi_pm: 142.25,
-                    country_code: "EGY",
-                    date: "2023-04-01",
-                    flood_indicator: 0,
-                    food_security_index: 36,
-                    gdp_per_capita_usd: 120000,
-                    healthcare_access_index: 32.1,
-                    heat_wave_days: 0,
-                    latitude: 26.82,
-                    longitude: 30.8,
-                    pm25_ugm3: 32.21,
-                    precipitation_mm: 3.1,
-                    temperature_celsius: 25.5,
-                },
-            })
+            try {
+                const environmentData = await weekService.fetchEnvironment(
+                    e.lngLat.lat,
+                    e.lngLat.lng,
+                    "2021-04-01"
+                )
+            } catch (error) {
+                if (!(error instanceof BadRequestException)) throw new Error("Unexpected error")
+
+                // Use a toast to show the error message
+                logger.info(error.message)
+            }
             const features = map.queryRenderedFeatures(e.point, {
                 layers: ["countries-fill"],
             })
+            // get lat,lon as coordinates
 
             if (!features.length) return
 
@@ -158,9 +156,9 @@ export default function MapView() {
                 .setDOMContent(popupContainer)
                 .addTo(map)
 
-            console.log(features)
-            console.log("Country:", country.properties?.NAME)
-            console.log("ISO:", country.properties?.ADM0_A3)
+            // console.log(features)
+            // console.log("Country:", country.properties?.NAME)
+            // console.log("ISO:", country.properties?.ADM0_A3)
             popupRef.current?.on("close", () => {
                 root.unmount()
             })

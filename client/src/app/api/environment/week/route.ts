@@ -1,42 +1,20 @@
 import { WeekEnvironmentParamsSchema } from "@/features/environment/week/week.schema"
+import { weekServiceHelpers } from "@/features/environment/week/week.service"
 import {
-    OPENCAGE_GEOCODE,
-    OPEN_METEO_AIR_QUALITY,
-    OPEN_METEO_HISTORICAL_WEATHER,
-    WORLDBANK,
-} from "@/shared/config/urls"
+    AggResult,
+    EnvironmentData,
+    HEAT_WAVE_DAY_THRESHOLD,
+    PRECIPITATION_THRESHOLD,
+    QueryParams,
+    Reducer,
+    WeeklyEnvironmentData,
+} from "@/features/environment/week/week.types"
+import { OPEN_METEO_AIR_QUALITY, OPEN_METEO_HISTORICAL_WEATHER } from "@/shared/config/urls"
 import { BadRequestException } from "@/shared/http/errors"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
-import ky, { SearchParamsOption } from "ky"
-import { NextRequest } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { fetchWeatherApi } from "openmeteo"
 import z from "zod"
-
-type Reducer = (values: number[]) => number | null
-type AggResult<T> = { date: string } & { [K in keyof T]: number | null }
-
-type QueryParams = {
-    lat: number
-    lng: number
-    date: string
-}
-
-interface WeeklyEnvironmentData {
-    date: string
-    pm25_ugm3: number | null
-    aqi_pm: number | null
-
-    temperature_celsius: number | null
-    precipitation_mm: number | null
-
-    heat_wave_days: number | null
-    flood_indicator: number | null
-}
-
-const HEAT_WAVE_DAY_THRESHOLD = 28
-// Precipitation in mm ranges between 0-200+
-const PRECIPITATION_THRESHOLD = 132.5
-const externalApi = ky.create({ timeout: 20000 })
 
 function parseWeekEnvironmentParams(request: NextRequest): QueryParams {
     const params = request.nextUrl.searchParams
@@ -158,62 +136,19 @@ async function fetchWeeklyWeatherData(query: QueryParams) {
     )
 }
 
-const fetchIndicators = async (CC: string, year: number) => {
-    const url = `${WORLDBANK}/countries/${CC}/indicators`
-    const searchParams: SearchParamsOption = { format: "json", date: year.toString() }
-
-    const gdpPerCapitaData: Array<any> = await externalApi
-        .get(`${url}/NY.GDP.PCAP.CD`, { searchParams })
-        .json()
-    const foodProductionData: Array<any> = await externalApi
-        .get(`${url}/AG.PRD.FOOD.XD`, { searchParams })
-        .json()
-    const undernourishmentData: Array<any> = await externalApi
-        .get(`${url}/SN.ITK.DEFC.ZS`, { searchParams })
-        .json()
-
-    const [gdpPerCapita, foodProductionIndex, undernourishment] = [
-        gdpPerCapitaData[1]?.[0] ?? null,
-        foodProductionData[1]?.[0] ?? null,
-        undernourishmentData[1]?.[0] ?? null,
-    ]
-
-    return [gdpPerCapita?.value, foodProductionIndex?.value, undernourishment?.value]
-}
-
-const fetchCountryCode = async (lat: number, lng: number) => {
-    const searchParams: SearchParamsOption = { q: `${lat}+${lng}`, key: process.env.OPENCAGE_KEY }
-    const { results }: { results: Array<any> } = await externalApi
-        .get(OPENCAGE_GEOCODE, { searchParams })
-        .json()
-
-    const countryCode: string = results[0].components["ISO_3166-1_alpha-3"]
-    if (!countryCode)
-        throw new BadRequestException(
-            "Invalid coordinates: country code not found using these coordinates",
-            { coords: `${lat},${lng}` }
-        )
-
-    return countryCode
-}
-
-export const GET = globalErrorHandler(async (request: NextRequest) => {
+export const GET = globalErrorHandler<EnvironmentData>(async (request: NextRequest) => {
     const query = parseWeekEnvironmentParams(request)
 
     const air = await fetchWeeklyAirData(query)
     const weather = await fetchWeeklyWeatherData(query)
 
-    /* // TODO: Derive other indicators
-     * Availability: Food production index (2014-2016 = 100) <https://api.worldbank.org/v2/countries/EGY/indicators/AG.PRD.FOOD.XD?format=json>
-     * Utilization: 2.1.1 Prevalence of undernourishment <https://api.worldbank.org/v2/countries/EGY/indicators/SN.ITK.DEFC.ZS?format=json>
+    /* // TODO: Find a way to fetch these from the backend, or use the client to fetch them and cache them on the server
      * Access: Percentage of the population unable to afford a healthy diet (percent) <server/resources/data/indicators/FAO_CAHD_7005.csv>
      * Stability: Prevalence of moderate or severe food insecurity in the total population (percent) (3-year average) <server/resources/data/indicators/FAO_FS_210091.csv>
      */
-    const country_code = await fetchCountryCode(query.lat, query.lng)
-    const [gdp_per_capita_usd, food_production_index, undernourishment] = await fetchIndicators(
-        country_code,
-        new Date(query.date).getFullYear()
-    )
+    const country_code = await weekServiceHelpers.fetchCountryCode(query.lat, query.lng)
+    const [gdp_per_capita_usd, food_production_index, undernourishment] =
+        await weekServiceHelpers.fetchIndicators(country_code, new Date(query.date).getFullYear())
 
     const weeklyEnvironmentData: WeeklyEnvironmentData[] = air.map((airWeek, i) => ({
         date: airWeek.date,
@@ -228,7 +163,7 @@ export const GET = globalErrorHandler(async (request: NextRequest) => {
         heat_wave_days: weather[i].heat_wave_days,
     }))
 
-    return {
+    return NextResponse.json({
         coords: `${query.lat},${query.lng}`,
         country_code,
         indicators: {
@@ -237,5 +172,5 @@ export const GET = globalErrorHandler(async (request: NextRequest) => {
             undernourishment,
         },
         data: weeklyEnvironmentData,
-    }
+    })
 })
