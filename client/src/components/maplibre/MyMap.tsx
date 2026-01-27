@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect, useRef } from "react"
-import maplibregl from "maplibre-gl"
-import "maplibre-gl/dist/maplibre-gl.css"
+import { weekService } from "@/features/environment/week/week.service"
 import bbox from "@turf/bbox"
 import centroid from "@turf/centroid"
+import maplibregl from "maplibre-gl"
+import "maplibre-gl/dist/maplibre-gl.css"
+import { useEffect, useRef } from "react"
 import { createRoot } from "react-dom/client"
 import CountryPopup from "./CountryPopup"
-import { MapService } from "@/services/map.service"
 
 export default function MapView() {
     const mapContainer = useRef<HTMLDivElement | null>(null)
@@ -73,7 +73,7 @@ export default function MapView() {
         })
 
         map.on("click", async (e) => {
-            await MapService.getMapPredictions({
+            await weekService.simulate({
                 data: {
                     aqi_pm: 142.25,
                     country_code: "EGY",

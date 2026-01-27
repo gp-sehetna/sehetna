@@ -1,4 +1,4 @@
-import { api } from "@/lib/fetch"
+import { api } from "@/shared/api"
 
 interface Prediction {
     respiratory_disease_rate: number
@@ -12,8 +12,8 @@ interface PredsRes {
     predictions: Prediction
 }
 
-export const MapService = {
-    getMapPredictions: async (payload: any) => {
+export const weekService = {
+    simulate: async (payload: any) => {
         const { predictions } = await api.post<PredsRes>("ai/simulate", { json: payload }).json()
         return predictions
     },

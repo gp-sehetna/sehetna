@@ -1,6 +1,7 @@
+import { ApplicationException } from "@/shared/http/errors"
+import { errorResponse, successResponse } from "@/shared/http/response"
+import logger from "@/shared/logger"
 import { NextRequest, NextResponse } from "next/server"
-import { errorResponse, successResponse } from "./api.response"
-import { ApplicationException } from "./error.response"
 
 type AppResponse<T = any> = Promise<NextResponse<T>> | NextResponse<T> | T
 
@@ -25,9 +26,11 @@ export function globalErrorHandler<T = any, Args extends any[] = any[]>(handler:
             return successResponse(result)
         } catch (err: unknown) {
             if (err instanceof ApplicationException) {
+                logger.error(`API error: ${err}`)
                 return errorResponse(err.message, err.status, err.err_details)
             }
-            console.error("Unhandled API error: ", err)
+
+            logger.error(`Unhandled API error: ${err}`)
             return errorResponse("Unhandled API error", 500)
         }
     }

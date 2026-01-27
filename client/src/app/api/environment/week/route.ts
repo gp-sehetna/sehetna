@@ -1,12 +1,12 @@
+import { WeekEnvironmentParamsSchema } from "@/features/environment/week/week.schema"
 import {
     OPENCAGE_GEOCODE,
     OPEN_METEO_AIR_QUALITY,
     OPEN_METEO_HISTORICAL_WEATHER,
     WORLDBANK,
-} from "@/lib/config/urls"
-import { WeekEnvironmentParamsSchema } from "@/lib/modules/core/core.business-logic.validation"
-import { globalErrorHandler } from "@/lib/utils/response/error.handler"
-import { BadRequestException } from "@/lib/utils/response/error.response"
+} from "@/shared/config/urls"
+import { BadRequestException } from "@/shared/http/errors"
+import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 import ky, { SearchParamsOption } from "ky"
 import { NextRequest } from "next/server"
 import { fetchWeatherApi } from "openmeteo"

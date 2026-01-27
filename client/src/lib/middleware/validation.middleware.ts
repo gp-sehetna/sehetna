@@ -1,6 +1,6 @@
+import { INextRequestWithBody } from "@/lib/types/next"
+import { BadRequestException } from "@/shared/http/errors"
 import { ZodType } from "zod"
-import { BadRequestException } from "../utils/response/error.response"
-import { INextRequestWithBody } from "../types/request.next"
 
 // type KeyReqType = keyof NextRequest // 'body' | 'params' | 'query' | 'file'
 // type SchemaType = Partial<Record<KeyReqType, ZodType>>

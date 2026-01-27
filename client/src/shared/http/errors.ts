@@ -1,4 +1,4 @@
-export class ApplicationException extends Error {
+class ApplicationException extends Error {
     public readonly status: number
     public readonly err_details: any
 
@@ -11,7 +11,7 @@ export class ApplicationException extends Error {
     }
 }
 
-export class BadRequestException extends ApplicationException {
+class BadRequestException extends ApplicationException {
     constructor(
         message = "Invalid syntax, could be a broken JSON",
         err_details?: any,
@@ -21,13 +21,13 @@ export class BadRequestException extends ApplicationException {
     }
 }
 
-export class UnauthorizedException extends ApplicationException {
+class UnauthorizedException extends ApplicationException {
     constructor(message = "Client has not been authenticated", err_details?: any, cause?: unknown) {
         super(message, 401, err_details, cause)
     }
 }
 
-export class ForbiddenException extends ApplicationException {
+class ForbiddenException extends ApplicationException {
     constructor(
         message = "Unauthorized access due to insufficient permissions",
         err_details?: any,
@@ -37,26 +37,37 @@ export class ForbiddenException extends ApplicationException {
     }
 }
 
-export class NotFoundException extends ApplicationException {
+class NotFoundException extends ApplicationException {
     constructor(message = "Resource is not found", err_details?: any, cause?: unknown) {
         super(message, 404, err_details, cause)
     }
 }
 
-export class ConflictException extends ApplicationException {
+class ConflictException extends ApplicationException {
     constructor(message = "Conflict", err_details?: any, cause?: unknown) {
         super(message, 409, err_details, cause)
     }
 }
 
-export class ValidationException extends ApplicationException {
+class ValidationException extends ApplicationException {
     constructor(message = "Validation failed", err_details?: any, cause?: unknown) {
         super(message, 422, err_details, cause)
     }
 }
 
-export class InternalServerException extends ApplicationException {
+class InternalServerException extends ApplicationException {
     constructor(message = "Internal server error", err_details?: any, cause?: unknown) {
         super(message, 500, err_details, cause)
     }
+}
+
+export {
+    ApplicationException,
+    BadRequestException,
+    ConflictException,
+    ForbiddenException,
+    InternalServerException,
+    NotFoundException,
+    UnauthorizedException,
+    ValidationException,
 }
