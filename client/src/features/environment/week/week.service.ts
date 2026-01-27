@@ -1,3 +1,4 @@
+import { MAP_CONFIG } from "@/components/ui/map/config"
 import { EnvironmentData, WeeklyEnvironmentData } from "@/features/environment/week/week.types"
 import { Alert, confirmMissingData } from "@/lib/alert"
 import { api, externalApi } from "@/shared/api"
@@ -103,6 +104,10 @@ export const weekService = {
         const environment = await weekService.fetchEnvironment(lat, lng, date)
         if (!environment) return null
         return await weekService.simulate(environment)
+    },
+    getCountriesPolygons: async () => {
+        const geoJson = await api.get<any>(MAP_CONFIG.countriesPath).json()
+        return geoJson
     },
 }
 
