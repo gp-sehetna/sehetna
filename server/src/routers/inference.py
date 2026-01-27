@@ -9,6 +9,7 @@ router = APIRouter(tags=["inference"])
 
 
 @router.post("/simulate", response_model=SimulationResponse)
-async def simulate(input_data: PredictionRequest):
-    result = Predictor.simulate(input_data.data)
+async def simulate(req: PredictionRequest):
+    lat, lon = req.coords.split(",")
+    result = Predictor.simulate(req, float(lat), float(lon))
     return SimulationResponse(predictions=result)

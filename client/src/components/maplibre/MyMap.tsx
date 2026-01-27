@@ -1,8 +1,6 @@
 "use client"
 
 import { weekService } from "@/features/environment/week/week.service"
-import { BadRequestException } from "@/shared/http/errors"
-import logger from "@/shared/logger"
 import bbox from "@turf/bbox"
 import centroid from "@turf/centroid"
 import maplibregl from "maplibre-gl"
@@ -75,18 +73,12 @@ export default function MapView() {
         })
 
         map.on("click", async (e) => {
-            try {
-                const environmentData = await weekService.fetchEnvironment(
-                    e.lngLat.lat,
-                    e.lngLat.lng,
-                    "2021-04-01"
-                )
-            } catch (error) {
-                if (!(error instanceof BadRequestException)) throw new Error("Unexpected error")
+            const predictions = await weekService.fetchEnvironmentAndSimulate(
+                e.lngLat.lat,
+                e.lngLat.lng,
+                "2023-04-01"
+            )
 
-                // Use a toast to show the error message
-                logger.info(error.message)
-            }
             const features = map.queryRenderedFeatures(e.point, {
                 layers: ["countries-fill"],
             })

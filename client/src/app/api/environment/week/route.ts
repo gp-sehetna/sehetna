@@ -34,7 +34,7 @@ function buildMeteoParams(query: QueryParams, options: { hourly?: string[]; dail
         latitude: query.lat,
         longitude: query.lng,
         start_date: query.date,
-        end_date: "2021-05-23", // TODO: derive dynamically (+7 days)
+        end_date: "2023-05-23", // TODO: derive dynamically (+7 days)
         timezone: "auto",
         ...options,
     }
@@ -142,10 +142,6 @@ export const GET = globalErrorHandler<EnvironmentData>(async (request: NextReque
     const air = await fetchWeeklyAirData(query)
     const weather = await fetchWeeklyWeatherData(query)
 
-    /* // TODO: Find a way to fetch these from the backend, or use the client to fetch them and cache them on the server
-     * Access: Percentage of the population unable to afford a healthy diet (percent) <server/resources/data/indicators/FAO_CAHD_7005.csv>
-     * Stability: Prevalence of moderate or severe food insecurity in the total population (percent) (3-year average) <server/resources/data/indicators/FAO_FS_210091.csv>
-     */
     const country_code = await weekServiceHelpers.fetchCountryCode(query.lat, query.lng)
     const [gdp_per_capita_usd, food_production_index, undernourishment] =
         await weekServiceHelpers.fetchIndicators(country_code, new Date(query.date).getFullYear())

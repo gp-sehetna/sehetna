@@ -2,6 +2,7 @@ import { EnvironmentData, WeeklyEnvironmentData } from "@/features/environment/w
 import { api, externalApi } from "@/shared/api"
 import { OPENCAGE_GEOCODE, WORLDBANK } from "@/shared/config/urls"
 import { BadRequestException } from "@/shared/http/errors"
+import logger from "@/shared/logger"
 import { SearchParamsOption } from "ky"
 
 interface Prediction {
@@ -60,7 +61,7 @@ export const weekServiceHelpers = {
 }
 
 export const weekService = {
-    simulate: async (payload: any) => {
+    simulate: async (payload: EnvironmentData) => {
         const { predictions } = await api.post<PredsRes>("ai/simulate", { json: payload }).json()
         return predictions
     },
@@ -68,27 +69,41 @@ export const weekService = {
         const coords = `${lat},${lng}`
         const searchParams: SearchParamsOption = { coords, date }
         const environmentData = await api
-            .get<EnvironmentData>("/api/environment/week", { searchParams })
+            .get<EnvironmentData>("api/environment/week", { searchParams })
             .json()
 
-        // Validate Environment Data and ensure non-null values.
-        if (!environmentData || !environmentData.data.length)
-            throw new BadRequestException("No data found for this location.")
-        if (!environmentData.indicators.gdp_per_capita_usd)
-            throw new BadRequestException("No GDP per capita data found for this location.")
-        if (!environmentData.indicators.food_production_index)
-            throw new BadRequestException("No food production index data found for this location.")
-        if (!environmentData.indicators.undernourishment)
-            throw new BadRequestException("No undernourishment data found for this location.")
+        try {
+            // Validate Environment Data and ensure non-null values.
+            if (!environmentData || !environmentData.data.length)
+                throw new BadRequestException("No data found for this location.")
+            if (!environmentData.indicators.gdp_per_capita_usd)
+                throw new BadRequestException("No GDP per capita data found for this location.")
+            if (!environmentData.indicators.food_production_index)
+                throw new BadRequestException(
+                    "No food production index data found for this location."
+                )
+            if (!environmentData.indicators.undernourishment)
+                throw new BadRequestException("No undernourishment data found for this location.")
 
-        // Check if any of the data objects keys is null and retreive this key for logging.
-        const keys = Object.keys(environmentData.data[0]) as Array<keyof WeeklyEnvironmentData>
-        const nullKeys = keys.filter((key) => environmentData.data[0][key] === null)
-        if (nullKeys)
-            throw new BadRequestException("Some data is missing for this location.", {
-                keys: nullKeys,
-            })
+            // Check if any of the data objects keys is null and retreive this key for logging.
+            const keys = Object.keys(environmentData.data[0]) as Array<keyof WeeklyEnvironmentData>
+            const nullKeys = keys.filter((key) => environmentData.data[0][key] === null)
+            if (nullKeys)
+                throw new BadRequestException("Some data is missing for this location.", {
+                    keys: nullKeys,
+                })
+        } catch (error) {
+            if (!(error instanceof BadRequestException)) throw new Error("Unexpected error")
+
+            // Use a toast to show the error message
+            logger.info(error.message)
+        }
 
         return environmentData
+    },
+
+    fetchEnvironmentAndSimulate: async (lat: number, lng: number, date: string) => {
+        const environment = await weekService.fetchEnvironment(lat, lng, date)
+        return await weekService.simulate(environment)
     },
 }

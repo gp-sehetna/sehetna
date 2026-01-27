@@ -1,12 +1,19 @@
 from pydantic import BaseModel, ConfigDict
 
-from src.schema.predictions import HealthDataInput, PredictionRequest, PredictionResult, SimulationResponse
+from src.schema.predictions import (
+    EnvironmentData,
+    PredictionRequest,
+    PredictionResult,
+    SimulationResponse,
+    WeeklyEnvironmentData,
+)
 
 __all__ = [
     "PredictionResult",
     "PredictionRequest",
     "SimulationResponse",
-    "HealthDataInput",
+    "EnvironmentData",
+    "WeeklyEnvironmentData",
     "RootResponse",
     "HealthCheckResponse",
 ]

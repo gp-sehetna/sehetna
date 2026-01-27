@@ -1,19 +1,22 @@
 [
 	{
-		"data": {
-			"date": "2023-04-01",
-			"country_code": "EGY",
-			"latitude": 26.82,
-			"longitude": 30.8,
-			"gdp_per_capita_usd": 120000,
-			"temperature_celsius": 25.5,
-			"pm25_ugm3": 32.21,
-			"precipitation_mm": 3.1,
-			"aqi_pm": 142.25,
-			"healthcare_access_index": 32.1,
-			"food_security_index": 36,
-			"heat_wave_days": 0,
-			"flood_indicator": 0
-		}
+		"coords": "15.769937299573499,7.898460106502284",
+		"country_code": "NER",
+		"indicators": {
+			"gdp_per_capita_usd": 638.336080897887,
+			"food_production_index": 22.7,
+			"undernourishment": 12.9
+		},
+		"data": [
+			{
+				"date": "2023-04-01",
+				"pm25_ugm3": 13.232738057772318,
+				"aqi_pm": 49.44129618008932,
+				"temperature_celsius": 27.80446379525321,
+				"precipitation_mm": 0,
+				"flood_indicator": 0,
+				"heat_wave_days": 3
+			}
+		]
 	}
 ]
