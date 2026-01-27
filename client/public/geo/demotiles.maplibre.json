@@ -10,39 +10,12 @@
             "id": "background",
             "type": "background",
             "paint": {
-                "background-color": "#D8F2FF"
+                "background-color": "#FFFCF8"
             },
             "filter": ["all"],
             "layout": {
                 "visibility": "visible"
-            },
-            "maxzoom": 24
-        },
-        {
-            "id": "coastline",
-            "type": "line",
-            "paint": {
-                "line-blur": 0.5,
-                "line-color": "#198EC8",
-                "line-width": {
-                    "stops": [
-                        [0, 2],
-                        [6, 6],
-                        [14, 9],
-                        [22, 18]
-                    ]
-                }
-            },
-            "filter": ["all"],
-            "layout": {
-                "line-cap": "round",
-                "line-join": "round",
-                "visibility": "visible"
-            },
-            "source": "maplibre",
-            "maxzoom": 24,
-            "minzoom": 0,
-            "source-layer": "countries"
+            }
         },
         {
             "id": "countries-fill",
@@ -301,15 +274,8 @@
             "id": "countries-boundary",
             "type": "line",
             "paint": {
-                "line-color": "rgba(255, 255, 255, 1)",
-                "line-width": {
-                    "stops": [
-                        [1, 1],
-                        [6, 2],
-                        [14, 6],
-                        [22, 12]
-                    ]
-                },
+                "line-color": "#FFFBFA",
+                "line-width": 0.5,
                 "line-opacity": {
                     "stops": [
                         [3, 0.5],
@@ -330,9 +296,9 @@
             "id": "geolines",
             "type": "line",
             "paint": {
-                "line-color": "#1077B0",
+                "line-color": "#ff5c02",
                 "line-opacity": 1,
-                "line-dasharray": [3, 3]
+                "line-dasharray": [3, 5]
             },
             "filter": ["all", ["!=", "name", "International Date Line"]],
             "layout": {
@@ -346,14 +312,14 @@
             "id": "geolines-label",
             "type": "symbol",
             "paint": {
-                "text-color": "#1077B0",
+                "text-color": "#ff5c02",
                 "text-halo-blur": 1,
-                "text-halo-color": "rgba(255, 255, 255, 1)",
+                "text-halo-color": "#FFF",
                 "text-halo-width": 1
             },
             "filter": ["all", ["!=", "name", "International Date Line"]],
             "layout": {
-                "text-font": ["Open Sans Semibold"],
+                "text-font": ["Space Grotesk"],
                 "text-size": {
                     "stops": [
                         [2, 12],

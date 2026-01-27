@@ -2,20 +2,21 @@ import { X } from "lucide-react"
 import Flex from "../Flex"
 import { Button } from "../shadcn/button"
 
-type MapPopupType = { name: string; iso: string; onClose: () => void }
+type PopupProps = { name: string; iso: string; onClose: () => void }
 
-export default function CountryPopup({ name, iso, onClose }: MapPopupType) {
+export default function CountryPopup({ name, iso, onClose }: PopupProps) {
     return (
-        <Flex direction="col" gap={2} className="glassy min-w-40 rounded-xl p-5">
+        <Flex direction="col" gap={2} className="glassy relative h-30 w-75 rounded-xl p-4">
             <Button
-                size={"sm"}
+                size="sm"
+                variant="ghost"
                 onClick={onClose}
-                className="hover:bg-danger/10 -mt-1 -mr-2 ml-auto h-fit rounded-full bg-transparent p-1! active:bg-transparent!"
+                className="absolute top-2 right-2 ml-auto h-fit p-1! hover:bg-neutral-400/60"
             >
-                <X size={24} />
+                <X />
             </Button>
-            <h5>{name}</h5>
-            <p className="text-xs text-slate-500">ISO: {iso}</p>
+            <h6>{name}</h6>
+            <p className="text-xs text-slate-500">{iso}</p>
         </Flex>
     )
 }

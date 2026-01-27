@@ -1,6 +1,6 @@
 "use client"
 
-import { MouseEventHandler, useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 import { Map, maplibregl, MAP_CONFIG } from "./config"
 import type {
     LngLatLike,
@@ -15,66 +15,16 @@ import { createRoot } from "react-dom/client"
 import CountryPopup from "./CountryPopup"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { MapService } from "@/services/map.service"
-import { Button } from "../shadcn/button"
-import { Minus, Plus } from "lucide-react"
+import ZoomControls from "./ZoomControls"
 
 const INITIAL_MAP_CONFIG = {
     longitude: 31.23,
     latitude: 30.04,
     zoom: 3,
 }
-export type BBox =
-    | [number, number, number, number]
-    | [number, number, number, number, number, number]
 
 type CountriesById = Record<string | number, MapGeoJSONFeature>
 
-// await MapService.getMapPredictions({
-//     data: {
-//         aqi_pm: 142.25,
-//         country_code: "EGY",
-//         date: "2023-04-01",
-//         flood_indicator: 0,
-//         food_security_index: 36,
-//         gdp_per_capita_usd: 120000,
-//         healthcare_access_index: 32.1,
-//         heat_wave_days: 0,
-//         latitude: 26.82,
-//         longitude: 30.8,
-//         pm25_ugm3: 32.21,
-//         precipitation_mm: 3.1,
-//         temperature_celsius: 25.5,
-//     },
-// })
-type ZoomControlsProps = {
-    onZoomIn: MouseEventHandler<HTMLButtonElement>
-    onZoomOut: MouseEventHandler<HTMLButtonElement>
-}
-const ZoomControls = ({ onZoomIn, onZoomOut }: ZoomControlsProps) => {
-    const iconSize = 18
-    return (
-        <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
-            <Button
-                onClick={onZoomIn}
-                variant="glassy"
-                className="rounded-xl"
-                size="icon"
-                aria-label="Zoom in"
-            >
-                <Plus size={iconSize} />
-            </Button>
-            <Button
-                onClick={onZoomOut}
-                variant="glassy"
-                className="rounded-xl"
-                size="icon"
-                aria-label="Zoom out"
-            >
-                <Minus size={iconSize} />
-            </Button>
-        </div>
-    )
-}
 export default function MapView() {
     const markerRef = useRef<maplibregl.Marker>(null)
     const popupRef = useRef<maplibregl.Popup>(null)
@@ -142,19 +92,11 @@ export default function MapView() {
             promoteId: MAP_CONFIG.promoteId,
         })
     }
-    const handleZoomIn = () => {
-        if (mapRef.current) {
-            mapRef.current.zoomIn()
-        }
-    }
+    const handleZoomIn = () => mapRef.current?.zoomIn()
+    const handleZoomOut = () => mapRef.current?.zoomOut()
 
-    const handleZoomOut = () => {
-        if (mapRef.current) {
-            mapRef.current.zoomOut()
-        }
-    }
     return (
-        <div className="relative h-screen w-full">
+        <>
             <Map
                 initialViewState={INITIAL_MAP_CONFIG}
                 style={{ height: "100%", width: "100%" }}
@@ -163,7 +105,7 @@ export default function MapView() {
                 onLoad={onMapLoad}
             />
             <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
-        </div>
+        </>
     )
 }
 
@@ -217,65 +159,65 @@ const renderPopup = (popupRef: any, properties: any, centroid: LngLatLike, map: 
     // console.log(features)
 }
 
-// Debugging bbox boundries
-const bboxToPolygon = (
-    minX: number,
-    minY: number,
-    maxX: number,
-    maxY: number
-): GeoJSON.GeoJSON => ({
-    type: "Feature",
-    geometry: {
-        type: "Polygon",
-        coordinates: [
-            [
-                [minX, minY],
-                [maxX, minY],
-                [maxX, maxY],
-                [minX, maxY],
-                [minX, minY], // close ring
-            ],
-        ],
-    },
-    properties: {},
-})
+//? Debugging bbox boundries
+// type BBox = [number, number, number, number] | [number, number, number, number, number, number]
+// const bboxToPolygon = (
+//     minX: number,
+//     minY: number,
+//     maxX: number,
+//     maxY: number
+// ): GeoJSON.GeoJSON => ({
+//     type: "Feature",
+//     geometry: {
+//         type: "Polygon",
+//         coordinates: [
+//             [
+//                 [minX, minY],
+//                 [maxX, minY],
+//                 [maxX, maxY],
+//                 [minX, maxY],
+//                 [minX, minY], // close ring
+//             ],
+//         ],
+//     },
+//     properties: {},
+// })
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const drawBBox = (map: maplibregl.Map, bbox: BBox) => {
-    const [minX, minY, maxX, maxY] = bbox
-    const feature = bboxToPolygon(minX, minY, maxX, maxY)
+// const drawBBox = (map: maplibregl.Map, bbox: BBox) => {
+//     const [minX, minY, maxX, maxY] = bbox
+//     const feature = bboxToPolygon(minX, minY, maxX, maxY)
 
-    const sourceId = "debug-bbox-source"
-    const lineLayerId = "debug-bbox-line"
-    const fillLayerId = "debug-bbox-fill"
+//     const sourceId = "debug-bbox-source"
+//     const lineLayerId = "debug-bbox-line"
+//     const fillLayerId = "debug-bbox-fill"
 
-    if (map.getSource(sourceId)) {
-        ;(map.getSource(sourceId) as maplibregl.GeoJSONSource).setData(feature)
-        return
-    }
+//     if (map.getSource(sourceId)) {
+//         ;(map.getSource(sourceId) as maplibregl.GeoJSONSource).setData(feature)
+//         return
+//     }
 
-    map.addSource(sourceId, {
-        type: "geojson",
-        data: feature,
-    })
+//     map.addSource(sourceId, {
+//         type: "geojson",
+//         data: feature,
+//     })
 
-    map.addLayer({
-        id: fillLayerId,
-        type: "fill",
-        source: sourceId,
-        paint: {
-            "fill-color": "#ff0000",
-            "fill-opacity": 0.15,
-        },
-    })
+//     map.addLayer({
+//         id: fillLayerId,
+//         type: "fill",
+//         source: sourceId,
+//         paint: {
+//             "fill-color": "#ff0000",
+//             "fill-opacity": 0.15,
+//         },
+//     })
 
-    map.addLayer({
-        id: lineLayerId,
-        type: "line",
-        source: sourceId,
-        paint: {
-            "line-color": "#ff0000",
-            "line-width": 2,
-        },
-    })
-}
+//     map.addLayer({
+//         id: lineLayerId,
+//         type: "line",
+//         source: sourceId,
+//         paint: {
+//             "line-color": "#ff0000",
+//             "line-width": 2,
+//         },
+//     })
+// }

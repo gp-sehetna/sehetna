@@ -6,6 +6,7 @@ h5,
 h6 {
     font-family: var(--font-heading);
     font-weight: bold;
+    color: var(--color-neutral-1000);
 }
 
 h1 {
