@@ -1,6 +1,8 @@
 import logging
+import os
 
 import joblib
+import pandas as pd
 from sklearn.pipeline import Pipeline
 
 from config import Settings
@@ -42,6 +44,10 @@ class ModelLoader:
             "waterborne_disease_incidents",
             "heat_related_admissions",
         ]
+        self.country_map: pd.DataFrame = None
+        self.uhc_df: pd.DataFrame = None
+        self.food_access_df: pd.DataFrame = None
+        self.food_stability_df: pd.DataFrame = None
 
     def __call__(self, settings: Settings):
         self.load_model(settings.model_path)
@@ -64,3 +70,25 @@ class ModelLoader:
     def load_pipeline(self, path: str):
         self.pipeline: Pipeline = joblib.load(path)
         logger.info("Loaded pipeline")
+
+    def load_indicators(self, settings: Settings):
+        """Load and cache indicator dataframes to avoid repeated I/O."""
+        country_map = pd.read_csv(os.path.join(settings.resources_path, "iso3_codes_m49_mapping.csv"))
+
+        uhc_df = pd.read_csv(
+            os.path.join(settings.indicators_dir, "WHO_9A706FD_ALL_LATEST/9A706FD_ALL_LATEST.csv"),
+            usecols=["DIM_GEO_CODE_M49", "DIM_TIME", "INDEX_N"],
+        )
+
+        food_access_df = pd.read_csv(
+            os.path.join(settings.indicators_dir, "FAO_CAHD_7005/FAO_CAHD_7005.csv"),
+            usecols=["REF_AREA", "TIME_PERIOD", "OBS_VALUE"],
+        )
+
+        food_stability_df = pd.read_csv(
+            os.path.join(settings.indicators_dir, "FAO_FS_210091/FAO_FS_210091.csv"),
+            usecols=["REF_AREA", "TIME_PERIOD", "OBS_VALUE"],
+        )
+        logger.info("Loaded and cached all indicator dataframes")
+
+        return country_map, uhc_df, food_access_df, food_stability_df

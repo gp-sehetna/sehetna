@@ -1,0 +1,43 @@
+
+├── src
+│   ├── app
+│   │   ├── api
+│   │   │   ├── auth
+│   │   │   │   ├── login
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── logout
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── signup
+│   │   │   │       └── route.ts
+│   │   │   └── environment
+│   │   │       └── week
+│   │   │           └── route.ts
+│   ├── lib
+│   │   ├── config
+│   │   │   └── urls.ts
+│   │   ├── fetch
+│   │   │   ├── client.ts
+│   │   │   ├── index.ts
+│   │   │   └── interceptors.ts
+│   │   ├── middleware
+│   │   │   ├── authentication.middleware.ts
+│   │   │   ├── chain.middleware.ts
+│   │   │   └── validation.middleware.ts
+│   │   ├── modules
+│   │   │   ├── auth
+│   │   │   │   ├── auth.dto.ts
+│   │   │   │   └── auth.validation.ts
+│   │   │   └── core
+│   │   │       ├── core.business-logic.dto.ts
+│   │   │       └── core.business-logic.validation.ts
+│   │   ├── types
+│   │   │   └── request.next.ts
+│   │   └── utils
+│   │       ├── cn.ts
+│   │       ├── response
+│   │       │   ├── api.response.ts
+│   │       │   ├── error.handler.ts
+│   │       │   └── error.response.ts
+│   │       └── security
+│   │           └── token.security.ts
+│   └── services
