@@ -1,8 +1,8 @@
 import { EnvironmentData, WeeklyEnvironmentData } from "@/features/environment/week/week.types"
+import { Alert, confirmMissingData } from "@/lib/alert"
 import { api, externalApi } from "@/shared/api"
 import { OPENCAGE_GEOCODE, WORLDBANK } from "@/shared/config/urls"
 import { BadRequestException } from "@/shared/http/errors"
-import logger from "@/shared/logger"
 import { SearchParamsOption } from "ky"
 
 interface Prediction {
@@ -72,31 +72,28 @@ export const weekService = {
             .get<EnvironmentData>("api/environment/week", { searchParams })
             .json()
 
-        try {
-            // Validate Environment Data and ensure non-null values.
-            if (!environmentData || !environmentData.data.length)
-                throw new BadRequestException("No data found for this location.")
-            if (!environmentData.indicators.gdp_per_capita_usd)
-                throw new BadRequestException("No GDP per capita data found for this location.")
-            if (!environmentData.indicators.food_production_index)
-                throw new BadRequestException(
-                    "No food production index data found for this location."
-                )
-            if (!environmentData.indicators.undernourishment)
-                throw new BadRequestException("No undernourishment data found for this location.")
+        // Validate Environment Data and ensure non-null values.
+        if (!environmentData || !environmentData.data.length) {
+            await Alert.popup.fire({ icon: "error", title: "No data found for this location" })
+            return null
+        }
 
-            // Check if any of the data objects keys is null and retreive this key for logging.
-            const keys = Object.keys(environmentData.data[0]) as Array<keyof WeeklyEnvironmentData>
-            const nullKeys = keys.filter((key) => environmentData.data[0][key] === null)
-            if (nullKeys)
-                throw new BadRequestException("Some data is missing for this location.", {
-                    keys: nullKeys,
-                })
-        } catch (error) {
-            if (!(error instanceof BadRequestException)) throw new Error("Unexpected error")
+        // Check if any of the data objects keys is null and retreive this key for logging.
+        const keys = Object.keys(environmentData.data[0]) as Array<keyof WeeklyEnvironmentData>
+        const nullKeys = keys
+            .filter((key) => environmentData.data[0][key] === null)
+            .map((key) => `data.${key}`)
+        if (!environmentData.indicators.gdp_per_capita_usd)
+            nullKeys.push("indicators.gdp_per_capita_usd")
+        if (!environmentData.indicators.food_production_index)
+            nullKeys.push("indicators.food_production_index")
+        if (!environmentData.indicators.undernourishment)
+            nullKeys.push("indicators.undernourishment")
 
-            // Use a toast to show the error message
-            logger.info(error.message)
+        if (nullKeys) {
+            const shouldContinue = await confirmMissingData(nullKeys)
+
+            if (!shouldContinue) return null
         }
 
         return environmentData
@@ -104,6 +101,20 @@ export const weekService = {
 
     fetchEnvironmentAndSimulate: async (lat: number, lng: number, date: string) => {
         const environment = await weekService.fetchEnvironment(lat, lng, date)
+        if (!environment) return null
         return await weekService.simulate(environment)
     },
 }
+
+/**
+ * Example usage:
+ *
+ * const predictions = await weekService.fetchEnvironmentAndSimulate(
+ *      e.lngLat.lat,
+ *      e.lngLat.lng,
+ *      "2023-04-01"
+ *  )
+ *
+ *  if (!predictions) return
+ *
+ */

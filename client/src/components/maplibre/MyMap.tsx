@@ -1,6 +1,5 @@
 "use client"
 
-import { weekService } from "@/features/environment/week/week.service"
 import bbox from "@turf/bbox"
 import centroid from "@turf/centroid"
 import maplibregl from "maplibre-gl"
@@ -73,12 +72,6 @@ export default function MapView() {
         })
 
         map.on("click", async (e) => {
-            const predictions = await weekService.fetchEnvironmentAndSimulate(
-                e.lngLat.lat,
-                e.lngLat.lng,
-                "2023-04-01"
-            )
-
             const features = map.queryRenderedFeatures(e.point, {
                 layers: ["countries-fill"],
             })

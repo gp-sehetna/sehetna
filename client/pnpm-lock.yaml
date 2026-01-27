@@ -29,6 +29,9 @@ importers:
       '@turf/centroid':
         specifier: ^7.3.2
         version: 7.3.2
+      animate.css:
+        specifier: ^4.1.1
+        version: 4.1.1
       axios:
         specifier: ^1.13.2
         version: 1.13.2
@@ -80,6 +83,12 @@ importers:
       react-dom:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
+      sweetalert2:
+        specifier: ^11.26.17
+        version: 11.26.17
+      sweetalert2-react-content:
+        specifier: ^5.1.1
+        version: 5.1.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sweetalert2@11.26.17)
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
@@ -1151,6 +1160,9 @@ packages:
 
   ajv@6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
+
+  animate.css@4.1.1:
+    resolution: {integrity: sha512-+mRmCTv6SbCmtYJCN4faJMNFVNN5EuCTTprDTAo7YzIGji2KADmakjVA3+8mVDkZ2Bf09vayB35lSQIex2+QaQ==}
 
   ansi-styles@4.3.0:
     resolution: {integrity: sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==}
@@ -2598,6 +2610,16 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
+  sweetalert2-react-content@5.1.1:
+    resolution: {integrity: sha512-JR1DWKQVCSy87q2gNGv5pZgG4TK/x1X61N/HbvDdKmnkCWCSSulG7JfFR8qSB32+H+6nvonsIcevZD7mzRpF0A==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+      sweetalert2: ^11.0.0
+
+  sweetalert2@11.26.17:
+    resolution: {integrity: sha512-kkaySn1IRfwNlf9AkZVqDmBINDWw9NRR6Ij0O5dBRBOD1+mbtZJWxxR9/pA90nce9E5tIIkJ7SWij4rMWXtA1g==}
+
   tailwind-merge@3.4.0:
     resolution: {integrity: sha512-uSaO4gnW+b3Y2aWoWfFpX62vn2sR3skfhbjsEnaBI81WD1wBLlHZe5sWf0AqjksNdYTbGBEd0UasQMT3SNV15g==}
 
@@ -3722,6 +3744,8 @@ snapshots:
       fast-json-stable-stringify: 2.1.0
       json-schema-traverse: 0.4.1
       uri-js: 4.4.1
+
+  animate.css@4.1.1: {}
 
   ansi-styles@4.3.0:
     dependencies:
@@ -5343,6 +5367,14 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  sweetalert2-react-content@5.1.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sweetalert2@11.26.17):
+    dependencies:
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
+      sweetalert2: 11.26.17
+
+  sweetalert2@11.26.17: {}
 
   tailwind-merge@3.4.0: {}
 
