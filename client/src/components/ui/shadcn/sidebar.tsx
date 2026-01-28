@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { PanelLeft } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils/cn"
@@ -265,26 +265,28 @@ const Sidebar = React.forwardRef<
 Sidebar.displayName = "Sidebar"
 
 const SidebarTrigger = React.forwardRef<
-    React.ElementRef<typeof Button>,
+    React.ComponentRef<typeof Button>,
     React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
-    const { toggleSidebar } = useSidebar()
+    const { toggleSidebar, state } = useSidebar()
 
     return (
         <Button
             ref={ref}
             data-sidebar="trigger"
-            variant="ghost"
+            variant="glassy"
             size="icon"
-            className={cn("h-7 w-7", className)}
+            className={cn(
+                "absolute top-4 -right-3 z-100 h-5 w-5 rounded-full border-neutral-300 text-neutral-500",
+                className
+            )}
             onClick={(event) => {
                 onClick?.(event)
                 toggleSidebar()
             }}
             {...props}
         >
-            <PanelLeft className="w-5" />
-            <span className="sr-only">Toggle Sidebar</span>
+            {state == "collapsed" ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </Button>
     )
 })
@@ -336,7 +338,7 @@ const SidebarInset = React.forwardRef<HTMLDivElement, React.ComponentProps<"main
 SidebarInset.displayName = "SidebarInset"
 
 const SidebarInput = React.forwardRef<
-    React.ElementRef<typeof Input>,
+    React.ComponentRef<typeof Input>,
     React.ComponentProps<typeof Input>
 >(({ className, ...props }, ref) => {
     return (
@@ -382,7 +384,7 @@ const SidebarFooter = React.forwardRef<HTMLDivElement, React.ComponentProps<"div
 SidebarFooter.displayName = "SidebarFooter"
 
 const SidebarSeparator = React.forwardRef<
-    React.ElementRef<typeof Separator>,
+    React.ComponentRef<typeof Separator>,
     React.ComponentProps<typeof Separator>
 >(({ className, ...props }, ref) => {
     return (
@@ -419,7 +421,7 @@ const SidebarGroup = React.forwardRef<HTMLDivElement, React.ComponentProps<"div"
             <div
                 ref={ref}
                 data-sidebar="group"
-                className={cn("relative flex w-full min-w-0 flex-col p-2", className)}
+                className={cn("relative flex w-full min-w-0 flex-col p-3", className)}
                 {...props}
             />
         )
@@ -488,7 +490,10 @@ const SidebarMenu = React.forwardRef<HTMLUListElement, React.ComponentProps<"ul"
         <ul
             ref={ref}
             data-sidebar="menu"
-            className={cn("flex w-full min-w-0 flex-col gap-1", className)}
+            className={cn(
+                "flex w-full min-w-0 flex-col gap-2 group-data-[state=collapsed]:items-center",
+                className
+            )}
             {...props}
         />
     )

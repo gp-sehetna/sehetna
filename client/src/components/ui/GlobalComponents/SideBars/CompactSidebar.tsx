@@ -14,6 +14,7 @@ import { ForwardRefExoticComponent, RefAttributes } from "react"
 import Flex from "../../Flex"
 import Logo from "../../GlobalControls/Logo"
 import NavLink from "../../NavLink"
+import { Button } from "../../shadcn/button"
 
 type LinkType = {
     title: string
@@ -32,19 +33,20 @@ const navigations: LinkType[] = [
 ]
 const AppSidebar = () => {
     return (
-        <Sidebar collapsible="icon" className="relative border-neutral-300">
-            <SidebarContent>
-                <SidebarGroup className="flex h-full flex-col justify-between">
+        <Sidebar collapsible="icon" className="relative overflow-visible border-neutral-300">
+            <SidebarContent className="overflow-visible!">
+                <SidebarGroup className="flex h-full flex-col justify-between overflow-visible">
                     <Flex direction="col" gap={4}>
-                        <SidebarTrigger className="z-100 mb-16 size-5" />
                         <Logo size={32} />
+                        <SidebarTrigger />
                         <SidebarGroupContent>
-                            <SidebarMenu>
+                            <SidebarMenu className="peer-data-[state=collapsed]:items-center">
                                 {navigations.map((navigation) => (
                                     <SidebarMenuItem key={navigation.title}>
                                         <SidebarMenuButton
                                             className="rounded-lg"
                                             asChild
+                                            size="sm"
                                             tooltip={navigation.title}
                                         >
                                             <NavLink href={navigation.url}>
@@ -58,7 +60,9 @@ const AppSidebar = () => {
                         </SidebarGroupContent>
                     </Flex>
                     <div className="mt-auto">
-                        <LogIn />
+                        <Button size="icon" className="rounded-full" variant="black">
+                            <LogIn size={16} />
+                        </Button>
                     </div>
                 </SidebarGroup>
             </SidebarContent>
