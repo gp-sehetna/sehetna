@@ -1,7 +1,11 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { Map, maplibregl, mapStyle } from "./config"
+import { maplibregl, mapStyle } from "./config"
+
+// MapLibre React wrapper
+import Map from "react-map-gl/maplibre"
+
 import type {
     LngLatLike,
     MapGeoJSONFeature,
@@ -59,18 +63,18 @@ export default function MapView() {
         if (!renderedFeatures.length) return
 
         const renderedCountry = renderedFeatures[0]
-        const id = renderedCountry.properties.ISO_A3
+        const countryIso: string = renderedCountry.properties.ISO_A3
 
-        if (id == null) {
+        if (countryIso == null) {
             console.warn("Clicked country has no id")
             return
         }
 
-        const sourceCountry = countriesByIdRef.current[id]
-        console.log(countriesByIdRef.current)
+        const sourceCountry = countriesByIdRef.current[countryIso]
+        // console.log(countriesByIdRef.current)
 
         if (!sourceCountry) {
-            console.warn("Country not found in source data:", id)
+            console.warn("Country not found in source data: ", countryIso)
             return
         }
 
@@ -82,6 +86,7 @@ export default function MapView() {
         const predictions = await weekService.fetchEnvironmentAndSimulate(
             e.lngLat.lat,
             e.lngLat.lng,
+            countryIso,
             "2023-04-01"
         )
 

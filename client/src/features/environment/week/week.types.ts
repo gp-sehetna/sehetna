@@ -4,6 +4,7 @@ type AggResult<T> = { date: string } & { [K in keyof T]: number | null }
 type QueryParams = {
     lat: number
     lng: number
+    iso: string
     date: string
 }
 

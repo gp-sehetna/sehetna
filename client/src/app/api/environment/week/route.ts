@@ -12,14 +12,15 @@ import {
 import { OPEN_METEO_AIR_QUALITY, OPEN_METEO_HISTORICAL_WEATHER } from "@/shared/config/urls"
 import { BadRequestException } from "@/shared/http/errors"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
-import { NextRequest, NextResponse } from "next/server"
+import { successResponse } from "@/shared/http/response"
+import { NextRequest } from "next/server"
 import { fetchWeatherApi } from "openmeteo"
 import z from "zod"
 
 function parseWeekEnvironmentParams(request: NextRequest): QueryParams {
     const params = request.nextUrl.searchParams
 
-    const raw = { coords: params.get("coords"), date: params.get("date") }
+    const raw = { coords: params.get("coords"), iso: params.get("iso"), date: params.get("date") }
 
     const result = WeekEnvironmentParamsSchema.safeParse(raw)
 
@@ -142,7 +143,7 @@ export const GET = globalErrorHandler<EnvironmentData>(async (request: NextReque
     const air = await fetchWeeklyAirData(query)
     const weather = await fetchWeeklyWeatherData(query)
 
-    const country_code = await weekServiceHelpers.fetchCountryCode(query.lat, query.lng)
+    const country_code = query.iso
     const [gdp_per_capita_usd, food_production_index, undernourishment] =
         await weekServiceHelpers.fetchIndicators(country_code, new Date(query.date).getFullYear())
 
@@ -159,7 +160,7 @@ export const GET = globalErrorHandler<EnvironmentData>(async (request: NextReque
         heat_wave_days: weather[i].heat_wave_days,
     }))
 
-    return NextResponse.json({
+    return successResponse({
         coords: `${query.lat},${query.lng}`,
         country_code,
         indicators: {

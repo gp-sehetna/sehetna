@@ -7,9 +7,6 @@ export {
     type MarkerOptions,
 } from "maplibre-gl"
 
-// MapLibre React wrapper
-export { default as Map } from "react-map-gl/maplibre"
-
 // Styles (side-effects)
 import "maplibre-gl/dist/maplibre-gl.css"
 

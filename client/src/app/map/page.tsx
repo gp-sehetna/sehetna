@@ -32,16 +32,16 @@ export async function generateMetadata({ searchParams }: MProps): Promise<M> {
     }
 
     return {
-        title: "Interactive Map | Sehetna",
+        title: "Interactive Map · Sehetna",
         description: `Explore interactive health and demographic visualizations across different countries. Click on any country to view detailed statistics and insights as of ${date}.`,
         openGraph: {
-            title: "Interactive Map | Sehetna",
+            title: "Interactive Map · Sehetna",
             description: "Interactive country visualizations and statistics",
             type: "website",
         },
         twitter: {
             card: "summary_large_image",
-            title: "Interactive Map | Sehetna",
+            title: "Interactive Map · Sehetna",
             description: "Interactive country visualizations and statistics",
         },
     }
