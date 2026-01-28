@@ -4,6 +4,7 @@ import Flex from "@/components/ui/Flex"
 import Divider from "@/components/ui/GlobalControls/Divider"
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import { LogIn } from "lucide-react"
+import Link from "next/link"
 
 const LogInPage = () => {
     const title = <h4>Hello again!</h4>
@@ -19,15 +20,17 @@ const LogInPage = () => {
                         Sign in with Google
                     </WideButton>
                     <Divider>OR</Divider>
-                    <WideButton size={btnSize} variant="gradient">
-                        Sign in with email address
+                    <WideButton asChild size={btnSize} variant="gradient">
+                        <Link href="/authenticate/login/raw">Sign in with email address</Link>
                     </WideButton>
                 </Flex>
                 <Flex direction="col" gap={4}>
                     <p className="text-xs">Don&apos;t have an account?</p>
-                    <WideButton size={btnSize} variant="outline">
-                        <LogIn />
-                        Sign Up
+                    <WideButton asChild size={btnSize} variant="outline">
+                        <Link href="signup">
+                            <LogIn />
+                            Sign Up
+                        </Link>
                     </WideButton>
                 </Flex>
             </BaseAuthentication>

@@ -8,12 +8,13 @@ type WideButtonProps = {
     variant: any
     size?: ButtonSize
     children?: React.ReactNode
-    // onClick?: () => void
+    asChild?: boolean
 }
 
-export default function WideButton({ variant, size, children }: WideButtonProps) {
+export default function WideButton({ variant, size, asChild, children }: WideButtonProps) {
     return (
         <Button
+            asChild={asChild}
             size={size}
             variant={variant}
             className={cn(

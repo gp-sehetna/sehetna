@@ -60,8 +60,10 @@ const AppSidebar = () => {
                         </SidebarGroupContent>
                     </Flex>
                     <div className="mt-auto">
-                        <Button size="icon" className="rounded-full" variant="black">
-                            <LogIn size={16} />
+                        <Button size="icon" asChild className="rounded-full" variant="black">
+                            <NavLink href="/authenticate/login">
+                                <LogIn size={16} />
+                            </NavLink>
                         </Button>
                     </div>
                 </SidebarGroup>

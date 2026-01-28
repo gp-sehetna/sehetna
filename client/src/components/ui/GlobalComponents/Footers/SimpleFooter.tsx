@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils/cn"
 import FooterLink from "./FooterLink"
+import Image from "next/image"
 
 type SimpleFooterProps = {
     className?: string
@@ -15,13 +16,25 @@ export default function SimpleFooter({ className }: SimpleFooterProps) {
             )}
         >
             <div className="flex w-3/4 justify-evenly">
-                <FooterLink href="#AboutUs">About Us</FooterLink>
-                <FooterLink href="#Methodology">Methodology</FooterLink>
-                <FooterLink href="#Terms">Terms of Service</FooterLink>
-                <FooterLink href="#PrivacyPolicy">Privacy Policy</FooterLink>
-                <FooterLink href="#CookieUse">Cookie Use</FooterLink>
-                <FooterLink href="#Help">Help & Support</FooterLink>
-                <FooterLink href="#Home">@GradProject</FooterLink>
+                <FooterLink href="/more-about-us">About Us</FooterLink>
+                <FooterLink href="/methodology">Methodology</FooterLink>
+                <FooterLink href="/support/services-and-policies#terms">
+                    Terms of Service
+                </FooterLink>
+                <FooterLink href="/support/services-and-policies#privacy-policy">
+                    Privacy Policy
+                </FooterLink>
+                <FooterLink href="/support/services-and-policies#cookie-use">Cookie Use</FooterLink>
+                <FooterLink href="/support">Help & Support</FooterLink>
+                <FooterLink href="/">
+                    @GradProject
+                    <Image
+                        width={15}
+                        height={10}
+                        src="https://media.tenor.com/0-M-_QQY4eQAAAAi/pixel-heart.gif"
+                        alt="H"
+                    />
+                </FooterLink>
             </div>
         </footer>
     )

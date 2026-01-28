@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "../assets/css/main.css";
-
 /* @custom-variant dark (&:is(.dark *)); */
 
 /* To Use Clamp it!: mobileFontSize, desktopFontSize, viewportMin, viewportMax, and baseFontSize. */
@@ -125,6 +124,19 @@
 }
 
 @layer base {
+    .lucide {
+        stroke-width: 1;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-heading);
+        font-weight: bold;
+        color: var(--color-neutral-1000);
+    }
     .glassy {
         @apply border border-neutral-100 bg-neutral-100/30 backdrop-blur-lg;
     }

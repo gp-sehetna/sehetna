@@ -28,7 +28,7 @@ const buttonVariants = cva(
                 gradient: "special-gradient base-transition border-none text-neutral-100",
                 glassy: "glassy base-transition hover:text-neutral-1000 text-neutral-800 hover:bg-neutral-100/60 active:bg-neutral-100/40",
 
-                ghost: "hover:bg-accent hover:text-accent-foreground",
+                ghost: "hover:text-neutral-1000 text-neutral-600",
                 link: "text-primary-foregroud underline-offset-2 hover:underline",
             },
             size: {

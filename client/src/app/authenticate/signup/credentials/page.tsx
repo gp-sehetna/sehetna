@@ -2,7 +2,7 @@ import { AuthenticationField } from "@/components/ui/Authentication/Authenticati
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
 import Flex from "@/components/ui/Flex"
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
-import { KeyRound } from "lucide-react"
+import AuthenticationPasswordInput from "@/components/ui/Authentication/AuthenticationPasswordInput"
 
 const CredentialsPage = () => {
     const title = <h3>Continue your credentials</h3>
@@ -28,12 +28,7 @@ const CredentialsPage = () => {
                     />
                 </div>
                 <Flex direction="col" gap={2} className="md:w-full">
-                    <AuthenticationField
-                        name="Password"
-                        type="password"
-                        placeholder="Enter your password"
-                        prependInnerIcon={<KeyRound />}
-                    />
+                    <AuthenticationPasswordInput id="login-password" name="Password" />
                     <p className="text-xs text-neutral-600">
                         Use 8 or more characters with a mix of letters, numbers & symbols
                     </p>
