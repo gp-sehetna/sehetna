@@ -13,15 +13,14 @@ import { externalApi } from "@/shared/api"
 import {
     OPEN_METEO_AIR_QUALITY,
     OPEN_METEO_HISTORICAL_WEATHER,
-    OPENCAGE_GEOCODE,
     WORLDBANK,
 } from "@/shared/config/urls"
 import { BadRequestException } from "@/shared/http/errors"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 
 import { successResponse } from "@/shared/http/response"
-import { NextRequest } from "next/server"
 import { SearchParamsOption } from "ky"
+import { NextRequest } from "next/server"
 import { fetchWeatherApi } from "openmeteo"
 import { z } from "zod"
 
@@ -118,27 +117,6 @@ async function fetchIndicators(CC: string, year: number): Promise<Array<number |
 
     return [gdpPerCapita?.value, foodProductionIndex?.value, undernourishment?.value]
 }
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function fetchCountryCode(lat: number, lng: number) {
-    const searchParams: SearchParamsOption = {
-        q: `${lat}+${lng}`,
-        key: process.env.OPENCAGE_KEY,
-    }
-    const { results }: { results: Array<any> } = await externalApi
-        .get(OPENCAGE_GEOCODE, { searchParams })
-        .json()
-
-    const countryCode: string = results[0].components["ISO_3166-1_alpha-3"]
-    if (!countryCode)
-        throw new BadRequestException(
-            "Invalid coordinates: country code not found using these coordinates",
-            { coords: `${lat},${lng}` }
-        )
-
-    return countryCode
-}
-
 async function fetchWeeklyAirData(query: QueryParams) {
     const [response] = await fetchWeatherApi(
         OPEN_METEO_AIR_QUALITY,
