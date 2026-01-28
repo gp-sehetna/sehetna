@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { Map, maplibregl, MAP_CONFIG } from "./config"
+import { Map, maplibregl, mapStyle } from "./config"
 import type {
     LngLatLike,
     MapGeoJSONFeature,
@@ -14,13 +14,13 @@ import centroid from "@turf/centroid"
 import { createRoot } from "react-dom/client"
 import CountryPopup from "./CountryPopup"
 import "maplibre-gl/dist/maplibre-gl.css"
-import { MapService } from "@/services/map.service"
 import ZoomControls from "./ZoomControls"
+import { weekService } from "@/features/environment/week/week.service"
 
 const INITIAL_MAP_CONFIG = {
     longitude: 31.23,
     latitude: 30.04,
-    zoom: 3,
+    zoom: 6,
 }
 
 type CountriesById = Record<string | number, MapGeoJSONFeature>
@@ -34,11 +34,11 @@ export default function MapView() {
 
     useEffect(() => {
         ;(async () => {
-            const geojson = await MapService.getCountriesPolygons()
+            const geojson = await weekService.getCountriesPolygons()
 
             const lookup: CountriesById = {}
             geojson.features.forEach((feature: MapGeoJSONFeature, index: number) => {
-                const id = feature.properties.ADM0_A3 ?? index
+                const id = feature.properties.ISO_A3 ?? index
                 lookup[id] = feature
                 feature.id = id
             })
@@ -47,7 +47,7 @@ export default function MapView() {
             // console.log("Countries indexed:", lookup)
         })()
     }, [])
-    const onMapClick = (e: MapLayerMouseEvent) => {
+    const onMapClick = async (e: MapLayerMouseEvent) => {
         const map = e.target
 
         popupRef.current?.remove()
@@ -59,7 +59,7 @@ export default function MapView() {
         if (!renderedFeatures.length) return
 
         const renderedCountry = renderedFeatures[0]
-        const id = renderedCountry.properties.ADM0_A3
+        const id = renderedCountry.properties.ISO_A3
 
         if (id == null) {
             console.warn("Clicked country has no id")
@@ -79,6 +79,14 @@ export default function MapView() {
 
         zoomToCountry(sourceCountry, map, countryCentroid)
 
+        const predictions = await weekService.fetchEnvironmentAndSimulate(
+            e.lngLat.lat,
+            e.lngLat.lng,
+            "2023-04-01"
+        )
+
+        if (!predictions) return
+
         addMarker(markerRef, e.lngLat, map)
         renderPopup(popupRef, sourceCountry.properties, countryCentroid, map)
     }
@@ -86,11 +94,7 @@ export default function MapView() {
     const onMapLoad = (e: MapLibreEvent) => {
         const map = e.target
         mapRef.current = map
-        map.addSource("countries", {
-            type: "geojson",
-            data: MAP_CONFIG.countriesPath,
-            promoteId: MAP_CONFIG.promoteId,
-        })
+        map.setStyle(mapStyle)
     }
     const handleZoomIn = () => mapRef.current?.zoomIn()
     const handleZoomOut = () => mapRef.current?.zoomOut()
@@ -100,7 +104,6 @@ export default function MapView() {
             <Map
                 initialViewState={INITIAL_MAP_CONFIG}
                 style={{ height: "100%", width: "100%" }}
-                mapStyle={MAP_CONFIG.stylePath}
                 onClick={onMapClick}
                 onLoad={onMapLoad}
             />
@@ -147,8 +150,8 @@ const renderPopup = (popupRef: any, properties: any, centroid: LngLatLike, map: 
         root.unmount()
     }
 
-    const { NAME, ADM0_A3 } = properties
-    root.render(<CountryPopup name={NAME} iso={ADM0_A3} onClose={closePopup} />)
+    const { NAME, ISO_A3 } = properties
+    root.render(<CountryPopup name={NAME} iso={ISO_A3} onClose={closePopup} />)
 
     // Create MapLibre popup
     popupRef.current = new maplibregl.Popup({ closeButton: false, closeOnClick: false })

@@ -16,16 +16,16 @@ export async function generateMetadata({ searchParams }: MProps): Promise<M> {
 
     if (country) {
         return {
-            title: `${country} | Sehetna`,
+            title: `${country} · Sehetna`,
             description: `Explore interactive health and demographic visualizations for ${country} as of ${date}. View detailed statistics and insights on our interactive map.`,
             openGraph: {
-                title: `${country} | Sehetna`,
+                title: `${country} · Sehetna`,
                 description: `Interactive visualizations for ${country}`,
                 type: "website",
             },
             twitter: {
                 card: "summary_large_image",
-                title: `${country} | Sehetna`,
+                title: `${country} · Sehetna`,
                 description: `Interactive visualizations for ${country}`,
             },
         }
