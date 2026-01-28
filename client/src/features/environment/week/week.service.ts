@@ -1,6 +1,5 @@
 import { MAP_CONFIG } from "@/components/ui/map/config"
 import { EnvironmentData, WeeklyEnvironmentData } from "@/features/environment/week/week.types"
-import { Alert, confirmMissingData } from "@/lib/alert"
 import { api, externalApi } from "@/shared/api"
 import { OPENCAGE_GEOCODE, WORLDBANK } from "@/shared/config/urls"
 import { BadRequestException } from "@/shared/http/errors"
@@ -74,10 +73,8 @@ export const weekService = {
             .json()
 
         // Validate Environment Data and ensure non-null values.
-        if (!environmentData || !environmentData.data.length) {
-            await Alert.popup.fire({ icon: "error", title: "No data found for this location" })
-            return null
-        }
+        if (!environmentData || !environmentData.data.length)
+            return { code: "ENVIRONMENT_NOT_FOUND", data: null } as const
 
         // Check if any of the data objects keys is null and retreive this key for logging.
         const keys = Object.keys(environmentData.data[0]) as Array<keyof WeeklyEnvironmentData>
@@ -91,19 +88,9 @@ export const weekService = {
         if (!environmentData.indicators.undernourishment)
             nullKeys.push("indicators.undernourishment")
 
-        if (nullKeys) {
-            const shouldContinue = await confirmMissingData(nullKeys)
+        if (nullKeys) return { code: "MISSING_DATA", data: nullKeys } as const
 
-            if (!shouldContinue) return null
-        }
-
-        return environmentData
-    },
-
-    fetchEnvironmentAndSimulate: async (lat: number, lng: number, date: string) => {
-        const environment = await weekService.fetchEnvironment(lat, lng, date)
-        if (!environment) return null
-        return await weekService.simulate(environment)
+        return { code: "SUCCESS", data: environmentData } as const
     },
     getCountriesPolygons: async () => {
         const geoJson = await api.get<any>(MAP_CONFIG.countriesPath).json()
@@ -114,11 +101,22 @@ export const weekService = {
 /**
  * Example usage:
  *
- * const predictions = await weekService.fetchEnvironmentAndSimulate(
- *      e.lngLat.lat,
- *      e.lngLat.lng,
- *      "2023-04-01"
- *  )
+ *  import { Alert, confirmMissingData } from "@/lib/alert"
+ *
+ *  const { code, data } = await weekService.fetchEnvironment(e.lngLat.lat, e.lngLat.lng, "2023-04-01")
+ *
+ *  if (code != "SUCCESS") return data
+ *  if (code == "ENVIRONMENT_NOT_FOUND") {
+ *      await Alert.popup.fire({ icon: "error", title: "No data found for this location" })
+ *      return
+ *  }
+ *
+ *  if (code == "MISSING_DATA") {
+ *      const shouldContinue = await confirmMissingData(nullKeys)
+ *      if (!shouldContinue) return null
+ *  }
+ *
+ *  const predictions = await weekService.simulate(data)
  *
  *  if (!predictions) return
  *

@@ -14,7 +14,7 @@ import { BadRequestException } from "@/shared/http/errors"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 import { NextRequest, NextResponse } from "next/server"
 import { fetchWeatherApi } from "openmeteo"
-import z from "zod"
+import { z } from "zod"
 
 function parseWeekEnvironmentParams(request: NextRequest): QueryParams {
     const params = request.nextUrl.searchParams
