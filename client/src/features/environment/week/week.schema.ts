@@ -13,7 +13,7 @@ export const WeekEnvironmentQuerySchema = z.object({
     ),
 
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "date must be YYYY-MM-DD"),
-    endCount: z.number().min(1).multipleOf(7), // Should be divisible by 7
+    endCount: z.coerce.number().min(1).multipleOf(7), // Should be divisible by 7
 })
 
 export const WeekEnvironmentParamsSchema = WeekEnvironmentQuerySchema.transform((data) => {
@@ -22,5 +22,5 @@ export const WeekEnvironmentParamsSchema = WeekEnvironmentQuerySchema.transform(
     const lat = Number(latStr)
     const lng = Number(lngStr)
 
-    return { lat, lng, date: data.date, endCount: data.endCount }
+    return { lat, lng, date: data.date, endCount: Number(data.endCount) }
 })

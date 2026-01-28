@@ -8,6 +8,7 @@ import {
     Reducer,
     WeeklyEnvironmentData,
 } from "@/features/environment/week/week.types"
+import { getWeekRange } from "@/lib/helpers/dateFunctions"
 import { externalApi } from "@/shared/api"
 import {
     OPEN_METEO_AIR_QUALITY,
@@ -25,8 +26,13 @@ import { z } from "zod"
 function parseWeekEnvironmentParams(request: NextRequest): QueryParams {
     const params = request.nextUrl.searchParams
 
-    const raw = { coords: params.get("coords"), date: params.get("date") }
-
+    const raw = {
+        coords: params.get("coords"),
+        date: params.get("date"),
+        endCount: params.get("endCount"),
+    }
+    
+    
     const result = WeekEnvironmentParamsSchema.safeParse(raw)
 
     if (!result.success)
@@ -36,11 +42,14 @@ function parseWeekEnvironmentParams(request: NextRequest): QueryParams {
 }
 
 function buildMeteoParams(query: QueryParams, options: { hourly?: string[]; daily?: string[] }) {
+    const endCount = query.endCount
+    const { startDate, endDate } = getWeekRange(query.date, endCount)
+    
     return {
         latitude: query.lat,
         longitude: query.lng,
-        start_date: query.date,
-        end_date: "2023-05-23", // TODO: derive dynamically (+7 days)
+        start_date: startDate,
+        end_date: endDate,
         timezone: "auto",
         ...options,
     }
@@ -187,7 +196,7 @@ async function fetchWeeklyWeatherData(query: QueryParams) {
 
 export const GET = globalErrorHandler<EnvironmentData>(async (request: NextRequest) => {
     const query = parseWeekEnvironmentParams(request)
-
+    
     const air = await fetchWeeklyAirData(query)
     const weather = await fetchWeeklyWeatherData(query)
 
