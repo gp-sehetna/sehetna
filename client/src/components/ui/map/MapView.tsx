@@ -1,7 +1,11 @@
 "use client"
 
+import { weekService } from "@/features/environment/week/week.service"
+import bbox from "@turf/bbox"
+import centroid from "@turf/centroid"
+import "maplibre-gl/dist/maplibre-gl.css"
 import { useEffect, useRef } from "react"
-import { Map, maplibregl, MAP_CONFIG } from "./config"
+import { createRoot } from "react-dom/client"
 import type {
     LngLatLike,
     MapGeoJSONFeature,
@@ -9,12 +13,8 @@ import type {
     MapLibreEvent,
     MarkerOptions,
 } from "./config"
-import bbox from "@turf/bbox"
-import centroid from "@turf/centroid"
-import { createRoot } from "react-dom/client"
+import { Map, MAP_CONFIG, maplibregl } from "./config"
 import CountryPopup from "./CountryPopup"
-import "maplibre-gl/dist/maplibre-gl.css"
-import { MapService } from "@/services/map.service"
 import ZoomControls from "./ZoomControls"
 
 const INITIAL_MAP_CONFIG = {
@@ -34,7 +34,7 @@ export default function MapView() {
 
     useEffect(() => {
         ;(async () => {
-            const geojson = await MapService.getCountriesPolygons()
+            const geojson = await weekService.getCountriesPolygons()
 
             const lookup: CountriesById = {}
             geojson.features.forEach((feature: MapGeoJSONFeature, index: number) => {
