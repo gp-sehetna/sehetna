@@ -179,6 +179,7 @@ async function fetchWeeklyWeatherData(query: QueryParams) {
             // TODO: Derive dynamically according to location or anomaly temperature.
             heat_wave_days: (vs) => vs.filter((v) => v > HEAT_WAVE_DAY_THRESHOLD).length,
             average_temperature: avg,
+            // TODO: Average precipitation can be sum instead of average?
             average_precipitation: avg,
         }
     )

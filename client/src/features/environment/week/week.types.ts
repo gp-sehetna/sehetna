@@ -4,7 +4,8 @@ type AggResult<T> = { date: string } & { [K in keyof T]: number | null }
 type QueryParams = {
     lat: number
     lng: number
-    date: string
+    date: string // 01-dec-2024
+    endCount: number // 7
 }
 
 interface WeeklyEnvironmentData {
