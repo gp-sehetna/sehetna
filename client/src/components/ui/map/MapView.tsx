@@ -1,10 +1,15 @@
 "use client"
 
+import { weekService } from "@/features/environment/week/week.service"
+import bbox from "@turf/bbox"
+import centroid from "@turf/centroid"
+import "maplibre-gl/dist/maplibre-gl.css"
 import { useEffect, useRef } from "react"
 import { maplibregl, mapStyle } from "./config"
 
 // MapLibre React wrapper
 import Map from "react-map-gl/maplibre"
+import { createRoot } from "react-dom/client"
 
 import type {
     LngLatLike,
@@ -13,13 +18,9 @@ import type {
     MapLibreEvent,
     MarkerOptions,
 } from "./config"
-import bbox from "@turf/bbox"
-import centroid from "@turf/centroid"
-import { createRoot } from "react-dom/client"
 import CountryPopup from "./CountryPopup"
-import "maplibre-gl/dist/maplibre-gl.css"
 import ZoomControls from "./ZoomControls"
-import { weekService } from "@/features/environment/week/week.service"
+import "maplibre-gl/dist/maplibre-gl.css"
 
 const INITIAL_MAP_CONFIG = {
     longitude: 31.23,

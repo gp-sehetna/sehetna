@@ -1,5 +1,4 @@
 import { WeekEnvironmentParamsSchema } from "@/features/environment/week/week.schema"
-import { weekServiceHelpers } from "@/features/environment/week/week.service"
 import {
     AggResult,
     EnvironmentData,
@@ -9,13 +8,21 @@ import {
     Reducer,
     WeeklyEnvironmentData,
 } from "@/features/environment/week/week.types"
-import { OPEN_METEO_AIR_QUALITY, OPEN_METEO_HISTORICAL_WEATHER } from "@/shared/config/urls"
+import { externalApi } from "@/shared/api"
+import {
+    OPEN_METEO_AIR_QUALITY,
+    OPEN_METEO_HISTORICAL_WEATHER,
+    OPENCAGE_GEOCODE,
+    WORLDBANK,
+} from "@/shared/config/urls"
 import { BadRequestException } from "@/shared/http/errors"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
+
 import { successResponse } from "@/shared/http/response"
 import { NextRequest } from "next/server"
+import { SearchParamsOption } from "ky"
 import { fetchWeatherApi } from "openmeteo"
-import z from "zod"
+import { z } from "zod"
 
 function parseWeekEnvironmentParams(request: NextRequest): QueryParams {
     const params = request.nextUrl.searchParams
@@ -78,6 +85,49 @@ function aggregateWeekly<T extends Record<string, number[]>>(
     }
 
     return result
+}
+
+async function fetchIndicators(CC: string, year: number): Promise<Array<number | null>> {
+    const url = `${WORLDBANK}/countries/${CC}/indicators`
+    const searchParams: SearchParamsOption = { format: "json", date: year.toString() }
+
+    const gdpPerCapitaData: Array<any> = await externalApi
+        .get(`${url}/NY.GDP.PCAP.CD`, { searchParams })
+        .json()
+    const foodProductionData: Array<any> = await externalApi
+        .get(`${url}/AG.PRD.FOOD.XD`, { searchParams })
+        .json()
+    const undernourishmentData: Array<any> = await externalApi
+        .get(`${url}/SN.ITK.DEFC.ZS`, { searchParams })
+        .json()
+
+    const [gdpPerCapita, foodProductionIndex, undernourishment] = [
+        gdpPerCapitaData[1]?.[0] ?? null,
+        foodProductionData[1]?.[0] ?? null,
+        undernourishmentData[1]?.[0] ?? null,
+    ]
+
+    return [gdpPerCapita?.value, foodProductionIndex?.value, undernourishment?.value]
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function fetchCountryCode(lat: number, lng: number) {
+    const searchParams: SearchParamsOption = {
+        q: `${lat}+${lng}`,
+        key: process.env.OPENCAGE_KEY,
+    }
+    const { results }: { results: Array<any> } = await externalApi
+        .get(OPENCAGE_GEOCODE, { searchParams })
+        .json()
+
+    const countryCode: string = results[0].components["ISO_3166-1_alpha-3"]
+    if (!countryCode)
+        throw new BadRequestException(
+            "Invalid coordinates: country code not found using these coordinates",
+            { coords: `${lat},${lng}` }
+        )
+
+    return countryCode
 }
 
 async function fetchWeeklyAirData(query: QueryParams) {
@@ -144,8 +194,10 @@ export const GET = globalErrorHandler<EnvironmentData>(async (request: NextReque
     const weather = await fetchWeeklyWeatherData(query)
 
     const country_code = query.iso
-    const [gdp_per_capita_usd, food_production_index, undernourishment] =
-        await weekServiceHelpers.fetchIndicators(country_code, new Date(query.date).getFullYear())
+    const [gdp_per_capita_usd, food_production_index, undernourishment] = await fetchIndicators(
+        country_code,
+        new Date(query.date).getFullYear()
+    )
 
     const weeklyEnvironmentData: WeeklyEnvironmentData[] = air.map((airWeek, i) => ({
         date: airWeek.date,
