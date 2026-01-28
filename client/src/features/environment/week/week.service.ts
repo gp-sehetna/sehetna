@@ -21,9 +21,15 @@ export const weekService = {
         const { predictions } = await api.post<PredsRes>("ai/simulate", { json: payload }).json()
         return predictions
     },
-    fetchEnvironment: async (lat: number, lng: number, iso: string, date: string) => {
+    fetchEnvironment: async (
+        lat: number,
+        lng: number,
+        iso: string,
+        date: string,
+        endCount: number
+    ) => {
         const coords = `${lat},${lng}`
-        const searchParams: SearchParamsOption = { coords, iso, date }
+        const searchParams: SearchParamsOption = { coords, iso, date, endCount }
         const environmentData = await api
             .get<EnvironmentData>("api/environment/week", { searchParams })
             .json()
@@ -55,8 +61,14 @@ export const weekService = {
         return environmentData
     },
 
-    fetchEnvironmentAndSimulate: async (lat: number, lng: number, iso: string, date: string) => {
-        const environment = await weekService.fetchEnvironment(lat, lng, iso, date)
+    fetchEnvironmentAndSimulate: async (
+        lat: number,
+        lng: number,
+        iso: string,
+        date: string,
+        endCount: number
+    ) => {
+        const environment = await weekService.fetchEnvironment(lat, lng, iso, date, endCount)
         if (!environment) return null
         return await weekService.simulate(environment)
     },
