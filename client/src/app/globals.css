@@ -125,7 +125,7 @@
 
 @layer base {
     .glassy {
-        @apply border border-neutral-100 bg-white/30 backdrop-blur-lg;
+        @apply border border-neutral-100 bg-neutral-100/30 backdrop-blur-lg;
     }
     .base-transition {
         @apply transition-all duration-300;
