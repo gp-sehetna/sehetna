@@ -6,6 +6,7 @@ type QueryParams = {
     lng: number
     iso: string
     date: string
+    endCount: number
 }
 
 interface WeeklyEnvironmentData {
