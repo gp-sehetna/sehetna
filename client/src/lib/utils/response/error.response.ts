@@ -15,3 +15,9 @@ export class BadRequestException extends ApplicationException {
         super(message, 400, cause)
     }
 }
+
+export class UnauthorizedException extends ApplicationException {
+    constructor(message: string, cause?: unknown) {
+        super(message, 401, cause)
+    }
+}
