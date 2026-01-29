@@ -1,8 +1,15 @@
 import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
+import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
-import WideButton from "@/components/ui/WideButton"
 import { LogIn, Mail } from "lucide-react"
+import { Metadata } from "next"
+import Link from "next/link"
+
+export const metadata: Metadata = {
+    title: "Sign Up",
+    description: "Create a new account on Sehetna to access healthcare insights and data.",
+}
 
 const SignUpRawPage = () => {
     const title = <h3>Create your account</h3>
@@ -25,9 +32,11 @@ const SignUpRawPage = () => {
                 <WideButton variant="black">Continue</WideButton>
                 <Flex direction="col" gap={4}>
                     <p className="text-xs">Aleady have an account?</p>
-                    <WideButton size="lg" variant="outline">
-                        <LogIn />
-                        Log In
+                    <WideButton asChild size="lg" variant="outline">
+                        <Link href="/authenticate/login">
+                            <LogIn />
+                            Log In
+                        </Link>
                     </WideButton>
                 </Flex>
             </BaseAuthentication>

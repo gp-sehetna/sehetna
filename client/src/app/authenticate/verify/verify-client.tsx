@@ -1,7 +1,7 @@
 "use client"
 
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
-import WideButton from "@/components/ui/WideButton"
+import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import { Button } from "@/components/ui/shadcn/button"
 import {
     InputOTP,

@@ -38,6 +38,11 @@ class Settings(_Settings):
 
     @computed_field
     @property
+    def indicators_dir(self) -> str:
+        return os.path.join(self.data_path, "indicators")
+
+    @computed_field
+    @property
     def model_path(self) -> str:
         return os.path.join(self.archive_dir, self.__archive_name, "model.joblib")
 

@@ -1,7 +1,21 @@
-import PageCenter from "@/components/ui/PageCenter"
+import ComingSoon from "@/components/ui/ComingSoon"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+    title: "Security Settings",
+    description: "Manage security preferences, authentication, and account protection settings.",
+    alternates: {
+        canonical: "/settings/security",
+    },
+}
 
 const SecuritySettingsPage = () => {
-    return <PageCenter children="Security Settings Page" />
+    return (
+        <ComingSoon
+            title="Security Settings"
+            description="Manage security preferences, authentication, and account protection settings."
+        />
+    )
 }
 
 export default SecuritySettingsPage

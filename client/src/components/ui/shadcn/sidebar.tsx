@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { PanelLeft } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils/cn"
@@ -142,7 +142,7 @@ const SidebarProvider = React.forwardRef<
                             } as React.CSSProperties
                         }
                         className={cn(
-                            "group/sidebar-wrapper has-[[data-variant=inset]]:bg-sidebar flex min-h-svh w-full",
+                            "group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full",
                             className
                         )}
                         ref={ref}
@@ -233,7 +233,7 @@ const Sidebar = React.forwardRef<
                         "group-data-[collapsible=offcanvas]:w-0",
                         "group-data-[side=right]:rotate-180",
                         variant === "floating" || variant === "inset"
-                            ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]"
+                            ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]"
                             : "group-data-[collapsible=icon]:w-[--sidebar-width-icon]"
                     )}
                 />
@@ -245,7 +245,7 @@ const Sidebar = React.forwardRef<
                             : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
                         // Adjust the padding for floating and inset variants.
                         variant === "floating" || variant === "inset"
-                            ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+2px)]"
+                            ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
                             : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
                         className
                     )}
@@ -265,26 +265,28 @@ const Sidebar = React.forwardRef<
 Sidebar.displayName = "Sidebar"
 
 const SidebarTrigger = React.forwardRef<
-    React.ElementRef<typeof Button>,
+    React.ComponentRef<typeof Button>,
     React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
-    const { toggleSidebar } = useSidebar()
+    const { toggleSidebar, state } = useSidebar()
 
     return (
         <Button
             ref={ref}
             data-sidebar="trigger"
-            variant="ghost"
+            variant="glassy"
             size="icon"
-            className={cn("h-7 w-7", className)}
+            className={cn(
+                "absolute top-4 -right-3 z-100 h-5 w-5 rounded-full border-neutral-300 text-neutral-500",
+                className
+            )}
             onClick={(event) => {
                 onClick?.(event)
                 toggleSidebar()
             }}
             {...props}
         >
-            <PanelLeft className="w-5" />
-            <span className="sr-only">Toggle Sidebar</span>
+            {state == "collapsed" ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </Button>
     )
 })
@@ -303,8 +305,8 @@ const SidebarRail = React.forwardRef<HTMLButtonElement, React.ComponentProps<"bu
                 onClick={toggleSidebar}
                 title="Toggle Sidebar"
                 className={cn(
-                    "hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] sm:flex",
-                    "[[data-side=left]_&]:cursor-w-resize [[data-side=right]_&]:cursor-e-resize",
+                    "hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-0.5 sm:flex",
+                    "in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize",
                     "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
                     "group-data-[collapsible=offcanvas]:hover:bg-sidebar group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full",
                     "[[data-side=left][data-collapsible=offcanvas]_&]:-right-2",
@@ -336,7 +338,7 @@ const SidebarInset = React.forwardRef<HTMLDivElement, React.ComponentProps<"main
 SidebarInset.displayName = "SidebarInset"
 
 const SidebarInput = React.forwardRef<
-    React.ElementRef<typeof Input>,
+    React.ComponentRef<typeof Input>,
     React.ComponentProps<typeof Input>
 >(({ className, ...props }, ref) => {
     return (
@@ -382,7 +384,7 @@ const SidebarFooter = React.forwardRef<HTMLDivElement, React.ComponentProps<"div
 SidebarFooter.displayName = "SidebarFooter"
 
 const SidebarSeparator = React.forwardRef<
-    React.ElementRef<typeof Separator>,
+    React.ComponentRef<typeof Separator>,
     React.ComponentProps<typeof Separator>
 >(({ className, ...props }, ref) => {
     return (
@@ -419,7 +421,7 @@ const SidebarGroup = React.forwardRef<HTMLDivElement, React.ComponentProps<"div"
             <div
                 ref={ref}
                 data-sidebar="group"
-                className={cn("relative flex w-full min-w-0 flex-col p-2", className)}
+                className={cn("relative flex w-full min-w-0 flex-col p-3", className)}
                 {...props}
             />
         )
@@ -488,7 +490,10 @@ const SidebarMenu = React.forwardRef<HTMLUListElement, React.ComponentProps<"ul"
         <ul
             ref={ref}
             data-sidebar="menu"
-            className={cn("flex w-full min-w-0 flex-col gap-1", className)}
+            className={cn(
+                "flex w-full min-w-0 flex-col gap-2 group-data-[state=collapsed]:items-center",
+                className
+            )}
             {...props}
         />
     )
@@ -647,6 +652,7 @@ const SidebarMenuSkeleton = React.forwardRef<
 >(({ className, showIcon = false, ...props }, ref) => {
     // Random width between 50 to 90%.
     const width = React.useMemo(() => {
+        // eslint-disable-next-line react-hooks/purity
         return `${Math.floor(Math.random() * 40) + 50}%`
     }, [])
 

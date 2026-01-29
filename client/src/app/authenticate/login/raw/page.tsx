@@ -1,11 +1,16 @@
-"use client"
-
 import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
 import AuthenticationPasswordInput from "@/components/ui/Authentication/AuthenticationPasswordInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
+import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
-import WideButton from "@/components/ui/WideButton"
-import { Mail, LogIn } from "lucide-react"
+import { LogIn, Mail } from "lucide-react"
+import { Metadata } from "next"
+import Link from "next/link"
+
+export const metadata: Metadata = {
+    title: "Log In",
+    description: "Access your Sehetna account to explore healthcare insights and data.",
+}
 
 const LoginRawPage = () => {
     const title = <h3>Log In with your email</h3>
@@ -29,12 +34,14 @@ const LoginRawPage = () => {
                         inlineOptions={forgotPasswordButton}
                     />
                 </Flex>
-                <WideButton variant="black">Log In</WideButton>
+                <WideButton variant="black">Log In With Credentials</WideButton>
                 <Flex direction="col" gap={4}>
                     <p className="text-xs">Don&apos;t have an account?</p>
-                    <WideButton size="lg" variant="outline">
-                        <LogIn />
-                        Sign Up
+                    <WideButton asChild size="lg" variant="outline">
+                        <Link href="/authenticate/signup">
+                            <LogIn />
+                            Sign Up
+                        </Link>
                     </WideButton>
                 </Flex>
             </BaseAuthentication>

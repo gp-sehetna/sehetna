@@ -1,13 +1,7 @@
-import AppSidebar from "@/components/ui/shadcn/AppSidebar"
-import { SidebarInset, SidebarProvider } from "@/components/ui/shadcn/sidebar"
+import AppLayout from "@/components/ui/layouts/AppLayout"
 
 const DataExplorerLayout = ({ children }: { children: React.ReactNode }) => {
-    return (
-        <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset className="flex-1">{children}</SidebarInset>
-        </SidebarProvider>
-    )
+    return <AppLayout children={children} />
 }
 
 export default DataExplorerLayout

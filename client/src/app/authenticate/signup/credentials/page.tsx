@@ -1,8 +1,14 @@
 import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
+import AuthenticationPasswordInput from "@/components/ui/Authentication/AuthenticationPasswordInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
+import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
-import WideButton from "@/components/ui/WideButton"
-import { KeyRound } from "lucide-react"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+    title: "Sign Up · Credentials",
+    description: "Continue setting up your Sehetna account by providing your credentials.",
+}
 
 const CredentialsPage = () => {
     const title = <h3>Continue your credentials</h3>
@@ -28,12 +34,7 @@ const CredentialsPage = () => {
                     />
                 </div>
                 <Flex direction="col" gap={2} className="md:w-full">
-                    <AuthenticationField
-                        name="Password"
-                        type="password"
-                        placeholder="Enter your password"
-                        prependInnerIcon={<KeyRound />}
-                    />
+                    <AuthenticationPasswordInput id="login-password" name="Password" />
                     <p className="text-xs text-neutral-600">
                         Use 8 or more characters with a mix of letters, numbers & symbols
                     </p>

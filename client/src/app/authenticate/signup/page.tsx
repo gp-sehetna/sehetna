@@ -1,10 +1,17 @@
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
 import GoogleIcon from "@/components/ui/Authentication/Globals/GoogleIcon"
+import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
 import AppLink from "@/components/ui/GlobalControls/AppLink"
 import Divider from "@/components/ui/GlobalControls/Divider"
-import WideButton from "@/components/ui/WideButton"
 import { LogIn } from "lucide-react"
+import { Metadata } from "next"
+import Link from "next/link"
+
+export const metadata: Metadata = {
+    title: "Sign Up",
+    description: "Create a new account on Sehetna to access healthcare insights and data.",
+}
 
 const SignUpPage = () => {
     const title = <p>Start your journey</p>
@@ -21,23 +28,33 @@ const SignUpPage = () => {
                     </WideButton>
                     <Divider>OR</Divider>
                     <Flex direction="col" gap={2}>
-                        <WideButton size={btnSize} variant="gradient">
-                            Sign up with email address
+                        <WideButton asChild size={btnSize} variant="gradient">
+                            <Link href="/authenticate/signup/raw">Sign up with email address</Link>
                         </WideButton>
                         <p className="w-75 text-xs font-extralight">
                             By signing up, you agree to the&thinsp;
-                            <AppLink href="#Terms">Terms of Service</AppLink>&thinsp; and&thinsp;
-                            <AppLink href="#PrivacyPolicy">Privacy Policy</AppLink>,
-                            including&thinsp;
-                            <AppLink href="#CookieUse">Cookie Use</AppLink>.
+                            <AppLink href="/support/services-and-policies#terms">
+                                Terms of Service
+                            </AppLink>
+                            &thinsp; and&thinsp;
+                            <AppLink href="/support/services-and-policies#privacy-policy">
+                                Privacy Policy
+                            </AppLink>
+                            , including&thinsp;
+                            <AppLink href="/support/services-and-policies#cookie-use">
+                                Cookie Use
+                            </AppLink>
+                            .
                         </p>
                     </Flex>
                 </Flex>
                 <Flex direction="col" gap={4}>
                     <p className="text-xs">Aleady have an account?</p>
-                    <WideButton size={btnSize} variant="outline">
-                        <LogIn />
-                        Log In
+                    <WideButton asChild size={btnSize} variant="outline">
+                        <Link href="/authenticate/login">
+                            <LogIn />
+                            Log In
+                        </Link>
                     </WideButton>
                 </Flex>
             </BaseAuthentication>

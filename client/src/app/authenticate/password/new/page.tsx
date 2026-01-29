@@ -1,8 +1,14 @@
 import AuthenticationPasswordInput from "@/components/ui/Authentication/AuthenticationPasswordInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
+import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
-import WideButton from "@/components/ui/WideButton"
 import { LockIcon } from "lucide-react"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+    title: "Reset Password",
+    description: "Set a new password for your Sehetna account.",
+}
 
 const NewPasswordPage = () => {
     const title = <h3>Reset password</h3>

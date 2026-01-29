@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils/cn"
 
 const buttonVariants = cva(
-    "focus-visible:ring-ring inline-flex cursor-pointer items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-3 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+    "focus-visible:ring-ring inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-3 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
     {
         variants: {
             variant: {
@@ -13,11 +13,22 @@ const buttonVariants = cva(
                     "bg-primary text-primary-foreground hover:bg-primary-500 active:bg-primary-600",
                 secondary:
                     "bg-secondary text-secondary-foreground hover:bg-secondary-400 active:bg-secondary-300",
-                outline:
-                    "border-primary text-primary bg-background border-primary hover:bg-accent hover:text-accent-foreground border",
                 destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
 
-                ghost: "hover:bg-accent hover:text-accent-foreground",
+                outline: cn(
+                    "border-neutral-1000 border bg-neutral-100",
+                    "hover:bg-neutral-200",
+                    "active:bg-neutral-300"
+                ),
+                black: cn(
+                    "border-neutral-1000 border bg-black text-neutral-100",
+                    "hover:bg-neutral-1000/90 shadow-md",
+                    "active:bg-neutral-1000/80"
+                ),
+                gradient: "special-gradient base-transition border-none text-neutral-100",
+                glassy: "glassy base-transition hover:text-neutral-1000 text-neutral-800 hover:bg-neutral-100/60 active:bg-neutral-100/40",
+
+                ghost: "hover:text-neutral-1000 text-neutral-600",
                 link: "text-primary-foregroud underline-offset-2 hover:underline",
             },
             size: {

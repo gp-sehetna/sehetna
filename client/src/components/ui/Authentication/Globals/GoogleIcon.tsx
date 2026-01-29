@@ -5,7 +5,7 @@ type GoogleIconProps = {
 }
 
 const GoogleIcon = ({ size = 16 }: GoogleIconProps) => {
-    return <Image width={size} height={size} alt="Google logo" src="/Google.svg" />
+    return <Image width={size} height={size} alt="Google logo" src="/icons/Google.svg" />
 }
 
 export default GoogleIcon

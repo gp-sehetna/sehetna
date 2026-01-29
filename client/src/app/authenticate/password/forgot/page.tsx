@@ -1,8 +1,14 @@
 import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
+import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
-import WideButton from "@/components/ui/WideButton"
 import { Mail } from "lucide-react"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+    title: "Forgot Password",
+    description: "Reset your Sehetna account password by entering your email address.",
+}
 
 const ForgotPasswordPage = () => {
     const title = <h3>Forgot your password?</h3>

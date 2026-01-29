@@ -1,4 +1,4 @@
-from modeling.types import BreakPointsDict
+from src.models.types import BreakPointsDict
 
 """
 Module-level docstring for Constants.py

@@ -1,5 +1,5 @@
-from modeling.constants.aqi import BREAKPOINTS
-from modeling.types import BreakPoint, Pollutants
+from src.models.constants.aqi import BREAKPOINTS
+from src.models.types import BreakPoint, Pollutants
 
 
 def pollutant_to_aqi(breakpoints: BreakPoint, value: float) -> float:
@@ -8,6 +8,15 @@ def pollutant_to_aqi(breakpoints: BreakPoint, value: float) -> float:
             if c_high == float("inf"):
                 return aqi_low
             return ((aqi_high - aqi_low) / (c_high - c_low)) * (value - c_low) + aqi_low
+    return float("nan")
+
+
+def aqi_to_pollutant(breakpoints: BreakPoint, aqi: float) -> float:
+    for c_low, c_high, aqi_low, aqi_high in breakpoints:
+        if aqi_low <= aqi <= aqi_high:
+            if aqi_high == float("inf"):
+                return c_low
+            return ((c_high - c_low) / (aqi_high - aqi_low)) * (aqi - aqi_low) + c_low
     return float("nan")
 
 

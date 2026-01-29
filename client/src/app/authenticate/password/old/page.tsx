@@ -1,8 +1,13 @@
 import AuthenticationPasswordInput from "@/components/ui/Authentication/AuthenticationPasswordInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
+import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
-import WideButton from "@/components/ui/WideButton"
+import { Metadata } from "next"
 
+export const metadata: Metadata = {
+    title: "Old Password",
+    description: "Enter your old password to verify your identity.",
+}
 const OldPasswordPage = () => {
     const title = <h3>Enter your old password</h3>
     const subtitle = (
