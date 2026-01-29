@@ -1,5 +1,5 @@
+import { BadRequestException, UnauthorizedException } from "@/shared/http/errors"
 import { JwtPayload, Secret, sign, SignOptions, verify } from "jsonwebtoken"
-import { BadRequestException, UnauthorizedException } from "../response/error.response"
 export enum RoleEnum {
     user = "user",
     admin = "admin",

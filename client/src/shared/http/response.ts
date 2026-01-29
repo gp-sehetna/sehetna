@@ -10,3 +10,4 @@ export const errorResponse = (message: string, status = 400, err_details?: unkno
         { status }
     )
 }
+
