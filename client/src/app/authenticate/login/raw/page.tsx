@@ -1,5 +1,3 @@
-"use client"
-
 import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
 import AuthenticationPasswordInput from "@/components/ui/Authentication/AuthenticationPasswordInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
