@@ -10,7 +10,7 @@ import { CalendarIcon } from "lucide-react"
 import { type DateRange } from "react-day-picker"
 import { cn } from "@/lib/utils/cn"
 
-export function DatePickerWithRange({ className }: { className: string }) {
+export function DatePickerWithRange({ className }: { className?: string }) {
     const [date, setDate] = React.useState<DateRange | undefined>({
         from: new Date(new Date().getFullYear(), 0, 20),
         to: addDays(new Date(new Date().getFullYear(), 0, 20), 20),

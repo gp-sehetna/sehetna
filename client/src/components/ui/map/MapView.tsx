@@ -115,7 +115,7 @@ export default function MapView() {
                 onClick={onMapClick}
                 onLoad={onMapLoad}
             />
-            <DatePickerWithRange className="absolute" />
+            <DatePickerWithRange className="absolute bottom-5 left-5" />
             <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
         </>
     )
