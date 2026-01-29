@@ -5,6 +5,9 @@ export const metadata: Metadata = {
     title: "Data Explorer",
     description:
         "Explore healthcare datasets and insights through Sehetna's interactive data explorer.",
+    alternates: {
+        canonical: "/data-explorer",
+    },
 }
 
 const DataExplorerPage = () => {

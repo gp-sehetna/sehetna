@@ -5,6 +5,9 @@ export const metadata: Metadata = {
     title: "About Us",
     description:
         "Learn about Sehetna, our goals, and how we aim to improve healthcare transparency and accessibility.",
+    alternates: {
+        canonical: "/more-about-us",
+    },
 }
 
 const page = () => {

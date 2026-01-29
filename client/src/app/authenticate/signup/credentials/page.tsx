@@ -1,8 +1,14 @@
 import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
-import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
-import Flex from "@/components/ui/Flex"
-import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import AuthenticationPasswordInput from "@/components/ui/Authentication/AuthenticationPasswordInput"
+import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
+import WideButton from "@/components/ui/Authentication/Globals/WideButton"
+import Flex from "@/components/ui/Flex"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+    title: "Sign Up · Credentials",
+    description: "Continue setting up your Sehetna account by providing your credentials.",
+}
 
 const CredentialsPage = () => {
     const title = <h3>Continue your credentials</h3>

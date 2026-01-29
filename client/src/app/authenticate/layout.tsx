@@ -4,6 +4,10 @@ import Footer from "@/components/ui/GlobalComponents/Footers/Footer"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
+    title: {
+        default: "Sehetna Authentication",
+        template: "%s · Sehetna Authentication",
+    },
     robots: {
         index: false,
         follow: false,

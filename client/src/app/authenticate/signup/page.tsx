@@ -1,11 +1,17 @@
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
 import GoogleIcon from "@/components/ui/Authentication/Globals/GoogleIcon"
+import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
 import AppLink from "@/components/ui/GlobalControls/AppLink"
 import Divider from "@/components/ui/GlobalControls/Divider"
-import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import { LogIn } from "lucide-react"
+import { Metadata } from "next"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+    title: "Sign Up",
+    description: "Create a new account on Sehetna to access healthcare insights and data.",
+}
 
 const SignUpPage = () => {
     const title = <p>Start your journey</p>
