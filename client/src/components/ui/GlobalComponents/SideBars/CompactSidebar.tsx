@@ -27,9 +27,6 @@ const navigations: LinkType[] = [
     { title: "Methodology", url: "/methodology", icon: Waypoints },
     { title: "Security", url: "/settings/security", icon: ShieldCheck },
     { title: "Help & Support", url: "/support", icon: Info },
-    // { title: "Log In", url: "/authenticate/login", icon: Home},
-    // { title: "Sign Up", url: "/authenticate/signup" , icon: Home},
-    // { title: "Account", url: "/settings/account" , icon: Home},
 ]
 const AppSidebar = () => {
     return (

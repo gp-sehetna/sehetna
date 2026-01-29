@@ -1,5 +1,5 @@
 import Image from "next/image"
-import NavLink from "../NavLink"
+import Link from "next/link"
 
 type LogoProps = {
     size?: number
@@ -7,8 +7,8 @@ type LogoProps = {
 
 export default function Logo({ size = 48 }: LogoProps) {
     return (
-        <NavLink href="/">
+        <Link href="/">
             <Image width={size} height={size} alt="Sehetna" src="/Branding/Logo/sehetna-logo.png" />
-        </NavLink>
+        </Link>
     )
 }
