@@ -4,13 +4,16 @@ import { weekService } from "@/features/environment/week/week.service"
 import bbox from "@turf/bbox"
 import centroid from "@turf/centroid"
 import "maplibre-gl/dist/maplibre-gl.css"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { maplibregl, mapStyle } from "./config"
 
 // MapLibre React wrapper
-import Map from "react-map-gl/maplibre"
 import { createRoot } from "react-dom/client"
+import Map from "react-map-gl/maplibre"
 
+import { slugifyCountry, toProperCase, unslugifyCountry } from "@/lib/utils"
+import "maplibre-gl/dist/maplibre-gl.css"
+import { useParams, useRouter } from "next/navigation"
 import type {
     LngLatLike,
     MapGeoJSONFeature,
@@ -20,7 +23,6 @@ import type {
 } from "./config"
 import CountryPopup from "./CountryPopup"
 import ZoomControls from "./ZoomControls"
-import "maplibre-gl/dist/maplibre-gl.css"
 
 const INITIAL_MAP_CONFIG = {
     longitude: 31.23,
@@ -31,11 +33,32 @@ const INITIAL_MAP_CONFIG = {
 type CountriesById = Record<string | number, MapGeoJSONFeature>
 
 export default function MapView() {
+    const [geojsonReady, setGeojsonReady] = useState(false)
+    const [mapLoaded, setMapLoaded] = useState(false)
+    const params = useParams<{ country?: string }>()
+    const activeCountrySlug = params.country
+    const router = useRouter()
     const markerRef = useRef<maplibregl.Marker>(null)
     const popupRef = useRef<maplibregl.Popup>(null)
     const mapRef = useRef<maplibregl.Map>(null)
 
     const countriesByIdRef = useRef<CountriesById>({})
+
+    const zoomToCountryBySlug = (slug: string) => {
+        if (!mapRef.current) return
+
+        const countryName = toProperCase(unslugifyCountry(slug))
+
+        const countryFeature = Object.values(countriesByIdRef.current).find(
+            (feature) => feature.properties?.NAME?.toLowerCase() === countryName.toLowerCase()
+        )
+
+        if (!countryFeature) return
+
+        const centroidCoords = centroid(countryFeature).geometry.coordinates as LngLatLike
+
+        zoomToCountry(countryFeature, mapRef.current, centroidCoords)
+    }
 
     useEffect(() => {
         ;(async () => {
@@ -49,9 +72,17 @@ export default function MapView() {
             })
 
             countriesByIdRef.current = lookup
+            setGeojsonReady(true)
             // console.log("Countries indexed:", lookup)
         })()
-    }, [])
+        if (!mapLoaded) return
+        if (!geojsonReady) return
+        if (!activeCountrySlug) return
+        if (!mapRef.current) return
+
+        zoomToCountryBySlug(activeCountrySlug)
+    }, [mapLoaded, geojsonReady, activeCountrySlug])
+
     const onMapClick = async (e: MapLayerMouseEvent) => {
         const map = e.target
 
@@ -79,7 +110,9 @@ export default function MapView() {
             return
         }
 
-        // ✅ Stable geometry
+        const slug = slugifyCountry(sourceCountry.properties.NAME)
+        router.push(`/map/${slug}`)
+
         const countryCentroid = centroid(sourceCountry).geometry.coordinates as LngLatLike
 
         zoomToCountry(sourceCountry, map, countryCentroid)
@@ -102,6 +135,7 @@ export default function MapView() {
         const map = e.target
         mapRef.current = map
         map.setStyle(mapStyle)
+        setMapLoaded(true)
     }
     const handleZoomIn = () => mapRef.current?.zoomIn()
     const handleZoomOut = () => mapRef.current?.zoomOut()
@@ -109,6 +143,7 @@ export default function MapView() {
     return (
         <>
             <Map
+                reuseMaps
                 initialViewState={INITIAL_MAP_CONFIG}
                 style={{ height: "100%", width: "100%" }}
                 onClick={onMapClick}

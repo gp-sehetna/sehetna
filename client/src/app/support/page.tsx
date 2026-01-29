@@ -1,7 +1,18 @@
-import PageCenter from "@/components/ui/PageCenter"
+import ComingSoon from "@/components/ui/ComingSoon"
+import { Metadata } from "next"
 
-const page = () => {
-    return <PageCenter children="Support Page" />
+export const metadata: Metadata = {
+    title: "Support",
+    description: "Get support, help, and assistance for using the Sehetna platform.",
 }
 
-export default page
+const SupportPage = () => {
+    return (
+        <ComingSoon
+            title="Support"
+            description="Get support, help, and assistance for using the Sehetna platform."
+        />
+    )
+}
+
+export default SupportPage

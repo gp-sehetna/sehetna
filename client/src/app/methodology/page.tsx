@@ -1,7 +1,19 @@
-import PageCenter from "@/components/ui/PageCenter"
+import ComingSoon from "@/components/ui/ComingSoon"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+    title: "Methodology",
+    description:
+        "Understand the methodology and data sources used by Sehetna to generate healthcare insights.",
+}
 
 const MethodologyPage = () => {
-    return <PageCenter children="Methodology Page" />
+    return (
+        <ComingSoon
+            title="Methodology"
+            description="Understand the methodology and data sources used by Sehetna to generate healthcare insights."
+        />
+    )
 }
 
 export default MethodologyPage

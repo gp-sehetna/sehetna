@@ -1,7 +1,18 @@
-import PageCenter from "@/components/ui/PageCenter"
+import ComingSoon from "@/components/ui/ComingSoon"
+import { Metadata } from "next"
 
-const page = () => {
-    return <PageCenter children="Services and Policies Page" />
+export const metadata: Metadata = {
+    title: "Services & Policies",
+    description: "Review Sehetna's terms of service, privacy policy, and cookie usage guidelines.",
 }
 
-export default page
+const ServicesAndPoliciesPage = () => {
+    return (
+        <ComingSoon
+            title="Services & Policies"
+            description="Review Sehetna's terms of service, privacy policy, and cookie usage guidelines."
+        />
+    )
+}
+
+export default ServicesAndPoliciesPage
