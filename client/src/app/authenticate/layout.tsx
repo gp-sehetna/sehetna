@@ -1,4 +1,3 @@
-import "@/app/globals.css"
 import Footer from "@/components/ui/GlobalComponents/Footers/Footer"
 
 import { Metadata } from "next"
