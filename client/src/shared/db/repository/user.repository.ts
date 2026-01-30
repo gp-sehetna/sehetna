@@ -5,6 +5,7 @@ import { IUser as TDocument } from "./../model/user.model"
 import { BadRequestException } from "@/shared/http/errors"
 
 export class UserRepository extends DatabaseRepository<TDocument> {
+
     constructor(protected override readonly model: Model<TDocument>) {
         super(model)
     }
@@ -18,3 +19,4 @@ export class UserRepository extends DatabaseRepository<TDocument> {
         return user
     }
 }
+

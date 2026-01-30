@@ -17,7 +17,6 @@ export interface IUser {
     _id: Types.ObjectId
     firstName: string
     lastName: string
-    userName?: string
     email: string
     password: string
     confirmEmailOtp?: string
@@ -57,16 +56,16 @@ const userSchema = new Schema<IUser>(
     }
 )
 
-userSchema
-    .virtual("userName")
-    .set(function (value: string) {
-        const [firstName, lastName] = value.split(" ") || []
+// userSchema
+//     .virtual("userName")
+//     .set(function (value: string) {
+//         const [firstName, lastName] = value.split(" ") || []
 
-        this.set({ firstName, lastName })
-    })
-    .get(function () {
-        return this.firstName + " " + this.lastName
-    })
+//         this.set({ firstName, lastName })
+//     })
+//     .get(function () {
+//         return this.firstName + " " + this.lastName
+//     })
 
 export const UserModel = models.User || model<IUser>("User", userSchema)
 
