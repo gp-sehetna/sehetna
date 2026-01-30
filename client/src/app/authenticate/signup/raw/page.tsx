@@ -29,7 +29,9 @@ const SignUpRawPage = () => {
                         prependInnerIcon={<Mail />}
                     />
                 </Flex>
-                <WideButton variant="black">Continue</WideButton>
+                <WideButton asChild variant="black">
+                    <Link href="/authenticate/verify?purpose=password_reset">Continue</Link>
+                </WideButton>
                 <Flex direction="col" gap={4}>
                     <p className="text-xs">Aleady have an account?</p>
                     <WideButton asChild size="lg" variant="outline">
