@@ -3,6 +3,7 @@ import BaseAuthentication from "@/components/ui/Authentication/BaseAuthenticatio
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
 import { Metadata } from "next"
+import Link from "next/link"
 
 export const metadata: Metadata = {
     title: "Old Password",
@@ -16,7 +17,11 @@ const OldPasswordPage = () => {
         </p>
     )
 
-    const forgotPasswordButton = <p className="cursor-pointer text-xs">Forgot password?</p>
+    const forgotPasswordButton = (
+        <Link href="/authenticate/password/forgot">
+            <p className="cursor-pointer text-xs">Forgot password?</p>
+        </Link>
+    )
     return (
         <>
             <BaseAuthentication title={title} subtitle={subtitle}>

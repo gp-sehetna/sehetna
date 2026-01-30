@@ -26,15 +26,21 @@ export default function SimpleFooter({ className }: SimpleFooterProps) {
                 </FooterLink>
                 <FooterLink href="/support/services-and-policies#cookie-use">Cookie Use</FooterLink>
                 <FooterLink href="/support">Help & Support</FooterLink>
-                <FooterLink href="/">
-                    @GradProject
+                <div className="flex gap-1">
+                    <FooterLink href="/">@GradProject</FooterLink>
                     <Image
                         width={15}
                         height={10}
                         src="https://media.tenor.com/0-M-_QQY4eQAAAAi/pixel-heart.gif"
-                        alt="H"
+                        alt="Red Heart"
                     />
-                </FooterLink>
+                    <Image
+                        width={15}
+                        height={15}
+                        src="https://media.tenor.com/mvLRHMrHUWwAAAAi/diamond-elegant.gif"
+                        alt="Diamond"
+                    />
+                </div>
             </div>
         </footer>
     )

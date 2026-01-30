@@ -4,6 +4,7 @@ import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
 import { Mail } from "lucide-react"
 import { Metadata } from "next"
+import Link from "next/link"
 
 export const metadata: Metadata = {
     title: "Forgot Password",
@@ -29,7 +30,9 @@ const ForgotPasswordPage = () => {
                         required
                         prependInnerIcon={<Mail />}
                     />
-                    <WideButton variant="black">Continue</WideButton>
+                    <WideButton asChild variant="black">
+                        <Link href="/authenticate/verify?purpose=password_reset">Continue</Link>
+                    </WideButton>
                 </Flex>
             </BaseAuthentication>
         </>

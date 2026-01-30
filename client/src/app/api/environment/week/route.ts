@@ -8,7 +8,7 @@ import {
     Reducer,
     WeeklyEnvironmentData,
 } from "@/features/environment/week/week.types"
-import { getWeekRange } from "@/lib/helpers/dateFunctions"
+import { getWeekRange } from "@/lib/utils/date"
 import { externalApi } from "@/shared/api"
 import {
     OPEN_METEO_AIR_QUALITY,

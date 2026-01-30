@@ -15,7 +15,11 @@ export const metadata: Metadata = {
 const LoginRawPage = () => {
     const title = <h3>Log In with your email</h3>
     const subtitle = <p className="text-md text-neutral-600">Enter your credentials</p>
-    const forgotPasswordButton = <p className="cursor-pointer text-xs">Forgot password?</p>
+    const forgotPasswordButton = (
+        <Link href="/authenticate/password/forgot">
+            <p className="cursor-pointer text-xs">Forgot password?</p>
+        </Link>
+    )
     return (
         <>
             <BaseAuthentication title={title} subtitle={subtitle}>

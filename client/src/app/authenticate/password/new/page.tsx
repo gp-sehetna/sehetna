@@ -4,6 +4,7 @@ import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
 import { LockIcon } from "lucide-react"
 import { Metadata } from "next"
+import Link from "next/link"
 
 export const metadata: Metadata = {
     title: "Reset Password",
@@ -22,8 +23,10 @@ const NewPasswordPage = () => {
                     <AuthenticationPasswordInput id="new-password" name="New Password" />
                     <AuthenticationPasswordInput id="confirm-password" name="Confirm Password" />
                 </Flex>
-                <WideButton variant="black">
-                    <LockIcon /> Set New Password
+                <WideButton asChild variant="black">
+                    <Link href="/authenticate/login/raw">
+                        <LockIcon /> Set New Password
+                    </Link>
                 </WideButton>
             </BaseAuthentication>
         </>
