@@ -1,22 +1,21 @@
-import { CreateOptions, Model } from "mongoose"
-import { DatabaseRepository } from "./database.repository"
-
-import { IUser as TDocument } from "./../model/user.model"
+import { DUser } from "@/shared/db/model/user.model"
+import { DatabaseRepository } from "@/shared/db/repository/database.repository"
 import { BadRequestException } from "@/shared/http/errors"
+import { Model } from "mongoose"
 
-export class UserRepository extends DatabaseRepository<TDocument> {
-
-    constructor(protected override readonly model: Model<TDocument>) {
+export class UserRepository extends DatabaseRepository<DUser> {
+    constructor(protected override readonly model: Model<DUser>) {
         super(model)
     }
 
-    async createUser({ data, options }: { data: Partial<TDocument>[]; options?: CreateOptions }) {
-        const [user] = (await this.create({ data: data, options: options })) || []
-        if (!user) {
-            throw new BadRequestException("Fail to signup this user")
-        }
+    async create(data: Partial<DUser>[]) {
+        const users = await this.model.create(data, { validateBeforeSave: true })
+        if (!users) throw new BadRequestException("Failed to create users")
 
-        return user
+        return users
+    }
+
+    async findByEmail(email: string) {
+        return await this.model.findOne({ email }).exec()
     }
 }
-

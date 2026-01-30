@@ -1,12 +1,16 @@
 type Reducer = (values: number[]) => number | null
 type AggResult<T> = { date: string } & { [K in keyof T]: number | null }
 
-type QueryParams = {
+type WeekParams = {
+    loc: Location
+    date: string
+    weeks: number
+}
+
+interface Location {
     lat: number
     lng: number
     iso: string
-    date: string
-    endCount: number
 }
 
 interface WeeklyEnvironmentData {
@@ -32,8 +36,29 @@ interface EnvironmentData {
     data: Array<WeeklyEnvironmentData>
 }
 
+interface Prediction {
+    respiratory_disease_rate: number
+    cardio_mortality_rate: number
+    vector_disease_risk_score: number
+    waterborne_disease_incidents: number
+    heat_related_admissions: number
+}
+
+interface SimulateResponse {
+    predictions: Prediction
+}
+
 const HEAT_WAVE_DAY_THRESHOLD = 28
 const PRECIPITATION_THRESHOLD = 132.5 // Precipitation in mm ranges between 0-200+
 
 export { HEAT_WAVE_DAY_THRESHOLD, PRECIPITATION_THRESHOLD }
-export type { AggResult, EnvironmentData, QueryParams, Reducer, WeeklyEnvironmentData }
+export type {
+    AggResult,
+    EnvironmentData,
+    Location,
+    Prediction,
+    Reducer,
+    SimulateResponse,
+    WeeklyEnvironmentData,
+    WeekParams,
+}

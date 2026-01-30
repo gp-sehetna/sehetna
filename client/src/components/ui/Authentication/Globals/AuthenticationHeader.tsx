@@ -1,8 +1,8 @@
 "use client"
-import { cn } from "@/lib/utils/cn"
+import { cn } from "@/lib/utils"
+import { ReactNode } from "react"
 import Flex from "../../Flex"
 import Logo from "../../GlobalControls/Logo"
-import { ReactNode } from "react"
 
 type AuthenticationHeaderProps = {
     title: ReactNode

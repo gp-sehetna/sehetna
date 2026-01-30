@@ -17,11 +17,12 @@ export async function connectMongodb() {
     if (cached.conn) return cached.conn
 
     if (!cached.promise) {
-        cached.promise = connect(MONGODB_URI, { bufferCommands: false })
+        cached.promise = connect(MONGODB_URI, {
+            bufferCommands: false,
+            serverSelectionTimeoutMS: 10_000,
+        })
     }
 
     cached.conn = await cached.promise
     return cached.conn
 }
-
-

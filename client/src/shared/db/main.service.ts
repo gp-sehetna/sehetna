@@ -1,35 +1,42 @@
-import { AuthService } from "@/app/api/auth/auth.service"
-import { connectMongodb } from "./mongodb.client"
-import { UserRepository } from "./repository/user.repository"
-import { UserModel } from "./model/user.model"
+import { connectMongodb } from "@/shared/db/mongodb.client"
+import logger from "@/shared/logger"
+
+import { UserModel } from "@/shared/db/model/user.model"
+import { UserRepository } from "@/shared/db/repository/user.repository"
+
+import { AuthService } from "@/features/auth/auth.service"
+import { WeekService } from "@/features/environment/week/week.service"
+
+type MainServiceOptions = {
+    db?: boolean
+}
 
 export class MainService {
-    private static instance: MainService
+    private static instance: MainService | null = null
+    private static initialized = false
 
-    public authService!: AuthService
+    public readonly authService: AuthService = new AuthService(new UserRepository(UserModel))
+    public readonly weekService: WeekService = new WeekService()
 
     private constructor() {}
-
-    public static async getInstance() {
+    public static async getInstance(
+        options: MainServiceOptions = { db: true }
+    ): Promise<MainService> {
         if (!MainService.instance) {
             MainService.instance = new MainService()
-            await MainService.instance.init()
+            await MainService.instance.init(options)
+            MainService.initialized = true
         }
+
         return MainService.instance
     }
 
-    private async init() { //  this funtion perform 3 initializations [dbConnection , userRepository , authService].
-        // 1️⃣ Connect to MongoDB (only once)
+    private async init(options: MainServiceOptions) {
+        if (options.db) await this.initDatabase()
+    }
+
+    private async initDatabase() {
         const connection = await connectMongodb()
-
-        console.log("✅ MongoDB connection successful!")
-
-        // 2️⃣ Print all registered models
-        console.log("Models registered in this connection:")
-        console.log(Object.keys(connection.models).join(", "))
-
-        // 3️⃣ Initialize services
-        const userRepository = new UserRepository(UserModel)
-        this.authService = new AuthService(userRepository)
+        logger.info(`MongoDB connected: ${connection.connection.host}`)
     }
 }

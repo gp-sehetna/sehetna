@@ -1,12 +1,12 @@
 "use client"
 
-import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
+import * as React from "react"
 
-import { cn } from "@/lib/utils/cn"
 import { Button } from "@/components/ui/shadcn/button"
 import { Input, InputProps, inputVariants } from "@/components/ui/shadcn/input"
 import { Textarea } from "@/components/ui/shadcn/textarea"
+import { cn } from "@/lib/utils"
 
 function InputGroup({
     className,
@@ -161,7 +161,7 @@ export {
     InputGroup,
     InputGroupAddon,
     InputGroupButton,
-    InputGroupText,
     InputGroupInput,
+    InputGroupText,
     InputGroupTextarea,
 }

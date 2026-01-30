@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils/cn"
-import FooterLink from "./FooterLink"
+import { cn } from "@/lib/utils"
 import Image from "next/image"
+import FooterLink from "./FooterLink"
 
 type SimpleFooterProps = {
     className?: string

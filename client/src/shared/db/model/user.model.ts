@@ -1,4 +1,5 @@
-import { HydratedDocument, model, models, Schema, Types } from "mongoose"
+import { Document, model, models, Schema } from "mongoose"
+
 export enum ProviderEnum {
     GOOGLE = "GOOGLE",
     SYSTEM = "SYSTEM",
@@ -13,8 +14,7 @@ export enum RoleEnum {
     admin = "admin",
 }
 
-export interface IUser {
-    _id: Types.ObjectId
+export interface DUser extends Document {
     firstName: string
     lastName: string
     email: string
@@ -30,7 +30,7 @@ export interface IUser {
     role?: RoleEnum
 }
 
-const userSchema = new Schema<IUser>(
+const userSchema = new Schema<DUser>(
     {
         firstName: { type: String, required: true, minLength: 2, maxLength: 20 },
         lastName: { type: String, required: true, minLength: 2, maxLength: 20 },
@@ -56,17 +56,4 @@ const userSchema = new Schema<IUser>(
     }
 )
 
-// userSchema
-//     .virtual("userName")
-//     .set(function (value: string) {
-//         const [firstName, lastName] = value.split(" ") || []
-
-//         this.set({ firstName, lastName })
-//     })
-//     .get(function () {
-//         return this.firstName + " " + this.lastName
-//     })
-
-export const UserModel = models.User || model<IUser>("User", userSchema)
-
-export type HUserDocument = HydratedDocument<IUser>
+export const UserModel = models.User || model<DUser>("User", userSchema)
