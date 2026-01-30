@@ -1,26 +1,35 @@
 "use client"
 
-import { weekService } from "@/features/environment/week/week.service"
+import { MAP_CONFIG, maplibregl, mapStyle } from "@/shared/config/map"
 import bbox from "@turf/bbox"
 import centroid from "@turf/centroid"
 import { useEffect, useRef, useState } from "react"
-import { maplibregl, mapStyle } from "./config"
 
 // MapLibre React wrapper
 import { createRoot } from "react-dom/client"
 import Map from "react-map-gl/maplibre"
 
+import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
+import {
+    EnvironmentData,
+    Location,
+    SimulateResponse,
+    WeeklyEnvironmentData,
+} from "@/features/environment/week/week.types"
+import { Alert, confirmMissingData } from "@/lib/alert"
 import { slugifyCountry, toProperCase, unslugifyCountry } from "@/lib/utils"
-import "maplibre-gl/dist/maplibre-gl.css"
-import { useParams, useRouter } from "next/navigation"
-import { DatePickerWithRange } from "../GlobalControls/DatePicker"
+import { formatDate } from "@/lib/utils/date"
+import { api } from "@/shared/api"
 import type {
     LngLatLike,
     MapGeoJSONFeature,
     MapLayerMouseEvent,
     MapLibreEvent,
     MarkerOptions,
-} from "./config"
+} from "@/shared/config/map"
+import { SearchParamsOption } from "ky"
+import "maplibre-gl/dist/maplibre-gl.css"
+import { useParams, useRouter } from "next/navigation"
 import CountryPopup from "./CountryPopup"
 import ZoomControls from "./ZoomControls"
 
@@ -34,6 +43,7 @@ type CountriesById = Record<string | number, MapGeoJSONFeature>
 
 export default function MapView() {
     const [geojsonReady, setGeojsonReady] = useState(false)
+    const [date, setDate] = useState<Date>()
     const [mapLoaded, setMapLoaded] = useState(false)
     const params = useParams<{ country?: string }>()
     const activeCountrySlug = params.country
@@ -62,7 +72,7 @@ export default function MapView() {
 
     useEffect(() => {
         ;(async () => {
-            const geojson = await weekService.getCountriesPolygons()
+            const geojson = await api.get<any>(MAP_CONFIG.countriesPath).json()
 
             const lookup: CountriesById = {}
             geojson.features.forEach((feature: MapGeoJSONFeature, index: number) => {
@@ -73,7 +83,6 @@ export default function MapView() {
 
             countriesByIdRef.current = lookup
             setGeojsonReady(true)
-            // console.log("Countries indexed:", lookup)
         })()
         if (!mapLoaded) return
         if (!geojsonReady) return
@@ -83,7 +92,59 @@ export default function MapView() {
         zoomToCountryBySlug(activeCountrySlug)
     }, [mapLoaded, geojsonReady, activeCountrySlug])
 
+    const fetchEnvironment = async ({ lat, lng, iso }: Location, date: string, weeks = 1) => {
+        const coords = `${lat},${lng}`
+        const searchParams: SearchParamsOption = { coords, iso, date, weeks }
+        const environmentData = await api
+            .get<EnvironmentData>("api/environment/week", { searchParams })
+            .json()
+
+        // Validate Environment Data and ensure non-null values.
+        if (!environmentData || !environmentData.data.length) {
+            await Alert.popup.fire({ icon: "error", title: "No data found for this location" })
+            return null
+        }
+
+        // Check if any of the data objects keys is null and retreive this key for logging.
+        const keys = Object.keys(environmentData.data[0]) as Array<keyof WeeklyEnvironmentData>
+        const nullKeys = keys
+            .filter((key) => environmentData.data[0][key] === null)
+            .map((key) => `data.${key}`)
+        if (!environmentData.indicators.gdp_per_capita_usd)
+            nullKeys.push("indicators.gdp_per_capita_usd")
+        if (!environmentData.indicators.food_production_index)
+            nullKeys.push("indicators.food_production_index")
+        if (!environmentData.indicators.undernourishment)
+            nullKeys.push("indicators.undernourishment")
+
+        if (nullKeys) {
+            // Alert the user about missing data and confirm if they want to continue.
+            const shouldContinue = await confirmMissingData(nullKeys)
+
+            if (!shouldContinue) return null
+        }
+
+        return environmentData
+    }
+
+    const fetchEnvironmentAndSimulate = async (loc: Location, date: Date, weeks = 1) => {
+        const environment = await fetchEnvironment(loc, formatDate(date), weeks)
+        if (!environment) return null
+
+        const { predictions } = await api
+            .post<SimulateResponse>("ai/simulate", { json: environment })
+            .json()
+        return predictions
+    }
+
     const onMapClick = async (e: MapLayerMouseEvent) => {
+        // handle if date is not set
+
+        if (!date) {
+            await Alert.popup.fire({ icon: "warning", title: "Please select a date first." })
+            return
+        }
+
         const map = e.target
 
         popupRef.current?.remove()
@@ -103,7 +164,6 @@ export default function MapView() {
         }
 
         const sourceCountry = countriesByIdRef.current[countryIso]
-        // console.log(countriesByIdRef.current)
 
         if (!sourceCountry) {
             console.warn("Country not found in source data: ", countryIso)
@@ -117,13 +177,8 @@ export default function MapView() {
 
         zoomToCountry(sourceCountry, map, countryCentroid)
 
-        const predictions = await weekService.fetchEnvironmentAndSimulate(
-            e.lngLat.lat,
-            e.lngLat.lng,
-            countryIso,
-            "2023-04-01",
-            7
-        )
+        const location = { lat: e.lngLat.lat, lng: e.lngLat.lng, iso: countryIso }
+        const predictions = await fetchEnvironmentAndSimulate(location, date)
 
         if (!predictions) return
 
@@ -149,7 +204,7 @@ export default function MapView() {
                 onClick={onMapClick}
                 onLoad={onMapLoad}
             />
-            <DatePickerWithRange className="absolute bottom-5 left-5" />
+            <DatePickerSimple date={date} setDate={setDate} className="absolute bottom-5 left-5" />
             <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
         </>
     )

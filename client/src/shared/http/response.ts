@@ -1,29 +1,7 @@
 import { NextResponse } from "next/server"
 
-// export const successResponse = ({
-//     data,
-//     status,
-//     message,
-// }: {
-//     data?: any
-//     status?: number
-//     message: string
-// }) => {
-//     return NextResponse.json({ success: true, message, ...data }, { status })
-// }
-export const successResponse = (
-    data: any,
-    status: number = 200,
-    message: string = "Success"
-) => {
-    return NextResponse.json(
-        {
-            success: true,
-            message,
-            data,
-        },
-        { status }
-    )
+export const successResponse = (data: any, message = "Request was successful", status = 200) => {
+    return NextResponse.json({ success: true, message, ...data }, { status })
 }
 
 export const errorResponse = (message: string, status = 400, err_details?: unknown) => {

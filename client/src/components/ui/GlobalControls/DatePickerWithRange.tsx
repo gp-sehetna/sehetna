@@ -1,14 +1,14 @@
 "use client"
 
-import * as React from "react"
 import { Button } from "@/components/ui/shadcn/button"
 import { Calendar } from "@/components/ui/shadcn/calendar"
 import { Field, FieldLabel } from "@/components/ui/shadcn/field"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/shadcn/popover"
+import { cn } from "@/lib/utils"
 import { addDays, format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
+import * as React from "react"
 import { type DateRange } from "react-day-picker"
-import { cn } from "@/lib/utils/cn"
 
 export function DatePickerWithRange({ className }: { className?: string }) {
     const [date, setDate] = React.useState<DateRange | undefined>({

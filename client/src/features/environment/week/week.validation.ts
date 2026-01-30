@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export const WeekEnvironmentQuerySchema = z.object({
+const WeekEnvironmentQuerySchema = z.object({
     coords: z.string().refine(
         (val) => {
             const parts = val.split(",")
@@ -11,16 +11,20 @@ export const WeekEnvironmentQuerySchema = z.object({
         },
         { message: "coords must be in format lat,lng" }
     ),
-    iso: z.string(),
+    iso: z.string().length(3), // ISO-Alpha-3 country code
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "date must be YYYY-MM-DD"),
-    endCount: z.coerce.number().min(1).multipleOf(7), // Should be divisible by 7
+    weeks: z.coerce.number().min(1).default(1),
 })
 
-export const WeekEnvironmentParamsSchema = WeekEnvironmentQuerySchema.transform((data) => {
+const WeekEnvironmentParamsSchema = WeekEnvironmentQuerySchema.transform((data) => {
     const [latStr, lngStr] = data.coords.split(",")
 
-    const lat = Number(latStr)
-    const lng = Number(lngStr)
-
-    return { lat, lng, iso: data.iso, date: data.date, endCount: Number(data.endCount) }
+    const loc = {
+        lat: Number(latStr),
+        lng: Number(lngStr),
+        iso: data.iso,
+    }
+    return { loc, date: data.date, weeks: data.weeks }
 })
+
+export { WeekEnvironmentParamsSchema, WeekEnvironmentQuerySchema }

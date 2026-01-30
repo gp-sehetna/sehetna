@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/shadcn/button"
-import { cn } from "@/lib/utils/cn"
+import { cn } from "@/lib/utils"
 
 type ButtonSize = "default" | "sm" | "lg" | "icon"
 type WideButtonProps = {

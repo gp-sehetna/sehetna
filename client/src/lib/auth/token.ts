@@ -1,12 +1,13 @@
-import { HUserDocument, RoleEnum } from "@/shared/db/model/user.model"
+import { DUser, RoleEnum } from "@/shared/db/model/user.model"
 import { BadRequestException, UnauthorizedException } from "@/shared/http/errors"
-import { JwtPayload, Secret, sign, SignOptions, verify } from "jsonwebtoken"
+import { sign as generateToken, JwtPayload, verify as verifyToken } from "jsonwebtoken"
 
 // Constants
-const expirations  = {
-    ACCESS_TOKEN: 30 * 60 * 1000,
-    REFRESH_TOKEN: 30 * 24 * 60 * 60 * 1000,
+const expirations = {
+    ACCESS_TOKEN: 30 * 60 * 1000, // 30 minutes
+    REFRESH_TOKEN: 30 * 24 * 60 * 60 * 1000, // 30 days
 } as const
+
 export enum SignatureLevelEnum {
     Bearer = "Bearer",
     System = "System",
@@ -16,117 +17,53 @@ export enum TokenTypeEnum {
     refresh = "refresh",
 }
 
-export const generateToken = async ({
-    payload,
-    secret = process.env.ACCESS_USER_TOKEN_SIGNATURE as string,
-    options,
-}: {
-    payload: object
-    secret?: Secret
-    options?: SignOptions
-}) => {
-    return sign(payload, secret, options)
+export const detectSignatureLevel = (role = RoleEnum.user): SignatureLevelEnum => {
+    return role === RoleEnum.admin ? SignatureLevelEnum.System : SignatureLevelEnum.Bearer
 }
 
-export const verifyToken = ({
-    token,
-    secret = process.env.ACCESS_USER_TOKEN_SIGNATURE as string,
-}: {
-    token: string
-    secret: Secret
-}): JwtPayload => {
-    return verify(token, secret) as JwtPayload
-}
+export const getSignatures = (level: SignatureLevelEnum) => {
+    const signatures = { access: "", refresh: "" }
 
-export const detectSignatureLevel = ({
-    role = RoleEnum.user,
-}: {
-    role: RoleEnum
-}): SignatureLevelEnum => {
-    let signatureLevel: SignatureLevelEnum = SignatureLevelEnum.Bearer
-
-    switch (role) {
-        case RoleEnum.admin:
-            signatureLevel = SignatureLevelEnum.System
-            break
-
-        default:
-            signatureLevel = SignatureLevelEnum.Bearer
-            break
-    }
-
-    return signatureLevel
-}
-
-export const getSignatures = (
-    signatureLevel: SignatureLevelEnum
-): {
-    accessSignatures: string
-    refreshSignatures: string
-} => {
-    const signatures: { accessSignatures: string; refreshSignatures: string } = {
-        accessSignatures: "",
-        refreshSignatures: "",
-    }
-
-    switch (signatureLevel) {
+    switch (level) {
         case SignatureLevelEnum.Bearer:
-            signatures.accessSignatures = process.env.ACCESS_USER_TOKEN_SIGNATURE!
-            signatures.refreshSignatures = process.env.REFRESH_USER_TOKEN_SIGNATURE!
+            signatures.access = process.env.ACCESS_USER_TOKEN_SIGNATURE!
+            signatures.refresh = process.env.REFRESH_USER_TOKEN_SIGNATURE!
             break
 
         default:
-            signatures.accessSignatures = process.env.ACCESS_SYSTEM_TOKEN_SIGNATURE!
-            signatures.refreshSignatures = process.env.REFRESH_SYSTEM_TOKEN_SIGNATURE!
+            signatures.access = process.env.ACCESS_SYSTEM_TOKEN_SIGNATURE!
+            signatures.refresh = process.env.REFRESH_SYSTEM_TOKEN_SIGNATURE!
             break
     }
 
     return signatures
 }
 
-export const createCredentials = async ({
-    user,
-}: {
-    user: HUserDocument
-}): Promise<{
+export const createCredentials = async (
+    user: DUser
+): Promise<{
     accessToken: string
     refreshToken: string
 }> => {
-    const signatureLevel = detectSignatureLevel({ role: user.role as RoleEnum })
-
+    const signatureLevel = detectSignatureLevel(user.role)
     const signatures = getSignatures(signatureLevel)
+    const payload = { _id: user._id }
 
-    const accessToken = await generateToken({
-        payload: {
-            _id: user._id,
-        },
-        secret: signatures.accessSignatures,
-        options: { expiresIn: expirations.ACCESS_TOKEN },
+    const accessToken = generateToken(payload, signatures.access, {
+        expiresIn: expirations.ACCESS_TOKEN,
     })
 
-    const refreshToken = await generateToken({
-        payload: {
-            _id : user._id,
-        },
-        secret: signatures.refreshSignatures,
-        options: { expiresIn: expirations.REFRESH_TOKEN },
+    const refreshToken = generateToken(payload, signatures.refresh, {
+        expiresIn: expirations.REFRESH_TOKEN,
     })
 
     return { accessToken, refreshToken }
 }
 
-export const decodeToken = ({
-    authoriation,
-    type = TokenTypeEnum.access,
-}: {
-    authoriation: string
-    type: TokenTypeEnum
-}) => {
+export const decodeToken = (authoriation: string, type = TokenTypeEnum.access) => {
     const [bearerKey, token] = authoriation.split(" ")
 
-    if (!bearerKey || !token) {
-        throw new UnauthorizedException("Missing token parts")
-    }
+    if (!bearerKey || !token) throw new UnauthorizedException("Invalid authorization format")
 
     // switch (bearerKey) {
     //     case SignatureLevelEnum.System:
@@ -140,17 +77,12 @@ export const decodeToken = ({
 
     const signatures = getSignatures(bearerKey as SignatureLevelEnum)
 
-    const decoded = verifyToken({
-        token: token,
-        secret:
-            type === TokenTypeEnum.access
-                ? signatures.accessSignatures
-                : signatures.refreshSignatures,
-    })
+    const decoded = verifyToken(
+        token,
+        type === TokenTypeEnum.access ? signatures.access : signatures.refresh
+    ) as JwtPayload
 
-    if (!decoded?._id || !decoded?.iat) {
-        throw new BadRequestException("In-valid token payload")
-    }
+    if (!decoded?._id || !decoded?.iat) throw new BadRequestException("Invalid token payload")
 
     // finding user
 

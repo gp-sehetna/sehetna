@@ -1,7 +1,7 @@
 import { Field, FieldLabel } from "@/components/ui/shadcn/field"
-import { InputGroup, InputGroupInput, InputGroupAddon } from "../shadcn/input-group"
+import { cn } from "@/lib/utils"
 import { InputProps } from "../shadcn/input"
-import { cn } from "@/lib/utils/cn"
+import { InputGroup, InputGroupAddon, InputGroupInput } from "../shadcn/input-group"
 
 type AuthenticationFieldProps = {
     name: string
