@@ -7,9 +7,6 @@ export {
     type MarkerOptions,
 } from "maplibre-gl"
 
-// Styles (side-effects)
-import "maplibre-gl/dist/maplibre-gl.css"
-
 import baseMapStyle from "@/../public/geo/maptunik.style.json"
 
 export const mapStyle: any = {

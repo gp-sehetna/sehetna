@@ -3,7 +3,6 @@
 import { weekService } from "@/features/environment/week/week.service"
 import bbox from "@turf/bbox"
 import centroid from "@turf/centroid"
-import "maplibre-gl/dist/maplibre-gl.css"
 import { useEffect, useRef, useState } from "react"
 import { maplibregl, mapStyle } from "./config"
 
