@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react"
 import { createRoot } from "react-dom/client"
 import Map from "react-map-gl/maplibre"
 
+import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
 import {
     EnvironmentData,
     Location,
@@ -17,6 +18,7 @@ import {
 } from "@/features/environment/week/week.types"
 import { Alert, confirmMissingData } from "@/lib/alert"
 import { slugifyCountry, toProperCase, unslugifyCountry } from "@/lib/utils"
+import { formatDate } from "@/lib/utils/date"
 import { api } from "@/shared/api"
 import type {
     LngLatLike,
@@ -28,7 +30,6 @@ import type {
 import { SearchParamsOption } from "ky"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { useParams, useRouter } from "next/navigation"
-import { DatePickerWithRange } from "../GlobalControls/DatePicker"
 import CountryPopup from "./CountryPopup"
 import ZoomControls from "./ZoomControls"
 
@@ -42,6 +43,7 @@ type CountriesById = Record<string | number, MapGeoJSONFeature>
 
 export default function MapView() {
     const [geojsonReady, setGeojsonReady] = useState(false)
+    const [date, setDate] = useState<Date>()
     const [mapLoaded, setMapLoaded] = useState(false)
     const params = useParams<{ country?: string }>()
     const activeCountrySlug = params.country
@@ -125,8 +127,8 @@ export default function MapView() {
         return environmentData
     }
 
-    const fetchEnvironmentAndSimulate = async (loc: Location, date: string, weeks = 1) => {
-        const environment = await fetchEnvironment(loc, date, weeks)
+    const fetchEnvironmentAndSimulate = async (loc: Location, date: Date, weeks = 1) => {
+        const environment = await fetchEnvironment(loc, formatDate(date), weeks)
         if (!environment) return null
 
         const { predictions } = await api
@@ -136,6 +138,13 @@ export default function MapView() {
     }
 
     const onMapClick = async (e: MapLayerMouseEvent) => {
+        // handle if date is not set
+
+        if (!date) {
+            await Alert.popup.fire({ icon: "warning", title: "Please select a date first." })
+            return
+        }
+
         const map = e.target
 
         popupRef.current?.remove()
@@ -169,7 +178,7 @@ export default function MapView() {
         zoomToCountry(sourceCountry, map, countryCentroid)
 
         const location = { lat: e.lngLat.lat, lng: e.lngLat.lng, iso: countryIso }
-        const predictions = await fetchEnvironmentAndSimulate(location, "2023-04-01")
+        const predictions = await fetchEnvironmentAndSimulate(location, date)
 
         if (!predictions) return
 
@@ -195,7 +204,7 @@ export default function MapView() {
                 onClick={onMapClick}
                 onLoad={onMapLoad}
             />
-            <DatePickerWithRange className="absolute bottom-5 left-5" />
+            <DatePickerSimple date={date} setDate={setDate} className="absolute bottom-5 left-5" />
             <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
         </>
     )

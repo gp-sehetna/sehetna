@@ -154,6 +154,7 @@
     .lucide {
         stroke-width: 1;
     }
+
     h1,
     h2,
     h3,
@@ -164,9 +165,11 @@
         font-weight: bold;
         color: var(--color-neutral-1000);
     }
+
     .glassy {
         @apply border border-neutral-100 bg-neutral-100/30 backdrop-blur-lg;
     }
+
     .base-transition {
         @apply transition-all duration-300;
     }
@@ -190,10 +193,11 @@
     }
 
     .maplibregl-popup-content {
-        @apply rounded-none! bg-transparent! p-0! shadow-none!;
+        @apply rounded-none ! bg-transparent ! p-0 ! shadow-none !;
     }
+
     .maplibregl-popup-tip {
-        @apply hidden!;
+        @apply hidden !;
     }
 }
 
@@ -231,7 +235,7 @@
     --destructive: oklch(0.577 0.245 27.325);
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
+    --ring: oklch(82.344% 0.00009 271.152);
     --chart-1: oklch(0.646 0.222 41.116);
     --chart-2: oklch(0.6 0.118 184.704);
     --chart-3: oklch(0.398 0.07 227.392);
@@ -277,6 +281,7 @@
     * {
         @apply border-border outline-ring/50;
     }
+
     body {
         @apply bg-background text-foreground;
     }
