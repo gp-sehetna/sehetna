@@ -1,9 +1,9 @@
+import { RoleEnum } from "@/shared/db/model/user.model"
 import { BadRequestException, UnauthorizedException } from "@/shared/http/errors"
 import { JwtPayload, Secret, sign, SignOptions, verify } from "jsonwebtoken"
-export enum RoleEnum {
-    user = "user",
-    admin = "admin",
-}
+
+
+
 export enum SignatureLevelEnum {
     Bearer = "Bearer",
     System = "System",
@@ -112,26 +112,26 @@ export const createCredentials = async ({
     return { accessToken, refreshToken }
 }
 
-export const decodeToken = ({ authoriation }: { authoriation: string }) => {
+export const decodeToken = ({ authoriation , type = TokenTypeEnum.access}: { authoriation: string , type : TokenTypeEnum }) => {
     const [bearerKey, token] = authoriation.split(" ")
 
     if (!bearerKey || !token) {
         throw new UnauthorizedException("Missing token parts")
     }
 
-    let type = TokenTypeEnum.access
 
-    switch (bearerKey) {
-        case SignatureLevelEnum.System:
-            type = TokenTypeEnum.refresh
-            break
+    // switch (bearerKey) {
+    //     case SignatureLevelEnum.System:
+    //         type = TokenTypeEnum.refresh
+    //         break
 
-        default:
-            type = TokenTypeEnum.access
-            break
-    }
+    //     default:
+    //         type = TokenTypeEnum.access
+    //         break
+    // }
 
     const signatures = getSignatures(bearerKey as SignatureLevelEnum)
+
     const decoded = verifyToken({
         token: token,
         secret:
@@ -147,4 +147,6 @@ export const decodeToken = ({ authoriation }: { authoriation: string }) => {
     // finding user
 
     // returning user and decoded in object.
+
+
 }

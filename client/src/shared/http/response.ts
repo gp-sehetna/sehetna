@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-export const successResponse = (data: any, status = 200, message = undefined) => {
+export const successResponse = ({data , status , message}:{data?: any, status?: number, message : string}) => {
     return NextResponse.json({ success: true, message, ...data }, { status })
 }
 

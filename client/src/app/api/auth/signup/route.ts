@@ -5,14 +5,14 @@ import { signupSchema } from "@/lib/modules/auth/auth.validation"
 import { INextRequestWithBody } from "@/lib/types/next"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 import { successResponse } from "@/shared/http/response"
+import { AuthService } from "../auth.service"
 
+const authService = new AuthService()
 export const POST = globalErrorHandler(async (req: INextRequestWithBody, context: any) => {
     await chainMiddlewares(validation(signupSchema))(req, context)
 
     const { firstName, lastName, email, password }: ISignupInputsDTO = req.validatedBody
-
-    // Check if user exists (DB logic)
-
-    // Hash password
-    return successResponse({ data: { firstName, lastName, email, password } }, 201)
+    const user = await authService.signup({ data: { firstName, lastName, email, password } })
+    return successResponse({ message: "User registered successfully", status: 201, data: user })
+    // return successResponse({message : 'Done signup!'})
 })
