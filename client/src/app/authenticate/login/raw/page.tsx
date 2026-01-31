@@ -1,3 +1,4 @@
+"use client"
 import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
 import AuthenticationPasswordInput from "@/components/ui/Authentication/AuthenticationPasswordInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
@@ -8,7 +9,7 @@ import { LoginSchema } from "@/features/auth/auth.validation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LogIn, Mail } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 
 const LoginRawPage = () => {
