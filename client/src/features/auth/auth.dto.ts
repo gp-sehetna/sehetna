@@ -1,6 +1,15 @@
 import { z } from "zod"
-import * as validators from "./auth.validation"
-type ISignupInputsDTO = z.infer<typeof validators.SignupSchema>
-type ILoginInputsDTO = z.infer<typeof validators.LoginSchema>
+import * as v from "@/features/auth/auth.validation"
+type ISignupInputsDTO = z.infer<typeof v.SignupSchema>
+type ILoginInputsDTO = z.infer<typeof v.LoginSchema>
+type EmailInputsDTO = z.infer<typeof v.EmailSchema>
+type OTPInputsDTO = z.infer<typeof v.OtpSchema>
+type PasswordAndNameInputsDTO = z.infer<typeof v.PasswordAndNameSchema>
 
-export type { ILoginInputsDTO, ISignupInputsDTO }
+export type {
+    ILoginInputsDTO,
+    ISignupInputsDTO,
+    EmailInputsDTO,
+    OTPInputsDTO,
+    PasswordAndNameInputsDTO,
+}

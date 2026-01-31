@@ -1,7 +1,17 @@
 import { z } from "zod"
 
-const LoginSchema = z.strictObject({
-    email: z.email({ error: "Valid email must be like : example@domain.com" }),
+const OtpSchema = z.strictObject({
+    otp: z
+        .string()
+        .regex(/^\d+$/, { error: "OTP must only contain numbers" })
+        .length(6, { error: "OTP must be exactly 6 digits" }),
+})
+
+const EmailSchema = z.strictObject({
+    email: z.email({ error: "Email address isn't in the expected format, abc@gmail.com" }),
+})
+
+const PasswordSchema = z.strictObject({
     password: z
         .string()
         .regex(
@@ -10,16 +20,13 @@ const LoginSchema = z.strictObject({
         ),
 })
 
-const SignupSchema = z.strictObject({
-    email: z.email({ error: "Valid email must be like : example@domain.com" }),
-    password: z
-        .string()
-        .regex(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/,
-            "Password must contain uppercase, lowercase, number, and special character"
-        ),
+const NameSchema = z.strictObject({
     firstName: z.string().min(2, "Min username length is 2 chars"),
     lastName: z.string().max(20, "Max username length is 20 chars"),
 })
 
-export { LoginSchema, SignupSchema }
+const LoginSchema = EmailSchema.extend(PasswordSchema.shape)
+const SignupSchema = LoginSchema.extend(NameSchema.shape)
+const PasswordAndNameSchema = NameSchema.extend(PasswordSchema.shape)
+
+export { LoginSchema, SignupSchema, EmailSchema, OtpSchema, PasswordAndNameSchema }

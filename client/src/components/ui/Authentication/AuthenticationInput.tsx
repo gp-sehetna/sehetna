@@ -1,21 +1,24 @@
-import { Field, FieldLabel } from "@/components/ui/shadcn/field"
+import { Field, FieldLabel, FieldError } from "@/components/ui/shadcn/field"
 import { cn } from "@/lib/utils"
-import { InputProps } from "../shadcn/input"
-import { InputGroup, InputGroupAddon, InputGroupInput } from "../shadcn/input-group"
+import { InputProps } from "@/components/ui/shadcn/input"
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/shadcn/input-group"
+import RHF from "react-hook-form"
 
 type AuthenticationFieldProps = {
-    name: string
+    label: string
     prependInnerIcon?: React.ReactNode
     appendInnerIcon?: React.ReactNode
     inlineOptions?: React.ReactNode
+    errors?: Array<RHF.FieldError | undefined>
 } & InputProps
 
 export function AuthenticationField({
-    name,
+    label,
     id,
     prependInnerIcon,
     appendInnerIcon,
     inlineOptions,
+    errors,
     className,
     ...props
 }: AuthenticationFieldProps) {
@@ -23,7 +26,7 @@ export function AuthenticationField({
         <>
             <Field className={cn("gap-1", className)}>
                 <FieldLabel className="px-3 text-xs font-bold text-neutral-500" htmlFor={id}>
-                    {name}
+                    {label}
                     <div className="hover:text-neutral-1000 ml-auto pl-0 font-light italic">
                         {inlineOptions}
                     </div>
@@ -33,6 +36,7 @@ export function AuthenticationField({
                     <InputGroupAddon>{prependInnerIcon}</InputGroupAddon>
                     <InputGroupAddon align="inline-end">{appendInnerIcon}</InputGroupAddon>
                 </InputGroup>
+                <FieldError errors={errors} />
             </Field>
         </>
     )

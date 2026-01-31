@@ -3,22 +3,15 @@
 import { MAP_CONFIG, maplibregl, mapStyle } from "@/shared/config/map"
 import bbox from "@turf/bbox"
 import centroid from "@turf/centroid"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 // MapLibre React wrapper
 import { createRoot } from "react-dom/client"
 import Map from "react-map-gl/maplibre"
 
 import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
-import {
-    EnvironmentData,
-    Location,
-    SimulateResponse,
-    WeeklyEnvironmentData,
-} from "@/features/environment/week/week.types"
-import { Alert, confirmMissingData } from "@/lib/alert"
+import { Alert } from "@/lib/alert"
 import { slugifyCountry, toProperCase, unslugifyCountry } from "@/lib/utils"
-import { formatDate } from "@/lib/utils/date"
 import { api } from "@/shared/api"
 import type {
     LngLatLike,
@@ -27,11 +20,11 @@ import type {
     MapLibreEvent,
     MarkerOptions,
 } from "@/shared/config/map"
-import { SearchParamsOption } from "ky"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { useParams, useRouter } from "next/navigation"
 import CountryPopup from "./CountryPopup"
 import ZoomControls from "./ZoomControls"
+import { WeekClientService } from "@/features/environment/week/week.service.client"
 
 const INITIAL_MAP_CONFIG = {
     longitude: 31.23,
@@ -51,6 +44,7 @@ export default function MapView() {
     const markerRef = useRef<maplibregl.Marker>(null)
     const popupRef = useRef<maplibregl.Popup>(null)
     const mapRef = useRef<maplibregl.Map>(null)
+    const weekService = useMemo(() => new WeekClientService(), [])
 
     const countriesByIdRef = useRef<CountriesById>({})
 
@@ -92,54 +86,7 @@ export default function MapView() {
         zoomToCountryBySlug(activeCountrySlug)
     }, [mapLoaded, geojsonReady, activeCountrySlug])
 
-    const fetchEnvironment = async ({ lat, lng, iso }: Location, date: string, weeks = 1) => {
-        const coords = `${lat},${lng}`
-        const searchParams: SearchParamsOption = { coords, iso, date, weeks }
-        const environmentData = await api
-            .get<EnvironmentData>("api/environment/week", { searchParams })
-            .json()
-
-        // Validate Environment Data and ensure non-null values.
-        if (!environmentData || !environmentData.data.length) {
-            await Alert.popup.fire({ icon: "error", title: "No data found for this location" })
-            return null
-        }
-
-        // Check if any of the data objects keys is null and retreive this key for logging.
-        const keys = Object.keys(environmentData.data[0]) as Array<keyof WeeklyEnvironmentData>
-        const nullKeys = keys
-            .filter((key) => environmentData.data[0][key] === null)
-            .map((key) => `data.${key}`)
-        if (!environmentData.indicators.gdp_per_capita_usd)
-            nullKeys.push("indicators.gdp_per_capita_usd")
-        if (!environmentData.indicators.food_production_index)
-            nullKeys.push("indicators.food_production_index")
-        if (!environmentData.indicators.undernourishment)
-            nullKeys.push("indicators.undernourishment")
-
-        if (nullKeys) {
-            // Alert the user about missing data and confirm if they want to continue.
-            const shouldContinue = await confirmMissingData(nullKeys)
-
-            if (!shouldContinue) return null
-        }
-
-        return environmentData
-    }
-
-    const fetchEnvironmentAndSimulate = async (loc: Location, date: Date, weeks = 1) => {
-        const environment = await fetchEnvironment(loc, formatDate(date), weeks)
-        if (!environment) return null
-
-        const { predictions } = await api
-            .post<SimulateResponse>("ai/simulate", { json: environment })
-            .json()
-        return predictions
-    }
-
     const onMapClick = async (e: MapLayerMouseEvent) => {
-        // handle if date is not set
-
         if (!date) {
             await Alert.popup.fire({ icon: "warning", title: "Please select a date first." })
             return
@@ -178,7 +125,7 @@ export default function MapView() {
         zoomToCountry(sourceCountry, map, countryCentroid)
 
         const location = { lat: e.lngLat.lat, lng: e.lngLat.lng, iso: countryIso }
-        const predictions = await fetchEnvironmentAndSimulate(location, date)
+        const predictions = await weekService.fetchEnvironmentAndSimulate(location, date)
 
         if (!predictions) return
 

@@ -2,13 +2,8 @@ import AuthenticationPasswordInput from "@/components/ui/Authentication/Authenti
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
-import { Metadata } from "next"
 import Link from "next/link"
 
-export const metadata: Metadata = {
-    title: "Old Password",
-    description: "Enter your old password to verify your identity.",
-}
 const OldPasswordPage = () => {
     const title = <h3>Enter your old password</h3>
     const subtitle = (
@@ -28,7 +23,7 @@ const OldPasswordPage = () => {
                 <Flex direction="col" gap={4}>
                     <AuthenticationPasswordInput
                         id="old-password"
-                        name="Old Password"
+                        label="Old Password"
                         inlineOptions={forgotPasswordButton}
                     />
                     <WideButton variant="black">Continue</WideButton>

@@ -5,22 +5,16 @@ import Flex from "@/components/ui/Flex"
 import AppLink from "@/components/ui/GlobalControls/AppLink"
 import Divider from "@/components/ui/GlobalControls/Divider"
 import { LogIn } from "lucide-react"
-import { Metadata } from "next"
 import Link from "next/link"
 
-export const metadata: Metadata = {
-    title: "Sign Up",
-    description: "Create a new account on Sehetna to access healthcare insights and data.",
-}
-
 const SignUpPage = () => {
-    const title = <p>Start your journey</p>
-    const subtitle = <h2 className="text-primary">Sign Up to Sehetna</h2>
-
     const btnSize = "lg"
     return (
         <>
-            <BaseAuthentication title={title} subtitle={subtitle}>
+            <BaseAuthentication
+                title={<p>Start your journey</p>}
+                subtitle={<h2 className="text-primary">Sign Up to Sehetna</h2>}
+            >
                 <Flex direction="col" gap={4}>
                     <WideButton size={btnSize} variant="outline">
                         <GoogleIcon />

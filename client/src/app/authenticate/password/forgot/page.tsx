@@ -3,13 +3,7 @@ import BaseAuthentication from "@/components/ui/Authentication/BaseAuthenticatio
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
 import { Mail } from "lucide-react"
-import { Metadata } from "next"
 import Link from "next/link"
-
-export const metadata: Metadata = {
-    title: "Forgot Password",
-    description: "Reset your Sehetna account password by entering your email address.",
-}
 
 const ForgotPasswordPage = () => {
     const title = <h3>Forgot your password?</h3>
@@ -23,7 +17,7 @@ const ForgotPasswordPage = () => {
             <BaseAuthentication title={title} subtitle={subtitle}>
                 <Flex direction="col" gap={6}>
                     <AuthenticationField
-                        name="Email Address"
+                        label="Email Address"
                         id="forgot-password-email"
                         type="email"
                         placeholder="Enter your email address"

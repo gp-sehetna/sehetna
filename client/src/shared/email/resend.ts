@@ -8,7 +8,7 @@ interface EmailTemplate {
 
 type SendEmailOptions = {
     to: string | string[]
-    templateId: string
+    templateAlias: string
     variables?: EmailTemplate["variables"]
 }
 
@@ -21,29 +21,13 @@ export class EmailService {
         this.resend = new Resend(apiKey)
     }
 
-    private async getTemplate(
-        templateId: string,
-        variables?: EmailTemplate["variables"]
-    ): Promise<EmailTemplate> {
-        try {
-            const templateResponse = await this.resend.templates.get(templateId)
-            const data = templateResponse as unknown as EmailTemplate
-
-            return {
-                id: data.id,
-                variables,
-            }
-        } catch (error) {
-            throw new InternalServerException(`Failed to load email template: ${templateId}`, error)
-        }
-    }
-
-    async send({ to, templateId, variables }: SendEmailOptions) {
-        const template = await this.getTemplate(templateId, variables)
-
+    async send({ to, templateAlias, variables }: SendEmailOptions) {
         const { data, error } = await this.resend.emails.send({
             to: Array.isArray(to) ? to : [to],
-            template,
+            template: {
+                id: templateAlias,
+                variables,
+            },
         })
 
         if (error)
@@ -55,14 +39,14 @@ export class EmailService {
     sendWelcome(to: string) {
         return this.send({
             to,
-            templateId: "welcome-message",
+            templateAlias: "welcome-message",
         })
     }
 
     sendVerification(to: string, otp: string) {
         return this.send({
             to,
-            templateId: "email-verification",
+            templateAlias: "email-verification",
             variables: { otp_code: otp },
         })
     }

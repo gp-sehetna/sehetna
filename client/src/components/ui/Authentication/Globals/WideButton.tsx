@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@/components/ui/shadcn/button"
+import { Button, ButtonProps } from "@/components/ui/shadcn/button"
 import { cn } from "@/lib/utils"
 
 type ButtonSize = "default" | "sm" | "lg" | "icon"
@@ -9,7 +9,7 @@ type WideButtonProps = {
     size?: ButtonSize
     children?: React.ReactNode
     asChild?: boolean
-}
+} & ButtonProps
 
 export default function WideButton({ variant, size, asChild, children }: WideButtonProps) {
     return (

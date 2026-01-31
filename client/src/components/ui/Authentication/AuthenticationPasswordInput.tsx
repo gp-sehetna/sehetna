@@ -4,17 +4,21 @@ import { AuthenticationField } from "@/components/ui/Authentication/Authenticati
 import ShowHidePasswordButton from "@/components/ui/GlobalControls/ShowHidePasswordButton"
 import { KeyRound } from "lucide-react"
 import { useState } from "react"
+import { InputProps } from "@/components/ui/shadcn/input"
+import RHF from "react-hook-form"
 
 type AuthenticationPasswordInputProps = {
     id: string
-    name: string
+    label: string
     inlineOptions?: React.ReactNode
-}
+    errors?: Array<RHF.FieldError | undefined>
+} & InputProps
 
 const AuthenticationPasswordInput = ({
     id,
-    name,
+    label,
     inlineOptions,
+    ...props
 }: AuthenticationPasswordInputProps) => {
     const [showPassword, setShowPassword] = useState(false)
 
@@ -30,10 +34,11 @@ const AuthenticationPasswordInput = ({
     return (
         <>
             <AuthenticationField
+                {...props}
                 id={id}
-                name={name}
+                label={label}
                 type={showPassword ? "text" : "password"}
-                placeholder={`Enter your ${name.toLowerCase()}`}
+                placeholder={`Enter your ${label.toLowerCase()}`}
                 required
                 prependInnerIcon={<KeyRound />}
                 appendInnerIcon={ShowHideIcon}

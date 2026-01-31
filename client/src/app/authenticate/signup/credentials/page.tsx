@@ -1,40 +1,64 @@
+"use client"
 import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
 import AuthenticationPasswordInput from "@/components/ui/Authentication/AuthenticationPasswordInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
-import { Metadata } from "next"
 
-export const metadata: Metadata = {
-    title: "Sign Up · Credentials",
-    description: "Continue setting up your Sehetna account by providing your credentials.",
-}
+import { PasswordAndNameInputsDTO } from "@/features/auth/auth.dto"
+import { PasswordAndNameSchema } from "@/features/auth/auth.validation"
+import { zodResolver } from "@hookform/resolvers/zod"
 
-const CredentialsPage = () => {
-    const title = <h3>Continue your credentials</h3>
-    const subtitle = (
-        <p className="text-md text-neutral-600">
-            Almost there, let’s finish setting up your account
-        </p>
-    )
+import { useRouter } from "next/navigation"
+import { useForm } from "react-hook-form"
+
+const SignupCredentialsPage = () => {
+    const router = useRouter()
+    const { register, handleSubmit, formState } = useForm<PasswordAndNameInputsDTO>({
+        resolver: zodResolver(PasswordAndNameSchema),
+        mode: "onSubmit",
+    })
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    function onSubmit({ firstName, lastName, password }: PasswordAndNameInputsDTO) {
+        // TODO: Call signup endpoint.
+        router.push("/authenticate/login/raw")
+    }
 
     return (
         <>
-            <BaseAuthentication title={title} subtitle={subtitle}>
+            <BaseAuthentication
+                title={<h3>Continue your credentials</h3>}
+                subtitle={
+                    <p className="text-md text-neutral-600">
+                        Almost there, let’s finish setting up your account
+                    </p>
+                }
+                onSubmit={handleSubmit(onSubmit)}
+            >
                 <div className="grid w-full grid-cols-1 gap-6 xl:grid-cols-2">
                     <AuthenticationField
-                        name="First name"
+                        {...register("firstName")}
+                        errors={[formState.errors.firstName]}
+                        label="First Name"
                         type="text"
                         placeholder="Enter your first name"
                     />
                     <AuthenticationField
-                        name="Last name"
+                        {...register("lastName")}
+                        errors={[formState.errors.lastName]}
+                        label="Last Name"
                         type="text"
                         placeholder="Enter your last name"
                     />
                 </div>
                 <Flex direction="col" gap={2} className="md:w-full">
-                    <AuthenticationPasswordInput id="login-password" name="Password" />
+                    <AuthenticationPasswordInput
+                        {...register("password")}
+                        errors={[formState.errors.password]}
+                        id="login-password"
+                        label="Password"
+                    />
                     <p className="text-xs text-neutral-600">
                         Use 8 or more characters with a mix of letters, numbers & symbols
                     </p>
@@ -47,4 +71,4 @@ const CredentialsPage = () => {
     )
 }
 
-export default CredentialsPage
+export default SignupCredentialsPage

@@ -6,7 +6,6 @@ import { Field, FieldLabel } from "@/components/ui/shadcn/field"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/shadcn/popover"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
-import * as React from "react"
 
 type DatePickerSimpleProps = {
     date: Date | undefined
@@ -22,10 +21,14 @@ export function DatePickerSimple({ date, setDate, className }: DatePickerSimpleP
                 <PopoverTrigger asChild>
                     <Button
                         variant="glassy"
-                        className="justify-start px-2.5 font-normal"
+                        className="text-neutral-1000 justify-start px-2.5 font-normal"
                         id="date-picker-simple"
                     >
-                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                        {date ? (
+                            format(date, "PPP")
+                        ) : (
+                            <span className="text-muted-foreground/80">Pick a date</span>
+                        )}
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
