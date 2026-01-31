@@ -42,6 +42,7 @@
     "react-day-picker": "^9.13.0",
     "react-dom": "19.2.3",
     "react-map-gl": "^8.1.0",
+    "resend": "^6.9.1",
     "sweetalert2": "^11.26.17",
     "sweetalert2-react-content": "^5.1.1",
     "tailwind-merge": "^3.4.0",

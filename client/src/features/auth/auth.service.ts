@@ -1,6 +1,7 @@
 import { ILoginInputsDTO, ISignupInputsDTO } from "@/features/auth/auth.dto"
 import { createCredentials } from "@/lib/auth/token"
 import { UserRepository } from "@/shared/db/repository/user.repository"
+// import { EmailService } from "@/shared/email/resend"
 import { ConflictException, NotFoundException, ValidationException } from "@/shared/http/errors"
 import { compare as compareHash, hash as generateHash } from "bcrypt"
 
@@ -13,8 +14,10 @@ export class AuthService {
 
         const hashedPassword = await generateHash(password, 10)
         const user = { firstName, lastName, email, password: hashedPassword }
-
-        return this.userRepository.create([user])
+        // Added await here because the function doesn't return a promise.
+        const createdUser = await this.userRepository.create([user])
+        // const _ = await new EmailService().sendWelcome(email)
+        return createdUser
     }
 
     login = async ({ email, password }: ILoginInputsDTO) => {
