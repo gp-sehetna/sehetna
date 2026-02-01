@@ -1,17 +1,34 @@
 "use client"
-import { Alert, confirmMissingData } from "@/lib/alert"
-import { formatDate } from "@/lib/utils/date"
-import { api } from "@/shared/api"
-import { SearchParamsOption } from "ky"
 import {
     EnvironmentData,
-    WeeklyEnvironmentData,
-    SimulateResponse,
     Location,
+    Prediction,
+    SimulateResponse,
 } from "@/features/environment/week/week.types"
+import { toProperCase } from "@/lib/utils"
+import { formatDate } from "@/lib/utils/date"
+import { confirmIncompleteEnvironment } from "@/lib/utils/toast"
+import { api } from "@/shared/api"
+import { SearchParamsOption } from "ky"
+import { toast } from "sonner"
 
 export class WeekClientService {
-    fetchEnvironment = async ({ lat, lng, iso }: Location, date: string, weeks = 1) => {
+    private getNullEnvironmentDataKeys(environmentData: EnvironmentData): string[] {
+        const nullKeys = new Set<string>()
+
+        // Check all weekly data rows
+        for (const row of environmentData.data)
+            for (const [key, value] of Object.entries(row))
+                if (value === null) nullKeys.add(toProperCase(key))
+
+        // Check all indicators dynamically
+        for (const [key, value] of Object.entries(environmentData.indicators))
+            if (value == null) nullKeys.add(toProperCase(key))
+
+        return Array.from(nullKeys)
+    }
+
+    private fetchEnvironment = async ({ lat, lng, iso }: Location, date: string, weeks = 1) => {
         const coords = `${lat},${lng}`
         const searchParams: SearchParamsOption = { coords, iso, date, weeks }
         const environmentData = await api
@@ -20,33 +37,22 @@ export class WeekClientService {
 
         // Validate Environment Data and ensure non-null values.
         if (!environmentData || !environmentData.data.length) {
-            await Alert.popup.fire({ icon: "error", title: "No data found for this location" })
+            toast.error("No data found for this location", {
+                description: "Please try another location or date.",
+            })
             return null
         }
 
         // Check if any of the data objects keys is null and retreive this key for logging.
-        const keys = Object.keys(environmentData.data[0]) as Array<keyof WeeklyEnvironmentData>
-        const nullKeys = keys
-            .filter((key) => environmentData.data[0][key] === null)
-            .map((key) => `data.${key}`)
-        if (!environmentData.indicators.gdp_per_capita_usd)
-            nullKeys.push("indicators.gdp_per_capita_usd")
-        if (!environmentData.indicators.food_production_index)
-            nullKeys.push("indicators.food_production_index")
-        if (!environmentData.indicators.undernourishment)
-            nullKeys.push("indicators.undernourishment")
+        const nullKeys = this.getNullEnvironmentDataKeys(environmentData)
+        const result = await confirmIncompleteEnvironment(environmentData, nullKeys)
+        if (result === null) return null
 
-        if (nullKeys) {
-            // Alert the user about missing data and confirm if they want to continue.
-            const shouldContinue = await confirmMissingData(nullKeys)
-
-            if (!shouldContinue) return null
-        }
-
-        return environmentData
+        // user chose "Continue Anyway"
+        return result
     }
 
-    fetchEnvironmentAndSimulate = async (loc: Location, date: Date, weeks = 1) => {
+    private fetchEnvironmentAndSimulate = async (loc: Location, date: Date, weeks = 1) => {
         const environment = await this.fetchEnvironment(loc, formatDate(date), weeks)
         if (!environment) return null
 
@@ -54,5 +60,21 @@ export class WeekClientService {
             .post<SimulateResponse>("ai/simulate", { json: environment })
             .json()
         return predictions
+    }
+
+    simulateEnvironment = (loc: Location, date: Date, weeks = 1) => {
+        toast.promise<Prediction | null>(() => this.fetchEnvironmentAndSimulate(loc, date, weeks), {
+            loading: "Loading...",
+            success: (predictions) => {
+                if (!predictions)
+                    return {
+                        message: "Modify your inputs at the side bar to get predictions.",
+                        type: "warning",
+                    }
+
+                return { message: "Predictions loaded!", type: "info" }
+            },
+            error: "Error occurred",
+        })
     }
 }

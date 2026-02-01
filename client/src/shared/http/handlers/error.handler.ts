@@ -38,26 +38,37 @@ export function globalErrorHandler<T = any, Args extends any[] = any[]>(handler:
 }
 
 const handleError = (err: unknown) => {
+    const notProduction = process.env.NODE_ENV !== "production"
     if (err instanceof ApplicationException) {
+        // Case 1: Known Application Exception
         const log = `[APPLICATION API (${err.name}):${err.status}] ${err.message}`
-        logger.error({ error_details: err.err_details }, log)
-        return errorResponse(log, err.status, err.err_details)
+        // logger.error({ error_details: err.err_details }, log)
+        logger.error(log)
+        return errorResponse(err.message, err.status, err.err_details)
     } else if (err instanceof ZodError) {
+        // Case 2: Zod Validation Error
         const log = `[VALIDATION (${err.name}):422]: ${err.message}`
-        logger.error({ error_details: z.treeifyError(err) }, log)
-        return errorResponse(log, 422, z.treeifyError(err))
+        // logger.error({ error_details: z.treeifyError(err) }, log)
+        logger.error(log)
+        return errorResponse(err.message, 422, z.treeifyError(err))
     }
+
     // Determine the message to send back
     // In Development: Send the specific error message for debugging
     // In Production: Send a generic message to avoid leaking security details
     else if (err instanceof Error) {
-        const notProduction = process.env.NODE_ENV !== "production",
-            stack = notProduction ? err.stack : undefined,
+        // Case 3: Generic Error
+        const stack = notProduction ? err.stack : undefined,
             message = notProduction ? err.message : "Internal Server Error",
             log = `[UNHANDLED (${err.name}):500]: ${message}`
 
-        logger.error({ error_details: stack }, log)
-        return errorResponse(log, 500, stack)
+        // logger.error({ error_details: stack }, log)
+        logger.error(log)
+        return errorResponse(message, 500, stack)
     }
-    return errorResponse("Unknown error occurred", 500)
+    // Case 4: Unknown Error Type example: throw "string error"
+    const message = notProduction ? String(err) : "Unknown error occurred",
+        log = `[UNHANDLED UNKNOWN:500]: ${message}`
+    logger.error(log)
+    return errorResponse(message, 500)
 }

@@ -5,6 +5,7 @@ import {
     OPEN_METEO_HISTORICAL_WEATHER,
     WORLDBANK,
 } from "@/shared/config/urls"
+import { ValidationException } from "@/shared/http/errors"
 import { SearchParamsOption } from "ky"
 import { fetchWeatherApi } from "openmeteo"
 import {
@@ -19,35 +20,40 @@ import {
 
 export class WeekService {
     async getWeeklyEnvironmentData(query: WeekParams): Promise<EnvironmentData> {
-        const [air, weather] = await Promise.all([
-            this.fetchWeeklyAirData(query),
-            this.fetchWeeklyWeatherData(query),
-        ])
+        try {
+            const [air, weather] = await Promise.all([
+                this.fetchWeeklyAirData(query),
+                this.fetchWeeklyWeatherData(query),
+            ])
 
-        const country_code = query.loc.iso
-        const indicators = await this.fetchIndicators(
-            country_code,
-            new Date(query.date).getFullYear()
-        )
+            const country_code = query.loc.iso
+            const indicators = await this.fetchIndicators(
+                country_code,
+                new Date(query.date).getFullYear()
+            )
 
-        const data: WeeklyEnvironmentData[] = air.map((airWeek, i) => ({
-            date: airWeek.date,
+            const data: WeeklyEnvironmentData[] = air.map((airWeek, i) => ({
+                date: airWeek.date,
 
-            pm25_ugm3: airWeek.pm2_5,
-            aqi_pm: airWeek.us_aqi_pm2_5,
+                pm25_ugm3: airWeek.pm2_5,
+                aqi_pm: airWeek.us_aqi_pm2_5,
 
-            temperature_celsius: weather[i]?.average_temperature ?? null,
-            precipitation_mm: weather[i]?.average_precipitation ?? null,
+                temperature_celsius: weather[i]?.average_temperature ?? null,
+                precipitation_mm: weather[i]?.average_precipitation ?? null,
 
-            flood_indicator: weather[i]?.is_flooded ?? null,
-            heat_wave_days: weather[i]?.heat_wave_days ?? null,
-        }))
+                flood_indicator: weather[i]?.is_flooded ?? null,
+                heat_wave_days: weather[i]?.heat_wave_days ?? null,
+            }))
 
-        return {
-            coords: `${query.loc.lat},${query.loc.lng}`,
-            country_code,
-            indicators,
-            data,
+            return {
+                coords: `${query.loc.lat},${query.loc.lng}`,
+                country_code,
+                indicators,
+                data,
+            }
+        } catch (err: unknown) {
+            if (err instanceof Error) throw new ValidationException(err.message)
+            throw err
         }
     }
 
