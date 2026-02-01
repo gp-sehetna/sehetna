@@ -1,6 +1,5 @@
 import { DUser } from "@/shared/db/model/user.model"
 import { DatabaseRepository } from "@/shared/db/repository/database.repository"
-import { BadRequestException } from "@/shared/http/errors"
 import { Model } from "mongoose"
 
 export class UserRepository extends DatabaseRepository<DUser> {
@@ -9,10 +8,7 @@ export class UserRepository extends DatabaseRepository<DUser> {
     }
 
     async create(data: Partial<DUser>[]) {
-        const users = await this.model.create(data, { validateBeforeSave: true })
-        if (!users) throw new BadRequestException("Failed to create users")
-
-        return users
+        return await this.model.create(data, { validateBeforeSave: true })
     }
 
     async findByEmail(email: string) {

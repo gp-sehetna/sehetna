@@ -1,12 +1,6 @@
 import { DUser, RoleEnum } from "@/shared/db/model/user.model"
 import { BadRequestException, UnauthorizedException } from "@/shared/http/errors"
-import { sign as generateToken, JwtPayload, verify as verifyToken } from "jsonwebtoken"
-
-// Constants
-const expirations = {
-    ACCESS_TOKEN: 30 * 60 * 1000, // 30 minutes
-    REFRESH_TOKEN: 30 * 24 * 60 * 60 * 1000, // 30 days
-} as const
+import { sign, JwtPayload, verify } from "jsonwebtoken"
 
 export enum SignatureLevelEnum {
     Bearer = "Bearer",
@@ -39,23 +33,13 @@ export const getSignatures = (level: SignatureLevelEnum) => {
     return signatures
 }
 
-export const createCredentials = async (
-    user: DUser
-): Promise<{
-    accessToken: string
-    refreshToken: string
-}> => {
+export const createTokens = async (user: DUser) => {
     const signatureLevel = detectSignatureLevel(user.role)
     const signatures = getSignatures(signatureLevel)
     const payload = { _id: user._id }
 
-    const accessToken = generateToken(payload, signatures.access, {
-        expiresIn: expirations.ACCESS_TOKEN,
-    })
-
-    const refreshToken = generateToken(payload, signatures.refresh, {
-        expiresIn: expirations.REFRESH_TOKEN,
-    })
+    const accessToken = sign(payload, signatures.access, { expiresIn: "30m" }) // ACCESS_TOKEN
+    const refreshToken = sign(payload, signatures.refresh, { expiresIn: "30d" }) // REFRESH_TOKEN
 
     return { accessToken, refreshToken }
 }
@@ -77,7 +61,7 @@ export const decodeToken = (authoriation: string, type = TokenTypeEnum.access) =
 
     const signatures = getSignatures(bearerKey as SignatureLevelEnum)
 
-    const decoded = verifyToken(
+    const decoded = verify(
         token,
         type === TokenTypeEnum.access ? signatures.access : signatures.refresh
     ) as JwtPayload

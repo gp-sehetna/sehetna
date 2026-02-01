@@ -49,9 +49,20 @@ class ConflictException extends ApplicationException {
     }
 }
 
+class ExpiredException extends ApplicationException {
+    constructor(message = "Expired", err_details?: any, cause?: unknown) {
+        super(message, 410, err_details, cause)
+    }
+}
+
 class ValidationException extends ApplicationException {
     constructor(message = "Validation failed", err_details?: any, cause?: unknown) {
         super(message, 422, err_details, cause)
+    }
+}
+class RateLimitException extends ApplicationException {
+    constructor(message = "Too many requests", err_details?: any, cause?: unknown) {
+        super(message, 429, err_details, cause)
     }
 }
 
@@ -68,6 +79,8 @@ export {
     ForbiddenException,
     InternalServerException,
     NotFoundException,
+    RateLimitException,
+    ExpiredException,
     UnauthorizedException,
     ValidationException,
 }

@@ -4,8 +4,11 @@ import logger from "@/shared/logger"
 import { UserModel } from "@/shared/db/model/user.model"
 import { UserRepository } from "@/shared/db/repository/user.repository"
 
+import { EmailService } from "@/shared/email/email.service"
 import { AuthService } from "@/features/auth/auth.service"
 import { WeekService } from "@/features/environment/week/week.service"
+import { OtpRepository } from "./repository/otp.repository"
+import { OtpModel } from "@/shared/db/model/otp.model"
 
 type MainServiceOptions = {
     db?: boolean
@@ -15,7 +18,11 @@ export class MainService {
     private static instance: MainService | null = null
     private static initialized = false
 
-    public readonly authService: AuthService = new AuthService(new UserRepository(UserModel))
+    public readonly authService: AuthService = new AuthService(
+        new UserRepository(UserModel),
+        new OtpRepository(OtpModel),
+        new EmailService()
+    )
     public readonly weekService: WeekService = new WeekService()
 
     private constructor() {}
