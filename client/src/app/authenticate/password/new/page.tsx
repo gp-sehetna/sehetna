@@ -6,14 +6,16 @@ import Flex from "@/components/ui/Flex"
 import { ConfirmPasswordInputsDTO } from "@/features/auth/auth.dto"
 import { AuthClientService } from "@/features/auth/auth.service.client"
 import { ConfirmPasswordSchema } from "@/features/auth/auth.validation"
+import { toLast } from "@/lib/auth/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LockIcon } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
 import { useForm } from "react-hook-form"
 
 const NewPasswordPage = () => {
     const router = useRouter()
+    const params = useSearchParams()
 
     const authService = useMemo(() => new AuthClientService(), [])
     const { register, handleSubmit, formState } = useForm<ConfirmPasswordInputsDTO>({
@@ -25,7 +27,8 @@ const NewPasswordPage = () => {
         await authService.updatePassword({ password })
 
         // TODO: Route user back dynamically to where he was.
-        router.push("/authenticate/login/raw")
+        toLast(router, params)
+        // router.push("/authenticate/login/raw")
     }
 
     return (

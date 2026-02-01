@@ -19,7 +19,7 @@ export async function connectMongodb() {
     if (!cached.promise) {
         cached.promise = connect(MONGODB_URI, {
             bufferCommands: false,
-            serverSelectionTimeoutMS: 10_000,
+            serverSelectionTimeoutMS: 60_000,
         })
     }
 

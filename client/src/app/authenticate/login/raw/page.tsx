@@ -7,15 +7,17 @@ import Flex from "@/components/ui/Flex"
 import { ILoginInputsDTO } from "@/features/auth/auth.dto"
 import { AuthClientService } from "@/features/auth/auth.service.client"
 import { LoginSchema } from "@/features/auth/auth.validation"
+import { toLast } from "@/lib/auth/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LogIn, Mail } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
 import { useForm } from "react-hook-form"
 
 const LoginRawPage = () => {
     const router = useRouter()
+    const params = useSearchParams()
 
     const authService = useMemo(() => new AuthClientService(), [])
     const { register, handleSubmit, formState } = useForm<ILoginInputsDTO>({
@@ -26,7 +28,7 @@ const LoginRawPage = () => {
     const onSubmit = async (fields: ILoginInputsDTO) => {
         await authService.login(fields)
         // TODO: Navigate to the last recent path user was in.
-        router.push("/")
+        toLast(router, params)
     }
 
     return (

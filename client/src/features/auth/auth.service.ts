@@ -51,4 +51,10 @@ export class AuthService extends OTPService {
 
         return await createTokens(user)
     }
+
+    checkOldPassword = async (userId: string, password: string) => {
+        const user = await this.userRepository.findById(userId)
+        if (!user) throw new NotFoundException(`User by id (${userId}) not found in the Database`)
+        return compare(password, user.password)
+    }
 }
