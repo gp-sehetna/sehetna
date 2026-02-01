@@ -11,14 +11,20 @@ export const POST = globalErrorHandler(async (req: NextRequest) => {
     const mainService = await MainService.getInstance()
 
     const { value: emailToken } = req.cookies.get("email_tok") || {}
-    const res = successResponse(undefined, "Email verified successfully")
-
-    res.cookies.delete("email_tok")
 
     if (!emailToken)
         throw new UnauthorizedException("Verification expired, resend an email to try again.")
 
-    await mainService.authService.verifyOtp(otp, emailToken)
+    const otpId = await mainService.authService.verifyOtp(otp, emailToken)
+
+    const res = successResponse(undefined, "Email verified successfully")
+    res.cookies.delete("email_tok")
+    res.cookies.set("otp_id", otpId, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 2 * 60 * 60, // 2hr
+    })
 
     return res
 })

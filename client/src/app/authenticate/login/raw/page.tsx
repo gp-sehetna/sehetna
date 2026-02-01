@@ -5,23 +5,26 @@ import BaseAuthentication from "@/components/ui/Authentication/BaseAuthenticatio
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
 import { ILoginInputsDTO } from "@/features/auth/auth.dto"
+import { AuthClientService } from "@/features/auth/auth.service.client"
 import { LoginSchema } from "@/features/auth/auth.validation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LogIn, Mail } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useMemo } from "react"
 import { useForm } from "react-hook-form"
 
 const LoginRawPage = () => {
     const router = useRouter()
+
+    const authService = useMemo(() => new AuthClientService(), [])
     const { register, handleSubmit, formState } = useForm<ILoginInputsDTO>({
         resolver: zodResolver(LoginSchema),
         mode: "onSubmit",
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function onSubmit({ email, password }: ILoginInputsDTO) {
-        // TODO: Call endpoint to login user
+    const onSubmit = async (fields: ILoginInputsDTO) => {
+        await authService.login(fields)
         // TODO: Navigate to the last recent path user was in.
         router.push("/")
     }

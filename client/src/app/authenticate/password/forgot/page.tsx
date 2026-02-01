@@ -1,20 +1,45 @@
+"use client"
 import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
+import { EmailInputsDTO } from "@/features/auth/auth.dto"
+import { AuthClientService } from "@/features/auth/auth.service.client"
+import { EmailSchema } from "@/features/auth/auth.validation"
+import { hideEmail } from "@/lib/utils/email"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Mail } from "lucide-react"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useMemo } from "react"
+import { useForm } from "react-hook-form"
 
 const ForgotPasswordPage = () => {
-    const title = <h3>Forgot your password?</h3>
-    const subtitle = (
-        <p className="text-md text-neutral-600">
-            No problem, enter your email to find your account
-        </p>
-    )
+    const router = useRouter()
+
+    const authService = useMemo(() => new AuthClientService(), [])
+    const { register, handleSubmit, formState } = useForm<EmailInputsDTO>({
+        resolver: zodResolver(EmailSchema),
+        mode: "onSubmit",
+    })
+
+    const onSubmit = async (fields: EmailInputsDTO) => {
+        await authService.checkEmail(fields)
+        router.push(
+            `/authenticate/verify?purpose=password_reset&mail=${encodeURIComponent(hideEmail(fields.email))}`
+        )
+    }
+
     return (
         <>
-            <BaseAuthentication title={title} subtitle={subtitle}>
+            <BaseAuthentication
+                title={<h3>Forgot your password?</h3>}
+                subtitle={
+                    <p className="text-md text-neutral-600">
+                        No problem, enter your email to find your account
+                    </p>
+                }
+                onSubmit={handleSubmit(onSubmit)}
+            >
                 <Flex direction="col" gap={6}>
                     <AuthenticationField
                         label="Email Address"
@@ -23,9 +48,11 @@ const ForgotPasswordPage = () => {
                         placeholder="Enter your email address"
                         required
                         prependInnerIcon={<Mail />}
+                        {...register("email")}
+                        errors={[formState.errors.email]}
                     />
-                    <WideButton asChild variant="black">
-                        <Link href="/authenticate/verify?purpose=password_reset">Continue</Link>
+                    <WideButton type="submit" variant="black">
+                        Continue
                     </WideButton>
                 </Flex>
             </BaseAuthentication>

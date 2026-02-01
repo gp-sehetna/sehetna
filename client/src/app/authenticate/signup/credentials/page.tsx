@@ -6,22 +6,25 @@ import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
 
 import { PasswordAndNameInputsDTO } from "@/features/auth/auth.dto"
+import { AuthClientService } from "@/features/auth/auth.service.client"
 import { PasswordAndNameSchema } from "@/features/auth/auth.validation"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { useRouter } from "next/navigation"
+import { useMemo } from "react"
 import { useForm } from "react-hook-form"
 
 const SignupCredentialsPage = () => {
     const router = useRouter()
+
+    const authService = useMemo(() => new AuthClientService(), [])
     const { register, handleSubmit, formState } = useForm<PasswordAndNameInputsDTO>({
         resolver: zodResolver(PasswordAndNameSchema),
         mode: "onSubmit",
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function onSubmit({ firstName, lastName, password }: PasswordAndNameInputsDTO) {
-        // TODO: Call signup endpoint.
+    const onSubmit = async (fields: PasswordAndNameInputsDTO) => {
+        await authService.signup(fields)
         router.push("/authenticate/login/raw")
     }
 

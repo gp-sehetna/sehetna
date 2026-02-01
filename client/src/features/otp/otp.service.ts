@@ -1,6 +1,7 @@
 import {
     ExpiredException,
     InternalServerException,
+    NotFoundException,
     RateLimitException,
     UnauthorizedException,
 } from "@/shared/http/errors"
@@ -53,6 +54,12 @@ export class OTPService {
         return emailToken
     }
 
+    getEmailByOtpId = async (id: string) => {
+        const otpRecord = await this.otpRepository.getOtpById(id)
+        if (!otpRecord) throw new NotFoundException("Otp record not found with the provided id")
+        return otpRecord.email
+    }
+
     verifyOtp = async (otp: string, emailToken: string) => {
         const { email } = verify(emailToken, this.tokenSignature) as JwtPayload & {
             email: string
@@ -71,7 +78,7 @@ export class OTPService {
             throw new UnauthorizedException("Invalid OTP")
         }
 
-        await this.otpRepository.markAsUsed(otpRecord.id)
-        return true
+        await this.otpRepository.markAsUsedAndVerified(otpRecord.id)
+        return otpRecord.id
     }
 }

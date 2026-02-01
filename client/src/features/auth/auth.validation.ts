@@ -20,6 +20,13 @@ const PasswordSchema = z.strictObject({
         ),
 })
 
+const ConfirmPasswordSchema = PasswordSchema.extend({
+    confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+})
+
 const NameSchema = z.strictObject({
     firstName: z.string().min(2, "Min username length is 2 chars"),
     lastName: z.string().max(20, "Max username length is 20 chars"),
@@ -29,4 +36,12 @@ const LoginSchema = EmailSchema.extend(PasswordSchema.shape)
 const SignupSchema = LoginSchema.extend(NameSchema.shape)
 const PasswordAndNameSchema = NameSchema.extend(PasswordSchema.shape)
 
-export { LoginSchema, SignupSchema, EmailSchema, OtpSchema, PasswordAndNameSchema }
+export {
+    LoginSchema,
+    SignupSchema,
+    EmailSchema,
+    OtpSchema,
+    PasswordSchema,
+    ConfirmPasswordSchema,
+    PasswordAndNameSchema,
+}

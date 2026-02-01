@@ -6,6 +6,7 @@ export interface IOtp extends Document {
     purpose: "email_verification" | "password_reset"
     expiresAt: Date
     used: boolean
+    verified: boolean
     attempts: number
     createdAt: Date
 }
@@ -21,12 +22,16 @@ const OtpSchema = new Schema<IOtp>(
         },
         expiresAt: { type: Date, required: true },
         used: { type: Boolean, default: false },
+        verified: { type: Boolean, default: false },
         attempts: { type: Number, default: 0 },
     },
     { timestamps: true }
 )
 
-// Auto-delete expired OTPs
-OtpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 })
+// Auto-delete expired OTPs which are still not verified.
+OtpSchema.index(
+    { expiresAt: 1 },
+    { expireAfterSeconds: 0, partialFilterExpression: { verified: false } }
+)
 
 export const OtpModel = models.Otp || model<IOtp>("Otp", OtpSchema)

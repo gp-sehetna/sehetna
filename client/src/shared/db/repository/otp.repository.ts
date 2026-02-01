@@ -32,7 +32,13 @@ export class OtpRepository extends DatabaseRepository<IOtp> {
             .exec()
     }
 
-    async markAsUsed(id: string) {
-        return await this.model.findByIdAndUpdate(id, { used: true }, { new: true }).exec()
+    async markAsUsedAndVerified(id: string) {
+        return await this.model
+            .findByIdAndUpdate(id, { used: true, verified: true }, { new: true })
+            .exec()
+    }
+
+    async getOtpById(id: string) {
+        return await this.model.findOne({ id }).exec()
     }
 }

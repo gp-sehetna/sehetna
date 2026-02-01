@@ -11,18 +11,22 @@ import { useRouter } from "next/navigation"
 import { hideEmail } from "@/lib/utils/email"
 import { EmailSchema } from "@/features/auth/auth.validation"
 import { EmailInputsDTO } from "@/features/auth/auth.dto"
+import { useMemo } from "react"
+import { AuthClientService } from "@/features/auth/auth.service.client"
 
 const SignupRawPage = () => {
     const router = useRouter()
+
+    const authService = useMemo(() => new AuthClientService(), [])
     const { register, handleSubmit, formState } = useForm<EmailInputsDTO>({
         resolver: zodResolver(EmailSchema),
         mode: "onSubmit",
     })
 
-    function onSubmit({ email }: EmailInputsDTO) {
-        // TODO: Call endpoint to store email address in server cookies
+    const onSubmit = async (fields: EmailInputsDTO) => {
+        await authService.generateAndFetchOtp(fields)
         router.push(
-            `/authenticate/verify?purpose=password_reset&mail=${encodeURIComponent(hideEmail(email))}`
+            `/authenticate/verify?purpose=email_verification&mail=${encodeURIComponent(hideEmail(fields.email))}`
         )
     }
 

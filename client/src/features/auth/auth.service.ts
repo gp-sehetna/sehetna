@@ -1,4 +1,4 @@
-import { ILoginInputsDTO, ISignupInputsDTO } from "@/features/auth/auth.dto"
+import { ILoginInputsDTO, PasswordAndNameInputsDTO } from "@/features/auth/auth.dto"
 import { createTokens } from "@/lib/auth/token"
 import { UserRepository } from "@/shared/db/repository/user.repository"
 import { EmailService } from "@/shared/email/email.service"
@@ -16,12 +16,26 @@ export class AuthService extends OTPService {
         super(otpRepository, emailService)
     }
 
-    signup = async ({ firstName, lastName, email, password }: ISignupInputsDTO) => {
+    updateUserPassword = async (id: string, password: string) => {
+        const updatedUser = await this.userRepository.updateUserPasswordById(id, password)
+        if (!updatedUser)
+            throw new NotFoundException(`User by ID (${id}) not found in the Database`)
+        return updatedUser.id
+    }
+
+    getUserIdByEmail = async (email: string) => {
+        const user = await this.userRepository.findByEmail(email)
+        if (!user) throw new NotFoundException(`User by email (${email}) not found in the Database`)
+        return user.id
+    }
+
+    signup = async ({ firstName, lastName, password }: PasswordAndNameInputsDTO, otpId: string) => {
+        const email = await this.getEmailByOtpId(otpId)
         const checkUserExist = await this.userRepository.findByEmail(email)
         if (checkUserExist) throw new ConflictException("Email already exists")
 
         const hashedPassword = await hash(password, 10)
-        const user = { firstName, lastName, email, password: hashedPassword }
+        const user = { firstName, lastName, password: hashedPassword }
         const createdUser = await this.userRepository.create([user])
         this.emailService.sendWelcome(email)
 

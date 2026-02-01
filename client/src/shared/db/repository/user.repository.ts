@@ -14,4 +14,8 @@ export class UserRepository extends DatabaseRepository<DUser> {
     async findByEmail(email: string) {
         return await this.model.findOne({ email }).exec()
     }
+
+    async updateUserPasswordById(id: string, password: string) {
+        return await this.model.findByIdAndUpdate(id, { password }, { new: true }).exec()
+    }
 }
