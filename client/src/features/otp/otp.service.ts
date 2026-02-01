@@ -27,7 +27,7 @@ export class OTPService {
     }
 
     private static generateOtp = () => {
-        return String(randomInt(100000, 999999))
+        return process.env.TEST_OTP ?? String(randomInt(100000, 999999))
     }
 
     generateAndSendOtp = async (email: string) => {

@@ -14,12 +14,15 @@
             {
               "name": "Generate",
               "id": "228d4b31-4f7a-4a40-a364-0999bb198953",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
               "request": {
                 "method": "POST",
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"email\": {{email}}\r\n}",
+                  "raw": "{\r\n    \"email\": \"{{email}}\"\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -28,8 +31,14 @@
                 },
                 "url": {
                   "raw": "{{NEXT_SERVER_BASE_URL}}/auth/otp/generate",
-                  "host": ["{{NEXT_SERVER_BASE_URL}}"],
-                  "path": ["auth", "otp", "generate"]
+                  "host": [
+                    "{{NEXT_SERVER_BASE_URL}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "otp",
+                    "generate"
+                  ]
                 }
               },
               "response": []
@@ -37,12 +46,15 @@
             {
               "name": "Verify",
               "id": "0ab8e3f7-8014-43c8-88c6-1946e28eb015",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
               "request": {
                 "method": "POST",
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"otp\": {{otp}} \r\n}",
+                  "raw": "{\r\n    \"otp\": \"{{otp}}\"\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -51,8 +63,14 @@
                 },
                 "url": {
                   "raw": "{{NEXT_SERVER_BASE_URL}}/auth/otp/verify",
-                  "host": ["{{NEXT_SERVER_BASE_URL}}"],
-                  "path": ["auth", "otp", "verify"]
+                  "host": [
+                    "{{NEXT_SERVER_BASE_URL}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "otp",
+                    "verify"
+                  ]
                 }
               },
               "response": []
@@ -66,12 +84,15 @@
             {
               "name": "Forgot",
               "id": "417702f9-2e05-4084-a5a8-8fd379feb28c",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
               "request": {
                 "method": "POST",
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"email\": {{email}}\r\n}",
+                  "raw": "{\r\n    \"email\": \"{{email}}\"\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -80,8 +101,14 @@
                 },
                 "url": {
                   "raw": "{{NEXT_SERVER_BASE_URL}}/auth/password/forgot",
-                  "host": ["{{NEXT_SERVER_BASE_URL}}"],
-                  "path": ["auth", "password", "forgot"]
+                  "host": [
+                    "{{NEXT_SERVER_BASE_URL}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "password",
+                    "forgot"
+                  ]
                 }
               },
               "response": []
@@ -89,12 +116,15 @@
             {
               "name": "New",
               "id": "8dad9417-360f-41e4-907f-1ab83cf5738c",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
               "request": {
                 "method": "POST",
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"password\": {{newPassword}}\r\n}",
+                  "raw": "{\r\n    \"password\": \"{{newPassword}}\"\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -103,8 +133,14 @@
                 },
                 "url": {
                   "raw": "{{NEXT_SERVER_BASE_URL}}/auth/password/new",
-                  "host": ["{{NEXT_SERVER_BASE_URL}}"],
-                  "path": ["auth", "password", "new"]
+                  "host": [
+                    "{{NEXT_SERVER_BASE_URL}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "password",
+                    "new"
+                  ]
                 }
               },
               "response": []
@@ -112,12 +148,15 @@
             {
               "name": "Old",
               "id": "3b4d652e-eec2-4b55-9d09-7995a0095325",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
               "request": {
                 "method": "POST",
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"password\": {{password}}\r\n}",
+                  "raw": "{\r\n    \"password\": \"{{password}}\"\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -126,8 +165,14 @@
                 },
                 "url": {
                   "raw": "{{NEXT_SERVER_BASE_URL}}/auth/password/old",
-                  "host": ["{{NEXT_SERVER_BASE_URL}}"],
-                  "path": ["auth", "password", "old"]
+                  "host": [
+                    "{{NEXT_SERVER_BASE_URL}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "password",
+                    "old"
+                  ]
                 }
               },
               "response": []
@@ -138,12 +183,15 @@
         {
           "name": "Log In",
           "id": "5afc70b3-078a-4a66-8cbd-13904ff5151d",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
           "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": {{email}},\r\n    \"password\": {{password}}\r\n}",
+              "raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -152,8 +200,13 @@
             },
             "url": {
               "raw": "{{NEXT_SERVER_BASE_URL}}/auth/login",
-              "host": ["{{NEXT_SERVER_BASE_URL}}"],
-              "path": ["auth", "login"]
+              "host": [
+                "{{NEXT_SERVER_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             }
           },
           "response": []
@@ -161,13 +214,21 @@
         {
           "name": "Log Out",
           "id": "c0205678-62c3-46aa-a34d-139a17d4059f",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
           "request": {
             "method": "POST",
             "header": [],
             "url": {
               "raw": "{{NEXT_SERVER_BASE_URL}}/auth/logout",
-              "host": ["{{NEXT_SERVER_BASE_URL}}"],
-              "path": ["auth", "logout"]
+              "host": [
+                "{{NEXT_SERVER_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
             }
           },
           "response": []
@@ -175,12 +236,15 @@
         {
           "name": "Sign Up",
           "id": "fd0e6444-5837-408c-b82d-0f402fc0324e",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
           "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"firstName\": \"{{firstName}}\",\r\n    \"lastName\": \"{{lastName}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+              "raw": "{\r\n    \"firstName\": \"{{firstName}}\",\r\n    \"lastName\": \"{{lastName}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -189,8 +253,13 @@
             },
             "url": {
               "raw": "{{NEXT_SERVER_BASE_URL}}/auth/signup",
-              "host": ["{{NEXT_SERVER_BASE_URL}}"],
-              "path": ["auth", "signup"]
+              "host": [
+                "{{NEXT_SERVER_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
             }
           },
           "response": []
@@ -210,13 +279,21 @@
             {
               "name": "Environment Week",
               "id": "3040a5ae-88a7-4cef-bbd6-9e0b69dede4d",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
               "request": {
                 "method": "POST",
                 "header": [],
                 "url": {
                   "raw": "{{NEXT_SERVER_BASE_URL}}/environment/week",
-                  "host": ["{{NEXT_SERVER_BASE_URL}}"],
-                  "path": ["environment", "week"]
+                  "host": [
+                    "{{NEXT_SERVER_BASE_URL}}"
+                  ],
+                  "path": [
+                    "environment",
+                    "week"
+                  ]
                 }
               },
               "response": []
