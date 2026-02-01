@@ -43,6 +43,13 @@ class NotFoundException extends ApplicationException {
     }
 }
 
+class UserNotFoundException extends NotFoundException {
+    constructor(message = "User not found", err_details?: any, cause?: unknown) {
+        super(message, err_details, cause)
+        this.name = this.constructor.name
+    }
+}
+
 class ConflictException extends ApplicationException {
     constructor(message = "Conflict", err_details?: any, cause?: unknown) {
         super(message, 409, err_details, cause)
@@ -83,5 +90,6 @@ export {
     NotFoundException,
     RateLimitException,
     UnauthorizedException,
+    UserNotFoundException,
     ValidationException,
 }

@@ -6,17 +6,18 @@ import { successResponse } from "@/shared/http/response"
 import { NextRequest } from "next/server"
 
 export const POST = globalErrorHandler(async (req: NextRequest) => {
-    const { password } = PasswordSchema.parse(await req.json())
+    const { password: newPassword } = PasswordSchema.parse(await req.json())
 
-    const { value: userId } = req.cookies.get("password/forgot/user_id") || {}
+    const { value: otpId } = req.cookies.get("otp_id") || {}
 
-    if (!userId) throw new ExpiredException("No User ID provided in the request cookies.")
+    if (!otpId) throw new ExpiredException("No Otp Id provided in the request cookies.")
 
     const mainService = await MainService.getInstance()
-    await mainService.authService.updateUserPassword(userId, password)
+    const email = await mainService.authService.getEmailByOtpId(otpId)
+    await mainService.authService.updateUserPassword(email, newPassword)
 
-    const res = successResponse(undefined, "User password updated successfully")
-    res.cookies.delete("password/forgot/user_id")
+    const res = successResponse(undefined, "Password updated successfully", 201)
+    res.cookies.delete("otp_id")
 
     return res
 })

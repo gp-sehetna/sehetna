@@ -7,6 +7,10 @@ const OtpSchema = z.strictObject({
         .length(6, { error: "OTP must be exactly 6 digits" }),
 })
 
+const PurposeAndOtpSchema = OtpSchema.extend({
+    purpose: z.enum(["email_verification", "password_reset"]),
+})
+
 const EmailSchema = z.strictObject({
     email: z.email({ error: "Email address isn't in the expected format, abc@gmail.com" }),
 })
@@ -37,11 +41,12 @@ const SignupSchema = LoginSchema.extend(NameSchema.shape)
 const PasswordAndNameSchema = NameSchema.extend(PasswordSchema.shape)
 
 export {
-    LoginSchema,
-    SignupSchema,
-    EmailSchema,
-    OtpSchema,
-    PasswordSchema,
     ConfirmPasswordSchema,
+    EmailSchema,
+    LoginSchema,
+    OtpSchema,
     PasswordAndNameSchema,
+    PasswordSchema,
+    PurposeAndOtpSchema,
+    SignupSchema,
 }

@@ -1,12 +1,12 @@
 "use client"
 
-import { api } from "@/shared/api"
 import {
-    PasswordAndNameInputsDTO,
-    ILoginInputsDTO,
     EmailInputsDTO,
+    ILoginInputsDTO,
+    PasswordAndNameInputsDTO,
     PasswordInputsDTO,
 } from "@/features/auth/auth.dto"
+import { api } from "@/shared/api"
 
 export class AuthClientService {
     updatePassword = async (json: PasswordInputsDTO) => {
@@ -25,7 +25,11 @@ export class AuthClientService {
         await api.post("api/auth/otp/generate", { json }).json()
     }
 
-    verifyOtp = async (otp: string) => {
-        await api.post<{ data: string }>("api/auth/otp/verify", { json: { otp } }).json()
+    verifyOtp = async (otp: string, purpose: string | null) => {
+        const { destination } = await api
+            .post<{ destination: string }>("api/auth/otp/verify", { json: { otp, purpose } })
+            .json()
+
+        return destination
     }
 }

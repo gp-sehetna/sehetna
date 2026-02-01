@@ -1,3 +1,7 @@
+import { AuthService } from "@/features/auth/auth.service"
+import { IOtp } from "@/shared/db/model/otp.model"
+import { OtpRepository } from "@/shared/db/repository/otp.repository"
+import { EmailService } from "@/shared/email/email.service"
 import {
     ExpiredException,
     InternalServerException,
@@ -5,12 +9,10 @@ import {
     RateLimitException,
     UnauthorizedException,
 } from "@/shared/http/errors"
-import { randomInt } from "crypto"
-import { AuthService } from "@/features/auth/auth.service"
-import { JwtPayload, sign, verify } from "jsonwebtoken"
+import { successResponse } from "@/shared/http/response"
 import { compare, hash } from "bcrypt"
-import { EmailService } from "@/shared/email/email.service"
-import { OtpRepository } from "@/shared/db/repository/otp.repository"
+import { randomInt } from "crypto"
+import { JwtPayload, sign, verify } from "jsonwebtoken"
 
 export class OTPService {
     private tokenSignature: string
@@ -30,7 +32,7 @@ export class OTPService {
         return String(randomInt(100000, 999999))
     }
 
-    generateAndSendOtp = async (email: string) => {
+    generateAndSendOtp = async (email: string, purpose: IOtp["purpose"]) => {
         // Store email in server cookie with expiration date = 5 mins
         const emailToken = sign({ email }, this.tokenSignature, {
             expiresIn: "5m", // EMAIL_VERIFICATION_TOKEN
@@ -41,31 +43,35 @@ export class OTPService {
         const otpHash = await hash(otp, 10)
         const expiresAt = new Date(Date.now() + 5 * 60 * 1000) // EMAIL_VERIFICATION_TOKEN
 
-        await this.otpRepository.invalidatePrevious(email, "email_verification")
+        await this.otpRepository.invalidatePrevious(email, purpose)
         await this.otpRepository.create({
             email,
             otpHash,
-            purpose: "email_verification",
+            purpose,
             expiresAt,
         })
 
         // Send it as an email to the user
         this.emailService.sendVerification(email, otp)
-        return emailToken
+
+        const res = successResponse(undefined, "OTP generated and stored", 201)
+
+        res.cookies.set("email_token", emailToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 5 * 60, // 5min
+        })
+
+        return res
     }
 
-    getEmailByOtpId = async (id: string) => {
-        const otpRecord = await this.otpRepository.getOtpById(id)
-        if (!otpRecord) throw new NotFoundException("Otp record not found with the provided id")
-        return otpRecord.email
-    }
-
-    verifyOtp = async (otp: string, emailToken: string) => {
+    verifyOtp = async (otp: string, emailToken: string, purpose: IOtp["purpose"]) => {
         const { email } = verify(emailToken, this.tokenSignature) as JwtPayload & {
             email: string
         }
 
-        const otpRecord = await this.otpRepository.findActiveOtp(email, "email_verification")
+        const otpRecord = await this.otpRepository.findActiveOtp(email, purpose)
 
         if (!otpRecord) throw new ExpiredException("OTP expired or invalid")
 
@@ -80,5 +86,11 @@ export class OTPService {
 
         await this.otpRepository.markAsUsedAndVerified(otpRecord.id)
         return otpRecord.id
+    }
+
+    getEmailByOtpId = async (id: string) => {
+        const otpRecord = await this.otpRepository.getOtpById(id)
+        if (!otpRecord) throw new NotFoundException("Otp record not found with the provided id")
+        return otpRecord.email
     }
 }

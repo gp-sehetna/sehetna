@@ -4,7 +4,7 @@ import { createTokens } from "@/lib/auth/token"
 import { OtpRepository } from "@/shared/db/repository/otp.repository"
 import { UserRepository } from "@/shared/db/repository/user.repository"
 import { EmailService } from "@/shared/email/email.service"
-import { ConflictException, NotFoundException, ValidationException } from "@/shared/http/errors"
+import { UserNotFoundException, ValidationException } from "@/shared/http/errors"
 import { compare, hash } from "bcrypt"
 
 export class AuthService extends OTPService {
@@ -16,22 +16,27 @@ export class AuthService extends OTPService {
         super(otpRepository, emailService)
     }
 
-    updateUserPassword = async (id: string, password: string) => {
-        const updatedUser = await this.userRepository.updateUserPasswordById(id, password)
-        if (!updatedUser)
-            throw new NotFoundException(`User by ID (${id}) not found in the Database`)
-        return updatedUser.id
+    updateUserPassword = async (email: string, newPassword: string) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [_, isPasswordSame] = await this.getUserAndComparePassword(email, newPassword)
+        if (isPasswordSame) throw new ValidationException("Password is same as before")
+
+        const hashedPassword = await hash(newPassword, 10)
+        const updatedUser = await this.userRepository.updateUserPasswordByEmail(
+            email,
+            hashedPassword
+        )
+        if (!updatedUser) throw new UserNotFoundException()
+
+        return updatedUser
     }
 
-    getUserIdByEmail = async (email: string) => {
-        const user = await this.userRepository.findByEmail(email)
-        if (!user) throw new NotFoundException(`User by email (${email}) not found in the Database`)
-        return user.id
+    getUserByEmail = async (email: string) => {
+        return await this.userRepository.findByEmail(email)
     }
 
     checkUserExistsByEmail = async (email: string) => {
-        const checkUserExist = await this.userRepository.findByEmail(email)
-        if (checkUserExist) throw new ConflictException("Email already exists")
+        return await this.userRepository.findByEmail(email)
     }
 
     signup = async ({ firstName, lastName, password }: PasswordAndNameInputsDTO, otpId: string) => {
@@ -44,11 +49,15 @@ export class AuthService extends OTPService {
         return createdUser
     }
 
-    login = async ({ email, password }: ILoginInputsDTO) => {
+    getUserAndComparePassword = async (email: string, password: string) => {
         const user = await this.userRepository.findByEmail(email)
-        if (!user) throw new NotFoundException(`User by email (${email}) not found in the Database`)
+        if (!user) throw new UserNotFoundException()
         const isPasswordValid = await compare(password, user.password)
+        return [user, isPasswordValid] as const
+    }
 
+    login = async ({ email, password }: ILoginInputsDTO) => {
+        const [user, isPasswordValid] = await this.getUserAndComparePassword(email, password)
         if (!isPasswordValid) throw new ValidationException("Invalid credentials")
 
         return await createTokens(user)
@@ -56,7 +65,7 @@ export class AuthService extends OTPService {
 
     checkOldPassword = async (userId: string, password: string) => {
         const user = await this.userRepository.findById(userId)
-        if (!user) throw new NotFoundException(`User by id (${userId}) not found in the Database`)
+        if (!user) throw new UserNotFoundException()
         return compare(password, user.password)
     }
 }

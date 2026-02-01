@@ -1,7 +1,7 @@
 import { EmailSchema } from "@/features/auth/auth.validation"
 import { MainService } from "@/shared/db/main.service"
+import { ConflictException } from "@/shared/http/errors"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
-import { successResponse } from "@/shared/http/response"
 import { NextRequest } from "next/server"
 
 export const POST = globalErrorHandler(async (req: NextRequest) => {
@@ -9,17 +9,8 @@ export const POST = globalErrorHandler(async (req: NextRequest) => {
 
     const mainService = await MainService.getInstance()
 
-    await mainService.authService.checkUserExistsByEmail(email)
-    const emailToken = await mainService.authService.generateAndSendOtp(email)
+    const user = await mainService.authService.getUserByEmail(email)
+    if (user) throw new ConflictException("Email already exists")
 
-    const res = successResponse(undefined, "OTP generated and stored", 201)
-
-    res.cookies.set("email_tok", emailToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 5 * 60, // 5min
-    })
-
-    return res
+    return await mainService.authService.generateAndSendOtp(email, "email_verification")
 })

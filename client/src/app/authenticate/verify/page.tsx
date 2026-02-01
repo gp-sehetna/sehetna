@@ -15,10 +15,8 @@ import { AuthClientService } from "@/features/auth/auth.service.client"
 import { OtpSchema } from "@/features/auth/auth.validation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useMemo } from "react"
+import { useMemo } from "react"
 import { Controller, useForm } from "react-hook-form"
-
-const purposes = new Set(["email_verification", "password_reset"])
 
 export default function VerifyPage() {
     const router = useRouter()
@@ -28,16 +26,11 @@ export default function VerifyPage() {
         resolver: zodResolver(OtpSchema),
     })
 
-    const requiredParam = searchParams.get("purpose")
     const email = searchParams.get("mail") as string
 
-    useEffect(() => {
-        if (!requiredParam || !purposes.has(requiredParam)) router.replace("/authenticate/login")
-    }, [requiredParam, router])
-
     const onSubmit = async ({ otp }: OTPInputsDTO) => {
-        await authService.verifyOtp(otp)
-        router.replace("/authenticate/signup/credentials")
+        const destination = await authService.verifyOtp(otp, searchParams.get("purpose"))
+        router.replace(destination)
     }
 
     return (
