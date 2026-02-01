@@ -37,7 +37,7 @@ export default function VerifyPage() {
 
     const onSubmit = async ({ otp }: OTPInputsDTO) => {
         await authService.verifyOtp(otp)
-        router.push("authenticate/signup/credentials")
+        router.replace("/authenticate/signup/credentials")
     }
 
     return (

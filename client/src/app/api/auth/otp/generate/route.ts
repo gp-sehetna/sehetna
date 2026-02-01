@@ -8,6 +8,8 @@ export const POST = globalErrorHandler(async (req: NextRequest) => {
     const { email } = EmailSchema.parse(await req.json())
 
     const mainService = await MainService.getInstance()
+
+    await mainService.authService.checkUserExistsByEmail(email)
     const emailToken = await mainService.authService.generateAndSendOtp(email)
 
     const res = successResponse(undefined, "OTP generated and stored", 201)

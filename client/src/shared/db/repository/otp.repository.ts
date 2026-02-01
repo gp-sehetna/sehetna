@@ -1,5 +1,5 @@
-import { DatabaseRepository } from "@/shared/db/repository/database.repository"
 import { IOtp } from "@/shared/db/model/otp.model"
+import { DatabaseRepository } from "@/shared/db/repository/database.repository"
 import { Model } from "mongoose"
 
 export class OtpRepository extends DatabaseRepository<IOtp> {
@@ -39,6 +39,6 @@ export class OtpRepository extends DatabaseRepository<IOtp> {
     }
 
     async getOtpById(id: string) {
-        return await this.model.findOne({ id }).exec()
+        return await this.model.findById(id).exec()
     }
 }
