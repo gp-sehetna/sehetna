@@ -29,13 +29,15 @@ export class AuthService extends OTPService {
         return user.id
     }
 
-    signup = async ({ firstName, lastName, password }: PasswordAndNameInputsDTO, otpId: string) => {
-        const email = await this.getEmailByOtpId(otpId)
+    checkUserExistsByEmail = async (email: string) => {
         const checkUserExist = await this.userRepository.findByEmail(email)
         if (checkUserExist) throw new ConflictException("Email already exists")
+    }
 
+    signup = async ({ firstName, lastName, password }: PasswordAndNameInputsDTO, otpId: string) => {
+        const email = await this.getEmailByOtpId(otpId)
         const hashedPassword = await hash(password, 10)
-        const user = { firstName, lastName, password: hashedPassword }
+        const user = { firstName, lastName, email, password: hashedPassword }
         const createdUser = await this.userRepository.create([user])
         this.emailService.sendWelcome(email)
 
