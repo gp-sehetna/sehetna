@@ -60,6 +60,7 @@ class ValidationException extends ApplicationException {
         super(message, 422, err_details, cause)
     }
 }
+
 class RateLimitException extends ApplicationException {
     constructor(message = "Too many requests", err_details?: any, cause?: unknown) {
         super(message, 429, err_details, cause)
@@ -76,11 +77,11 @@ export {
     ApplicationException,
     BadRequestException,
     ConflictException,
+    ExpiredException,
     ForbiddenException,
     InternalServerException,
     NotFoundException,
     RateLimitException,
-    ExpiredException,
     UnauthorizedException,
     ValidationException,
 }
