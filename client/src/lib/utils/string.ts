@@ -18,10 +18,8 @@ export function unslugifyCountry(slug: string): string {
 
 /**
  * "united states" → "United States"
+ * "united_states" → "United States"
  */
 export function toProperCase(value: string): string {
-    return String(value).replace(
-        /\w\S*/g,
-        (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    )
+    return value.replace(/[_\s]+/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())
 }

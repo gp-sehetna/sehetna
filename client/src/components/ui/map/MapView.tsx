@@ -1,94 +1,89 @@
 "use client"
 
-import { MAP_CONFIG, maplibregl, mapStyle } from "@/shared/config/map"
 import bbox from "@turf/bbox"
 import centroid from "@turf/centroid"
 import { useEffect, useMemo, useRef, useState } from "react"
 
 // MapLibre React wrapper
-import { createRoot } from "react-dom/client"
-import Map from "react-map-gl/maplibre"
-
 import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
-import { Alert } from "@/lib/alert"
-import { slugifyCountry, toProperCase, unslugifyCountry } from "@/lib/utils"
+import { WeekClientService } from "@/features/environment/week/week.service.client"
+import { Prediction } from "@/features/environment/week/week.types"
+import { slugifyCountry } from "@/lib/utils"
 import { api } from "@/shared/api"
-import type {
-    LngLatLike,
-    MapGeoJSONFeature,
-    MapLayerMouseEvent,
-    MapLibreEvent,
-    MarkerOptions,
+import { createRoot } from "react-dom/client"
+
+import {
+    buildCountriesLookup,
+    CountriesById,
+    getClickedCountry,
+    getCountryBySlug,
+    MAP_CONFIG,
+    mapStyle,
 } from "@/shared/config/map"
+import maplibregl from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { useParams, useRouter } from "next/navigation"
+import Map from "react-map-gl/maplibre"
+import { toast } from "sonner"
 import CountryPopup from "./CountryPopup"
 import ZoomControls from "./ZoomControls"
-import { WeekClientService } from "@/features/environment/week/week.service.client"
 
-const INITIAL_MAP_CONFIG = {
-    longitude: 31.23,
-    latitude: 30.04,
-    zoom: 6,
-}
-
-type CountriesById = Record<string | number, MapGeoJSONFeature>
-
-export default function MapView() {
+export default function MapView({ children }: { children: React.ReactNode }) {
+    const router = useRouter()
     const [geojsonReady, setGeojsonReady] = useState(false)
+
     const [date, setDate] = useState<Date>()
     const [mapLoaded, setMapLoaded] = useState(false)
     const params = useParams<{ country?: string }>()
-    const activeCountrySlug = params.country
-    const router = useRouter()
-    const markerRef = useRef<maplibregl.Marker>(null)
-    const popupRef = useRef<maplibregl.Popup>(null)
-    const mapRef = useRef<maplibregl.Map>(null)
-    const weekService = useMemo(() => new WeekClientService(), [])
 
+    const popupRef = useRef<maplibregl.Popup | null>(null)
+    const mapRef = useRef<maplibregl.Map | null>(null)
     const countriesByIdRef = useRef<CountriesById>({})
 
-    const zoomToCountryBySlug = (slug: string) => {
-        if (!mapRef.current) return
+    const weekService = useMemo(() => new WeekClientService(), [])
+    const activeCountrySlug = params.country
 
-        const countryName = toProperCase(unslugifyCountry(slug))
-
-        const countryFeature = Object.values(countriesByIdRef.current).find(
-            (feature) => feature.properties?.NAME?.toLowerCase() === countryName.toLowerCase()
-        )
-
-        if (!countryFeature) return
-
-        const centroidCoords = centroid(countryFeature).geometry.coordinates as LngLatLike
-
-        zoomToCountry(countryFeature, mapRef.current, centroidCoords)
-    }
+    const markerRef = useRef<maplibregl.Marker | null>(null)
 
     useEffect(() => {
-        ;(async () => {
+        markerRef.current = new maplibregl.Marker({
+            color: "var(--color-danger-100)",
+            scale: 0.7,
+        })
+
+        return () => {
+            markerRef.current?.remove()
+            markerRef.current = null
+        }
+    }, [])
+
+    useEffect(() => {
+        async function loadCountries() {
             const geojson = await api.get<any>(MAP_CONFIG.countriesPath).json()
-
-            const lookup: CountriesById = {}
-            geojson.features.forEach((feature: MapGeoJSONFeature, index: number) => {
-                const id = feature.properties.ISO_A3 ?? index
-                lookup[id] = feature
-                feature.id = id
-            })
-
-            countriesByIdRef.current = lookup
+            countriesByIdRef.current = buildCountriesLookup(geojson)
             setGeojsonReady(true)
-        })()
-        if (!mapLoaded) return
-        if (!geojsonReady) return
-        if (!activeCountrySlug) return
+        }
+
+        loadCountries()
+    }, [])
+
+    useEffect(() => {
+        if (!mapLoaded || !geojsonReady || !activeCountrySlug) return
         if (!mapRef.current) return
 
-        zoomToCountryBySlug(activeCountrySlug)
+        const country = getCountryBySlug(activeCountrySlug, countriesByIdRef.current)
+
+        if (!country) return
+
+        const center = centroid(country).geometry.coordinates as [number, number]
+        zoomToCountry(country, mapRef.current, center)
     }, [mapLoaded, geojsonReady, activeCountrySlug])
 
-    const onMapClick = async (e: MapLayerMouseEvent) => {
+    const onMapClick = (e: maplibregl.MapLayerMouseEvent) => {
         if (!date) {
-            await Alert.popup.fire({ icon: "warning", title: "Please select a date first." })
+            toast.warning("Please select a date first.", {
+                description: "Use the date picker at the bottom left corner.",
+            })
             return
         }
 
@@ -96,44 +91,24 @@ export default function MapView() {
 
         popupRef.current?.remove()
 
-        const renderedFeatures: MapGeoJSONFeature[] = map.queryRenderedFeatures(e.point, {
-            layers: ["countries-fill"],
-        })
+        const country = getClickedCountry(map, e.point, countriesByIdRef.current)
 
-        if (!renderedFeatures.length) return
-
-        const renderedCountry = renderedFeatures[0]
-        const countryIso: string = renderedCountry.properties.ISO_A3
-
-        if (countryIso == null) {
-            console.warn("Clicked country has no id")
-            return
-        }
-
-        const sourceCountry = countriesByIdRef.current[countryIso]
-
-        if (!sourceCountry) {
-            console.warn("Country not found in source data: ", countryIso)
-            return
-        }
-
-        const slug = slugifyCountry(sourceCountry.properties.NAME)
+        if (!country) return
+        const slug = slugifyCountry(country.properties.NAME)
         router.push(`/map/${slug}`)
 
-        const countryCentroid = centroid(sourceCountry).geometry.coordinates as LngLatLike
+        const center = centroid(country).geometry.coordinates as [number, number]
 
-        zoomToCountry(sourceCountry, map, countryCentroid)
+        markerRef.current?.remove()
+        markerRef.current?.setLngLat(e.lngLat).addTo(map)
+        zoomToCountry(country, map, center)
+        renderPopup(popupRef, country.properties, center, map)
 
-        const location = { lat: e.lngLat.lat, lng: e.lngLat.lng, iso: countryIso }
-        const predictions = await weekService.fetchEnvironmentAndSimulate(location, date)
-
-        if (!predictions) return
-
-        addMarker(markerRef, e.lngLat, map)
-        renderPopup(popupRef, sourceCountry.properties, countryCentroid, map)
+        const location = { lat: e.lngLat.lat, lng: e.lngLat.lng, iso: country.properties.ISO_A3 }
+        weekService.simulateEnvironment(location, date)
     }
 
-    const onMapLoad = (e: MapLibreEvent) => {
+    const onMapLoad = (e: maplibregl.MapLibreEvent) => {
         const map = e.target
         mapRef.current = map
         map.setStyle(mapStyle)
@@ -144,47 +119,34 @@ export default function MapView() {
 
     return (
         <>
-            <Map
-                reuseMaps
-                initialViewState={INITIAL_MAP_CONFIG}
-                style={{ height: "100%", width: "100%" }}
-                onClick={onMapClick}
-                onLoad={onMapLoad}
-            />
+            <Map reuseMaps onClick={onMapClick} onLoad={onMapLoad} />
+            {children}
             <DatePickerSimple date={date} setDate={setDate} className="absolute bottom-5 left-5" />
             <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
         </>
     )
 }
 
-const addMarker = (markerRef: any, lngLat: LngLatLike, map: maplibregl.Map) => {
-    if (!markerRef.current) {
-        const markerOpts: MarkerOptions = { color: "var(--color-danger-100)", scale: 0.7 }
-        markerRef.current = new maplibregl.Marker(markerOpts).setLngLat(lngLat).addTo(map)
-    } else {
-        markerRef.current.setLngLat(lngLat)
-    }
-}
-
-const zoomToCountry = (country: MapGeoJSONFeature, map: maplibregl.Map, centroid: LngLatLike) => {
+const zoomToCountry = (
+    country: maplibregl.MapGeoJSONFeature,
+    map: maplibregl.Map,
+    centroid: [number, number]
+) => {
     const bounds = bbox(country)
     const [minX, minY, maxX, maxY] = bounds
-
-    // For dubugging
-    // console.log("Country: ", country)
-    // console.log("BBox: ", bounds)
-    // drawBBox(map, bounds)
-
-    map.fitBounds(
-        [
-            [minX, minY],
-            [maxX, maxY],
-        ],
-        { padding: 50, duration: 1200, maxZoom: 8, center: centroid }
-    )
+    const alignedBounds: maplibregl.LngLatBoundsLike = [
+        [minX, minY],
+        [maxX, maxY],
+    ]
+    map.fitBounds(alignedBounds, { padding: 50, duration: 1200, maxZoom: 8, center: centroid })
 }
 
-const renderPopup = (popupRef: any, properties: any, centroid: LngLatLike, map: maplibregl.Map) => {
+const renderPopup = (
+    popupRef: React.RefObject<maplibregl.Popup | null>,
+    properties: maplibregl.GeoJSONFeature["properties"],
+    centroid: maplibregl.LngLatLike,
+    map: maplibregl.Map
+) => {
     // Create container
     const popupContainer = document.createElement("div")
     // Render React component
@@ -203,8 +165,6 @@ const renderPopup = (popupRef: any, properties: any, centroid: LngLatLike, map: 
         .setLngLat(centroid)
         .setDOMContent(popupContainer)
         .addTo(map)
-
-    // console.log(features)
 }
 
 //? Debugging bbox boundries

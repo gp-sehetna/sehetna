@@ -1,12 +1,21 @@
+import { handleErrors } from "@/shared/api/hooks"
 import ky from "ky"
 
-const api = ky.create({
+const core = ky.create({
+    timeout: process.env.NODE_ENV !== "production" ? 10000000 : 20000,
+    hooks: {
+        afterResponse: [handleErrors],
+    },
+})
+
+const api = core.extend({
     prefixUrl: "/",
     credentials: "include",
-    timeout: process.env.NODE_ENV !== "production" ? 10000000 : 20000,
     headers: {
         "Content-Type": "application/json",
     },
 })
 
-export default api
+const externalApi = core.extend({})
+
+export { api, externalApi }

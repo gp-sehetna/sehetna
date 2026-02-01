@@ -21,7 +21,6 @@
     "@turf/bbox": "^7.3.2",
     "@turf/centroid": "^7.3.2",
     "animate.css": "^4.1.1",
-    "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -45,8 +44,7 @@
     "react-hook-form": "^7.71.1",
     "react-map-gl": "^8.1.0",
     "resend": "^6.9.1",
-    "sweetalert2": "^11.26.17",
-    "sweetalert2-react-content": "^5.1.1",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^4.3.5"

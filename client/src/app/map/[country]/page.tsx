@@ -1,4 +1,3 @@
-import MapView from "@/components/ui/map/MapView"
 import { toProperCase, unslugifyCountry } from "@/lib/utils"
 import { Metadata } from "next"
 
@@ -22,11 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const MapPage = () => {
-    return (
-        <div className="flex h-screen w-full flex-col items-center justify-center">
-            <MapView />
-        </div>
-    )
+    return <></>
 }
 
 export default MapPage

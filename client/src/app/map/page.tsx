@@ -1,4 +1,3 @@
-import MapView from "@/components/ui/map/MapView"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -11,11 +10,7 @@ export const metadata: Metadata = {
 }
 
 const MapPage = () => {
-    return (
-        <div className="flex h-screen w-full flex-col items-center justify-center">
-            <MapView />
-        </div>
-    )
+    return <></>
 }
 
 export default MapPage

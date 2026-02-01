@@ -1,4 +1,5 @@
 import "@/app/globals.css"
+import { Toaster } from "@/components/ui/shadcn/sonner"
 import { plusJakarta } from "@/fonts/fonts"
 import "animate.css"
 import type { Metadata } from "next"
@@ -82,7 +83,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <head>
                 <meta name="apple-mobile-web-app-title" content="Sehetna" />
             </head>
-            <body className={plusJakarta.className}>{children}</body>
+            <body className={plusJakarta.className}>
+                {children}
+                <Toaster />
+            </body>
         </html>
     )
 }

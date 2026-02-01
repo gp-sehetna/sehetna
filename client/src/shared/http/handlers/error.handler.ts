@@ -8,8 +8,8 @@ type AppResponse<T = any> =
     | Promise<NextResponse<T>>
     | NextResponse<T>
     | Promise<[T, string?, number?]>
-    | Promise<T>
     | [T, string?, number?]
+    | Promise<T>
     | T
 
 // Handler that takes no arguments
@@ -24,43 +24,51 @@ type HandlerWithRequest<T = any, Args extends any[] = any[]> = (
 type Handler<T = any, Args extends any[] = any[]> = HandlerNoArgs<T> | HandlerWithRequest<T, Args>
 
 export function globalErrorHandler<T = any, Args extends any[] = any[]>(handler: Handler<T, Args>) {
-    return async (req?: NextRequest, ...args: Args): Promise<NextResponse> => {
+    return async (req: NextRequest, ...args: Args): Promise<NextResponse> => {
         try {
-            // Call handler with all available arguments
-            const result = await handler(req as any, ...args)
+            const result = await handler(req, ...args)
 
             if (result instanceof NextResponse) return result
             if (Array.isArray(result)) return successResponse(...result)
             return successResponse(result)
         } catch (err: unknown) {
-            // Case 1: Handled Application Exceptions (User errors, Validation, etc.)
-            if (err instanceof ApplicationException) {
-                logger.error(`API error: ${err}`)
-                return errorResponse(err.message, err.status, err.err_details)
-            }
-
-            // Case 2: ZodError (Validation errors)
-            if (err instanceof ZodError) {
-                // logger.error('Validation failed:', );
-                return errorResponse("Validation failed", 422, z.treeifyError(err))
-            }
-
-            // Case 3: Unhandled/System Errors (Crashes, DB issues)
-            logger.error(`Unhandled API error: ${err}`)
-
-            // Determine the message to send back
-            // In Development: Send the specific error message for debugging
-            // In Production: Send a generic message to avoid leaking security details
-            const isDev = process.env.NODE_ENV === "development"
-
-            let message = "Internal Server Error"
-            if (isDev && err instanceof Error) {
-                message = err.message
-            } else if (typeof err === "string") {
-                message = err
-            }
-
-            return errorResponse(message, 500)
+            return handleError(err)
         }
     }
+}
+
+const handleError = (err: unknown) => {
+    const notProduction = process.env.NODE_ENV !== "production"
+    if (err instanceof ApplicationException) {
+        // Case 1: Known Application Exception
+        const log = `[APPLICATION API (${err.name}):${err.status}] ${err.message}`
+        // logger.error({ error_details: err.err_details }, log)
+        logger.error(log)
+        return errorResponse(err.message, err.status, err.err_details)
+    } else if (err instanceof ZodError) {
+        // Case 2: Zod Validation Error
+        const log = `[VALIDATION (${err.name}):422]: ${err.message}`
+        // logger.error({ error_details: z.treeifyError(err) }, log)
+        logger.error(log)
+        return errorResponse(err.message, 422, z.treeifyError(err))
+    }
+
+    // Determine the message to send back
+    // In Development: Send the specific error message for debugging
+    // In Production: Send a generic message to avoid leaking security details
+    else if (err instanceof Error) {
+        // Case 3: Generic Error
+        const stack = notProduction ? err.stack : undefined,
+            message = notProduction ? err.message : "Internal Server Error",
+            log = `[UNHANDLED (${err.name}):500]: ${message}`
+
+        // logger.error({ error_details: stack }, log)
+        logger.error(log)
+        return errorResponse(message, 500, stack)
+    }
+    // Case 4: Unknown Error Type example: throw "string error"
+    const message = notProduction ? String(err) : "Unknown error occurred",
+        log = `[UNHANDLED UNKNOWN:500]: ${message}`
+    logger.error(log)
+    return errorResponse(message, 500)
 }
