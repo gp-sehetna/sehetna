@@ -56,4 +56,12 @@ export class EmailService {
             variables: { OTP_CODE: otp },
         })
     }
+
+    async sendPasswordChanged(to: string, timestamp: string, deviceName: string) {
+        await this.send({
+            to,
+            templateAlias: "password-changed",
+            variables: { timestamp, device_info: deviceName },
+        })
+    }
 }

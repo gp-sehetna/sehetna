@@ -6,6 +6,7 @@ import { UserRepository } from "@/shared/db/repository/user.repository"
 import { EmailService } from "@/shared/email/email.service"
 import { UserNotFoundException, ValidationException } from "@/shared/http/errors"
 import { compare, hash } from "bcrypt"
+import { NextRequest, userAgent } from "next/server"
 
 export class AuthService extends OTPService {
     constructor(
@@ -16,7 +17,7 @@ export class AuthService extends OTPService {
         super(otpRepository, emailService)
     }
 
-    updateUserPassword = async (email: string, newPassword: string) => {
+    updateUserPassword = async (email: string, newPassword: string, req: NextRequest) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [_, isPasswordSame] = await this.getUserAndComparePassword(email, newPassword)
         if (isPasswordSame) throw new ValidationException("Password is same as before")
@@ -27,7 +28,13 @@ export class AuthService extends OTPService {
             hashedPassword
         )
         if (!updatedUser) throw new UserNotFoundException()
-
+        // Send an email to the user
+        const ua = userAgent(req)
+        this.emailService.sendPasswordChanged(
+            email,
+            updatedUser.updatedAt?.toISOString() ?? "",
+            ua.device.type || "Unknown Device"
+        )
         return updatedUser
     }
 

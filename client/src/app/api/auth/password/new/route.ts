@@ -14,7 +14,7 @@ export const POST = globalErrorHandler(async (req: NextRequest) => {
 
     const mainService = await MainService.getInstance()
     const email = await mainService.authService.getEmailByOtpId(otpId)
-    await mainService.authService.updateUserPassword(email, newPassword)
+    await mainService.authService.updateUserPassword(email, newPassword, req)
 
     const res = successResponse(undefined, "Password updated successfully", 201)
     res.cookies.delete("otp_id")
