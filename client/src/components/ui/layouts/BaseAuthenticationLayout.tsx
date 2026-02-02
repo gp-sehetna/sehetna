@@ -1,5 +1,6 @@
 import { ReactNode, Suspense } from "react"
 import Footer from "@/components/ui/GlobalComponents/Footers/Footer"
+import { GooSpinner } from "../GlobalComponents/Loaders/GooSpinner"
 
 export const BaseAuthenticationLayout = ({ children }: { children: ReactNode }) => {
     return (
@@ -7,7 +8,7 @@ export const BaseAuthenticationLayout = ({ children }: { children: ReactNode }) 
             <div className="flex min-h-screen flex-col">
                 <div className="flex flex-2 overflow-hidden">
                     <main className="m-8 flex flex-1 items-center justify-center md:justify-start md:p-20">
-                        <Suspense fallback={<div>Loading...</div>} children={children} />
+                        <Suspense fallback={<GooSpinner color="primary" />} children={children} />
                     </main>
 
                     <div
