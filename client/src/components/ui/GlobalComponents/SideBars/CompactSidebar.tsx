@@ -28,7 +28,7 @@ const navigations: LinkType[] = [
     { title: "Security", url: "/settings/security", icon: ShieldCheck },
     { title: "Help & Support", url: "/support", icon: Info },
 ]
-const AppSidebar = () => {
+const CompactSidebar = () => {
     return (
         <Sidebar collapsible="icon" className="relative overflow-visible border-neutral-300">
             <SidebarContent className="overflow-visible!">
@@ -69,4 +69,4 @@ const AppSidebar = () => {
     )
 }
 
-export default AppSidebar
+export default CompactSidebar

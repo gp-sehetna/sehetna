@@ -27,6 +27,8 @@ import Map from "react-map-gl/maplibre"
 import { toast } from "sonner"
 import CountryPopup from "./CountryPopup"
 import ZoomControls from "./ZoomControls"
+import CompactSidebar from "../GlobalComponents/SideBars/CompactSidebar"
+import MainSidebar from "../GlobalComponents/SideBars/MainSidebar"
 
 export default function MapView({ children }: { children: React.ReactNode }) {
     const router = useRouter()
@@ -111,6 +113,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
     const onMapLoad = (e: maplibregl.MapLibreEvent) => {
         const map = e.target
         mapRef.current = map
+
         map.setStyle(mapStyle)
         setMapLoaded(true)
     }
@@ -119,10 +122,19 @@ export default function MapView({ children }: { children: React.ReactNode }) {
 
     return (
         <>
-            <Map reuseMaps onClick={onMapClick} onLoad={onMapLoad} />
-            {children}
-            <DatePickerSimple date={date} setDate={setDate} className="absolute bottom-5 left-5" />
-            <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
+            <Map reuseMaps onClick={onMapClick} onLoad={onMapLoad}>
+                {children}
+                <div className="absolute top-0 left-0 flex w-fit gap-4">
+                    <CompactSidebar />
+                    <MainSidebar />
+                </div>
+                <DatePickerSimple
+                    date={date}
+                    setDate={setDate}
+                    className="absolute bottom-5 left-5"
+                />
+                <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
+            </Map>
         </>
     )
 }
