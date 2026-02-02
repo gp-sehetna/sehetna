@@ -33,7 +33,7 @@ export class AuthService extends OTPService {
         this.emailService.sendPasswordChanged(
             email,
             updatedUser.updatedAt?.toISOString() ?? "",
-            ua.device.type || "Unknown Device"
+            ua.device.type || ua.device.model || "Unknown Device"
         )
         return updatedUser
     }
