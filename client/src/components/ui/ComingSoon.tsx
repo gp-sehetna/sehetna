@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/shadcn/button"
 type ComingSoonProps = {
     title: string
     description?: string
@@ -54,6 +55,10 @@ export default function ComingSoon({ title, description }: ComingSoonProps) {
                     <p className="mt-4 text-sm text-gray-600">
                         Building something great for your health
                     </p>
+                </div>
+                <div className="mt-2 flex justify-center gap-4">
+                    <Button>Ok</Button>
+                    <Button variant={"outline"}>Cancel</Button>
                 </div>
             </div>
         </main>
