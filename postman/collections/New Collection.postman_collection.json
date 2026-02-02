@@ -283,10 +283,10 @@
                 "disableBodyPruning": true
               },
               "request": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{NEXT_SERVER_BASE_URL}}/environment/week?coords=52.52,13.41&date=2026-01-09&endCount=7",
+                  "raw": "{{NEXT_SERVER_BASE_URL}}/environment/week?coords=52.52,13.41&date=2026-01-09&weeks=1&iso=EGY",
                   "host": [
                     "{{NEXT_SERVER_BASE_URL}}"
                   ],
@@ -297,20 +297,98 @@
                   "query": [
                     {
                       "key": "coords",
-                      "value": "52.52,13.41"
+                      "value": "52.52,13.41",
+                      "uuid": "32dd927d-253e-49f4-8871-22a1f73f4a2a"
                     },
                     {
                       "key": "date",
-                      "value": "2026-01-09"
+                      "value": "2026-01-09",
+                      "uuid": "3e761688-855a-43fc-8573-400edfed5a5c"
                     },
                     {
-                      "key": "endCount",
-                      "value": "7"
+                      "key": "weeks",
+                      "value": "1",
+                      "uuid": "d9e207f1-6794-4012-9505-ce81abb4f55e"
+                    },
+                    {
+                      "key": "iso",
+                      "value": "EGY",
+                      "type": "text",
+                      "uuid": "bbe8a65e-f381-4402-a45a-86b958e72681"
                     }
                   ]
                 }
               },
-              "response": []
+              "response": [
+                {
+                  "id": "c6037994-1b91-4ee9-8c90-47b0ff62999e",
+                  "name": "Success",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{NEXT_SERVER_BASE_URL}}/environment/week?coords=52.52,13.41&date=2026-01-09&weeks=1&iso=EGY",
+                      "host": [
+                        "{{NEXT_SERVER_BASE_URL}}"
+                      ],
+                      "path": [
+                        "environment",
+                        "week"
+                      ],
+                      "query": [
+                        {
+                          "key": "coords",
+                          "value": "52.52,13.41"
+                        },
+                        {
+                          "key": "date",
+                          "value": "2026-01-09"
+                        },
+                        {
+                          "key": "weeks",
+                          "value": "1"
+                        },
+                        {
+                          "key": "iso",
+                          "value": "EGY"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Mon, 02 Feb 2026 00:47:35 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": "2026-02-02T00:48:51.880Z",
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Weekly environment data fetched successfully\",\n    \"coords\": \"52.52,13.41\",\n    \"country_code\": \"EGY\",\n    \"indicators\": {\n        \"gdp_per_capita_usd\": null,\n        \"food_production_index\": null,\n        \"undernourishment\": null\n    },\n    \"data\": [\n        {\n            \"date\": \"2026-01-04\",\n            \"pm25_ugm3\": 13.479761928319931,\n            \"aqi_pm\": 49.75192272095453,\n            \"temperature_celsius\": -5.420833587646484,\n            \"precipitation_mm\": 0,\n            \"flood_indicator\": 0,\n            \"heat_wave_days\": 0\n        }\n    ]\n}"
+                }
+              ]
             }
           ],
           "id": "7c1b7806-4096-4d45-9045-e218842db460"
