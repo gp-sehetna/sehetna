@@ -54,7 +54,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"otp\": \"{{otp}}\"\r\n}",
+                  "raw": "{\r\n    \"otp\": \"{{otp}}\",\r\n    \"purpose\": \"{{purpose}}\"\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -286,13 +286,27 @@
                 "method": "POST",
                 "header": [],
                 "url": {
-                  "raw": "{{NEXT_SERVER_BASE_URL}}/environment/week",
+                  "raw": "{{NEXT_SERVER_BASE_URL}}/environment/week?coords=52.52,13.41&date=2026-01-09&endCount=7",
                   "host": [
                     "{{NEXT_SERVER_BASE_URL}}"
                   ],
                   "path": [
                     "environment",
                     "week"
+                  ],
+                  "query": [
+                    {
+                      "key": "coords",
+                      "value": "52.52,13.41"
+                    },
+                    {
+                      "key": "date",
+                      "value": "2026-01-09"
+                    },
+                    {
+                      "key": "endCount",
+                      "value": "7"
+                    }
                   ]
                 }
               },
