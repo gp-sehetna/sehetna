@@ -26,7 +26,9 @@ const OldPasswordPage = () => {
                         label="Old Password"
                         inlineOptions={forgotPasswordButton}
                     />
-                    <WideButton variant="black">Continue</WideButton>
+                    <WideButton type="submit" variant="black">
+                        Continue
+                    </WideButton>
                 </Flex>
             </BaseAuthentication>
         </>

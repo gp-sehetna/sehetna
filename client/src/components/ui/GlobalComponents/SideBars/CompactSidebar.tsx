@@ -28,10 +28,10 @@ const navigations: LinkType[] = [
     { title: "Security", url: "/settings/security", icon: ShieldCheck },
     { title: "Help & Support", url: "/support", icon: Info },
 ]
-const AppSidebar = () => {
+const CompactSidebar = () => {
     return (
-        <Sidebar collapsible="icon" className="relative overflow-visible border-neutral-300">
-            <SidebarContent className="overflow-visible!">
+        <Sidebar collapsible="icon" className="relative! w-fit overflow-visible border-neutral-300">
+            <SidebarContent className="overflow-visible! relative">
                 <SidebarGroup className="flex h-full flex-col justify-between overflow-visible">
                     <Flex direction="col" gap={4}>
                         <Logo size={32} />
@@ -69,4 +69,4 @@ const AppSidebar = () => {
     )
 }
 
-export default AppSidebar
+export default CompactSidebar
