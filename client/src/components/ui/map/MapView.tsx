@@ -36,6 +36,7 @@ import ZoomControls from "./ZoomControls"
 import CompactSidebar from "../GlobalComponents/SideBars/CompactSidebar"
 import MainSidebar from "../GlobalComponents/SideBars/MainSidebar"
 import RespiratoryLegend from "../legend/RespiratoryLegend"
+import Flex from "../Flex"
 
 export default function MapView({ children }: { children: React.ReactNode }) {
     const router = useRouter()
@@ -128,22 +129,19 @@ export default function MapView({ children }: { children: React.ReactNode }) {
     const handleZoomOut = () => mapRef.current?.zoomOut()
 
     return (
-        <>
+        <Flex>
+            <CompactSidebar />
             <Map reuseMaps onClick={onMapClick} onLoad={onMapLoad}>
                 {children}
-                <div className="absolute top-0 left-0 flex w-fit gap-4">
-                    <CompactSidebar />
+                <Flex className="absolute inset-0 h-full w-fit" direction="col" gap={2}>
                     <MainSidebar />
-                </div>
-                <DatePickerSimple
-                    date={date}
-                    setDate={setDate}
-                    className="absolute bottom-5 left-5"
-                />
-                <RespiratoryLegend />
+
+                    <RespiratoryLegend />
+                    <DatePickerSimple date={date} setDate={setDate} className="p-5" />
+                </Flex>
                 <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
             </Map>
-        </>
+        </Flex>
     )
 }
 
