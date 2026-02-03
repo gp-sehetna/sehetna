@@ -1,18 +1,5 @@
 import { Document, model, models, Schema } from "mongoose"
-
-export enum ProviderEnum {
-    GOOGLE = "GOOGLE",
-    SYSTEM = "SYSTEM",
-}
-export enum GenderEnum {
-    Male = "Male",
-    Female = "Female",
-}
-
-export enum RoleEnum {
-    user = "user",
-    admin = "admin",
-}
+import { ProviderEnum, GenderEnum, RoleEnum } from "../enums/enums.db"
 
 export interface DUser extends Document {
     firstName: string
