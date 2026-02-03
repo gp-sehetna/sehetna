@@ -1,6 +1,12 @@
-import { DUser, RoleEnum } from "@/shared/db/model/user.model"
+import { RoleEnum } from "@/shared/db/enums/enums.db"
+import { DUser } from "@/shared/db/model/user.model"
 import { BadRequestException, UnauthorizedException } from "@/shared/http/errors"
 import { sign, JwtPayload, verify } from "jsonwebtoken"
+
+export const EXPIRE = {
+    access: 30 * 60,
+    refresh: 30 * 24 * 60 * 60,
+}
 
 export enum SignatureLevelEnum {
     Bearer = "Bearer",
@@ -38,8 +44,8 @@ export const createTokens = async (user: DUser) => {
     const signatures = getSignatures(signatureLevel)
     const payload = { _id: user._id }
 
-    const accessToken = sign(payload, signatures.access, { expiresIn: "30m" }) // ACCESS_TOKEN
-    const refreshToken = sign(payload, signatures.refresh, { expiresIn: "30d" }) // REFRESH_TOKEN
+    const accessToken = sign(payload, signatures.access, { expiresIn: EXPIRE.access }) // ACCESS_TOKEN
+    const refreshToken = sign(payload, signatures.refresh, { expiresIn: EXPIRE.refresh }) // REFRESH_TOKEN
 
     return { accessToken, refreshToken }
 }
