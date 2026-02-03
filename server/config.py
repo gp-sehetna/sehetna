@@ -16,7 +16,7 @@ class CoreSettings(BaseSettings):
 
     # Team info
     team_name: str = "Sehetna Team"
-    team_email: str = "dexter.kuhn63@gmail.com"
+    team_email: str = "support@sehetna.from-masr.com"
     description: str = """\
 Sehetna Services API
 Provides health risk predictions based on climate data.\
