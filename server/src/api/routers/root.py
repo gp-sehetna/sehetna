@@ -5,7 +5,7 @@ from src.domain.schemas.root import RootResponse
 
 __all__ = ["root_router"]
 
-root_router = APIRouter(tags=["status", "health", "root"])
+root_router = APIRouter(tags=["status"])
 
 
 @root_router.get("/", response_model=RootResponse)

@@ -1,12 +1,13 @@
 import json
 from datetime import date
-from typing import Annotated
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StringConstraints, model_validator
 
 from src.core.exceptions import BadRequest
 from src.domain.constants.aqi import BREAKPOINTS
 from src.domain.helpers.aqi import aqi_to_pollutant, pollutant_to_aqi
+from src.domain.types import ExplainerMethod
 
 __all__ = ["PredictionResult", "PredictionRequest", "SimulationResponse", "EnvironmentData", "WeeklyEnvironmentData"]
 
@@ -62,8 +63,13 @@ class LocationData(BaseModel):
         return data
 
 
+class PredictionQueryParams(BaseModel):
+    top_k_contributors: int = 5
+    explainer_method: Annotated[ExplainerMethod, BeforeValidator(lambda v: v.lower().strip())] = "cumulative"
+
+
 class EnvironmentData(LocationData):
-    country_code: str
+    country_code: Annotated[str, StringConstraints(strip_whitespace=True, min_length=3, max_length=3, to_upper=True)]
     indicators: IndicatorsData
 
 
@@ -82,6 +88,19 @@ class PredictionResult(BaseModel):
     vector_disease_risk_score: float
     waterborne_disease_incidents: int
     heat_related_admissions: int
+
+    explanations: dict[ExplainerMethod | Literal["method"], ExplainerMethod | dict[str, list] | None]
+
+    @classmethod
+    def from_predictions(cls, method: ExplainerMethod, predictions, data: dict[str, list] | None = None):
+        return cls(
+            respiratory_disease_rate=float(predictions[0]),
+            cardio_mortality_rate=float(predictions[1]),
+            vector_disease_risk_score=float(predictions[2]),
+            waterborne_disease_incidents=round(predictions[3]),
+            heat_related_admissions=round(predictions[4]),
+            explanations={"method": method, method: data},
+        )
 
 
 class SimulationResponse(BaseModel):

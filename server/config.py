@@ -54,6 +54,11 @@ class PathSettings(CoreSettings):
 
     @computed_field
     @property
+    def shap_background_data_path(self) -> str:
+        return os.path.join(self.archive_dir, self.__archive_name, "shap_background.joblib")
+
+    @computed_field
+    @property
     def pipeline_path(self) -> str:
         return os.path.join(self.archive_dir, self.__archive_name, "pipeline.joblib")
 
@@ -77,25 +82,19 @@ class Settings(PathSettings):
     @computed_field
     @property
     def targets(self) -> list[str]:
-        path = os.path.join(self.resources_path, "targets.json")
-
-        with open(path) as f:
+        with open(os.path.join(self.configuration_dir, "targets.json")) as f:
             return json.load(f)
 
     @computed_field
     @property
     def features(self) -> list[str]:
-        path = os.path.join(self.resources_path, "features.json")
-
-        with open(path) as f:
+        with open(os.path.join(self.configuration_dir, "features.json")) as f:
             return json.load(f)
 
     @computed_field
     @property
     def feature_groups(self) -> dict[str, list[str]]:
-        path = os.path.join(self.resources_path, "feature_groups.json")
-
-        with open(path) as f:
+        with open(os.path.join(self.configuration_dir, "feature_groups.json")) as f:
             return json.load(f)
 
 
