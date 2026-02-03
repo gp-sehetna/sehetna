@@ -23,12 +23,19 @@ import {
 import maplibregl from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { useParams, useRouter } from "next/navigation"
-import Map from "react-map-gl/maplibre"
+import Map, {
+    MapRef,
+    Source,
+    NavigationControl,
+    CustomLayerInterface,
+    useMap,
+} from "react-map-gl/maplibre"
 import { toast } from "sonner"
 import CountryPopup from "./CountryPopup"
 import ZoomControls from "./ZoomControls"
 import CompactSidebar from "../GlobalComponents/SideBars/CompactSidebar"
 import MainSidebar from "../GlobalComponents/SideBars/MainSidebar"
+import RespiratoryLegend from "../legend/RespiratoryLegend"
 
 export default function MapView({ children }: { children: React.ReactNode }) {
     const router = useRouter()
@@ -133,6 +140,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
                     setDate={setDate}
                     className="absolute bottom-5 left-5"
                 />
+                <RespiratoryLegend />
                 <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
             </Map>
         </>
