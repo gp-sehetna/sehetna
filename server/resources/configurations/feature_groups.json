@@ -1,0 +1,58 @@
+{
+	"Air Quality": [
+		"pm25_ugm3",
+		"aqi_pm",
+		"pm25_change_rate",
+		"pm25_ugm3_lag_1w",
+		"spatial_lag_pm25",
+		"pollution_vulnerability"
+	],
+	"Climate": [
+		"temperature_celsius",
+		"temp_squared",
+		"temp_change_rate",
+		"temp_anomaly_celsius",
+		"temp_precip_interaction",
+		"heat_wave_days",
+		"flood_indicator",
+		"spatial_lag_temp",
+		"distance_to_equator",
+		"is_tropical",
+		"month_sin",
+		"month_cos",
+		"quarter"
+	],
+	"Socioeconomic": [
+		"gdp_per_capita_usd",
+		"food_security_index",
+		"pollution_vulnerability",
+		"healthcare_access_index"
+	],
+	"Healthcare": [
+		"healthcare_access_index",
+		"pollution_vulnerability",
+		"heat_wave_days"
+	],
+	"Seasonal": [
+		"month_sin",
+		"month_cos",
+		"quarter",
+		"pm25_ugm3_lag_1w",
+		"temp_change_rate",
+		"pm25_change_rate"
+	],
+	"Geographic & Spatial": [
+		"distance_to_equator",
+		"is_northern",
+		"is_tropical",
+		"spatial_lag_pm25",
+		"spatial_lag_temp"
+	],
+	"Exposure & Risk": [
+		"pollution_vulnerability",
+		"flood_indicator",
+		"heat_wave_days",
+		"food_security_index",
+		"healthcare_access_index"
+	]
+}

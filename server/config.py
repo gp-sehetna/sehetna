@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from typing import Literal
@@ -6,7 +7,7 @@ from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class _Settings(BaseSettings):
+class CoreSettings(BaseSettings):
     # App info
     app_name: str = "Sehetna App"
     version: str = "1.0"
@@ -27,9 +28,14 @@ Provides health risk predictions based on climate data.\
     model_config = SettingsConfigDict(env_file=".env")
 
 
-class Settings(_Settings):
+class PathSettings(CoreSettings):
     # Paths
-    __archive_name: str = "[modelling_phase_v5]-lgbm_fold_ensemble"
+    __archive_name: str = "[modelling_phase_v5]-multioutput_lgbm"
+
+    @computed_field
+    @property
+    def configuration_dir(self) -> str:
+        return os.path.join(self.resources_path, "configurations")
 
     @computed_field
     @property
@@ -65,6 +71,32 @@ class Settings(_Settings):
     @property
     def data_path(self) -> str:
         return os.path.join(self.resources_path, "data")
+
+
+class Settings(PathSettings):
+    @computed_field
+    @property
+    def targets(self) -> list[str]:
+        path = os.path.join(self.resources_path, "targets.json")
+
+        with open(path) as f:
+            return json.load(f)
+
+    @computed_field
+    @property
+    def features(self) -> list[str]:
+        path = os.path.join(self.resources_path, "features.json")
+
+        with open(path) as f:
+            return json.load(f)
+
+    @computed_field
+    @property
+    def feature_groups(self) -> dict[str, list[str]]:
+        path = os.path.join(self.resources_path, "feature_groups.json")
+
+        with open(path) as f:
+            return json.load(f)
 
 
 class DevelopmentSettings(Settings):
