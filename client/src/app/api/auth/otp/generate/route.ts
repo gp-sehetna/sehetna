@@ -1,4 +1,5 @@
 import { EmailSchema } from "@/features/auth/auth.validation"
+import { PurposeEnum } from "@/shared/db/enums/enums.db"
 import { MainService } from "@/shared/db/main.service"
 import { ConflictException } from "@/shared/http/errors"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
@@ -12,5 +13,5 @@ export const POST = globalErrorHandler(async (req: NextRequest) => {
     const user = await mainService.authService.getUserByEmail(email)
     if (user) throw new ConflictException("Email already exists")
 
-    return await mainService.authService.generateAndSendOtp(email, "email_verification")
+    return await mainService.authService.generateAndSendOtp(email, PurposeEnum.emailVerification)
 })

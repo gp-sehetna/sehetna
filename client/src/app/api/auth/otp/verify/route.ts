@@ -1,4 +1,5 @@
 import { PurposeAndOtpSchema } from "@/features/auth/auth.validation"
+import { PurposeEnum } from "@/shared/db/enums/enums.db"
 import { MainService } from "@/shared/db/main.service"
 import { UnauthorizedException } from "@/shared/http/errors"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
@@ -8,7 +9,7 @@ import { NextRequest } from "next/server"
 export const POST = globalErrorHandler(async (req: NextRequest) => {
     const { otp, purpose } = PurposeAndOtpSchema.parse(await req.json())
     const destination =
-        purpose == "email_verification"
+        purpose == PurposeEnum.emailVerification
             ? "/authenticate/signup/credentials"
             : "/authenticate/password/new"
 

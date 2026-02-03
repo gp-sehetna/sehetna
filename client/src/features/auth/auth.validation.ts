@@ -1,3 +1,4 @@
+import { PurposeEnum } from "@/shared/db/enums/enums.db"
 import { z } from "zod"
 
 const OtpSchema = z.strictObject({
@@ -8,7 +9,7 @@ const OtpSchema = z.strictObject({
 })
 
 const PurposeAndOtpSchema = OtpSchema.extend({
-    purpose: z.enum(["email_verification", "password_reset"]),
+    purpose: z.enum(PurposeEnum),
 })
 
 const EmailSchema = z.strictObject({
