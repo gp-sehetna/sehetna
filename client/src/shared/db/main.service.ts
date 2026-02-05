@@ -16,34 +16,30 @@ type MainServiceOptions = {
 
 export class MainService {
     private static instance: MainService | null = null
+    private static initialized = false
 
-    public authService!: AuthService
-    public weekService!: WeekService
+    public readonly authService: AuthService = new AuthService(
+        new UserRepository(UserModel),
+        new OtpRepository(OtpModel),
+        new EmailService()
+    )
+    public readonly weekService: WeekService = new WeekService()
 
     private constructor() {}
-
     public static async getInstance(
         options: MainServiceOptions = { db: true }
     ): Promise<MainService> {
         if (!MainService.instance) {
-            const service = new MainService()
-            await service.init(options)
-            MainService.instance = service
+            MainService.instance = new MainService()
+            await MainService.instance.init(options)
+            MainService.initialized = true
         }
+
         return MainService.instance
     }
 
     private async init(options: MainServiceOptions) {
         if (options.db) await this.initDatabase()
-
-        // initialize AFTER DB + AFTER module graph settles
-        this.authService = new AuthService(
-            new UserRepository(UserModel),
-            new OtpRepository(OtpModel),
-            new EmailService()
-        )
-
-        this.weekService = new WeekService()
     }
 
     private async initDatabase() {
