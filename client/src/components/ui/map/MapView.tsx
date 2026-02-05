@@ -2,7 +2,7 @@
 
 import bbox from "@turf/bbox"
 import centroid from "@turf/centroid"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { SetStateAction, useEffect, useMemo, useRef, useState } from "react"
 
 // MapLibre React wrapper
 import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
@@ -20,9 +20,9 @@ import {
     MAP_CONFIG,
     mapStyle,
 } from "@/shared/config/map"
-import maplibregl from "maplibre-gl"
+import maplibregl, { MapGeoJSONFeature } from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
-import { useParams, useRouter } from "next/navigation"
+import { redirect, useParams, useRouter } from "next/navigation"
 import Map from "react-map-gl/maplibre"
 import { toast } from "sonner"
 import CountryPopup from "./CountryPopup"
@@ -34,6 +34,7 @@ import Flex from "../Flex"
 export default function MapView({ children }: { children: React.ReactNode }) {
     const router = useRouter()
     const [geojsonReady, setGeojsonReady] = useState(false)
+    const [clickedcountryProps, setClickedCountryProps] = useState<MapGeoJSONFeature | null>(null)
 
     const [date, setDate] = useState<Date>()
     const [mapLoaded, setMapLoaded] = useState(false)
@@ -105,10 +106,11 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         markerRef.current?.remove()
         markerRef.current?.setLngLat(e.lngLat).addTo(map)
         zoomToCountry(country, map, center)
-        renderPopup(popupRef, country.properties, center, map)
+        renderPopup(popupRef, country.properties, center, map, markerRef, setClickedCountryProps)
 
         const location = { lat: e.lngLat.lat, lng: e.lngLat.lng, iso: country.properties.ISO_A3 }
         weekService.simulateEnvironment(location, date)
+        setClickedCountryProps(country)
     }
 
     const onMapLoad = (e: maplibregl.MapLibreEvent) => {
@@ -121,18 +123,25 @@ export default function MapView({ children }: { children: React.ReactNode }) {
     const handleZoomIn = () => mapRef.current?.zoomIn()
     const handleZoomOut = () => mapRef.current?.zoomOut()
 
+    useEffect(() => { 
+        // i wanna check if there is a country selectec from the url or not 
+        // if not close the popup and the sidebar 
+        if (!params.country) {
+            markerRef.current?.remove()
+            popupRef.current?.remove()
+            setClickedCountryProps(null)
+        }
+    }, [activeCountrySlug])
     return (
         <Flex>
             <CompactSidebar />
             <Map reuseMaps onClick={onMapClick} onLoad={onMapLoad}>
                 {children}
-                <Flex className=" absolute inset-0 h-full w-fit " direction="col" gap={2}>
-                    <MainSidebar />
-                    <DatePickerSimple
-                        date={date}
-                        setDate={setDate}
-                        className="p-5"
-                    />
+                <Flex className="absolute inset-0 h-full w-fit min-w-1/4 z-50 justify-start! items-start! p-4" direction="col" gap={5}>
+                    {clickedcountryProps != null && (
+                        <MainSidebar clickedcountryProps={clickedcountryProps} />
+                    )}
+                    <DatePickerSimple date={date} setDate={setDate} className=" w-full mt-auto min-w-5!" />
                 </Flex>
                 <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
             </Map>
@@ -158,16 +167,20 @@ const renderPopup = (
     popupRef: React.RefObject<maplibregl.Popup | null>,
     properties: maplibregl.GeoJSONFeature["properties"],
     centroid: maplibregl.LngLatLike,
-    map: maplibregl.Map
+    map: maplibregl.Map,
+    markerRef:React.RefObject<maplibregl.Marker | null>,
+    setClickedCountryProps: React.Dispatch<React.SetStateAction<MapGeoJSONFeature | null>>
 ) => {
     // Create container
     const popupContainer = document.createElement("div")
     // Render React component
     const root = createRoot(popupContainer)
-
     const closePopup = () => {
         popupRef.current?.remove()
         root.unmount()
+        markerRef.current?.remove()
+        setClickedCountryProps(null)
+        redirect("/map")
     }
 
     const { NAME, ISO_A3 } = properties
