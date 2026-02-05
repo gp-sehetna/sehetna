@@ -5,10 +5,9 @@ import {
 } from "maplibre-gl"
 import { useMemo } from "react"
 import { Colors } from "@/shared/config/map-colors"
-import { useTheme } from "@/hooks/map/use-theme"
 
-const useLayers = (heathOutcome: string) => {
-    const theme = useTheme(heathOutcome)
+const useLayers = () => {
+    // const theme = useTheme(heathOutcome)
 
     const backgroundLayer = useMemo<BackgroundLayerSpecification>(
         () => ({
