@@ -1,7 +1,7 @@
 "use client"
 
 import centroid from "@turf/centroid"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { SetStateAction, useEffect, useMemo, useRef, useState } from "react"
 
 import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
 import { WeekClientService } from "@/features/environment/week/week.service.client"
@@ -17,19 +17,21 @@ import {
     parseSlug,
     zoomToCountry,
 } from "@/shared/config/map"
-
-import maplibregl from "maplibre-gl"
+import maplibregl, { MapGeoJSONFeature } from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
-import { useParams, useRouter } from "next/navigation"
+import { useParams, redirect, useRouter } from "next/navigation"
 import Map, { MapRef } from "react-map-gl/maplibre"
 import { toast } from "sonner"
 import ZoomControls from "./ZoomControls"
 import RespiratoryLegend from "../legend/RespiratoryLegend"
 import MapSources from "./MapSources"
 import { useTheme } from "@/hooks/map/use-theme"
+import MainSidebar from "../GlobalComponents/SideBars/MainSidebar"
 
 export default function MapView({ children }: { children: React.ReactNode }) {
     const router = useRouter()
+    const [clickedcountryProps, setClickedCountryProps] = useState<MapGeoJSONFeature | null>(null)
+
     const [date, setDate] = useState<Date>()
     const [popupInfo, setPopupInfo] = useState(null)
     const [hoveredZone, setHoveredZone] = useState<maplibregl.MapGeoJSONFeature | null>(null)
@@ -116,6 +118,8 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         markerRef.current?.setLngLat(e.lngLat).addTo(map)
         zoomToCountry(country, map, center)
 
+        // renderPopup(popupRef, country.properties, center, map, markerRef, setClickedCountryProps)
+
         if (!date) {
             toast.warning("Please select a date first.", {
                 description: "Use the date picker at the bottom left corner.",
@@ -127,6 +131,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
 
         const location = { lat: e.lngLat.lat, lng: e.lngLat.lng, iso: country.properties.isoA3 }
         weekService.simulateEnvironment(location, date)
+        setClickedCountryProps(country)
     }
 
     const onMapLoad = (e: maplibregl.MapLibreEvent) => {
@@ -144,6 +149,15 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         zoomToCountry(country, map, center)
     }
 
+    // useEffect(() => {
+    //     // i wanna check if there is a country selectec from the url or not
+    //     // if not close the popup and the sidebar
+    //     if (!params.country) {
+    //         markerRef.current?.remove()
+    //         popupRef.current?.remove()
+    //         setClickedCountryProps(null)
+    //     }
+    // }, [activeCountrySlug])
     return (
         <Map
             interactiveLayerIds={["countries-hover-layer", "country-boundaries-hover-layer"]}
@@ -171,9 +185,48 @@ export default function MapView({ children }: { children: React.ReactNode }) {
                 >
                 </Popup>
             )} */}
-            <DatePickerSimple date={date} setDate={setDate} className="p-5" />
+            <div className="absolute inset-0 z-50 flex h-full w-fit min-w-1/4 flex-col items-start! justify-start! gap-5 p-4">
+                {clickedcountryProps != null && (
+                    <MainSidebar clickedcountryProps={clickedcountryProps} />
+                )}
+                <DatePickerSimple
+                    date={date}
+                    setDate={setDate}
+                    className="mt-auto w-full min-w-5!"
+                />
+            </div>
             <RespiratoryLegend healthOutcome={activeSlug.healthOutcome} />
             <ZoomControls />
         </Map>
     )
 }
+
+// const renderPopup = (
+//     popupRef: React.RefObject<maplibregl.Popup | null>,
+//     properties: maplibregl.GeoJSONFeature["properties"],
+//     centroid: maplibregl.LngLatLike,
+//     map: maplibregl.Map,
+//     markerRef:React.RefObject<maplibregl.Marker | null>,
+//     setClickedCountryProps: React.Dispatch<React.SetStateAction<MapGeoJSONFeature | null>>
+// ) => {
+//     // Create container
+//     const popupContainer = document.createElement("div")
+//     // Render React component
+//     const root = createRoot(popupContainer)
+//     const closePopup = () => {
+//         popupRef.current?.remove()
+//         root.unmount()
+//         markerRef.current?.remove()
+//         setClickedCountryProps(null)
+//         redirect("/map")
+//     }
+
+//     const { NAME, ISO_A3 } = properties
+//     root.render(<CountryPopup name={NAME} iso={ISO_A3} onClose={closePopup} />)
+
+//     // Create MapLibre popup
+//     popupRef.current = new maplibregl.Popup({ closeButton: false, closeOnClick: false })
+//         .setLngLat(centroid)
+//         .setDOMContent(popupContainer)
+//         .addTo(map)
+// }
