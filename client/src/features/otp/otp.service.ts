@@ -1,4 +1,4 @@
-import { AuthService } from "@/features/auth/auth.service"
+import { generateOtp } from "@/lib/utils"
 import { IOtp } from "@/shared/db/model/otp.model"
 import { OtpRepository } from "@/shared/db/repository/otp.repository"
 import { EmailService } from "@/shared/email/email.service"
@@ -11,7 +11,6 @@ import {
 } from "@/shared/http/errors"
 import { successResponse } from "@/shared/http/response"
 import { compare, hash } from "bcrypt"
-import { randomInt } from "crypto"
 import { JwtPayload, sign, verify } from "jsonwebtoken"
 
 export class OTPService {
@@ -27,11 +26,6 @@ export class OTPService {
 
         this.tokenSignature = process.env.GLOBAL_TOKEN_SIGNATURE
     }
-
-    private static generateOtp = () => {
-        return process.env.TEST_OTP ?? String(randomInt(100000, 999999))
-    }
-
     generateAndSendOtp = async (email: string, purpose: IOtp["purpose"]) => {
         // Store email in server cookie with expiration date = 5 mins
         const emailToken = sign({ email }, this.tokenSignature, {
@@ -39,7 +33,7 @@ export class OTPService {
         })
 
         // Generate an OTP string of 6 numbers exactly,
-        const otp = AuthService.generateOtp()
+        const otp = generateOtp()
         const otpHash = await hash(otp, 10)
         const expiresAt = new Date(Date.now() + 5 * 60 * 1000) // EMAIL_VERIFICATION_TOKEN
 
