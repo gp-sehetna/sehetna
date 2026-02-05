@@ -1,7 +1,6 @@
 pnpm-lock.yaml
 package.json
 
-next.config.ts
 eslint.config.mts
 tsconfig.json
 postcss.config.mjs
