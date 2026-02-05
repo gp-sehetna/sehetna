@@ -1,11 +1,18 @@
+import { useTheme } from "@/hooks/map/use-theme"
 import HorizontalColorbar from "./ColorBar"
 import { LegendItem } from "./LegendItem"
-import { blueTheme } from "@/shared/config/map-colors"
+import { toProperCase, unslugify } from "@/lib/utils"
 
-export default function RespiratoryLegend() {
+type Props = {
+    healthOutcome: string
+}
+
+export default function RespiratoryLegend({ healthOutcome }: Props) {
+    const theme = useTheme(healthOutcome)
+
     return (
-        <LegendItem label="Respiratory Disease Rate" unit="%">
-            <HorizontalColorbar colorScale={blueTheme.colorScale} id="respiratory" ticks={6} />
+        <LegendItem label={toProperCase(unslugify(healthOutcome))} unit="%">
+            <HorizontalColorbar colorScale={theme.colorScale} id={healthOutcome} ticks={6} />
         </LegendItem>
     )
 }

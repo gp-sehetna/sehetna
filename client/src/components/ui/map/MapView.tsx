@@ -5,37 +5,43 @@ import { useEffect, useMemo, useRef, useState } from "react"
 
 import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
 import { WeekClientService } from "@/features/environment/week/week.service.client"
-import { slugifyCountry } from "@/lib/utils"
+import { slugify } from "@/lib/utils"
 
 import {
+    colorEachCountry,
     COUNTRIES_SOURCE,
+    GeoJsonProperties,
     getClickedCountry,
     getCountryBySlug,
+    MapPageProps,
+    parseSlug,
     zoomToCountry,
 } from "@/shared/config/map"
 
 import maplibregl from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { useParams, useRouter } from "next/navigation"
-import Map from "react-map-gl/maplibre"
+import Map, { MapRef } from "react-map-gl/maplibre"
 import { toast } from "sonner"
 import ZoomControls from "./ZoomControls"
 import RespiratoryLegend from "../legend/RespiratoryLegend"
 import MapSources from "./MapSources"
+import { useTheme } from "@/hooks/map/use-theme"
 
 export default function MapView({ children }: { children: React.ReactNode }) {
     const router = useRouter()
     const [date, setDate] = useState<Date>()
     const [popupInfo, setPopupInfo] = useState(null)
     const [hoveredZone, setHoveredZone] = useState<maplibregl.MapGeoJSONFeature | null>(null)
-    const params = useParams<{ country?: string }>()
+    const params = useParams<MapPageProps["params"]>()
 
     const popupRef = useRef<maplibregl.Popup>(null)
 
     const weekService = useMemo(() => new WeekClientService(), [])
-    const activeCountrySlug = params.country
+    const activeSlug = parseSlug(params.slug)
 
     const markerRef = useRef<maplibregl.Marker>(null)
+    const theme = useTheme(activeSlug.healthOutcome)
 
     useEffect(() => {
         markerRef.current = new maplibregl.Marker({
@@ -94,13 +100,6 @@ export default function MapView({ children }: { children: React.ReactNode }) {
     }
 
     const onMapClick = (e: maplibregl.MapLayerMouseEvent) => {
-        if (!date) {
-            toast.warning("Please select a date first.", {
-                description: "Use the date picker at the bottom left corner.",
-            })
-            return
-        }
-
         const map = e.target
 
         popupRef.current?.remove()
@@ -108,7 +107,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         const country = getClickedCountry(map, e.point)
 
         if (!country) return
-        const slug = slugifyCountry(country.properties.name)
+        const slug = slugify(country.properties.name)
         router.push(`/map/${slug}`)
 
         const center = centroid(country).geometry.coordinates as [number, number]
@@ -117,17 +116,27 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         markerRef.current?.setLngLat(e.lngLat).addTo(map)
         zoomToCountry(country, map, center)
 
-        // const location = { lat: e.lngLat.lat, lng: e.lngLat.lng, iso: country.properties.isoA3 }
-        // weekService.simulateEnvironment(location, date)
+        if (!date) {
+            toast.warning("Please select a date first.", {
+                description: "Use the date picker at the bottom left corner.",
+            })
+            return
+        }
+
+        if (process.env.NODE_ENV == "development") return
+
+        const location = { lat: e.lngLat.lat, lng: e.lngLat.lng, iso: country.properties.isoA3 }
+        weekService.simulateEnvironment(location, date)
     }
 
     const onMapLoad = (e: maplibregl.MapLibreEvent) => {
         const map = e.target,
             features = map.queryRenderedFeatures({ layers: ["countries-fill"] })
 
-        if (!activeCountrySlug) return
+        colorEachCountry(map, features, theme)
+        if (!activeSlug.country) return
 
-        const country = getCountryBySlug(activeCountrySlug, features)
+        const country = getCountryBySlug(activeSlug.country, features)
 
         if (!country) return
 
@@ -163,7 +172,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
                 </Popup>
             )} */}
             <DatePickerSimple date={date} setDate={setDate} className="p-5" />
-            <RespiratoryLegend />
+            <RespiratoryLegend healthOutcome={activeSlug.healthOutcome} />
             <ZoomControls />
         </Map>
     )

@@ -2,17 +2,20 @@ import {
     BackgroundLayerSpecification,
     FillLayerSpecification,
     LineLayerSpecification,
-    SymbolLayerSpecification,
 } from "maplibre-gl"
 import { useMemo } from "react"
+import { Colors } from "@/shared/config/map-colors"
+import { useTheme } from "@/hooks/map/use-theme"
 
-const useLayers = () => {
+const useLayers = (heathOutcome: string) => {
+    const theme = useTheme(heathOutcome)
+
     const backgroundLayer = useMemo<BackgroundLayerSpecification>(
         () => ({
             id: "ocean",
             type: "background",
             paint: {
-                "background-color": "rgba(248, 250, 255, 1)",
+                "background-color": "#fff",
                 "background-opacity": 1,
             },
         }),
@@ -29,9 +32,9 @@ const useLayers = () => {
                 "line-join": "round",
             },
             paint: {
-                "line-color": "#fff",
+                "line-color": Colors.strokeColor,
                 "line-translate-anchor": "map",
-                "line-width": 2,
+                "line-width": Colors.strokeHoverWidth,
                 "line-blur": 0.4,
                 "line-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 1, 0],
             },
@@ -45,7 +48,7 @@ const useLayers = () => {
             type: "fill",
             source: "countries",
             paint: {
-                "fill-color": "#FFFFFF",
+                "fill-color": "#fff",
                 "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.3, 0],
             },
         }),
@@ -73,10 +76,10 @@ const useLayers = () => {
                 "line-join": "round",
             },
             paint: {
-                "line-color": "#fff",
+                "line-color": Colors.strokeColor,
                 "line-translate-anchor": "map",
                 "line-opacity": 1,
-                "line-width": 0.3,
+                "line-width": Colors.strokeWidth,
                 "line-blur": 0.2,
             },
         }),

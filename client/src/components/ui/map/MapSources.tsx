@@ -13,12 +13,7 @@ const MapSources = () => {
     return (
         <>
             <Layer {...backgroundLayer} />
-            <Source
-                id="countries"
-                type="geojson"
-                promoteId="wikiDataId"
-                data="/geo/countries.geojson"
-            >
+            <Source id="countries" type="geojson" promoteId="id" data="/geo/countries.geojson">
                 <Layer {...countriesLayer} />
                 <Layer {...countriesHoverLayer} />
                 <Layer {...countryBondariesHoverableLayer} />

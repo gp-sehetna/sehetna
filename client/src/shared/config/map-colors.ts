@@ -2,43 +2,28 @@ import { scaleLinear } from "d3"
 
 const steps = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100]
 
-class GradientPalette {
-    static steps: number[] = steps
+class Colors {
+    static strokeColor = "#fff"
+    static strokeHoverWidth = 2
+    static strokeWidth = 0.15
+    static clickableContentFill = "#fff"
+    static nonClickableContentFill = "#333333aa"
+}
+
+class GradientPalette extends Colors {
+    steps: number[] = steps
     private colors: string[]
 
     oceanColor: string
 
-    static strokeColor = "#fff"
-    static strokeWidth = 0.15
-
-    static clickableContentFill = "#FFFFFF"
-    static nonClickableContentFill = "#333333aa"
-
     constructor(colors: string[], oceanColor: string) {
+        super()
         this.colors = colors
         this.oceanColor = oceanColor
     }
 
-    get strokeColor() {
-        return GradientPalette.strokeColor
-    }
-    get strokeWidth() {
-        return GradientPalette.strokeWidth
-    }
-
-    get clickableContentFill() {
-        return GradientPalette.clickableContentFill
-    }
-
-    get nonClickableContentFill() {
-        return GradientPalette.nonClickableContentFill
-    }
-
     get colorScale() {
-        return scaleLinear<string>()
-            .domain(GradientPalette.steps)
-            .range(this.colors)
-            .unknown(this.oceanColor)
+        return scaleLinear<string>().domain(this.steps).range(this.colors).unknown(this.oceanColor)
     }
 }
 
@@ -120,8 +105,4 @@ const mix = {
     ],
 }
 
-const blueTheme = new GradientPalette(blue.colors, blue.oceanColor)
-const greenTheme = new GradientPalette(green.colors, green.oceanColor)
-const mixTheme = new GradientPalette(mix.colors, mix.oceanColor)
-
-export { GradientPalette, blueTheme, greenTheme, mixTheme }
+export { Colors, GradientPalette, blue, green, mix }
