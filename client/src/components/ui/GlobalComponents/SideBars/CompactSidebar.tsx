@@ -3,15 +3,17 @@ import { Info, LogIn, LucideProps, Map, ShieldCheck, Telescope, Waypoints } from
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarGroup,
-    SidebarGroupContent,
+    SidebarGroupLabel,
+    SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarRail,
     SidebarTrigger,
 } from "@/components/ui/shadcn/sidebar"
 import { ForwardRefExoticComponent, RefAttributes } from "react"
-import Flex from "../../Flex"
 import Logo from "../../GlobalControls/Logo"
 import NavLink from "../../NavLink"
 import { Button } from "../../shadcn/button"
@@ -28,45 +30,52 @@ const navigations: LinkType[] = [
     { title: "Security", url: "/settings/security", icon: ShieldCheck },
     { title: "Help & Support", url: "/support", icon: Info },
 ]
-const AppSidebar = () => {
+const CompactSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
     return (
-        <Sidebar collapsible="icon" className="relative overflow-visible border-neutral-300">
-            <SidebarContent className="overflow-visible!">
-                <SidebarGroup className="flex h-full flex-col justify-between overflow-visible">
-                    <Flex direction="col" gap={4}>
-                        <Logo size={32} />
-                        <SidebarTrigger />
-                        <SidebarGroupContent>
-                            <SidebarMenu className="peer-data-[state=collapsed]:items-center">
-                                {navigations.map((navigation) => (
-                                    <SidebarMenuItem key={navigation.title}>
-                                        <SidebarMenuButton
-                                            className="rounded-lg"
-                                            asChild
-                                            size="sm"
-                                            tooltip={navigation.title}
-                                        >
-                                            <NavLink href={navigation.url}>
-                                                <navigation.icon />
-                                                <span>{navigation.title}</span>
-                                            </NavLink>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                ))}
-                            </SidebarMenu>
-                        </SidebarGroupContent>
-                    </Flex>
-                    <div className="mt-auto">
-                        <Button size="icon" asChild className="rounded-full" variant="black">
-                            <NavLink href="/authenticate/login">
-                                <LogIn size={16} />
-                            </NavLink>
-                        </Button>
-                    </div>
-                </SidebarGroup>
-            </SidebarContent>
-        </Sidebar>
+        <>
+            <Sidebar collapsible="icon" {...props}>
+                <SidebarHeader>
+                    <Logo size={32} />
+                </SidebarHeader>
+                <SidebarTrigger />
+                <SidebarContent>
+                    <SidebarGroup>
+                        <SidebarGroupLabel>Pages</SidebarGroupLabel>
+                        <SidebarMenu>
+                            {navigations.map((navigation) => (
+                                <SidebarMenuItem key={navigation.title}>
+                                    <SidebarMenuButton
+                                        className="rounded-lg"
+                                        asChild
+                                        size="sm"
+                                        tooltip={navigation.title}
+                                    >
+                                        <NavLink href={navigation.url}>
+                                            <navigation.icon />
+                                            <span>{navigation.title}</span>
+                                        </NavLink>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                    </SidebarGroup>
+                </SidebarContent>
+                <SidebarFooter>
+                    <SidebarMenu>
+                        <SidebarMenuItem>
+                            <SidebarMenuButton variant="black" className="rounded-xl" asChild>
+                                <NavLink href="/authenticate/login">
+                                    <LogIn size={16} />
+                                    <span className="text-xs">Log In</span>
+                                </NavLink>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    </SidebarMenu>
+                </SidebarFooter>
+                <SidebarRail />
+            </Sidebar>
+        </>
     )
 }
 
-export default AppSidebar
+export default CompactSidebar

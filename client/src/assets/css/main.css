@@ -1,2 +1,3 @@
 @import "./controls/button.css";
 @import "./typography/typography.css";
+@import "./components/maplibre-zoom-controls.css";
