@@ -1,0 +1,60 @@
+/* Navigation Zoom Controls */
+.maplibregl-ctrl {
+    border-radius: var(--radius-2xl) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid var(--color-neutral-100) !important;
+    outline: none !important;
+    box-shadow: none !important;
+    color: var(--color-neutral-800) !important;
+    overflow: hidden !important;
+    background-color: --alpha(var(--color-neutral-100) / 30%) !important;
+
+    button.maplibregl-ctrl-zoom-in,
+    button.maplibregl-ctrl-zoom-out {
+        width: 38px !important;
+        height: 38px !important;
+        background-color: transparent !important;
+        border: none !important; /* Removes the internal line between buttons */
+        transition: background-color 0.2s ease;
+        transition: all 0.3s ease-in-out;
+        &:hover {
+            color: var(--color-neutral-1000) !important;
+            background-color: --alpha(var(--color-neutral-100) / 60%) !important;
+        }
+        .maplibregl-ctrl-icon {
+            /* 1. Remove default icon */
+            background-image: none !important;
+            /* 2. Setup standard sizing & centering */
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+
+            /* 3. Setup the Pseudo-element for the icon */
+            &::after {
+                content: "";
+                display: flex;
+                width: 24px;
+                height: 24px;
+                background-color: currentColor;
+                color: inherit;
+                mask-repeat: no-repeat;
+                mask-position: center;
+                mask-size: contain;
+                -webkit-mask-repeat: no-repeat;
+                -webkit-mask-position: center;
+                -webkit-mask-size: contain;
+            }
+        }
+    }
+
+    /* 4. Define specific icons using masks */
+    button.maplibregl-ctrl-zoom-in .maplibregl-ctrl-icon::after {
+        -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>');
+        mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>');
+    }
+
+    button.maplibregl-ctrl-zoom-out .maplibregl-ctrl-icon::after {
+        -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>');
+        mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>');
+    }
+}

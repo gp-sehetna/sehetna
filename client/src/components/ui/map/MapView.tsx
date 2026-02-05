@@ -1,59 +1,41 @@
 "use client"
 
-import bbox from "@turf/bbox"
 import centroid from "@turf/centroid"
 import { useEffect, useMemo, useRef, useState } from "react"
 
-// MapLibre React wrapper
 import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
 import { WeekClientService } from "@/features/environment/week/week.service.client"
-import { Prediction } from "@/features/environment/week/week.types"
 import { slugifyCountry } from "@/lib/utils"
-import { api } from "@/shared/api"
-import { createRoot } from "react-dom/client"
 
 import {
-    buildCountriesLookup,
-    CountriesById,
+    COUNTRIES_SOURCE,
     getClickedCountry,
     getCountryBySlug,
-    MAP_CONFIG,
-    mapStyle,
+    zoomToCountry,
 } from "@/shared/config/map"
+
 import maplibregl from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { useParams, useRouter } from "next/navigation"
-import Map, {
-    MapRef,
-    Source,
-    NavigationControl,
-    CustomLayerInterface,
-    useMap,
-} from "react-map-gl/maplibre"
+import Map from "react-map-gl/maplibre"
 import { toast } from "sonner"
-import CountryPopup from "./CountryPopup"
 import ZoomControls from "./ZoomControls"
-import CompactSidebar from "../GlobalComponents/SideBars/CompactSidebar"
-import MainSidebar from "../GlobalComponents/SideBars/MainSidebar"
 import RespiratoryLegend from "../legend/RespiratoryLegend"
-import Flex from "../Flex"
+import MapSources from "./MapSources"
 
 export default function MapView({ children }: { children: React.ReactNode }) {
     const router = useRouter()
-    const [geojsonReady, setGeojsonReady] = useState(false)
-
     const [date, setDate] = useState<Date>()
-    const [mapLoaded, setMapLoaded] = useState(false)
+    const [popupInfo, setPopupInfo] = useState(null)
+    const [hoveredZone, setHoveredZone] = useState<maplibregl.MapGeoJSONFeature | null>(null)
     const params = useParams<{ country?: string }>()
 
-    const popupRef = useRef<maplibregl.Popup | null>(null)
-    const mapRef = useRef<maplibregl.Map | null>(null)
-    const countriesByIdRef = useRef<CountriesById>({})
+    const popupRef = useRef<maplibregl.Popup>(null)
 
     const weekService = useMemo(() => new WeekClientService(), [])
     const activeCountrySlug = params.country
 
-    const markerRef = useRef<maplibregl.Marker | null>(null)
+    const markerRef = useRef<maplibregl.Marker>(null)
 
     useEffect(() => {
         markerRef.current = new maplibregl.Marker({
@@ -67,27 +49,49 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         }
     }, [])
 
-    useEffect(() => {
-        async function loadCountries() {
-            const geojson = await api.get<any>(MAP_CONFIG.countriesPath).json()
-            countriesByIdRef.current = buildCountriesLookup(geojson)
-            setGeojsonReady(true)
+    const onMouseMove = (e: maplibregl.MapLayerMouseEvent) => {
+        const map = e.target
+        if (!e.features) return
+
+        const feature = e.features[0]
+
+        if (!feature?.id) return
+
+        const isHoveringAZone = !!feature.id
+        const isHoveringANewZone = isHoveringAZone && hoveredZone?.id !== feature.id
+
+        // Reset currently hovered zone if we are no longer hovering anything
+        if (!isHoveringAZone && hoveredZone) {
+            setHoveredZone(null)
+            map.setFeatureState({ source: COUNTRIES_SOURCE, id: hoveredZone.id }, { hover: false })
         }
 
-        loadCountries()
-    }, [])
+        // Do no more if we are not hovering a zone
+        if (!isHoveringAZone) return
 
-    useEffect(() => {
-        if (!mapLoaded || !geojsonReady || !activeCountrySlug) return
-        if (!mapRef.current) return
+        // Update mouse position to help position the tooltip
+        // setMousePosition({ x: e.point.x, y: e.point.y })
 
-        const country = getCountryBySlug(activeCountrySlug, countriesByIdRef.current)
+        // Update hovered zone if we are hovering a new zone
+        // Reset the old one first
+        if (isHoveringANewZone && hoveredZone)
+            map.setFeatureState({ source: COUNTRIES_SOURCE, id: hoveredZone.id }, { hover: false })
 
-        if (!country) return
+        if (isHoveringANewZone) {
+            setHoveredZone(feature)
+            map.setFeatureState({ source: COUNTRIES_SOURCE, id: feature.id }, { hover: true })
+        }
+    }
 
-        const center = centroid(country).geometry.coordinates as [number, number]
-        zoomToCountry(country, mapRef.current, center)
-    }, [mapLoaded, geojsonReady, activeCountrySlug])
+    const onMouseOut = (e: maplibregl.MapLayerMouseEvent) => {
+        const map = e.target
+
+        if (!hoveredZone?.id) return
+
+        // Reset hovered state when mouse leaves map (e.g. cursor moving into panel)
+        map.setFeatureState({ source: COUNTRIES_SOURCE, id: hoveredZone.id }, { hover: false })
+        setHoveredZone(null)
+    }
 
     const onMapClick = (e: maplibregl.MapLayerMouseEvent) => {
         if (!date) {
@@ -101,10 +105,10 @@ export default function MapView({ children }: { children: React.ReactNode }) {
 
         popupRef.current?.remove()
 
-        const country = getClickedCountry(map, e.point, countriesByIdRef.current)
+        const country = getClickedCountry(map, e.point)
 
         if (!country) return
-        const slug = slugifyCountry(country.properties.NAME)
+        const slug = slugifyCountry(country.properties.name)
         router.push(`/map/${slug}`)
 
         const center = centroid(country).geometry.coordinates as [number, number]
@@ -112,138 +116,55 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         markerRef.current?.remove()
         markerRef.current?.setLngLat(e.lngLat).addTo(map)
         zoomToCountry(country, map, center)
-        renderPopup(popupRef, country.properties, center, map)
 
-        const location = { lat: e.lngLat.lat, lng: e.lngLat.lng, iso: country.properties.ISO_A3 }
-        weekService.simulateEnvironment(location, date)
+        // const location = { lat: e.lngLat.lat, lng: e.lngLat.lng, iso: country.properties.isoA3 }
+        // weekService.simulateEnvironment(location, date)
     }
 
     const onMapLoad = (e: maplibregl.MapLibreEvent) => {
-        const map = e.target
-        mapRef.current = map
+        const map = e.target,
+            features = map.queryRenderedFeatures({ layers: ["countries-fill"] })
 
-        map.setStyle(mapStyle)
-        setMapLoaded(true)
+        if (!activeCountrySlug) return
+
+        const country = getCountryBySlug(activeCountrySlug, features)
+
+        if (!country) return
+
+        const center = centroid(country).geometry.coordinates as [number, number]
+        zoomToCountry(country, map, center)
     }
-    const handleZoomIn = () => mapRef.current?.zoomIn()
-    const handleZoomOut = () => mapRef.current?.zoomOut()
 
     return (
-        <Flex>
-            <CompactSidebar />
-            <Map reuseMaps onClick={onMapClick} onLoad={onMapLoad}>
-                {children}
-                <Flex className="absolute inset-0 h-full w-fit" direction="col" gap={2}>
-                    <MainSidebar />
+        <Map
+            interactiveLayerIds={["countries-hover-layer", "country-boundaries-hover-layer"]}
+            // onMouseOver
+            // cursor={hoveredZone ? "pointer" : "grab"}
+            reuseMaps
+            mapLib={maplibregl}
+            onClick={onMapClick}
+            onLoad={onMapLoad}
+            onMouseMove={onMouseMove}
+            onMouseOut={onMouseOut}
+        >
+            <MapSources />
+            {children}
+            {/* <Flex className="absolute inset-0 h-full w-fit flex-col gap-2">
+                <MainSidebar />
+                </Flex> */}
 
-                    <RespiratoryLegend />
-                    <DatePickerSimple date={date} setDate={setDate} className="p-5" />
-                </Flex>
-                <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
-            </Map>
-        </Flex>
+            {/* {popupInfo && (
+                <Popup
+                    anchor="top"
+                    longitude={Number(popupInfo.longitude)}
+                    latitude={Number(popupInfo.latitude)}
+                    onClose={() => setPopupInfo(null)}
+                >
+                </Popup>
+            )} */}
+            <DatePickerSimple date={date} setDate={setDate} className="p-5" />
+            <RespiratoryLegend />
+            <ZoomControls />
+        </Map>
     )
 }
-
-const zoomToCountry = (
-    country: maplibregl.MapGeoJSONFeature,
-    map: maplibregl.Map,
-    centroid: [number, number]
-) => {
-    const bounds = bbox(country)
-    const [minX, minY, maxX, maxY] = bounds
-    const alignedBounds: maplibregl.LngLatBoundsLike = [
-        [minX, minY],
-        [maxX, maxY],
-    ]
-    map.fitBounds(alignedBounds, { padding: 50, duration: 1200, maxZoom: 8, center: centroid })
-}
-
-const renderPopup = (
-    popupRef: React.RefObject<maplibregl.Popup | null>,
-    properties: maplibregl.GeoJSONFeature["properties"],
-    centroid: maplibregl.LngLatLike,
-    map: maplibregl.Map
-) => {
-    // Create container
-    const popupContainer = document.createElement("div")
-    // Render React component
-    const root = createRoot(popupContainer)
-
-    const closePopup = () => {
-        popupRef.current?.remove()
-        root.unmount()
-    }
-
-    const { NAME, ISO_A3 } = properties
-    root.render(<CountryPopup name={NAME} iso={ISO_A3} onClose={closePopup} />)
-
-    // Create MapLibre popup
-    popupRef.current = new maplibregl.Popup({ closeButton: false, closeOnClick: false })
-        .setLngLat(centroid)
-        .setDOMContent(popupContainer)
-        .addTo(map)
-}
-
-//? Debugging bbox boundries
-// type BBox = [number, number, number, number] | [number, number, number, number, number, number]
-// const bboxToPolygon = (
-//     minX: number,
-//     minY: number,
-//     maxX: number,
-//     maxY: number
-// ): GeoJSON.GeoJSON => ({
-//     type: "Feature",
-//     geometry: {
-//         type: "Polygon",
-//         coordinates: [
-//             [
-//                 [minX, minY],
-//                 [maxX, minY],
-//                 [maxX, maxY],
-//                 [minX, maxY],
-//                 [minX, minY], // close ring
-//             ],
-//         ],
-//     },
-//     properties: {},
-// })
-
-// const drawBBox = (map: maplibregl.Map, bbox: BBox) => {
-//     const [minX, minY, maxX, maxY] = bbox
-//     const feature = bboxToPolygon(minX, minY, maxX, maxY)
-
-//     const sourceId = "debug-bbox-source"
-//     const lineLayerId = "debug-bbox-line"
-//     const fillLayerId = "debug-bbox-fill"
-
-//     if (map.getSource(sourceId)) {
-//         ;(map.getSource(sourceId) as maplibregl.GeoJSONSource).setData(feature)
-//         return
-//     }
-
-//     map.addSource(sourceId, {
-//         type: "geojson",
-//         data: feature,
-//     })
-
-//     map.addLayer({
-//         id: fillLayerId,
-//         type: "fill",
-//         source: sourceId,
-//         paint: {
-//             "fill-color": "#ff0000",
-//             "fill-opacity": 0.15,
-//         },
-//     })
-
-//     map.addLayer({
-//         id: lineLayerId,
-//         type: "line",
-//         source: sourceId,
-//         paint: {
-//             "line-color": "#ff0000",
-//             "line-width": 2,
-//         },
-//     })
-// }
