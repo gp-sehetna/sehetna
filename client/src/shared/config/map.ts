@@ -1,42 +1,44 @@
 import { toProperCase, unslugify } from "@/lib/utils"
 import bbox from "@turf/bbox"
-import maplibregl from "maplibre-gl"
+import maplibregl, { GeoJSONFeature } from "maplibre-gl"
 import { DEFAULT_HEALTH_OUTCOME, HEALTH_OUTCOMES } from "@/shared/config/health-outcomes"
 import { GradientPalette } from "./map-colors"
 
 const COUNTRIES_SOURCE = "countries"
 
-type GeoJsonProperties = {
-    id: string
-    scalerRank: number
-    countryName: string
-    type: string
-    admin: string
-    geoUnit: string
-    subUnit: string
-    name: string
-    longName: string
-    abbreviation: string
-    populationEstimate: number
-    populationRank: number
-    populationYear: number
-    milDollarsGDP: number
-    yearGDP: number
-    economy: string
-    incomeGroup: string
-    isoA2: string
-    isoA3: string
-    isoN3: string
-    WOE_ID: number
-    WOE_NOTE: string
-    continent: string
-    regionUnit: string
-    subRegion: string
-    regionWB: string
-    wikiDataId: string
-    arabicName: string
-    englishName: string
-}
+type GeoJsonProperties =
+    | GeoJSONFeature["properties"]
+    | {
+          id: string
+          scalerRank: number
+          countryName: string
+          type: string
+          admin: string
+          geoUnit: string
+          subUnit: string
+          name: string
+          longName: string
+          abbreviation: string
+          populationEstimate: number
+          populationRank: number
+          populationYear: number
+          milDollarsGDP: number
+          yearGDP: number
+          economy: string
+          incomeGroup: string
+          isoA2: string
+          isoA3: string
+          isoN3: string
+          WOE_ID: number
+          WOE_NOTE: string
+          continent: string
+          regionUnit: string
+          subRegion: string
+          regionWB: string
+          wikiDataId: string
+          arabicName: string
+          englishName: string
+      }
 
 type MapPageProps = {
     params: {

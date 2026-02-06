@@ -15,29 +15,30 @@ import {
     parseSlug,
     zoomToCountry,
 } from "@/shared/config/map"
-import maplibregl, { MapGeoJSONFeature } from "maplibre-gl"
+import { Marker, Popup, MapLibreEvent } from "maplibre-gl"
+import { MapGeoJSONFeature, MapLayerMouseEvent } from "react-map-gl/maplibre"
 
 import { useParams, useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 const useMapHook = () => {
     const router = useRouter()
-    const [clickedcountryProps, setClickedCountryProps] = useState<MapGeoJSONFeature | null>(null)
+    const [clickedZone, setClickedZone] = useState<MapGeoJSONFeature | null>(null)
 
     const [date, setDate] = useState<Date>()
-    const [hoveredZone, setHoveredZone] = useState<maplibregl.MapGeoJSONFeature | null>(null)
+    const [hoveredZone, setHoveredZone] = useState<MapGeoJSONFeature | null>(null)
     const params = useParams<MapPageProps["params"]>()
 
-    const popupRef = useRef<maplibregl.Popup>(null)
+    const popupRef = useRef<Popup>(null)
 
     const weekService = useMemo(() => new WeekClientService(), [])
     const activeSlug = parseSlug(params.slug)
 
-    const markerRef = useRef<maplibregl.Marker>(null)
+    const markerRef = useRef<Marker>(null)
     const theme = useTheme(activeSlug.healthOutcome)
 
     useEffect(() => {
-        markerRef.current = new maplibregl.Marker({
+        markerRef.current = new Marker({
             color: "var(--color-danger-100)",
             scale: 0.7,
         })
@@ -48,7 +49,7 @@ const useMapHook = () => {
         }
     }, [])
 
-    const onMouseMove = (e: maplibregl.MapLayerMouseEvent) => {
+    const onMouseMove = (e: MapLayerMouseEvent) => {
         const map = e.target
         if (!e.features) return
 
@@ -82,7 +83,7 @@ const useMapHook = () => {
         }
     }
 
-    const onMouseOut = (e: maplibregl.MapLayerMouseEvent) => {
+    const onMouseOut = (e: MapLayerMouseEvent) => {
         const map = e.target
 
         if (!hoveredZone?.id) return
@@ -92,10 +93,8 @@ const useMapHook = () => {
         setHoveredZone(null)
     }
 
-    const onMapClick = (e: maplibregl.MapLayerMouseEvent) => {
+    const onMapClick = (e: MapLayerMouseEvent) => {
         const map = e.target
-
-        popupRef.current?.remove()
 
         const country = getClickedCountry(map, e.point)
 
@@ -104,13 +103,15 @@ const useMapHook = () => {
         router.push(`/map/${slug}`)
 
         const center = centroid(country).geometry.coordinates as [number, number]
-
         markerRef.current?.remove()
         markerRef.current?.setLngLat(e.lngLat).addTo(map)
+
+        popupRef.current?.remove()
+        popupRef.current?.setLngLat(e.lngLat).addTo(map)
         zoomToCountry(country, map, center)
 
         // renderPopup(popupRef, country.properties, center, map, markerRef, setClickedCountryProps)
-        setClickedCountryProps(country)
+        setClickedZone(country)
 
         if (!date) {
             toast.warning("Please select a date first.", {
@@ -125,7 +126,7 @@ const useMapHook = () => {
         weekService.simulateEnvironment(location, date)
     }
 
-    const onMapLoad = (e: maplibregl.MapLibreEvent) => {
+    const onMapLoad = (e: MapLibreEvent) => {
         const map = e.target,
             features = map.queryRenderedFeatures({ layers: ["countries-fill"] })
 
@@ -137,30 +138,31 @@ const useMapHook = () => {
         if (!country) return
 
         const center = centroid(country).geometry.coordinates as [number, number]
+        markerRef.current?.remove()
+        markerRef.current?.setLngLat(center).addTo(map)
         zoomToCountry(country, map, center)
     }
 
-    // if closed sidebar remove marker & reset url
-    useEffect(() => {
-        if (!params.slug) {
-            markerRef.current?.remove()
-            popupRef.current?.remove()
-            setClickedCountryProps(null)
-        }
-    }, [params])
+    // if closed sidebar remove marker
+    // useEffect(() => {
+    //     if (activeSlug.country) return
+    //     markerRef.current?.remove()
+    //     popupRef.current?.remove()
+    // }, [activeSlug.country])
     return {
         onMapLoad,
         onMapClick,
         onMouseMove,
         onMouseOut,
-        clickedcountryProps,
+        clickedZone,
+        setClickedZone,
         setDate,
         date,
         hoveredZone,
         markerRef,
         popupRef,
         theme,
-        activeSlug
+        activeSlug,
     }
 }
 

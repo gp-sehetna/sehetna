@@ -1,4 +1,3 @@
-import { Prediction } from "@/features/environment/week/week.types"
 import { GradientPalette, blue, green, mix } from "@/shared/config/map-colors"
 import { useMemo } from "react"
 

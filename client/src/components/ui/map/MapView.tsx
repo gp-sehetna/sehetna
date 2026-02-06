@@ -1,14 +1,12 @@
 "use client"
 
-import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
 import "maplibre-gl/dist/maplibre-gl.css"
-import maplibregl from "maplibre-gl"
 import Map from "react-map-gl/maplibre"
-import MainSidebar from "../GlobalComponents/SideBars/MainSidebar"
-import RespiratoryLegend from "../legend/RespiratoryLegend"
-import MapSources from "./MapSources"
-import ZoomControls from "./ZoomControls"
-import useMapHook from "./useMapHook"
+import MainSidebar from "@/components/ui/GlobalComponents/SideBars/MainSidebar"
+import RespiratoryLegend from "@/components/ui/legend/RespiratoryLegend"
+import MapSources from "@/components/ui/map/MapSources"
+import ZoomControls from "@/components/ui/map/ZoomControls"
+import useMapHook from "@/components/ui/map/useMapHook"
 
 export default function MapView({ children }: { children: React.ReactNode }) {
     const {
@@ -16,18 +14,14 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         onMapClick,
         onMouseMove,
         onMouseOut,
-        clickedcountryProps,
-        setDate,
-        date,
-        activeSlug
+        clickedZone,
+        setClickedZone,
+        activeSlug,
     } = useMapHook()
     return (
         <Map
             interactiveLayerIds={["countries-hover-layer", "country-boundaries-hover-layer"]}
-            // onMouseOver
-            // cursor={hoveredZone ? "pointer" : "grab"}
             reuseMaps
-            mapLib={maplibregl}
             onClick={onMapClick}
             onLoad={onMapLoad}
             onMouseMove={onMouseMove}
@@ -36,16 +30,14 @@ export default function MapView({ children }: { children: React.ReactNode }) {
             <MapSources />
             {children}
 
-            <div className="z-50 flex h-full w-fit min-w-1/2 lg:min-w-1/4 flex-col items-start! justify-start! gap-5 p-4">
-                {clickedcountryProps != null && (
-                    <MainSidebar clickedcountryProps={clickedcountryProps} />
-                )}
-                <DatePickerSimple
-                    date={date}
-                    setDate={setDate}
-                    className="mt-auto w-full min-w-5!"
+            {clickedZone && (
+                <MainSidebar
+                    healthOutcome={activeSlug.healthOutcome}
+                    clickedZone={clickedZone}
+                    setClickedZone={setClickedZone}
                 />
-            </div>
+            )}
+
             <RespiratoryLegend healthOutcome={activeSlug.healthOutcome} />
             <ZoomControls />
         </Map>

@@ -1,22 +1,34 @@
 import { ArrowLeft } from "lucide-react"
-import { MapGeoJSONFeature } from "maplibre-gl"
-import Flex from "../../Flex"
+import Flex from "@/components/ui/Flex"
 import { redirect } from "next/navigation"
+import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
+import useMapHook from "@/components/ui/map/useMapHook"
+import { Dispatch, SetStateAction } from "react"
+import { MapGeoJSONFeature } from "react-map-gl/maplibre"
 
-type SideBarType = {
-    clickedcountryProps: MapGeoJSONFeature | null
+type MainSidebarProps = {
+    healthOutcome: string
+    clickedZone: MapGeoJSONFeature
+    setClickedZone: Dispatch<SetStateAction<MapGeoJSONFeature | null>>
 }
 
-const MainSidebar = ({ clickedcountryProps }: SideBarType) => {
-    if (!clickedcountryProps) return
+const MainSidebar = ({ healthOutcome, clickedZone, setClickedZone }: MainSidebarProps) => {
+    const { date, setDate } = useMapHook()
 
+    const closeSideBar = () => {
+        setClickedZone(null)
+        redirect(`/map/${healthOutcome}`)
+    }
 
     return (
-        <div className="glassy min-w-full flex-1 overflow-visible rounded-lg border p-3">
-            <Flex className="items-center justify-start" gap={2}>
-                <ArrowLeft className="cursor-pointer" onClick={() => redirect("/map")} />
-                <h5>{clickedcountryProps?.properties.countryName}</h5>
-            </Flex>
+        <div className="z-50 flex h-full w-1/3 min-w-md flex-col items-start justify-start p-4">
+            <div className="glassy min-w-full flex-1 rounded-2xl border p-4">
+                <Flex className="items-center justify-start" gap={2}>
+                    <ArrowLeft className="cursor-pointer" onClick={closeSideBar} />
+                    <h5>{clickedZone.properties.countryName}</h5>
+                </Flex>
+            </div>
+            <DatePickerSimple date={date} setDate={setDate} className="mt-auto w-full min-w-5!" />
         </div>
     )
 }
