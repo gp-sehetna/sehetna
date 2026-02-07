@@ -84,7 +84,7 @@ class LocationData(BaseModel):
             return data
 
         lat, lon = map(float, coords.split(","))
-        return {"lat": lat, "lon": lon}
+        return {**data, "lat": lat, "lon": lon}
 
 
 class PredictionQueryParams(BaseModel):
