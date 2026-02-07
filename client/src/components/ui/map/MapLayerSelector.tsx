@@ -1,17 +1,16 @@
-"use client"
+import { Button } from "@/components/ui/shadcn/button"
 import { Card } from "@/components/ui/shadcn/card"
 import { cn, toProperCase, unslugify } from "@/lib/utils"
 import { HEALTH_OUTCOMES } from "@/shared/config/health-outcomes"
 import { Check } from "lucide-react"
-import { Button } from "@/components/ui/shadcn/button"
-import useMapHook from "@/hooks/map/use-map"
+import { Dispatch } from "react"
 
 export type LayerSelectorProps = {
     healthOutcome: string
+    onLayerSelect: Dispatch<string>
 }
 
-const MapLayerSelector = ({ healthOutcome }: LayerSelectorProps) => {
-    const { onLayerSelect } = useMapHook()
+const MapLayerSelector = ({ healthOutcome, onLayerSelect }: LayerSelectorProps) => {
     return (
         <Card className="mb-3 space-y-1 p-2">
             {HEALTH_OUTCOMES.map((outcome) => (

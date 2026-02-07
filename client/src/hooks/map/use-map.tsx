@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react"
 
 import { WeekClientService } from "@/features/environment/week/week.service.client"
 import { slugify } from "@/lib/utils"
-import "maplibre-gl/dist/maplibre-gl.css"
 
 import { useTheme } from "@/hooks/map/use-theme"
 import {
@@ -19,15 +18,14 @@ import {
 import { GeoJSONFeature, MapLibreEvent } from "maplibre-gl"
 import { MapLayerMouseEvent } from "react-map-gl/maplibre"
 
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation"
-import { toast } from "sonner"
 import { Coordinates } from "@/shared/types/map"
 import { format } from "date-fns"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
+import { toast } from "sonner"
 
 const useMapHook = () => {
     const router = useRouter()
     const searchParams = useSearchParams()
-    const pathname = usePathname()
     const params = useParams<MapPageProps["params"]>()
 
     const activeSlug = parseSlug(params.slug)
@@ -50,7 +48,11 @@ const useMapHook = () => {
         if (!date) params.delete("date")
         else params.set("date", format(date, "yyyy-MM-dd"))
 
-        router.push(`${pathname}?${params.toString()}`, { scroll: false })
+        const basePath = activeSlug.country
+            ? `/map/${activeSlug.country}/${activeSlug.healthOutcome}`
+            : `/map/${activeSlug.healthOutcome}`
+
+        router.push(`${basePath}?${params.toString()}`, { scroll: false })
     }
 
     useEffect(() => {
@@ -150,7 +152,6 @@ const useMapHook = () => {
     }
 
     const onLayerSelect = (healthOutcome: string) => {
-        debugger
         const params = new URLSearchParams(searchParams.toString())
         router.push(
             activeSlug.country
@@ -159,12 +160,19 @@ const useMapHook = () => {
         )
     }
 
+    const closeCountryDetails = () => {
+        setClickedZone(null)
+        setMarkerCoords(null)
+        router.push(`/map/${activeSlug.healthOutcome}`, { scroll: false })
+    }
+
     return {
         onMapLoad,
         onMapClick,
         onMouseMove,
         onMouseOut,
         onLayerSelect,
+        closeCountryDetails,
         markerCoords,
         setMarkerCoords,
         clickedZone,
