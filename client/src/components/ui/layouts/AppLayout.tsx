@@ -4,11 +4,9 @@ import CompactSidebar from "../GlobalComponents/SideBars/CompactSidebar"
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <SidebarProvider>
-            <SidebarInset className="flex-1">
-                <div className="relative flex h-screen w-full">
-                    <CompactSidebar />
-                    {children}
-                </div>
+            <SidebarInset>
+                <CompactSidebar />
+                {children}
             </SidebarInset>
         </SidebarProvider>
     )

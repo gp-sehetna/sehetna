@@ -1,10 +1,8 @@
 "use client"
 
 import "maplibre-gl/dist/maplibre-gl.css"
-import { Map } from "react-map-gl/maplibre"
-import MainSidebar from "@/components/ui/GlobalComponents/SideBars/MainSidebar"
+import { Map, NavigationControl } from "react-map-gl/maplibre"
 import MapSources from "@/components/ui/map/MapSources"
-import ZoomControls from "@/components/ui/map/ZoomControls"
 import useMapHook from "@/hooks/map/use-map"
 import MapMarker from "@/components/ui/map/MapMarker"
 import MapControls from "@/components/ui/map/MapControls"
@@ -19,12 +17,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         onMouseMove,
         onMouseOut,
 
-        onLayerSelect,
-
-        clickedZone,
-        setClickedZone,
         markerCoords,
-        setMarkerCoords,
     } = useMapHook()
 
     return (
@@ -42,17 +35,8 @@ export default function MapView({ children }: { children: React.ReactNode }) {
 
             {children}
 
-            {clickedZone && (
-                <MainSidebar
-                    healthOutcome={activeSlug.healthOutcome}
-                    clickedZone={clickedZone}
-                    setClickedZone={setClickedZone}
-                    setMarker={setMarkerCoords}
-                />
-            )}
-
-            <MapControls healthOutcome={activeSlug.healthOutcome} onLayerSelect={onLayerSelect} />
-            <ZoomControls />
+            <MapControls healthOutcome={activeSlug.healthOutcome} />
+            <NavigationControl position="top-right" showCompass={false} visualizePitch />
         </Map>
     )
 }
