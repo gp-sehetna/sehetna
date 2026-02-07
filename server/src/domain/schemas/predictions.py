@@ -73,16 +73,18 @@ class LocationData(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def split_coords(cls, data):
-        if data["lat"] is None and data["lon"] is None and data["coords"] is None:
+        lat = data.get("lat")
+        lon = data.get("lon")
+        coords = data.get("coords")
+
+        if lat is None and lon is None and coords is None:
             raise BadRequest("lat, lon, or coords must be provided")
 
-        if data["lat"] is not None and data["lon"] is not None:
+        if lat is not None and lon is not None:
             return data
 
-        lat, lon = map(float, data["coords"].split(","))
-        data["lat"] = lat
-        data["lon"] = lon
-        return data
+        lat, lon = map(float, coords.split(","))
+        return {"lat": lat, "lon": lon}
 
 
 class PredictionQueryParams(BaseModel):
