@@ -1,10 +1,4 @@
-export function formatDate(date: Date): string {
-    const yyyy = date.getFullYear()
-    const mm = String(date.getMonth() + 1).padStart(2, "0")
-    const dd = String(date.getDate()).padStart(2, "0")
-
-    return `${yyyy}-${mm}-${dd}`
-}
+import { format } from "date-fns"
 
 export function getWeekRange(dateStr: string, weeks: number = 1) {
     const date = new Date(dateStr)
@@ -17,7 +11,7 @@ export function getWeekRange(dateStr: string, weeks: number = 1) {
     endDate.setDate(startDate.getDate() + (weeks * 7 - 1))
 
     return {
-        startDate: formatDate(startDate),
-        endDate: formatDate(endDate),
+        startDate: format(startDate, "yyyy-MM-dd"),
+        endDate: format(endDate, "yyyy-MM-dd"),
     }
 }

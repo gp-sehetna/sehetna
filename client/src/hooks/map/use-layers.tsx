@@ -4,12 +4,9 @@ import {
     LineLayerSpecification,
 } from "maplibre-gl"
 import { useMemo } from "react"
-import { Colors } from "@/shared/config/map-colors"
-import { useTheme } from "@/hooks/map/use-theme"
+import { Colors, GradientPalette } from "@/shared/config/map-colors"
 
-const useLayers = (heathOutcome: string) => {
-    const { theme } = useTheme(heathOutcome)
-
+const useLayers = (theme: GradientPalette) => {
     const backgroundLayer = useMemo<BackgroundLayerSpecification>(
         () => ({
             id: "ocean",

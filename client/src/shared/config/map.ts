@@ -1,6 +1,6 @@
 import { toProperCase, unslugify } from "@/lib/utils"
 import bbox from "@turf/bbox"
-import { Map, GeoJSONFeature, LngLatBoundsLike, MapGeoJSONFeature, PointLike } from "maplibre-gl"
+import { Map, GeoJSONFeature, LngLatBoundsLike, PointLike } from "maplibre-gl"
 import { DEFAULT_HEALTH_OUTCOME, HEALTH_OUTCOMES } from "@/shared/config/health-outcomes"
 import { GradientPalette } from "./map-colors"
 
@@ -63,13 +63,13 @@ const parseSlug = (slug: string[] = []) => {
     return { country, healthOutcome }
 }
 
-const getCountryBySlug = (slug: string, features: MapGeoJSONFeature[]) => {
+const getCountryBySlug = (slug: string, features: GeoJSONFeature[]) => {
     const countryName = toProperCase(unslugify(slug))
 
     return features.find((f) => f.properties?.name?.toLowerCase() === countryName.toLowerCase())
 }
 
-const zoomToCountry = (country: MapGeoJSONFeature, map: Map, centroid: [number, number]) => {
+const zoomToCountry = (country: GeoJSONFeature, map: Map, centroid: [number, number]) => {
     const bounds = bbox(country)
     const [minX, minY, maxX, maxY] = bounds
     const alignedBounds: LngLatBoundsLike = [
@@ -87,7 +87,7 @@ const getClickedCountry = (map: Map, point: PointLike) => {
     return features[0]
 }
 
-const colorEachCountry = (map: Map, features: MapGeoJSONFeature[], theme: GradientPalette) => {
+const colorEachCountry = (map: Map, features: GeoJSONFeature[], theme: GradientPalette) => {
     // This effect colors the zones based on the co2 intensity
     map.touchZoomRotate.disableRotation()
     map.touchPitch.disable()

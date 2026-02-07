@@ -2,15 +2,15 @@ import { ArrowLeft } from "lucide-react"
 import Flex from "@/components/ui/Flex"
 import { redirect } from "next/navigation"
 import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
-import useMapHook from "@/components/ui/map/useMapHook"
+import useMapHook from "@/hooks/map/use-map"
 import { Dispatch, SetStateAction } from "react"
-import { MapGeoJSONFeature } from "react-map-gl/maplibre"
 import { Coordinates } from "@/shared/types/map"
+import { GeoJSONFeature } from "maplibre-gl"
 
 type MainSidebarProps = {
     healthOutcome: string
-    clickedZone: MapGeoJSONFeature
-    setClickedZone: Dispatch<SetStateAction<MapGeoJSONFeature | null>>
+    clickedZone: GeoJSONFeature
+    setClickedZone: Dispatch<SetStateAction<GeoJSONFeature | null>>
     setMarker: Dispatch<SetStateAction<Coordinates | null>>
 }
 

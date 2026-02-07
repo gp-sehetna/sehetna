@@ -1,16 +1,17 @@
 "use client"
 
 import "maplibre-gl/dist/maplibre-gl.css"
-import Map from "react-map-gl/maplibre"
+import { Map } from "react-map-gl/maplibre"
 import MainSidebar from "@/components/ui/GlobalComponents/SideBars/MainSidebar"
-import RespiratoryLegend from "@/components/ui/legend/RespiratoryLegend"
 import MapSources from "@/components/ui/map/MapSources"
 import ZoomControls from "@/components/ui/map/ZoomControls"
-import useMapHook from "@/components/ui/map/useMapHook"
+import useMapHook from "@/hooks/map/use-map"
 import MapMarker from "@/components/ui/map/MapMarker"
+import MapControls from "@/components/ui/map/MapControls"
 
 export default function MapView({ children }: { children: React.ReactNode }) {
     const {
+        theme,
         activeSlug,
 
         onMapLoad,
@@ -18,11 +19,14 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         onMouseMove,
         onMouseOut,
 
+        onLayerSelect,
+
         clickedZone,
         setClickedZone,
         markerCoords,
         setMarkerCoords,
     } = useMapHook()
+
     return (
         <Map
             interactiveLayerIds={["countries-hover-layer", "country-boundaries-hover-layer"]}
@@ -31,9 +35,11 @@ export default function MapView({ children }: { children: React.ReactNode }) {
             onLoad={onMapLoad}
             onMouseMove={onMouseMove}
             onMouseOut={onMouseOut}
+            attributionControl={false}
         >
             <MapMarker coords={markerCoords} />
-            <MapSources />
+            <MapSources theme={theme} />
+
             {children}
 
             {clickedZone && (
@@ -45,7 +51,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
                 />
             )}
 
-            <RespiratoryLegend healthOutcome={activeSlug.healthOutcome} />
+            <MapControls healthOutcome={activeSlug.healthOutcome} onLayerSelect={onLayerSelect} />
             <ZoomControls />
         </Map>
     )
@@ -57,7 +63,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
 //     centroid: LngLatLike,
 //     map: Map,
 //     markerRef:React.RefObject<Marker | null>,
-//     setClickedCountryProps: React.Dispatch<React.SetStateAction<MapGeoJSONFeature | null>>
+//     setClickedCountryProps: React.Dispatch<React.SetStateAction<GeoJsonFeature | null>>
 // ) => {
 //     // Create container
 //     const popupContainer = document.createElement("div")

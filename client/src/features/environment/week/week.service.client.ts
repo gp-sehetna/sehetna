@@ -6,9 +6,9 @@ import {
     SimulateResponse,
 } from "@/features/environment/week/week.types"
 import { toProperCase } from "@/lib/utils"
-import { formatDate } from "@/lib/utils/date"
 import { confirmIncompleteEnvironment } from "@/lib/utils/toast"
 import { api } from "@/shared/api"
+import { format } from "date-fns"
 import { SearchParamsOption } from "ky"
 import { toast } from "sonner"
 
@@ -53,7 +53,7 @@ export class WeekClientService {
     }
 
     private fetchEnvironmentAndSimulate = async (loc: Location, date: Date, weeks = 1) => {
-        const environment = await this.fetchEnvironment(loc, formatDate(date), weeks)
+        const environment = await this.fetchEnvironment(loc, format(date, "yyyy-MM-dd"), weeks)
         if (!environment) return null
 
         const { predictions } = await api

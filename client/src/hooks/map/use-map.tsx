@@ -1,3 +1,4 @@
+"use client"
 import centroid from "@turf/centroid"
 import { useEffect, useMemo, useState } from "react"
 
@@ -15,13 +16,13 @@ import {
     parseSlug,
     zoomToCountry,
 } from "@/shared/config/map"
-import { MapLibreEvent } from "maplibre-gl"
-import { MapGeoJSONFeature, MapLayerMouseEvent } from "react-map-gl/maplibre"
+import { GeoJSONFeature, MapLibreEvent } from "maplibre-gl"
+import { MapLayerMouseEvent } from "react-map-gl/maplibre"
 
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { Coordinates } from "@/shared/types/map"
-import { formatDate } from "@/lib/utils/date"
+import { format } from "date-fns"
 
 const useMapHook = () => {
     const router = useRouter()
@@ -33,8 +34,8 @@ const useMapHook = () => {
     const { theme, isInvalid } = useTheme(activeSlug.healthOutcome)
     const [markerCoords, setMarkerCoords] = useState<Coordinates | null>(null)
 
-    const [clickedZone, setClickedZone] = useState<MapGeoJSONFeature | null>(null)
-    const [hoveredZone, setHoveredZone] = useState<MapGeoJSONFeature | null>(null)
+    const [clickedZone, setClickedZone] = useState<GeoJSONFeature | null>(null)
+    const [hoveredZone, setHoveredZone] = useState<GeoJSONFeature | null>(null)
 
     const weekService = useMemo(() => new WeekClientService(), [])
 
@@ -47,10 +48,9 @@ const useMapHook = () => {
         const params = new URLSearchParams(searchParams.toString())
 
         if (!date) params.delete("date")
-        else params.set("date", formatDate(date))
+        else params.set("date", format(date, "yyyy-MM-dd"))
 
-        const query = params.toString()
-        router.push(query ? `${pathname}?${query}` : pathname, { scroll: false })
+        router.push(`${pathname}?${params.toString()}`, { scroll: false })
     }
 
     useEffect(() => {
@@ -134,7 +134,7 @@ const useMapHook = () => {
 
     const onMapLoad = (e: MapLibreEvent) => {
         const map = e.target,
-            features = map.queryRenderedFeatures({ layers: ["countries-fill"] })
+            features = map.querySourceFeatures("countries")
 
         colorEachCountry(map, features, theme)
         if (!activeSlug.country) return
@@ -149,11 +149,22 @@ const useMapHook = () => {
         setClickedZone(country)
     }
 
+    const onLayerSelect = (healthOutcome: string) => {
+        debugger
+        const params = new URLSearchParams(searchParams.toString())
+        router.push(
+            activeSlug.country
+                ? `/map/${activeSlug.country}/${healthOutcome}?${params}`
+                : `/map/${healthOutcome}?${params}`
+        )
+    }
+
     return {
         onMapLoad,
         onMapClick,
         onMouseMove,
         onMouseOut,
+        onLayerSelect,
         markerCoords,
         setMarkerCoords,
         clickedZone,
