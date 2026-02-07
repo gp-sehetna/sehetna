@@ -1,37 +1,37 @@
+import { Map, GeoJSONSource } from "maplibre-gl"
+
 // ? Debugging bbox boundries
 type BBox = [number, number, number, number] | [number, number, number, number, number, number]
-const bboxToPolygon = (
-    minX: number,
-    minY: number,
-    maxX: number,
-    maxY: number
-): GeoJSON.GeoJSON => ({
-    type: "Feature",
-    geometry: {
-        type: "Polygon",
-        coordinates: [
-            [
-                [minX, minY],
-                [maxX, minY],
-                [maxX, maxY],
-                [minX, maxY],
-                [minX, minY], // close ring
-            ],
-        ],
-    },
-    properties: {},
-})
-
-const drawBBox = (map: maplibregl.Map, bbox: BBox) => {
+const bboxToPolygon = (bbox: BBox): GeoJSON.GeoJSON => {
     const [minX, minY, maxX, maxY] = bbox
-    const feature = bboxToPolygon(minX, minY, maxX, maxY)
+    return {
+        type: "Feature",
+        geometry: {
+            type: "Polygon",
+            coordinates: [
+                [
+                    [minX, minY],
+                    [maxX, minY],
+                    [maxX, maxY],
+                    [minX, maxY],
+                    [minX, minY], // close ring
+                ],
+            ],
+        },
+        properties: {},
+    }
+}
 
-    const sourceId = "debug-bbox-source"
-    const lineLayerId = "debug-bbox-line"
-    const fillLayerId = "debug-bbox-fill"
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const drawBBox = (map: Map, bbox: BBox) => {
+    const feature = bboxToPolygon(bbox),
+        sourceId = "debug-bbox-source",
+        lineLayerId = "debug-bbox-line",
+        fillLayerId = "debug-bbox-fill",
+        source = map.getSource<GeoJSONSource>(sourceId)
 
-    if (map.getSource(sourceId)) {
-        ;(map.getSource(sourceId) as maplibregl.GeoJSONSource).setData(feature)
+    if (source) {
+        source.setData(feature)
         return
     }
 

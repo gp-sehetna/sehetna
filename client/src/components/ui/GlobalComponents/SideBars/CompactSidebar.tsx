@@ -14,9 +14,8 @@ import {
     SidebarTrigger,
 } from "@/components/ui/shadcn/sidebar"
 import { ForwardRefExoticComponent, RefAttributes } from "react"
-import Logo from "../../GlobalControls/Logo"
-import NavLink from "../../NavLink"
-import { Button } from "../../shadcn/button"
+import Logo from "@/components/ui/GlobalControls/Logo"
+import NavLink from "@/components/ui/NavLink"
 
 type LinkType = {
     title: string
@@ -33,11 +32,11 @@ const navigations: LinkType[] = [
 const CompactSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
     return (
         <>
-            <Sidebar collapsible="icon" {...props}>
+            <Sidebar collapsible="icon" {...props} className="  z-1000 relative">
                 <SidebarHeader>
                     <Logo size={32} />
                 </SidebarHeader>
-                <SidebarTrigger />
+                <SidebarTrigger className="z-1000" />
                 <SidebarContent>
                     <SidebarGroup>
                         <SidebarGroupLabel>Pages</SidebarGroupLabel>

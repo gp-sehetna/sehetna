@@ -1,3 +1,5 @@
+import { Coordinates } from "@/shared/types/map"
+
 type Reducer = (values: number[]) => number | null
 type AggResult<T> = { date: string } & { [K in keyof T]: number | null }
 
@@ -7,9 +9,7 @@ type WeekParams = {
     weeks: number
 }
 
-interface Location {
-    lat: number
-    lng: number
+interface Location extends Coordinates {
     iso: string
 }
 

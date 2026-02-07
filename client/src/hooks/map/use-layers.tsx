@@ -1,14 +1,12 @@
+import { Colors, GradientPalette } from "@/shared/config/map-colors"
 import {
     BackgroundLayerSpecification,
     FillLayerSpecification,
     LineLayerSpecification,
 } from "maplibre-gl"
 import { useMemo } from "react"
-import { Colors } from "@/shared/config/map-colors"
 
-const useLayers = () => {
-    // const theme = useTheme(heathOutcome)
-
+const useLayers = (theme: GradientPalette) => {
     const backgroundLayer = useMemo<BackgroundLayerSpecification>(
         () => ({
             id: "ocean",

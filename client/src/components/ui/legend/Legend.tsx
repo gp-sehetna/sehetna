@@ -3,12 +3,12 @@ import HorizontalColorbar from "./ColorBar"
 import { LegendItem } from "./LegendItem"
 import { toProperCase, unslugify } from "@/lib/utils"
 
-type Props = {
+export type LegendProps = {
     healthOutcome: string
 }
 
-export default function RespiratoryLegend({ healthOutcome }: Props) {
-    const theme = useTheme(healthOutcome)
+export default function Legend({ healthOutcome }: LegendProps) {
+    const { theme } = useTheme(healthOutcome)
 
     return (
         <LegendItem label={toProperCase(unslugify(healthOutcome))} unit="%">

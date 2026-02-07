@@ -1,14 +1,19 @@
 import useLayers from "@/hooks/map/use-layers"
+import { GradientPalette } from "@/shared/config/map-colors"
 import { Source, Layer } from "react-map-gl/maplibre"
 
-const MapSources = () => {
+type Props = {
+    theme: GradientPalette
+}
+
+const MapSources = ({ theme }: Props) => {
     const {
         backgroundLayer,
         countriesHoverLayer,
         countryBondariesHoverableLayer,
         countriesLayer,
         boundariesLayer,
-    } = useLayers()
+    } = useLayers(theme)
 
     return (
         <>
