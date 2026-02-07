@@ -21,7 +21,7 @@ const MapCountryDetails = ({
     return (
         <>
             {clickedZone && (
-                <div className="z-50 flex h-full w-1/3 min-w-md flex-col items-start justify-start">
+                <div className="relative z-100 flex h-[calc(100vh-20px)]  w-full flex-col items-start justify-start gap-2 p-2 backdrop-blur-xs md:backdrop-blur-none my-auto md:w-1/3 md:min-w-md md:p-4">
                     <div className="glassy min-w-full flex-1 rounded-2xl border p-4">
                         <Flex className="items-center justify-start" gap={2}>
                             <ArrowLeft className="cursor-pointer" onClick={closeCountryDetails} />
@@ -31,7 +31,7 @@ const MapCountryDetails = ({
                     <DatePickerSimple
                         date={date}
                         setDate={setDate}
-                        className="mt-auto w-full min-w-5!"
+                        className="relative mt-auto w-full min-w-5!"
                     />
                 </div>
             )}

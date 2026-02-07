@@ -29,6 +29,13 @@ const useMapHook = () => {
     const params = useParams<MapPageProps["params"]>()
 
     const activeSlug = parseSlug(params.slug)
+
+    useEffect(() => {
+        console.log("SLUG in useEffect", activeSlug)
+
+        // if (params.slug) setActiveSlug(parseSlug(params.slug))
+    }, [params.slug])
+
     const { theme, isInvalid } = useTheme(activeSlug.healthOutcome)
     const [markerCoords, setMarkerCoords] = useState<Coordinates | null>(null)
 
@@ -153,6 +160,8 @@ const useMapHook = () => {
 
     const onLayerSelect = (healthOutcome: string) => {
         const params = new URLSearchParams(searchParams.toString())
+        console.log("SLUG in onLayerSelect", activeSlug)
+
         router.push(
             activeSlug.country
                 ? `/map/${activeSlug.country}/${healthOutcome}?${params}`

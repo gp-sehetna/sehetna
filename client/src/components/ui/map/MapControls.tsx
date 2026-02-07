@@ -102,12 +102,15 @@ const MapControls = ({
     closeCountryDetails,
     date,
     setDate,
-    healthOutcome,
+    activeSlug,
     onLayerSelect,
-}: BottomRightProps & BottomLeftProps) => {
-    const layerControls = useControl(() => new BottomRightView({ healthOutcome, onLayerSelect }), {
-        position: "bottom-right",
-    })
+}: Omit<BottomRightProps, "healthOutcome"> & BottomLeftProps & { activeSlug: any }) => {
+    const layerControls = useControl(
+        () => new BottomRightView({ healthOutcome: activeSlug.healthOutcome, onLayerSelect }),
+        {
+            position: "bottom-right",
+        }
+    )
 
     const countryControls = useControl(
         () => new BottomLeftView({ clickedZone, closeCountryDetails, date, setDate }),
@@ -117,8 +120,8 @@ const MapControls = ({
     )
 
     useEffect(() => {
-        layerControls.onUpdate(healthOutcome)
-    }, [layerControls, healthOutcome])
+        layerControls.onUpdate(activeSlug.healthOutcome)
+    }, [layerControls, activeSlug])
 
     useEffect(() => {
         countryControls.onUpdate(clickedZone, date)

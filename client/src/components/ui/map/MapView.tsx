@@ -11,18 +11,15 @@ export default function MapView({ children }: { children: React.ReactNode }) {
     const {
         theme,
         activeSlug,
-
         date,
         setDate,
         clickedZone,
         closeCountryDetails,
         onLayerSelect,
-
         onMapLoad,
         onMapClick,
         onMouseMove,
         onMouseOut,
-
         markerCoords,
     } = useMapHook()
 
@@ -46,7 +43,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
                 closeCountryDetails={closeCountryDetails}
                 date={date}
                 setDate={setDate}
-                healthOutcome={activeSlug.healthOutcome}
+                activeSlug={activeSlug}
                 onLayerSelect={onLayerSelect}
             />
             <NavigationControl position="top-right" showCompass={false} visualizePitch />

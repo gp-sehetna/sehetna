@@ -2,7 +2,7 @@
 
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Menu, PanelRight } from "lucide-react"
 import * as React from "react"
 
 import { Button } from "@/components/ui/shadcn/button"
@@ -177,7 +177,7 @@ const Sidebar = React.forwardRef<
         ref
     ) => {
         const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
-
+        
         if (collapsible === "none") {
             return (
                 <div
@@ -268,8 +268,8 @@ const SidebarTrigger = React.forwardRef<
     React.ComponentRef<typeof Button>,
     React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
-    const { toggleSidebar, state } = useSidebar()
-
+    const { isMobile, toggleSidebar, state } = useSidebar()
+    const isOffcanvas = state === "collapsed" && !isMobile
     return (
         <Button
             ref={ref}
@@ -277,7 +277,7 @@ const SidebarTrigger = React.forwardRef<
             variant="glassy"
             size="icon"
             className={cn(
-                "absolute top-4 -right-3 z-100 h-5 w-5 rounded-full border-neutral-300 text-neutral-500",
+                "absolute top-4 -right-3  h-5 w-5 rounded-full bg-white   hover:bg-white border-neutral-300 text-neutral-500",
                 className
             )}
             onClick={(event) => {
@@ -286,11 +286,32 @@ const SidebarTrigger = React.forwardRef<
             }}
             {...props}
         >
-            {state == "collapsed" ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+            {isOffcanvas ? <ChevronRight size={16}  className="z-1000" /> : <ChevronLeft size={16} className="z-1000" />}
         </Button>
     )
 })
 SidebarTrigger.displayName = "SidebarTrigger"
+
+// This is a trigger that only shows on mobile devices. It is used to open the sidebar when it is in offcanvas mode.
+export function MobileSidebarTrigger() {
+    const { isMobile, toggleSidebar } = useSidebar()
+
+    if (!isMobile) return null
+
+    
+
+    return (
+        <Button
+            variant="ghost"
+            size="icon"
+            className="fixed top-3 left-3 z-50 md:hidden"
+            onClick={toggleSidebar}
+        >
+            <PanelRight />
+        </Button>
+    )
+}
+
 
 const SidebarRail = React.forwardRef<HTMLButtonElement, React.ComponentProps<"button">>(
     ({ className, ...props }, ref) => {
