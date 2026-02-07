@@ -5,18 +5,26 @@ import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimpl
 import useMapHook from "@/components/ui/map/useMapHook"
 import { Dispatch, SetStateAction } from "react"
 import { MapGeoJSONFeature } from "react-map-gl/maplibre"
+import { Coordinates } from "@/shared/types/map"
 
 type MainSidebarProps = {
     healthOutcome: string
     clickedZone: MapGeoJSONFeature
     setClickedZone: Dispatch<SetStateAction<MapGeoJSONFeature | null>>
+    setMarker: Dispatch<SetStateAction<Coordinates | null>>
 }
 
-const MainSidebar = ({ healthOutcome, clickedZone, setClickedZone }: MainSidebarProps) => {
+const MainSidebar = ({
+    healthOutcome,
+    clickedZone,
+    setClickedZone,
+    setMarker,
+}: MainSidebarProps) => {
     const { date, setDate } = useMapHook()
 
     const closeSideBar = () => {
         setClickedZone(null)
+        setMarker(null)
         redirect(`/map/${healthOutcome}`)
     }
 

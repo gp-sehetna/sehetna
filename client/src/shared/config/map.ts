@@ -1,6 +1,6 @@
 import { toProperCase, unslugify } from "@/lib/utils"
 import bbox from "@turf/bbox"
-import maplibregl, { GeoJSONFeature } from "maplibre-gl"
+import { Map, GeoJSONFeature, LngLatBoundsLike, MapGeoJSONFeature, PointLike } from "maplibre-gl"
 import { DEFAULT_HEALTH_OUTCOME, HEALTH_OUTCOMES } from "@/shared/config/health-outcomes"
 import { GradientPalette } from "./map-colors"
 
@@ -63,27 +63,23 @@ const parseSlug = (slug: string[] = []) => {
     return { country, healthOutcome }
 }
 
-const getCountryBySlug = (slug: string, features: maplibregl.MapGeoJSONFeature[]) => {
+const getCountryBySlug = (slug: string, features: MapGeoJSONFeature[]) => {
     const countryName = toProperCase(unslugify(slug))
 
     return features.find((f) => f.properties?.name?.toLowerCase() === countryName.toLowerCase())
 }
 
-const zoomToCountry = (
-    country: maplibregl.MapGeoJSONFeature,
-    map: maplibregl.Map,
-    centroid: [number, number]
-) => {
+const zoomToCountry = (country: MapGeoJSONFeature, map: Map, centroid: [number, number]) => {
     const bounds = bbox(country)
     const [minX, minY, maxX, maxY] = bounds
-    const alignedBounds: maplibregl.LngLatBoundsLike = [
+    const alignedBounds: LngLatBoundsLike = [
         [minX, minY],
         [maxX, maxY],
     ]
     map.fitBounds(alignedBounds, { padding: 50, duration: 1200, maxZoom: 8, center: centroid })
 }
 
-const getClickedCountry = (map: maplibregl.Map, point: maplibregl.PointLike) => {
+const getClickedCountry = (map: Map, point: PointLike) => {
     const features = map.queryRenderedFeatures(point, { layers: ["countries-fill"] })
 
     if (!features.length) return null
@@ -91,26 +87,19 @@ const getClickedCountry = (map: maplibregl.Map, point: maplibregl.PointLike) => 
     return features[0]
 }
 
-const colorEachCountry = (
-    map: maplibregl.Map,
-    features: maplibregl.MapGeoJSONFeature[],
-    theme: GradientPalette
-) => {
+const colorEachCountry = (map: Map, features: MapGeoJSONFeature[], theme: GradientPalette) => {
     // This effect colors the zones based on the co2 intensity
     map.touchZoomRotate.disableRotation()
     map.touchPitch.disable()
     for (const feature of features) {
         const { id, populationRank } = feature.properties as GeoJsonProperties
         // const zone = data.data?.zones[id]
-        const healthOutcomeValue = populationRank //! FOR MOCK DATA
+        const healthOutcomeValue = populationRank, //! FOR MOCK DATA
+            fillColor = theme.colorScale(healthOutcomeValue),
+            existingColor = map.getFeatureState({ source: COUNTRIES_SOURCE, id })?.color
 
-        const fillColor = theme.colorScale(healthOutcomeValue)
-
-        const existingColor = map.getFeatureState({ source: COUNTRIES_SOURCE, id })?.color
-
-        if (existingColor !== fillColor) {
+        if (existingColor !== fillColor)
             map.setFeatureState({ source: COUNTRIES_SOURCE, id }, { color: fillColor })
-        }
     }
 }
 

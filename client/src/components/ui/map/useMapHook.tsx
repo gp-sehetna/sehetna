@@ -1,5 +1,5 @@
 import centroid from "@turf/centroid"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import { WeekClientService } from "@/features/environment/week/week.service.client"
 import { slugify } from "@/lib/utils"
@@ -15,39 +15,51 @@ import {
     parseSlug,
     zoomToCountry,
 } from "@/shared/config/map"
-import { Marker, Popup, MapLibreEvent } from "maplibre-gl"
+import { MapLibreEvent } from "maplibre-gl"
 import { MapGeoJSONFeature, MapLayerMouseEvent } from "react-map-gl/maplibre"
 
-import { useParams, useRouter } from "next/navigation"
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
+import { Coordinates } from "@/shared/types/map"
+import { formatDate } from "@/lib/utils/date"
 
 const useMapHook = () => {
     const router = useRouter()
-    const [clickedZone, setClickedZone] = useState<MapGeoJSONFeature | null>(null)
-
-    const [date, setDate] = useState<Date>()
-    const [hoveredZone, setHoveredZone] = useState<MapGeoJSONFeature | null>(null)
+    const searchParams = useSearchParams()
+    const pathname = usePathname()
     const params = useParams<MapPageProps["params"]>()
 
-    const popupRef = useRef<Popup>(null)
+    const activeSlug = parseSlug(params.slug)
+    const { theme, isInvalid } = useTheme(activeSlug.healthOutcome)
+    const [markerCoords, setMarkerCoords] = useState<Coordinates | null>(null)
+
+    const [clickedZone, setClickedZone] = useState<MapGeoJSONFeature | null>(null)
+    const [hoveredZone, setHoveredZone] = useState<MapGeoJSONFeature | null>(null)
 
     const weekService = useMemo(() => new WeekClientService(), [])
-    const activeSlug = parseSlug(params.slug)
 
-    const markerRef = useRef<Marker>(null)
-    const theme = useTheme(activeSlug.healthOutcome)
+    const date = useMemo(() => {
+        const value = searchParams.get("date")
+        return value ? new Date(value) : undefined
+    }, [searchParams])
+
+    const setDate = (date?: Date) => {
+        const params = new URLSearchParams(searchParams.toString())
+
+        if (!date) params.delete("date")
+        else params.set("date", formatDate(date))
+
+        const query = params.toString()
+        router.push(query ? `${pathname}?${query}` : pathname, { scroll: false })
+    }
 
     useEffect(() => {
-        markerRef.current = new Marker({
-            color: "var(--color-danger-100)",
-            scale: 0.7,
-        })
-
-        return () => {
-            markerRef.current?.remove()
-            markerRef.current = null
-        }
-    }, [])
+        if (!isInvalid) return
+        router.back()
+        toast.error(
+            `Unable to identify theme, health outcome (${activeSlug}) is of an unknown type. Redirecting back...`
+        )
+    }, [isInvalid, activeSlug, router])
 
     const onMouseMove = (e: MapLayerMouseEvent) => {
         const map = e.target
@@ -99,18 +111,12 @@ const useMapHook = () => {
         const country = getClickedCountry(map, e.point)
 
         if (!country) return
-        const slug = slugify(country.properties.name)
-        router.push(`/map/${slug}`)
+        const countrySlug = slugify(country.properties.name)
+        router.push(`/map/${countrySlug}/${activeSlug.healthOutcome}?${searchParams.toString()}`)
 
         const center = centroid(country).geometry.coordinates as [number, number]
-        markerRef.current?.remove()
-        markerRef.current?.setLngLat(e.lngLat).addTo(map)
-
-        popupRef.current?.remove()
-        popupRef.current?.setLngLat(e.lngLat).addTo(map)
+        setMarkerCoords({ lng: e.lngLat.lng, lat: e.lngLat.lat })
         zoomToCountry(country, map, center)
-
-        // renderPopup(popupRef, country.properties, center, map, markerRef, setClickedCountryProps)
         setClickedZone(country)
 
         if (!date) {
@@ -122,7 +128,7 @@ const useMapHook = () => {
 
         if (process.env.NODE_ENV == "development") return
 
-        const location = { lat: e.lngLat.lat, lng: e.lngLat.lng, iso: country.properties.isoA3 }
+        const location = { lng: e.lngLat.lng, lat: e.lngLat.lat, iso: country.properties.isoA3 }
         weekService.simulateEnvironment(location, date)
     }
 
@@ -138,29 +144,23 @@ const useMapHook = () => {
         if (!country) return
 
         const center = centroid(country).geometry.coordinates as [number, number]
-        markerRef.current?.remove()
-        markerRef.current?.setLngLat(center).addTo(map)
+        setMarkerCoords({ lng: center[0], lat: center[1] })
         zoomToCountry(country, map, center)
+        setClickedZone(country)
     }
 
-    // if closed sidebar remove marker
-    // useEffect(() => {
-    //     if (activeSlug.country) return
-    //     markerRef.current?.remove()
-    //     popupRef.current?.remove()
-    // }, [activeSlug.country])
     return {
         onMapLoad,
         onMapClick,
         onMouseMove,
         onMouseOut,
+        markerCoords,
+        setMarkerCoords,
         clickedZone,
         setClickedZone,
         setDate,
         date,
         hoveredZone,
-        markerRef,
-        popupRef,
         theme,
         activeSlug,
     }

@@ -8,7 +8,7 @@ type Props = {
 }
 
 export default function RespiratoryLegend({ healthOutcome }: Props) {
-    const theme = useTheme(healthOutcome)
+    const { theme } = useTheme(healthOutcome)
 
     return (
         <LegendItem label={toProperCase(unslugify(healthOutcome))} unit="%">
