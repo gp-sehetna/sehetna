@@ -12,22 +12,28 @@ export type LayerSelectorProps = {
 
 const MapLayerSelector = ({ healthOutcome, onLayerSelect }: LayerSelectorProps) => {
     return (
-        <Card className="mb-3 space-y-1 p-2">
-            {HEALTH_OUTCOMES.map((outcome) => (
-                <Button
-                    key={outcome}
-                    onClick={() => onLayerSelect(outcome)}
-                    variant={outcome === healthOutcome ? "default" : "ghost"}
-                    size="sm"
-                    className={cn(
-                        "w-full justify-between font-normal",
-                        outcome === healthOutcome && "bg-primary"
-                    )}
-                >
-                    <span>{toProperCase(unslugify(outcome))}</span>
-                    {outcome === healthOutcome && <Check className="h-4 w-4" />}
-                </Button>
-            ))}
+        <Card className="mb-3 p-1.5">
+            <div className="flex flex-col gap-0.5">
+                {HEALTH_OUTCOMES.map((outcome) => (
+                    <Button
+                        key={outcome}
+                        onClick={() => onLayerSelect(outcome)}
+                        variant={outcome === healthOutcome ? "default" : "ghost"}
+                        size="sm"
+                        className={cn(
+                            "h-8 w-full justify-between px-2.5 text-sm font-normal",
+                            outcome === healthOutcome
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : "hover:bg-accent hover:text-accent-foreground"
+                        )}
+                    >
+                        <span className="truncate">{toProperCase(unslugify(outcome))}</span>
+                        {outcome === healthOutcome && (
+                            <Check className="ml-2 h-3.5 w-3.5 flex-shrink-0" />
+                        )}
+                    </Button>
+                ))}
+            </div>
         </Card>
     )
 }

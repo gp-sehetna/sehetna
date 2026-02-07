@@ -43,40 +43,10 @@ export default function MapView({ children }: { children: React.ReactNode }) {
                 closeCountryDetails={closeCountryDetails}
                 date={date}
                 setDate={setDate}
-                activeSlug={activeSlug}
+                healthOutcome={activeSlug.healthOutcome}
                 onLayerSelect={onLayerSelect}
             />
             <NavigationControl position="top-right" showCompass={false} visualizePitch />
         </Map>
     )
 }
-
-// const renderPopup = (
-//     popupRef: React.RefObject<Popup | null>,
-//     properties: GeoJSONFeature["properties"],
-//     centroid: LngLatLike,
-//     map: Map,
-//     markerRef:React.RefObject<Marker | null>,
-//     setClickedCountryProps: React.Dispatch<React.SetStateAction<GeoJsonFeature | null>>
-// ) => {
-//     // Create container
-//     const popupContainer = document.createElement("div")
-//     // Render React component
-//     const root = createRoot(popupContainer)
-//     const closePopup = () => {
-//         popupRef.current?.remove()
-//         root.unmount()
-//         markerRef.current?.remove()
-//         setClickedCountryProps(null)
-//         redirect("/map")
-//     }
-
-//     const { NAME, ISO_A3 } = properties
-//     root.render(<CountryPopup name={NAME} iso={ISO_A3} onClose={closePopup} />)
-
-//     // Create MapLibre popup
-//     popupRef.current = new Popup({ closeButton: false, closeOnClick: false })
-//         .setLngLat(centroid)
-//         .setDOMContent(popupContainer)
-//         .addTo(map)
-// }

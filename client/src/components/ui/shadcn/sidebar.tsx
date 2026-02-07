@@ -177,7 +177,7 @@ const Sidebar = React.forwardRef<
         ref
     ) => {
         const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
-        
+
         if (collapsible === "none") {
             return (
                 <div
@@ -277,7 +277,7 @@ const SidebarTrigger = React.forwardRef<
             variant="glassy"
             size="icon"
             className={cn(
-                "absolute top-4 -right-3  h-5 w-5 rounded-full bg-white   hover:bg-white border-neutral-300 text-neutral-500",
+                "absolute top-4 -right-3 h-5 w-5 rounded-full border-neutral-300 bg-white text-neutral-500 hover:bg-white",
                 className
             )}
             onClick={(event) => {
@@ -286,7 +286,11 @@ const SidebarTrigger = React.forwardRef<
             }}
             {...props}
         >
-            {isOffcanvas ? <ChevronRight size={16}  className="z-1000" /> : <ChevronLeft size={16} className="z-1000" />}
+            {isOffcanvas ? (
+                <ChevronRight size={16} className="z-1000" />
+            ) : (
+                <ChevronLeft size={16} className="z-1000" />
+            )}
         </Button>
     )
 })
@@ -298,11 +302,9 @@ export function MobileSidebarTrigger() {
 
     if (!isMobile) return null
 
-    
-
     return (
         <Button
-            variant="ghost"
+            variant="glassy"
             size="icon"
             className="fixed top-3 left-3 z-50 md:hidden"
             onClick={toggleSidebar}
@@ -311,7 +313,6 @@ export function MobileSidebarTrigger() {
         </Button>
     )
 }
-
 
 const SidebarRail = React.forwardRef<HTMLButtonElement, React.ComponentProps<"button">>(
     ({ className, ...props }, ref) => {
