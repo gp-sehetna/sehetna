@@ -14,6 +14,17 @@ const api = core.extend({
     headers: {
         "Content-Type": "application/json",
     },
+    hooks: {
+        beforeRequest: [
+            (request, options, { retryCount }) => {
+                // Only set default auth header on initial request, not on retries
+                // (retries may have refreshed token set by beforeRetry)
+                if (retryCount === 0) {
+                    request.headers.set("Authorization", "token initial-token")
+                }
+            },
+        ],
+    },
 })
 
 const externalApi = core.extend({})

@@ -1,12 +1,13 @@
 import json
 from datetime import date
-from typing import Annotated
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StringConstraints, model_validator
 
 from src.core.exceptions import BadRequest
 from src.domain.constants.aqi import BREAKPOINTS
 from src.domain.helpers.aqi import aqi_to_pollutant, pollutant_to_aqi
+from src.domain.types import ExplainerMethod
 
 __all__ = ["PredictionResult", "PredictionRequest", "SimulationResponse", "EnvironmentData", "WeeklyEnvironmentData"]
 
@@ -15,21 +16,35 @@ with open("src/domain/schemas/examples/prediction_request.json") as f:
 
 
 class IndicatorsData(BaseModel):
-    gdp_per_capita_usd: float | None = None
-    food_production_index: float | None = None
-    undernourishment: float | None = None
+    """
+    Socioeconomic and nutrition indicators used as context for predictions.
+
+    Provide any subset of fields; missing values can be null.
+    """
+
+    gdp_per_capita_usd: float | None = Field(None, description="GDP per capita in USD.")
+    food_production_index: float | None = Field(None, description="Food production index value.")
+    undernourishment: float | None = Field(None, description="Undernourishment prevalence (% of population).")
 
 
 class WeeklyEnvironmentData(BaseModel):
-    date: Annotated[date, Field(description="Date in YYYY-MM-DD format")]
-    pm25_ugm3: float | None = None
-    aqi_pm: float | None = None
+    """
+    Weekly environmental measurements used as model inputs.
 
-    temperature_celsius: float
-    precipitation_mm: float
+    PM2.5 and AQI are interchangeable:
+    - Provide either `pm25_ugm3` or `aqi_pm` (not both required).
+    - If you provide one, the other is derived.
+    """
 
-    heat_wave_days: int = 0
-    flood_indicator: int = 0
+    date: Annotated[date, Field(description="Week date in YYYY-MM-DD format.")]
+    pm25_ugm3: float | None = Field(None, description="PM2.5 concentration in µg/m³.")
+    aqi_pm: float | None = Field(None, description="PM2.5 AQI value.")
+
+    temperature_celsius: float = Field(..., description="Average temperature in °C.")
+    precipitation_mm: float = Field(..., description="Total precipitation in mm.")
+
+    heat_wave_days: int = Field(0, description="Number of heat-wave days in the week.")
+    flood_indicator: int = Field(0, description="Flood occurrence indicator (0/1).")
 
     @model_validator(mode="after")
     def validate_pm25_and_aqi(self):
@@ -43,46 +58,108 @@ class WeeklyEnvironmentData(BaseModel):
 
 
 class LocationData(BaseModel):
-    lat: float
-    lon: float
+    """
+    Geographic location data.
+
+    You can provide location in either of these ways:
+    - `lat` and `lon` together, and omit `coords`
+    - `coords` only as a string formatted like "lat,lon"
+    """
+
+    lat: float | None = Field(None, description="Latitude in decimal degrees.")
+    lon: float | None = Field(None, description="Longitude in decimal degrees.")
+    coords: str | None = Field(None, description="Comma-separated coordinates: 'lat,lon'.")
 
     @model_validator(mode="before")
     @classmethod
     def split_coords(cls, data):
-        if not isinstance(data, dict) or "coords" not in data:
+        if data["lat"] is None and data["lon"] is None and data["coords"] is None:
+            raise BadRequest("lat, lon, or coords must be provided")
+
+        if data["lat"] is not None and data["lon"] is not None:
             return data
 
-        coords = data.pop("coords")
-        if not isinstance(coords, str):
-            return data
-
-        lat, lon = map(float, coords.split(","))
+        lat, lon = map(float, data["coords"].split(","))
         data["lat"] = lat
         data["lon"] = lon
         return data
 
 
+class PredictionQueryParams(BaseModel):
+    """
+    Query parameters controlling prediction explanations.
+
+    Use `top_k_contributors` to limit feature attributions and
+    `explainer_method` to choose how explanations are computed.
+    """
+
+    top_k_contributors: int = Field(5, description="Number of top contributing features to return.")
+    explainer_method: Annotated[ExplainerMethod, BeforeValidator(lambda v: v.lower().strip())] = Field(
+        "cumulative", description="Explanation method to use."
+    )
+
+
 class EnvironmentData(LocationData):
-    country_code: str
-    indicators: IndicatorsData
+    """
+    Base request context combining location and country-level indicators.
+
+    `country_code` must be a 3-letter ISO3 code, e.g. "EGY".
+    """
+
+    country_code: Annotated[
+        str,
+        StringConstraints(strip_whitespace=True, min_length=3, max_length=3, to_upper=True),
+    ] = Field(..., description="ISO3 country code.")
+    indicators: IndicatorsData = Field(..., description="Socioeconomic indicators.")
 
 
 class PredictionRequest(EnvironmentData):
+    """
+    Full prediction request payload.
+
+    Provide location + indicators plus a weekly `data` list of inputs.
+    """
+
     data: list[WeeklyEnvironmentData] = Field(
         ...,
-        description="Feature input values for prediction.",
+        description="Weekly feature inputs for prediction.",
     )
 
     model_config = ConfigDict(json_schema_extra={"examples": prediction_request_examples})
 
 
 class PredictionResult(BaseModel):
-    respiratory_disease_rate: float
-    cardio_mortality_rate: float
-    vector_disease_risk_score: float
-    waterborne_disease_incidents: int
-    heat_related_admissions: int
+    """
+    Prediction outputs and explanation payload.
+
+    `explanations` includes the chosen method and the corresponding data.
+    """
+
+    respiratory_disease_rate: float = Field(..., description="Predicted respiratory disease rate.")
+    cardio_mortality_rate: float = Field(..., description="Predicted cardiovascular mortality rate.")
+    vector_disease_risk_score: float = Field(..., description="Predicted vector-borne disease risk score.")
+    waterborne_disease_incidents: int = Field(..., description="Predicted count of waterborne disease incidents.")
+    heat_related_admissions: int = Field(..., description="Predicted heat-related hospital admissions.")
+
+    explanations: dict[ExplainerMethod | Literal["method"], ExplainerMethod | dict[str, list] | None] = Field(
+        ..., description="Model explanation payload and metadata."
+    )
+
+    @classmethod
+    def from_predictions(cls, method: ExplainerMethod, predictions, data: dict[str, list] | None = None):
+        return cls(
+            respiratory_disease_rate=float(predictions[0]),
+            cardio_mortality_rate=float(predictions[1]),
+            vector_disease_risk_score=float(predictions[2]),
+            waterborne_disease_incidents=round(predictions[3]),
+            heat_related_admissions=round(predictions[4]),
+            explanations={"method": method, method: data},
+        )
 
 
 class SimulationResponse(BaseModel):
-    predictions: PredictionResult = Field(..., description="Predicted health outcomes")
+    """
+    Response wrapper for prediction endpoints.
+    """
+
+    predictions: PredictionResult = Field(..., description="Predicted health outcomes.")

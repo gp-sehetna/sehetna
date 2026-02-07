@@ -2,8 +2,9 @@ import logging
 
 import pandas as pd
 
+from src.application.services.shap_service import ShapExplanabilityService
 from src.core.settings import Settings
-from src.domain.schemas.predictions import PredictionRequest, PredictionResult, WeeklyEnvironmentData
+from src.domain.schemas.predictions import PredictionQueryParams, PredictionRequest, PredictionResult, WeeklyEnvironmentData
 from src.infrastructure.data.indicator_repository import IndicatorRepository
 from src.infrastructure.ml.model_loader import ModelLoader
 
@@ -72,18 +73,14 @@ def expand_weekly_rows(
     )
 
 
-class PredictionService:
-    def __init__(
-        self,
-        indicator_repository: IndicatorRepository,
-        model_loader: ModelLoader,
-        settings: Settings,
-    ):
+class PredictionService(ShapExplanabilityService):
+    def __init__(self, indicator_repository: IndicatorRepository, model_loader: ModelLoader, settings: Settings):
+        super().__init__(settings, model_loader)
         self.indicator_repository = indicator_repository
         self.model_loader = model_loader
         self.settings = settings
 
-    def get_df(self, req: PredictionRequest, latitude: float, longitude: float) -> pd.DataFrame:
+    def get_df(self, req: PredictionRequest) -> pd.DataFrame:
         country_map, uhc_df, food_access_df, food_stability_df = self.indicator_repository.get_indicators()
 
         m49_code = resolve_m49_code(country_map, req.country_code)
@@ -107,8 +104,8 @@ class PredictionService:
         return expand_weekly_rows(
             req.data,
             req.country_code,
-            latitude,
-            longitude,
+            req.lat,
+            req.lon,
             indicators={
                 "food_security_index": food_security_index,
                 "gdp_per_capita_usd": req.indicators.gdp_per_capita_usd,
@@ -116,18 +113,15 @@ class PredictionService:
             },
         )
 
-    def simulate(self, req: PredictionRequest, latitude: float, longitude: float) -> PredictionResult:
-        df = self.get_df(req, latitude, longitude)
+    def simulate(self, req: PredictionRequest, query: PredictionQueryParams) -> PredictionResult:
+        df = self.get_df(req)
         df_processed = self.model_loader.pipeline.transform(df)
-        X_pred = df_processed[self.settings.features]
+        X_test = df_processed[self.settings.features]
 
-        predictions = self.model_loader.model.predict(X_pred)
-        _values = predictions[0]
+        logger.info("Explaining...")
+        explanations = self._explain(X_test, query.explainer_method, query.top_k_contributors)
 
-        return PredictionResult(
-            respiratory_disease_rate=float(_values[0]),
-            cardio_mortality_rate=float(_values[1]),
-            vector_disease_risk_score=float(_values[2]),
-            waterborne_disease_incidents=round(_values[3]),
-            heat_related_admissions=round(_values[4]),
-        )
+        logger.info("Predicting...")
+        predictions = self.model_loader.model.predict(X_test)
+
+        return PredictionResult.from_predictions(query.explainer_method, predictions[0], explanations)
