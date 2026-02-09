@@ -30,12 +30,6 @@ const useMapHook = () => {
 
     const activeSlug = parseSlug(params.slug)
 
-    useEffect(() => {
-        console.log("SLUG in useEffect", activeSlug)
-
-        // if (params.slug) setActiveSlug(parseSlug(params.slug))
-    }, [params.slug])
-
     const { theme, isInvalid } = useTheme(activeSlug.healthOutcome)
     const [markerCoords, setMarkerCoords] = useState<Coordinates | null>(null)
 
