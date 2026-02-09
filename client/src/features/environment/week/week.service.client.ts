@@ -1,6 +1,7 @@
 "use client"
 import {
     EnvironmentData,
+    GroupedHealthOutcome,
     Location,
     Prediction,
     SimulateResponse,
@@ -56,25 +57,31 @@ export class WeekClientService {
         const environment = await this.fetchEnvironment(loc, format(date, "yyyy-MM-dd"), weeks)
         if (!environment) return null
 
-        const { predictions } = await api
-            .post<SimulateResponse>("ai/simulate", { json: environment })
+        const {predictions}  = await api
+            .post<GroupedHealthOutcome>("ai/simulate", {
+                json: environment,
+                searchParams: { top_k_contributors: 10, explainer_method: "group" },
+            })
             .json()
         return predictions
     }
 
-    simulateEnvironment = (loc: Location, date: Date, weeks = 1) => {
-        toast.promise<Prediction | null>(() => this.fetchEnvironmentAndSimulate(loc, date, weeks), {
-            loading: "Loading...",
-            success: (predictions) => {
-                if (!predictions)
-                    return {
-                        message: "Modify your inputs at the side bar to get predictions.",
-                        type: "warning",
-                    }
+    simulateEnvironment = (loc: Location, date: Date, weeks = 1)  => {
+        return toast.promise<GroupedHealthOutcome["predictions"] | null>(
+            () => this.fetchEnvironmentAndSimulate(loc, date, weeks),
+            {
+                loading: "Loading...",
+                success: (predictions) => {
+                    if (!predictions)
+                        return {
+                            message: "Modify your inputs at the side bar to get predictions.",
+                            type: "warning",
+                        }
 
-                return { message: "Predictions loaded!", type: "info" }
-            },
-            error: "Error occurred",
-        })
+                    return { message: "Predictions loaded!", type: "info" }
+                },
+                error: "Error occurred",
+            }
+        )
     }
 }

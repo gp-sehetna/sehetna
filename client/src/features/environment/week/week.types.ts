@@ -44,6 +44,29 @@ interface Prediction {
     heat_related_admissions: number
 }
 
+type GroupExplanationItem = {
+  group: string
+  shap_sum: number
+  abs_shap_sum: number
+  percent: number
+}
+
+type GroupedByPrediction = {
+    [K in keyof Prediction]: GroupExplanationItem[]
+}
+
+type Explanation = {
+  method: "group"
+  group: GroupedByPrediction
+}
+
+type GroupedHealthOutcome = {
+  predictions: Prediction & {
+    explanations: Explanation
+  }
+}
+
+
 interface SimulateResponse {
     predictions: Prediction
 }
@@ -61,4 +84,5 @@ export type {
     SimulateResponse,
     WeeklyEnvironmentData,
     WeekParams,
+    GroupedHealthOutcome
 }

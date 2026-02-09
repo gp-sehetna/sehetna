@@ -21,6 +21,9 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         onMouseMove,
         onMouseOut,
         markerCoords,
+
+        clickedZonePredictions, 
+        loadingPredicitions
     } = useMapHook()
 
     return (
@@ -45,6 +48,8 @@ export default function MapView({ children }: { children: React.ReactNode }) {
                 setDate={setDate}
                 healthOutcome={activeSlug.healthOutcome}
                 onLayerSelect={onLayerSelect}
+                clickedZonePredictions={clickedZonePredictions}
+                loadingPredictions={loadingPredicitions}
             />
             <NavigationControl position="top-right" showCompass={false} visualizePitch />
         </Map>
