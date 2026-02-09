@@ -29,7 +29,7 @@ const MapLayerSelector = ({ healthOutcome, onLayerSelect }: LayerSelectorProps) 
                     >
                         <span className="truncate">{toProperCase(unslugify(outcome))}</span>
                         {outcome === healthOutcome && (
-                            <Check className="ml-2 h-3.5 w-3.5 flex-shrink-0" />
+                            <Check className="ml-2 h-3.5 w-3.5 shrink-0" />
                         )}
                     </Button>
                 ))}

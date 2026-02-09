@@ -22,12 +22,14 @@ import { Coordinates } from "@/shared/types/map"
 import { format } from "date-fns"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
+import { Prediction } from "@/features/environment/week/week.types"
 
 const useMapHook = () => {
     const router = useRouter()
     const searchParams = useSearchParams()
     const params = useParams<MapPageProps["params"]>()
-
+    const [loadingPredicitions, setLoadingPredicions] = useState(false)
+    const [clickedZonePredictions, setClickedZonePredictions] = useState<Prediction | null>(null)
     const activeSlug = parseSlug(params.slug)
 
     const { theme, isInvalid } = useTheme(activeSlug.healthOutcome)
@@ -108,7 +110,7 @@ const useMapHook = () => {
         setHoveredZone(null)
     }
 
-    const onMapClick = (e: MapLayerMouseEvent) => {
+    const onMapClick = async(e: MapLayerMouseEvent) => {
         const map = e.target
 
         const country = getClickedCountry(map, e.point)
@@ -129,10 +131,25 @@ const useMapHook = () => {
             return
         }
 
-        if (process.env.NODE_ENV == "development") return
+        // if (process.env.NODE_ENV == "development") return
 
         const location = { lng: e.lngLat.lng, lat: e.lngLat.lat, iso: country.properties.isoA3 }
-        weekService.simulateEnvironment(location, date)
+        try {
+            setLoadingPredicions(true)
+            const toastResult = weekService.simulateEnvironment(location, date)
+            const predictions = await toastResult.unwrap()
+            setClickedZonePredictions(predictions)
+            
+            const healthoutcome = activeSlug?.healthOutcome ? activeSlug.healthOutcome.replace(/-/g, "_") : "respiratory_disease_rate" 
+            const healthOutcomeValue = predictions ? predictions[healthoutcome as keyof Prediction] : null;
+            const healthOutcomeContributers = predictions?.explanations?.group[healthoutcome as keyof Prediction] || null; 
+
+            console.log(`Predicted value for ${activeSlug.healthOutcome}:`, healthOutcomeValue);
+            console.log(`Top contributors for ${activeSlug.healthOutcome}:`, healthOutcomeContributers);
+        } finally {
+            setLoadingPredicions(false)
+        }
+
     }
 
     const onMapLoad = (e: MapLibreEvent) => {
@@ -185,6 +202,8 @@ const useMapHook = () => {
         hoveredZone,
         theme,
         activeSlug,
+        loadingPredicitions,
+        clickedZonePredictions,
     }
 }
 
