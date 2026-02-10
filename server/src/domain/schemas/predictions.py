@@ -157,6 +157,32 @@ class PredictionResult(BaseModel):
             heat_related_admissions=round(predictions[4]),
             explanations={"method": method, method: data},
         )
+    @classmethod
+    def from_multi_model_predections(
+        cls ,
+        predictions : dict[str , list], # {'timesfm': [...], 'patchtst': [...]}  
+        method : ExplainerMethod = "cumulative",
+        explanation_data: dict | None = None,
+    ):
+        """
+        Create a PredictionResult instance from multiple models.
+        For simplicity, we just average predictions for each outcome.
+        """
+
+        # Convert each model's predictions to floats
+        model_preds = list(predictions.values())
+    
+        # Simple aggregation: average across models for each outcome
+        aggregated = [sum(x) / len(x) for x in zip(*model_preds)]
+
+        return cls(
+            respiratory_disease_rate=float(aggregated[0]),
+            cardio_mortality_rate=float(aggregated[1]),
+            vector_disease_risk_score=float(aggregated[2]),
+            waterborne_disease_incidents=round(aggregated[3]),
+            heat_related_admissions=round(aggregated[4]),
+            explanations={"method": method, method: explanation_data},
+        )
 
 
 class SimulationResponse(BaseModel):

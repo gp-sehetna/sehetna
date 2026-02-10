@@ -284,15 +284,69 @@ PatchTST(
 
 ---
 
-## [Unreleased]
+## [6.0] PatchTST Modelling Pipeline | 09-02-2026
 
 ### Add
-- [Describe new features]
+- PatchTSTForPrediction model (HuggingFace) with 5 targets, seq_len=12, prediction_len=6.
+- Target scaling using StandardScaler, applied per fold after preprocessing.
+- Temporal fold split (min_train_years/test_years) without `k` and `val_years` for train/test windows.
+- Configuration for best-config & retraining setup.
+- Inference utilities: flattened/3D visualizations, horizon-wise MAE, overlapping-prediction collapsing, and confidence intervals.
+
+#### Modelling
+
+```py
+PatchTST(
+  (patchtst_model): PatchTSTForPrediction(
+    (model): PatchTSTModel(
+      (scaler): PatchTSTScaler(
+        (scaler): PatchTSTStdScaler()
+      )
+      (patchifier): PatchTSTPatchify()
+      (masking): Identity()
+      (encoder): PatchTSTEncoder(
+        (embedder): PatchTSTEmbedding(
+          (input_embedding): Linear(in_features=6, out_features=128, bias=True)
+        )
+        (positional_encoder): PatchTSTPositionalEncoding(
+          (positional_dropout): Identity()
+        )
+        (layers): ModuleList(
+          (0-7): 8 x PatchTSTEncoderLayer(
+            (self_attn): PatchTSTAttention(
+              (k_proj): Linear(in_features=128, out_features=128, bias=True)
+              (v_proj): Linear(in_features=128, out_features=128, bias=True)
+              (q_proj): Linear(in_features=128, out_features=128, bias=True)
+              (out_proj): Linear(in_features=128, out_features=128, bias=True)
+            )
+            (dropout_path1): Identity()
+            (norm_sublayer1): PatchTSTBatchNorm(
+              (batchnorm): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+            (ff): Sequential(
+              (0): Linear(in_features=128, out_features=512, bias=True)
+              (1): GELUActivation()
+              (2): Identity()
+              (3): Linear(in_features=512, out_features=128, bias=True)
+            )
+            (dropout_path3): Identity()
+            (norm_sublayer3): PatchTSTBatchNorm(
+              (batchnorm): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+        )
+      )
+    )
+    (head): PatchTSTPredictionHead(
+      (flatten): Flatten(start_dim=2, end_dim=-1)
+      (projection): Linear(in_features=128, out_features=6, bias=True)
+      (dropout): Identity()
+    )
+  )
+)
+```
 
 ### Edit
-- [Describe modifications]
+- Curated feature subset for the PatchTST sweep description and experimentation.
 
-### Fixed
-- [Describe bug fixes]
-
-**Contributors:** [Add developer names here]
+**Contributors:** *mohamed-hussien*, *abdelrahman-hussien*

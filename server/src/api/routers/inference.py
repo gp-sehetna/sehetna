@@ -1,10 +1,10 @@
 from typing import Annotated
-
 from fastapi import APIRouter, Depends, Query
-
 from src.api.dependencies import get_prediction_service
+from core.container import ServiceContainer
 from src.application.services.prediction_service import PredictionService
-from src.domain.schemas.predictions import PredictionQueryParams, PredictionRequest, SimulationResponse
+from src.domain.schemas.predictions import PredictionQueryParams, PredictionRequest, SimulationResponse , PredictionResult
+
 
 __all__ = ["router"]
 
@@ -19,3 +19,15 @@ async def simulate(
 ):
     result = prediction_service.simulate(req, query)
     return SimulationResponse(predictions=result)
+
+
+
+
+@router.post("/forecast" , response_model= PredictionResult)
+async def forecast( 
+    req : PredictionRequest,
+    prediction_service : PredictionService = Depends(ServiceContainer.get_multi_model_service),
+):
+    return prediction_service.predict(req)
+
+
