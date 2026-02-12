@@ -56,7 +56,8 @@
     "styled-components": "^6.3.8",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^4.3.5"
+    "zod": "^4.3.5",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

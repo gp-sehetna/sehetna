@@ -18,18 +18,26 @@ import {
 import { GeoJSONFeature, MapLibreEvent } from "maplibre-gl"
 import { MapLayerMouseEvent } from "react-map-gl/maplibre"
 
+import { Prediction } from "@/features/environment/week/week.types"
 import { Coordinates } from "@/shared/types/map"
+import { usePredictionsStore } from "@/stores/usePredictions"
 import { format } from "date-fns"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
-import { Prediction } from "@/features/environment/week/week.types"
 
 const useMapHook = () => {
     const router = useRouter()
     const searchParams = useSearchParams()
     const params = useParams<MapPageProps["params"]>()
-    const [loadingPredicitions, setLoadingPredicions] = useState(false)
-    const [clickedZonePredictions, setClickedZonePredictions] = useState<Prediction | null>(null)
+
+    const {
+        loadingPredictions,
+        setLoading,
+        clickedZonePredictions, 
+        handleLayerChange,
+        handleStorePredictions
+    } = usePredictionsStore()
+
     const activeSlug = parseSlug(params.slug)
 
     const { theme, isInvalid } = useTheme(activeSlug.healthOutcome)
@@ -110,7 +118,7 @@ const useMapHook = () => {
         setHoveredZone(null)
     }
 
-    const onMapClick = async(e: MapLayerMouseEvent) => {
+    const onMapClick = async (e: MapLayerMouseEvent) => {
         const map = e.target
 
         const country = getClickedCountry(map, e.point)
@@ -135,21 +143,21 @@ const useMapHook = () => {
 
         const location = { lng: e.lngLat.lng, lat: e.lngLat.lat, iso: country.properties.isoA3 }
         try {
-            setLoadingPredicions(true)
+            setLoading(true)
+
             const toastResult = weekService.simulateEnvironment(location, date)
             const predictions = await toastResult.unwrap()
-            setClickedZonePredictions(predictions)
+
+            const healthOutcome = activeSlug.healthOutcome
+                ? activeSlug.healthOutcome.replace(/-/g, "_")
+                : "respiratory_disease_rate"
+
+            if (predictions) handleStorePredictions(predictions, healthOutcome);
+
             
-            const healthoutcome = activeSlug?.healthOutcome ? activeSlug.healthOutcome.replace(/-/g, "_") : "respiratory_disease_rate" 
-            const healthOutcomeValue = predictions ? predictions[healthoutcome as keyof Prediction] : null;
-            const healthOutcomeContributers = predictions?.explanations?.group[healthoutcome as keyof Prediction] || null; 
-
-            console.log(`Predicted value for ${activeSlug.healthOutcome}:`, healthOutcomeValue);
-            console.log(`Top contributors for ${activeSlug.healthOutcome}:`, healthOutcomeContributers);
         } finally {
-            setLoadingPredicions(false)
+            setLoading(false)
         }
-
     }
 
     const onMapLoad = (e: MapLibreEvent) => {
@@ -171,13 +179,18 @@ const useMapHook = () => {
 
     const onLayerSelect = (healthOutcome: string) => {
         const params = new URLSearchParams(searchParams.toString())
-        console.log("SLUG in onLayerSelect", activeSlug)
 
         router.push(
             activeSlug.country
                 ? `/map/${activeSlug.country}/${healthOutcome}?${params}`
                 : `/map/${healthOutcome}?${params}`
         )
+
+        // you already got the data in memory 
+        if (clickedZonePredictions) { 
+            const healthOutcomeKey = healthOutcome.replace(/-/g, "_") as keyof Prediction
+            handleLayerChange(healthOutcomeKey) // change healthoutcome in state & curr predictions shown in sidebar
+        }
     }
 
     const closeCountryDetails = () => {
@@ -202,8 +215,7 @@ const useMapHook = () => {
         hoveredZone,
         theme,
         activeSlug,
-        loadingPredicitions,
-        clickedZonePredictions,
+        loadingPredictions,
     }
 }
 

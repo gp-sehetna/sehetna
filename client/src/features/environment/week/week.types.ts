@@ -84,5 +84,6 @@ export type {
     SimulateResponse,
     WeeklyEnvironmentData,
     WeekParams,
-    GroupedHealthOutcome
+    GroupedHealthOutcome,
+    GroupExplanationItem
 }
