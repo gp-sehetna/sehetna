@@ -27,13 +27,21 @@ export default function AppPieChart({ items }: { items: CurrHealthOutcomePreds }
     ]
 
     const healthOutcome = toProperCase(items.healthOutcome)
-
     const chartData = items.contributors
 
     if (!chartData || chartData.length === 0) return null
 
-    const sortedData = [...chartData]
-        .sort((a, b) => b.percent - a.percent) // highest first
+    // Check if their percentages not close to 100% then add {Others} with the remaining
+    const total = chartData.reduce((acc, item) => acc + item.percent, 0)
+
+    if (Math.abs(total - 100) > 0.05)
+        chartData.push({
+            group: "Others",
+            percent: 100 - total,
+            fill: pieColors[chartData.length % pieColors.length],
+        } as any)
+
+    const sortedData = [...chartData] // they are sorted already
         .map((item, index) => ({
             ...item,
             fill: pieColors[index % pieColors.length],

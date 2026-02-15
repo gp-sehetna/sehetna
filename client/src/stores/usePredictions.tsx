@@ -1,6 +1,6 @@
-import { create } from "zustand"
 import { GroupedHealthOutcome, Prediction } from "@/features/environment/week/week.types"
 import { CurrHealthOutcomePreds } from "@/shared/types/map"
+import { create } from "zustand"
 
 type PredictionsState = {
     healthOutcome: string
@@ -9,10 +9,10 @@ type PredictionsState = {
     loadingPredictions: boolean
     handleStorePredictions: (
         predictions: GroupedHealthOutcome["predictions"],
-        healthOutcome: string
+        healthOutcome: keyof Prediction
     ) => void
     setLoading: (loading: boolean) => void
-    handleLayerChange: (healthOutcome: string) => void
+    handleLayerChange: (healthOutcome: keyof Prediction) => void
     reset: () => void
 }
 
@@ -23,16 +23,14 @@ export const usePredictionsStore = create<PredictionsState>((set, get) => ({
     loadingPredictions: false,
 
     setLoading: (loading) => set({ loadingPredictions: loading }),
-    
 
     handleStorePredictions: (
         predictions: GroupedHealthOutcome["predictions"],
-        healthOutcome: string
+        healthOutcome: keyof Prediction
     ) => {
-        const value = predictions ? predictions[healthOutcome as keyof Prediction] : null
+        const value = predictions ? predictions[healthOutcome] : null
 
-        const contributors =
-            predictions?.explanations?.group[healthOutcome as keyof Prediction] || null
+        const contributors = predictions?.explanations?.group[healthOutcome] || null
 
         set({
             healthOutcome,
@@ -41,15 +39,11 @@ export const usePredictionsStore = create<PredictionsState>((set, get) => ({
         })
     },
 
-    handleLayerChange: (newHealthOutcome: string) => {
+    handleLayerChange: (newHealthOutcome: keyof Prediction) => {
         const { clickedZonePredictions } = get()
-        const value = clickedZonePredictions
-            ? clickedZonePredictions[newHealthOutcome as keyof Prediction]
-            : null
+        const value = clickedZonePredictions ? clickedZonePredictions[newHealthOutcome] : null
 
-        const contributors =
-            clickedZonePredictions?.explanations?.group[newHealthOutcome as keyof Prediction] ||
-            null
+        const contributors = clickedZonePredictions?.explanations?.group[newHealthOutcome] || null
         const currHealthOutcomePredictions = {
             healthOutcome: newHealthOutcome,
             value,

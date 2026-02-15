@@ -33,9 +33,9 @@ const useMapHook = () => {
     const {
         loadingPredictions,
         setLoading,
-        clickedZonePredictions, 
+        clickedZonePredictions,
         handleLayerChange,
-        handleStorePredictions
+        handleStorePredictions,
     } = usePredictionsStore()
 
     const activeSlug = parseSlug(params.slug)
@@ -120,7 +120,6 @@ const useMapHook = () => {
 
     const onMapClick = async (e: MapLayerMouseEvent) => {
         const map = e.target
-
         const country = getClickedCountry(map, e.point)
 
         if (!country) return
@@ -152,9 +151,7 @@ const useMapHook = () => {
                 ? activeSlug.healthOutcome.replace(/-/g, "_")
                 : "respiratory_disease_rate"
 
-            if (predictions) handleStorePredictions(predictions, healthOutcome);
-
-            
+            if (predictions) handleStorePredictions(predictions, healthOutcome as keyof Prediction)
         } finally {
             setLoading(false)
         }
@@ -186,8 +183,8 @@ const useMapHook = () => {
                 : `/map/${healthOutcome}?${params}`
         )
 
-        // you already got the data in memory 
-        if (clickedZonePredictions) { 
+        // you already got the data in memory
+        if (clickedZonePredictions) {
             const healthOutcomeKey = healthOutcome.replace(/-/g, "_") as keyof Prediction
             handleLayerChange(healthOutcomeKey) // change healthoutcome in state & curr predictions shown in sidebar
         }
