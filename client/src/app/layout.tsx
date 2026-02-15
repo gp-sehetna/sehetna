@@ -85,7 +85,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </head>
             <body className={plusJakarta.className}>
                 {children}
-                <Toaster />
+                <Toaster position="top-center" />
             </body>
         </html>
     )

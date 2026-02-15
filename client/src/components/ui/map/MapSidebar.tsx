@@ -6,25 +6,19 @@ import { Dispatch } from "react"
 
 import HealthOutcomeCharts from "./HealthOutcomeCharts"
 
-export type MainSidebarProps = {
+export type MapSidebarProps = {
     clickedZone: GeoJSONFeature | null
 
     date: Date | undefined
     setDate: Dispatch<Date | undefined>
     closeCountryDetails: () => void
 }
-type MapCountryDetailsProps = MainSidebarProps
 
-const MapCountryDetails = ({
-    date,
-    setDate,
-    clickedZone,
-    closeCountryDetails,
-}: MapCountryDetailsProps) => {
+const MapSidebar = ({ date, setDate, clickedZone, closeCountryDetails }: MapSidebarProps) => {
     return (
         <>
-            {clickedZone && (
-                <div className="absolute flex h-full w-full flex-col gap-2 p-4 backdrop-blur-xs md:w-1/3 md:min-w-md md:backdrop-blur-none">
+            <div className="absolute flex h-full w-full flex-col gap-2 p-4 backdrop-blur-xs md:w-1/3 md:min-w-md md:backdrop-blur-none">
+                {clickedZone && (
                     <div className="glassy flex min-w-full flex-1 flex-col rounded-2xl border p-4">
                         <Flex className="items-center justify-start" gap={2}>
                             <ArrowLeft className="cursor-pointer" onClick={closeCountryDetails} />
@@ -35,15 +29,14 @@ const MapCountryDetails = ({
                             <HealthOutcomeCharts />
                         </div>
                     </div>
-                    <DatePickerSimple
-                        date={date}
-                        setDate={setDate}
-                        className="relative mt-auto w-full min-w-5!"
-                    />
+                )}
+
+                <div className="glassy mt-auto flex min-w-full flex-col rounded-2xl border p-4">
+                    <DatePickerSimple date={date} setDate={setDate} className="relative w-full" />
                 </div>
-            )}
+            </div>
         </>
     )
 }
 
-export default MapCountryDetails
+export default MapSidebar

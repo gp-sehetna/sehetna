@@ -12,11 +12,11 @@ const useLayers = (theme: GradientPalette) => {
             id: "ocean",
             type: "background",
             paint: {
-                "background-color": "#fff",
+                "background-color": theme.oceanColor,
                 "background-opacity": 1,
             },
         }),
-        []
+        [theme.oceanColor]
     )
 
     const countryBondariesHoverableLayer = useMemo<LineLayerSpecification>(
