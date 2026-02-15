@@ -30,13 +30,7 @@ const useMapHook = () => {
     const searchParams = useSearchParams()
     const params = useParams<MapPageProps["params"]>()
 
-    const {
-        loadingPredictions,
-        setLoading,
-        clickedZonePredictions,
-        handleLayerChange,
-        handleStorePredictions,
-    } = usePredictionsStore()
+    const { setLoading, onOutcomeSelect, setSimulation } = usePredictionsStore()
 
     const activeSlug = parseSlug(params.slug)
 
@@ -144,14 +138,10 @@ const useMapHook = () => {
         try {
             setLoading(true)
 
-            const toastResult = weekService.simulateEnvironment(location, date)
-            const predictions = await toastResult.unwrap()
+            const simulation = await weekService.simulateEnvironment(location, date).unwrap()
+            const healthOutcome = activeSlug.healthOutcome.replace(/-/g, "_") as keyof Prediction
 
-            const healthOutcome = activeSlug.healthOutcome
-                ? activeSlug.healthOutcome.replace(/-/g, "_")
-                : "respiratory_disease_rate"
-
-            if (predictions) handleStorePredictions(predictions, healthOutcome as keyof Prediction)
+            if (simulation) setSimulation(simulation, healthOutcome)
         } finally {
             setLoading(false)
         }
@@ -184,10 +174,8 @@ const useMapHook = () => {
         )
 
         // you already got the data in memory
-        if (clickedZonePredictions) {
-            const healthOutcomeKey = healthOutcome.replace(/-/g, "_") as keyof Prediction
-            handleLayerChange(healthOutcomeKey) // change healthoutcome in state & curr predictions shown in sidebar
-        }
+        const healthOutcomeKey = healthOutcome.replace(/-/g, "_") as keyof Prediction
+        onOutcomeSelect(healthOutcomeKey) // change healthoutcome in state & curr predictions shown in sidebar
     }
 
     const closeCountryDetails = () => {
@@ -212,7 +200,6 @@ const useMapHook = () => {
         hoveredZone,
         theme,
         activeSlug,
-        loadingPredictions,
     }
 }
 

@@ -1,16 +1,15 @@
-import { CurrHealthOutcomePreds } from "@/shared/types/map";
-import AppPieChart from "../GlobalComponents/charts/PieChart";
-import { usePredictionsStore } from "@/stores/usePredictions";
-import AppLoader from "../GlobalComponents/Loaders/AppLoader";
+import { usePredictionsStore } from "@/stores/usePredictions"
+import AppPieChart from "../GlobalComponents/charts/PieChart"
+import AppLoader from "../GlobalComponents/Loaders/AppLoader"
 
 const HealthOutcomeCharts = () => {
-    const { loadingPredictions, currHealthOutcomePredictions } = usePredictionsStore()
-    
-    if (loadingPredictions) return <AppLoader/>
+    const { loading, contributors, healthOutcome } = usePredictionsStore()
 
-    if (!currHealthOutcomePredictions || !currHealthOutcomePredictions.contributors || currHealthOutcomePredictions.contributors.length === 0) return <p>No data</p>
+    if (loading) return <AppLoader />
 
-    return <AppPieChart items={currHealthOutcomePredictions} />
+    if (!contributors || contributors.length === 0) return <p>No data</p>
+
+    return <AppPieChart contributors={contributors} healthOutcome={healthOutcome} />
 }
 
 export default HealthOutcomeCharts

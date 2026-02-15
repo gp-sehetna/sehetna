@@ -1,63 +1,53 @@
-import { GroupedHealthOutcome, Prediction } from "@/features/environment/week/week.types"
-import { CurrHealthOutcomePreds } from "@/shared/types/map"
+import { Prediction, SimulateResponse } from "@/features/environment/week/week.types"
+import { Contributors } from "@/shared/types/map"
 import { create } from "zustand"
 
 type PredictionsState = {
-    healthOutcome: string
-    clickedZonePredictions: GroupedHealthOutcome["predictions"] | null
-    currHealthOutcomePredictions: CurrHealthOutcomePreds | null
-    loadingPredictions: boolean
-    handleStorePredictions: (
-        predictions: GroupedHealthOutcome["predictions"],
-        healthOutcome: keyof Prediction
-    ) => void
+    healthOutcome: keyof Prediction
+    simulation: SimulateResponse | null
+    contributors: Contributors | null
+    loading: boolean
     setLoading: (loading: boolean) => void
-    handleLayerChange: (healthOutcome: keyof Prediction) => void
+    setSimulation: (simulation: SimulateResponse, healthOutcome: keyof Prediction) => void
+    onOutcomeSelect: (healthOutcome: keyof Prediction) => void
     reset: () => void
 }
 
-export const usePredictionsStore = create<PredictionsState>((set, get) => ({
-    healthOutcome: "",
-    clickedZonePredictions: null,
-    currHealthOutcomePredictions: null,
-    loadingPredictions: false,
+export const usePredictionsStore = create<PredictionsState>((set, get) => {
+    const getContributors = (simulation: SimulateResponse, healthOutcome: keyof Prediction) => {
+        if (!simulation || simulation.predictions.length === 0) return undefined
 
-    setLoading: (loading) => set({ loadingPredictions: loading }),
+        return simulation.explanations[simulation.explanations.method][healthOutcome]
+    }
 
-    handleStorePredictions: (
-        predictions: GroupedHealthOutcome["predictions"],
-        healthOutcome: keyof Prediction
-    ) => {
-        const value = predictions ? predictions[healthOutcome] : null
+    const setContributions = (simulation: SimulateResponse, healthOutcome: keyof Prediction) => {
+        const contributors = getContributors(simulation, healthOutcome)
+        if (!contributors) return
 
-        const contributors = predictions?.explanations?.group[healthOutcome] || null
+        set({ healthOutcome, contributors })
+    }
 
-        set({
-            healthOutcome,
-            clickedZonePredictions: predictions,
-            currHealthOutcomePredictions: { healthOutcome, value, contributors },
-        })
-    },
+    return {
+        healthOutcome: "respiratory_disease_rate",
+        simulation: null,
+        contributors: null,
+        loading: false,
 
-    handleLayerChange: (newHealthOutcome: keyof Prediction) => {
-        const { clickedZonePredictions } = get()
-        const value = clickedZonePredictions ? clickedZonePredictions[newHealthOutcome] : null
+        setLoading: (loading) => set({ loading }),
 
-        const contributors = clickedZonePredictions?.explanations?.group[newHealthOutcome] || null
-        const currHealthOutcomePredictions = {
-            healthOutcome: newHealthOutcome,
-            value,
-            contributors,
-        }
+        setSimulation: (simulation: SimulateResponse, healthOutcome: keyof Prediction) => {
+            setContributions(simulation, healthOutcome)
+            set({ simulation })
+        },
 
-        set({ healthOutcome: newHealthOutcome, currHealthOutcomePredictions })
-        if (!clickedZonePredictions) return
-    },
+        onOutcomeSelect: (healthOutcome: keyof Prediction) => {
+            const { simulation } = get()
+            if (!simulation) return
 
-    reset: () =>
-        set({
-            clickedZonePredictions: null,
-            currHealthOutcomePredictions: null,
-            loadingPredictions: false,
-        }),
-}))
+            setContributions(simulation, healthOutcome)
+        },
+
+        reset: () =>
+            set({ healthOutcome: "respiratory_disease_rate", contributors: null, loading: false }),
+    }
+})

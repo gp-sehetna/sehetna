@@ -9,12 +9,17 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/shadcn/chart"
+import { Prediction } from "@/features/environment/week/week.types"
 import { toProperCase } from "@/lib/utils"
-import { CurrHealthOutcomePreds } from "@/shared/types/map"
+import { Contributors } from "@/shared/types/map"
 
 export const description = "A simple pie chart"
 
-export default function AppPieChart({ items }: { items: CurrHealthOutcomePreds }) {
+type Props = {
+    contributors: Contributors
+    healthOutcome: keyof Prediction
+}
+export default function AppPieChart({ contributors, healthOutcome }: Props) {
     const pieColors = [
         "#d55035", // darkest orange
         "#ff390c",
@@ -26,8 +31,8 @@ export default function AppPieChart({ items }: { items: CurrHealthOutcomePreds }
         "#fee5ff",
     ]
 
-    const healthOutcome = toProperCase(items.healthOutcome)
-    const chartData = items.contributors
+    const label = toProperCase(healthOutcome)
+    const chartData = structuredClone(contributors)
 
     if (!chartData || chartData.length === 0) return null
 
@@ -47,7 +52,7 @@ export default function AppPieChart({ items }: { items: CurrHealthOutcomePreds }
             fill: pieColors[index % pieColors.length],
         }))
 
-    const chartConfig: ChartConfig = sortedData.reduce(
+    const chartConfig = sortedData.reduce(
         (acc, item, index) => {
             acc[item.group] = {
                 label: item.group,
@@ -56,7 +61,7 @@ export default function AppPieChart({ items }: { items: CurrHealthOutcomePreds }
             return acc
         },
         {
-            percent: { label: healthOutcome }, // main key
+            percent: { label }, // main key
         } as ChartConfig
     )
 
@@ -64,7 +69,7 @@ export default function AppPieChart({ items }: { items: CurrHealthOutcomePreds }
         <Card className="flex flex-col border-0 bg-transparent">
             <CardHeader className="items-center pb-0">
                 <CardTitle>
-                    <h6>{healthOutcome}</h6>
+                    <h6>{label}</h6>
                 </CardTitle>
             </CardHeader>
             <CardContent className="flex-1 pb-0">

@@ -1,9 +1,5 @@
 "use client"
-import {
-    EnvironmentData,
-    GroupedHealthOutcome,
-    Location,
-} from "@/features/environment/week/week.types"
+import { EnvironmentData, Location, SimulateResponse } from "@/features/environment/week/week.types"
 import { toProperCase } from "@/lib/utils"
 import { confirmIncompleteEnvironment } from "@/lib/utils/toast"
 import { api } from "@/shared/api"
@@ -55,17 +51,17 @@ export class WeekClientService {
         const environment = await this.fetchEnvironment(loc, format(date, "yyyy-MM-dd"), weeks)
         if (!environment) return null
 
-        const { predictions } = await api
-            .post<GroupedHealthOutcome>("ai/simulate", {
+        const result = await api
+            .post<SimulateResponse>("ai/simulate", {
                 json: environment,
                 searchParams: { top_k_contributors: 3, explainer_method: "group" },
             })
             .json()
-        return predictions
+        return result
     }
 
     simulateEnvironment = (loc: Location, date: Date, weeks = 1) => {
-        return toast.promise<GroupedHealthOutcome["predictions"] | null>(
+        return toast.promise<SimulateResponse | null>(
             () => this.fetchEnvironmentAndSimulate(loc, date, weeks),
             {
                 loading: "Loading...",

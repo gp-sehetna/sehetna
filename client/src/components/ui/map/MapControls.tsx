@@ -1,12 +1,10 @@
 import Legend, { LegendProps } from "@/components/ui/legend/Legend"
 import MapLayerSelector, { LayerSelectorProps } from "@/components/ui/map/MapLayerSelector"
 import { cn } from "@/lib/utils"
-import { PredictionsStates } from "@/shared/types/map"
 import MapCountryDetails, { MainSidebarProps } from "./MapCountryDetails"
 
-
 type BottomRightProps = LayerSelectorProps & LegendProps
-type BottomLeftProps = MainSidebarProps 
+type BottomLeftProps = MainSidebarProps
 
 const BottomRightContent = ({ healthOutcome, onLayerSelect }: BottomRightProps) => {
     // Hidden if in mobile && has a clickedZone active
