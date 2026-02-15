@@ -277,7 +277,7 @@ const SidebarTrigger = React.forwardRef<
             variant="glassy"
             size="icon"
             className={cn(
-                "absolute top-4 -right-3 h-5 w-5 rounded-full border-neutral-300 bg-white text-neutral-500 hover:bg-white",
+                "absolute top-4 -right-3 z-30 h-5 w-5 rounded-full border-neutral-300 bg-white text-neutral-500 hover:bg-white",
                 className
             )}
             onClick={(event) => {
@@ -286,11 +286,7 @@ const SidebarTrigger = React.forwardRef<
             }}
             {...props}
         >
-            {isOffcanvas ? (
-                <ChevronRight size={16} className="z-1000" />
-            ) : (
-                <ChevronLeft size={16} className="z-1000" />
-            )}
+            {isOffcanvas ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </Button>
     )
 })
@@ -327,7 +323,7 @@ const SidebarRail = React.forwardRef<HTMLButtonElement, React.ComponentProps<"bu
                 onClick={toggleSidebar}
                 title="Toggle Sidebar"
                 className={cn(
-                    "hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-in-out group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] sm:flex",
+                    "hover:after:bg-sidebar-border/60 absolute inset-y-0 hidden w-4 -translate-x-1/2 transition-all ease-in-out group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-1 sm:flex",
                     "[[data-side=left]_&]:cursor-w-resize [[data-side=right]_&]:cursor-e-resize",
                     "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
                     "group-data-[collapsible=offcanvas]:hover:bg-sidebar group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full",

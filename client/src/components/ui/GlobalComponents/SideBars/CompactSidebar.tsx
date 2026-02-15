@@ -32,11 +32,11 @@ const navigations: LinkType[] = [
 const CompactSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
     return (
         <>
-            <Sidebar collapsible="icon" {...props} className="  z-1000 relative">
+            <Sidebar collapsible="icon" {...props} className="relative">
                 <SidebarHeader>
                     <Logo size={32} />
                 </SidebarHeader>
-                <SidebarTrigger className="z-1000" />
+                <SidebarTrigger />
                 <SidebarContent>
                     <SidebarGroup>
                         <SidebarGroupLabel>Pages</SidebarGroupLabel>
