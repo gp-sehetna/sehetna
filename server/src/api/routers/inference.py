@@ -4,7 +4,11 @@ from fastapi import APIRouter, Depends, Query
 
 from src.api.dependencies import get_prediction_service
 from src.application.services.prediction_service import PredictionService
-from src.domain.schemas.predictions import PredictionQueryParams, PredictionRequest, SimulationResponse
+from src.domain.schemas.predictions import (
+    PredictionQueryParams,
+    PredictionRequest,
+    SimulationResponse,
+)
 
 __all__ = ["router"]
 
@@ -17,5 +21,5 @@ async def simulate(
     query: Annotated[PredictionQueryParams, Query()],
     prediction_service: PredictionService = Depends(get_prediction_service),
 ):
-    result = prediction_service.simulate(req, query)
-    return SimulationResponse(predictions=result)
+    predictions, explanations = prediction_service.simulate(req, query)
+    return SimulationResponse.build(predictions, query.explainer_method, explanations)
