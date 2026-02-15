@@ -132,7 +132,7 @@ const useMapHook = () => {
             return
         }
 
-        // if (process.env.NODE_ENV == "development") return
+        if (process.env.NODE_ENV == "development") return
 
         const location = { lng: e.lngLat.lng, lat: e.lngLat.lat, iso: country.properties.isoA3 }
         try {

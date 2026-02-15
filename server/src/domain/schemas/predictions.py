@@ -143,20 +143,19 @@ class PredictionResult(BaseModel):
     waterborne_disease_incidents: int = Field(..., description="Predicted count of waterborne disease incidents.")
     heat_related_admissions: int = Field(..., description="Predicted heat-related hospital admissions.")
 
-    explanations: dict[ExplainerMethod | Literal["method"], ExplainerMethod | dict[str, list] | None] = Field(
-        ..., description="Model explanation payload and metadata."
-    )
+    @classmethod
+    def from_prediction(cls, prediction: list[float]):
+        return cls(
+            respiratory_disease_rate=prediction[0],
+            cardio_mortality_rate=prediction[1],
+            vector_disease_risk_score=prediction[2],
+            waterborne_disease_incidents=round(prediction[3]),
+            heat_related_admissions=round(prediction[4]),
+        )
 
     @classmethod
-    def from_predictions(cls, method: ExplainerMethod, predictions, data: dict[str, list] | None = None):
-        return cls(
-            respiratory_disease_rate=float(predictions[0]),
-            cardio_mortality_rate=float(predictions[1]),
-            vector_disease_risk_score=float(predictions[2]),
-            waterborne_disease_incidents=round(predictions[3]),
-            heat_related_admissions=round(predictions[4]),
-            explanations={"method": method, method: data},
-        )
+    def from_predictions(cls, predictions: list[list[float]]):
+        return [cls.from_prediction(prediction) for prediction in predictions]
 
 
 class SimulationResponse(BaseModel):
@@ -164,4 +163,14 @@ class SimulationResponse(BaseModel):
     Response wrapper for prediction endpoints.
     """
 
-    predictions: PredictionResult = Field(..., description="Predicted health outcomes.")
+    explanations: dict[ExplainerMethod | Literal["method"], ExplainerMethod | dict[str, list] | None] = Field(
+        ..., description="Model explanation payload and metadata."
+    )
+    predictions: list[PredictionResult] = Field(..., description="Predicted health outcomes.")
+
+    @classmethod
+    def build(cls, predictions: list[list[float]], method: ExplainerMethod, explanations: dict[str, list] | None):
+        return cls(
+            predictions=PredictionResult.from_predictions(predictions),
+            explanations={"method": method, method: explanations},
+        )
