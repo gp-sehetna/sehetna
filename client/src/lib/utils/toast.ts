@@ -1,21 +1,16 @@
 import { toast } from "sonner"
 
-export function confirmIncompleteEnvironment<T>(
-    environmentData: T,
-    nullKeys: string[]
-): Promise<T | null> {
-    if (!nullKeys.length) return Promise.resolve(environmentData)
-
+export function confirmIncompleteEnvironment<T>(environmentData: T): Promise<T | null> {
     return new Promise<T | null>((resolve) => {
-        const toastId = toast.warning("Incomplete Environment Data", {
-            description: `Missing environment data: ${nullKeys.join(", ")}.`,
-            onAutoClose: () => resolve(null),
-            onDismiss: () => resolve(null),
+        const toastId = toast.warning("Action needed", {
+            description: "You must fill in the remaining details for accurate results",
+            onAutoClose: () => resolve(environmentData),
+            onDismiss: () => resolve(environmentData),
             action: {
-                label: "Continue Anyway",
+                label: "Modify",
                 onClick: () => {
                     toast.dismiss(toastId)
-                    resolve(environmentData)
+                    resolve(null)
                 },
             },
         })

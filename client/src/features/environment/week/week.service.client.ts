@@ -23,12 +23,16 @@ export class WeekClientService {
         return Array.from(nullKeys)
     }
 
-    private fetchEnvironment = async ({ lat, lng, iso }: Location, date: string, weeks = 1) => {
-        const coords = `${lat},${lng}`
-        const searchParams: SearchParamsOption = { coords, iso, date, weeks }
-        const environmentData = await api
-            .get<EnvironmentData>("api/environment/week", { searchParams })
-            .json()
+    private fetchEnvironment = async (location: Location, date: string | null, weeks: number) => {
+        const { lat, lng, iso } = location,
+            coords = `${lat},${lng}`,
+            isNotSimulation = !date || weeks == 0,
+            searchParams: SearchParamsOption = isNotSimulation
+                ? { coords, iso }
+                : { coords, iso, date, weeks },
+            environmentData = await api
+                .get<EnvironmentData>("api/environment/week", { searchParams })
+                .json()
 
         // Validate Environment Data and ensure non-null values.
         if (!environmentData || !environmentData.data.length) {
@@ -40,15 +44,19 @@ export class WeekClientService {
 
         // Check if any of the data objects keys is null and retreive this key for logging.
         const nullKeys = this.getNullEnvironmentDataKeys(environmentData)
-        const result = await confirmIncompleteEnvironment(environmentData, nullKeys)
-        if (result === null) return null
+        // If any of the data objects keys is null and this is not a simulation,
+        // notify the user for intermediate action.
+        if (!nullKeys.length || isNotSimulation) return environmentData
 
-        // user chose "Continue Anyway"
-        return result
+        const result = await confirmIncompleteEnvironment(environmentData)
+        if (result === null) return null // user chose "Modify"
+
+        return environmentData
     }
 
-    private fetchEnvironmentAndSimulate = async (loc: Location, date: Date, weeks = 1) => {
-        const environment = await this.fetchEnvironment(loc, format(date, "yyyy-MM-dd"), weeks)
+    private fetchEnvironmentAndSimulate = async (loc: Location, date?: Date, weeks = 0) => {
+        const formattedDate = date ? format(date, "yyyy-MM-dd") : null
+        const environment = await this.fetchEnvironment(loc, formattedDate, weeks)
         if (!environment) return null
 
         const result = await api
@@ -64,7 +72,7 @@ export class WeekClientService {
         return toast.promise<SimulateResponse | null>(
             () => this.fetchEnvironmentAndSimulate(loc, date, weeks),
             {
-                loading: "Loading...",
+                loading: "Simulating...",
                 success: (predictions) => {
                     if (!predictions)
                         return {
