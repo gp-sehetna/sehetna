@@ -6,35 +6,47 @@ logger = logging.getLogger(__name__)
 
 
 class MultiModelPredictionService:
-    def __init__(self):
+    def __init__(self , orchestrator : ModelOrchestrator):
         # Initialize the orchestrator
         self.orchestrator = ModelOrchestrator()
+        logger.info("MultiModelPredictionService initialized")
+
 
     def predict(
         self,
         req : PredictionRequest,
-        explainer_method= "cumulative"
+        explainer_method : str= "cumulative" 
     )-> PredictionResult :
 
         """
         Run predictions from TimesFM + PatchTST and aggregate results.
         """
 
-        # Example: convert weekly data to series (can extend based on your features)
+        logger.info(f"Starting multi-model prediction for country: {req.country_code}")
+        logger.info(f"Number of weekly data points: {len(req.data)}")
+
+
         weekly_series = [d.pm25_ugm3 for d in req.data]
 
 
-        # Step 2: Run models
-        logger.info("Running TimesFM and PatchTST predictions...")
-        model_predictions = self.orchestrator.run(series=weekly_series, horizon=len(weekly_series))
+        horizon = len(weekly_series)
+
+        try:
+            model_predictions = self.orchestrator.run(series=weekly_series ,horizon= horizon)
+            logger.info("Model predictions completed successfully")
+        except Exception as e:
+            logger.error(f"Error during model orchestration: {e}")
+            raise
 
 
-        # Step 3: Convert to PredictionResult
-        result = PredictionResult.from_multi_model_predictions(
+        result = PredictionResult.from_multi_model_predections(
             predictions=model_predictions,
             method=explainer_method,
-            explanation_data=None,  # SHAP/feature explanations can be added later
+            explanation_data=None # SHAP/feature explanations can be added later
         )
+
+        logger.info(f"Multi-model prediction completed: {result}")
+
 
         return result
 

@@ -44,8 +44,23 @@ interface Prediction {
     heat_related_admissions: number
 }
 
-interface SimulateResponse {
-    predictions: Prediction
+interface GroupExplanationItem {
+    group: string
+    shap_sum: number
+    abs_shap_sum: number
+    percent: number
+}
+
+type GroupedByPrediction = Record<keyof Prediction, GroupExplanationItem[]>
+type ExplanationMethod = "cumulative" | "group"
+
+interface Explanations extends Record<ExplanationMethod, GroupedByPrediction> {
+    method: ExplanationMethod
+}
+
+type SimulateResponse = {
+    predictions: Prediction[]
+    explanations: Explanations
 }
 
 const HEAT_WAVE_DAY_THRESHOLD = 28
@@ -55,6 +70,7 @@ export { HEAT_WAVE_DAY_THRESHOLD, PRECIPITATION_THRESHOLD }
 export type {
     AggResult,
     EnvironmentData,
+    GroupExplanationItem,
     Location,
     Prediction,
     Reducer,

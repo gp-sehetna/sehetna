@@ -79,6 +79,58 @@ const green = {
     ],
 }
 
+const red = {
+    oceanColor: "#fefae0",
+    colors: [
+        "#FFF477",
+        "#FFE971",
+        "#FFDE6A",
+        "#FFD364",
+        "#FFC85E",
+        "#FFBD58",
+        "#FFB251",
+        "#FFA74B",
+        "#FF9C45",
+        "#FF913F",
+        "#FF8538",
+        "#FF7A32",
+        "#FF6F2C",
+        "#FF6426",
+        "#FF591F",
+        "#FF4E19",
+        "#FF4313",
+        "#FF380D",
+        "#FF2D06",
+        "#FF2200",
+    ],
+}
+
+const darkBlue = {
+    oceanColor: "#fefae0",
+    colors: [
+        "#BFCAFF",
+        "#B6BFF9",
+        "#ACB5F2",
+        "#A3AAEC",
+        "#999FE5",
+        "#9095DF",
+        "#868AD8",
+        "#7D80D2",
+        "#7375CC",
+        "#6A6AC5",
+        "#6060BF",
+        "#5755B8",
+        "#4D4AB2",
+        "#4440AC",
+        "#3A35A5",
+        "#312B9F",
+        "#272098",
+        "#1E1592",
+        "#140B8B",
+        "#0B0085",
+    ],
+}
+
 const mix = {
     oceanColor: "#FFFFDE",
     colors: [
@@ -105,4 +157,4 @@ const mix = {
     ],
 }
 
-export { Colors, GradientPalette, blue, green, mix }
+export { Colors, GradientPalette, blue, green, mix, red, darkBlue }

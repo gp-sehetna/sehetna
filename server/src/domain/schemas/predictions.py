@@ -143,46 +143,54 @@ class PredictionResult(BaseModel):
     waterborne_disease_incidents: int = Field(..., description="Predicted count of waterborne disease incidents.")
     heat_related_admissions: int = Field(..., description="Predicted heat-related hospital admissions.")
 
-    explanations: dict[ExplainerMethod | Literal["method"], ExplainerMethod | dict[str, list] | None] = Field(
-        ..., description="Model explanation payload and metadata."
-    )
-
     @classmethod
-    def from_predictions(cls, method: ExplainerMethod, predictions, data: dict[str, list] | None = None):
+    def from_prediction(cls, prediction: list[float]):
         return cls(
-            respiratory_disease_rate=float(predictions[0]),
-            cardio_mortality_rate=float(predictions[1]),
-            vector_disease_risk_score=float(predictions[2]),
-            waterborne_disease_incidents=round(predictions[3]),
-            heat_related_admissions=round(predictions[4]),
-            explanations={"method": method, method: data},
+            respiratory_disease_rate=prediction[0],
+            cardio_mortality_rate=prediction[1],
+            vector_disease_risk_score=prediction[2],
+            waterborne_disease_incidents=round(prediction[3]),
+            heat_related_admissions=round(prediction[4]),
         )
-    @classmethod
-    def from_multi_model_predections(
-        cls ,
-        predictions : dict[str , list], # {'timesfm': [...], 'patchtst': [...]}  
-        method : ExplainerMethod = "cumulative",
-        explanation_data: dict | None = None,
-    ):
-        """
-        Create a PredictionResult instance from multiple models.
-        For simplicity, we just average predictions for each outcome.
-        """
 
-        # Convert each model's predictions to floats
-        model_preds = list(predictions.values())
+    # @classmethod
+    # def from_predictions(cls, method: ExplainerMethod, predictions, data: dict[str, list] | None = None):
+    #     return cls(
+    #         respiratory_disease_rate=float(predictions[0]),
+    #         cardio_mortality_rate=float(predictions[1]),
+    #         vector_disease_risk_score=float(predictions[2]),
+    #         waterborne_disease_incidents=round(predictions[3]),
+    #         heat_related_admissions=round(predictions[4]),
+    #         explanations={"method": method, method: data},
+    #     )
+    # @classmethod
+    # def from_multi_model_predections(
+    #     cls ,
+    #     predictions : dict[str , list], # {'timesfm': [...], 'patchtst': [...]}  
+    #     method : ExplainerMethod = "cumulative",
+    #     explanation_data: dict | None = None,
+    # ):
+    #     """
+    #     Create a PredictionResult instance from multiple models.
+    #     For simplicity, we just average predictions for each outcome.
+    #     """
+
+    #     # Convert each model's predictions to floats
+    #     model_preds = list(predictions.values())
     
-        # Simple aggregation: average across models for each outcome
-        aggregated = [sum(x) / len(x) for x in zip(*model_preds)]
+    #     # Simple aggregation: average across models for each outcome
+    #     aggregated = [sum(x) / len(x) for x in zip(*model_preds)]
 
-        return cls(
-            respiratory_disease_rate=float(aggregated[0]),
-            cardio_mortality_rate=float(aggregated[1]),
-            vector_disease_risk_score=float(aggregated[2]),
-            waterborne_disease_incidents=round(aggregated[3]),
-            heat_related_admissions=round(aggregated[4]),
-            explanations={"method": method, method: explanation_data},
-        )
+    #     return cls(
+    #         respiratory_disease_rate=float(aggregated[0]),
+    #         cardio_mortality_rate=float(aggregated[1]),
+    #         vector_disease_risk_score=float(aggregated[2]),
+    #         waterborne_disease_incidents=round(aggregated[3]),
+    #         heat_related_admissions=round(aggregated[4]),
+    #         explanations={"method": method, method: explanation_data},
+    #     )
+    def from_predictions(cls, predictions: list[list[float]]):
+        return [cls.from_prediction(prediction) for prediction in predictions]
 
 
 class SimulationResponse(BaseModel):
@@ -190,4 +198,14 @@ class SimulationResponse(BaseModel):
     Response wrapper for prediction endpoints.
     """
 
-    predictions: PredictionResult = Field(..., description="Predicted health outcomes.")
+    explanations: dict[ExplainerMethod | Literal["method"], ExplainerMethod | dict[str, list] | None] = Field(
+        ..., description="Model explanation payload and metadata."
+    )
+    predictions: list[PredictionResult] = Field(..., description="Predicted health outcomes.")
+
+    @classmethod
+    def build(cls, predictions: list[list[float]], method: ExplainerMethod, explanations: dict[str, list] | None):
+        return cls(
+            predictions=PredictionResult.from_predictions(predictions),
+            explanations={"method": method, method: explanations},
+        )

@@ -18,7 +18,9 @@ import {
 import { GeoJSONFeature, MapLibreEvent } from "maplibre-gl"
 import { MapLayerMouseEvent } from "react-map-gl/maplibre"
 
+import { Prediction } from "@/features/environment/week/week.types"
 import { Coordinates } from "@/shared/types/map"
+import { usePredictionsStore } from "@/stores/usePredictions"
 import { format } from "date-fns"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
@@ -28,13 +30,9 @@ const useMapHook = () => {
     const searchParams = useSearchParams()
     const params = useParams<MapPageProps["params"]>()
 
+    const { setLoading, onOutcomeSelect, setSimulation } = usePredictionsStore()
+
     const activeSlug = parseSlug(params.slug)
-
-    useEffect(() => {
-        console.log("SLUG in useEffect", activeSlug)
-
-        // if (params.slug) setActiveSlug(parseSlug(params.slug))
-    }, [params.slug])
 
     const { theme, isInvalid } = useTheme(activeSlug.healthOutcome)
     const [markerCoords, setMarkerCoords] = useState<Coordinates | null>(null)
@@ -114,9 +112,8 @@ const useMapHook = () => {
         setHoveredZone(null)
     }
 
-    const onMapClick = (e: MapLayerMouseEvent) => {
+    const onMapClick = async (e: MapLayerMouseEvent) => {
         const map = e.target
-
         const country = getClickedCountry(map, e.point)
 
         if (!country) return
@@ -138,7 +135,16 @@ const useMapHook = () => {
         if (process.env.NODE_ENV == "development") return
 
         const location = { lng: e.lngLat.lng, lat: e.lngLat.lat, iso: country.properties.isoA3 }
-        weekService.simulateEnvironment(location, date)
+        try {
+            setLoading(true)
+
+            const simulation = await weekService.simulateEnvironment(location, date).unwrap()
+            const healthOutcome = activeSlug.healthOutcome.replace(/-/g, "_") as keyof Prediction
+
+            if (simulation) setSimulation(simulation, healthOutcome)
+        } finally {
+            setLoading(false)
+        }
     }
 
     const onMapLoad = (e: MapLibreEvent) => {
@@ -160,13 +166,16 @@ const useMapHook = () => {
 
     const onLayerSelect = (healthOutcome: string) => {
         const params = new URLSearchParams(searchParams.toString())
-        console.log("SLUG in onLayerSelect", activeSlug)
 
         router.push(
             activeSlug.country
                 ? `/map/${activeSlug.country}/${healthOutcome}?${params}`
                 : `/map/${healthOutcome}?${params}`
         )
+
+        // you already got the data in memory
+        const healthOutcomeKey = healthOutcome.replace(/-/g, "_") as keyof Prediction
+        onOutcomeSelect(healthOutcomeKey) // change healthoutcome in state & curr predictions shown in sidebar
     }
 
     const closeCountryDetails = () => {

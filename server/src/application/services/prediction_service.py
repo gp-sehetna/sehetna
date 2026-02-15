@@ -4,7 +4,7 @@ import pandas as pd
 
 from src.application.services.shap_service import ShapExplanabilityService
 from src.core.settings import Settings
-from src.domain.schemas.predictions import PredictionQueryParams, PredictionRequest, PredictionResult, WeeklyEnvironmentData
+from src.domain.schemas.predictions import PredictionQueryParams, PredictionRequest, WeeklyEnvironmentData
 from src.infrastructure.data.indicator_repository import IndicatorRepository
 from src.infrastructure.ml.model_loader import ModelLoader
 
@@ -113,7 +113,7 @@ class PredictionService(ShapExplanabilityService):
             },
         )
 
-    def simulate(self, req: PredictionRequest, query: PredictionQueryParams) -> PredictionResult:
+    def simulate(self, req: PredictionRequest, query: PredictionQueryParams):
         df = self.get_df(req)
         df_processed = self.model_loader.pipeline.transform(df)
         X_test = df_processed[self.settings.features]
@@ -122,6 +122,6 @@ class PredictionService(ShapExplanabilityService):
         explanations = self._explain(X_test, query.explainer_method, query.top_k_contributors)
 
         logger.info("Predicting...")
-        predictions = self.model_loader.model.predict(X_test)
+        predictions: list[list[float]] = self.model_loader.model.predict(X_test)
 
-        return PredictionResult.from_predictions(query.explainer_method, predictions[0], explanations)
+        return predictions, explanations

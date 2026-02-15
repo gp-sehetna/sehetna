@@ -1,10 +1,5 @@
 "use client"
-import {
-    EnvironmentData,
-    Location,
-    Prediction,
-    SimulateResponse,
-} from "@/features/environment/week/week.types"
+import { EnvironmentData, Location, SimulateResponse } from "@/features/environment/week/week.types"
 import { toProperCase } from "@/lib/utils"
 import { confirmIncompleteEnvironment } from "@/lib/utils/toast"
 import { api } from "@/shared/api"
@@ -28,12 +23,16 @@ export class WeekClientService {
         return Array.from(nullKeys)
     }
 
-    private fetchEnvironment = async ({ lat, lng, iso }: Location, date: string, weeks = 1) => {
-        const coords = `${lat},${lng}`
-        const searchParams: SearchParamsOption = { coords, iso, date, weeks }
-        const environmentData = await api
-            .get<EnvironmentData>("api/environment/week", { searchParams })
-            .json()
+    private fetchEnvironment = async (location: Location, date: string | null, weeks: number) => {
+        const { lat, lng, iso } = location,
+            coords = `${lat},${lng}`,
+            isNotSimulation = !date || weeks == 0,
+            searchParams: SearchParamsOption = isNotSimulation
+                ? { coords, iso }
+                : { coords, iso, date, weeks },
+            environmentData = await api
+                .get<EnvironmentData>("api/environment/week", { searchParams })
+                .json()
 
         // Validate Environment Data and ensure non-null values.
         if (!environmentData || !environmentData.data.length) {
@@ -45,36 +44,46 @@ export class WeekClientService {
 
         // Check if any of the data objects keys is null and retreive this key for logging.
         const nullKeys = this.getNullEnvironmentDataKeys(environmentData)
-        const result = await confirmIncompleteEnvironment(environmentData, nullKeys)
-        if (result === null) return null
+        // If any of the data objects keys is null and this is not a simulation,
+        // notify the user for intermediate action.
+        if (!nullKeys.length || isNotSimulation) return environmentData
 
-        // user chose "Continue Anyway"
+        const result = await confirmIncompleteEnvironment(environmentData)
+        if (result === null) return null // user chose "Modify"
+
+        return environmentData
+    }
+
+    private fetchEnvironmentAndSimulate = async (loc: Location, date?: Date, weeks = 0) => {
+        const formattedDate = date ? format(date, "yyyy-MM-dd") : null
+        const environment = await this.fetchEnvironment(loc, formattedDate, weeks)
+        if (!environment) return null
+
+        const result = await api
+            .post<SimulateResponse>("ai/simulate", {
+                json: environment,
+                searchParams: { top_k_contributors: 3, explainer_method: "group" },
+            })
+            .json()
         return result
     }
 
-    private fetchEnvironmentAndSimulate = async (loc: Location, date: Date, weeks = 1) => {
-        const environment = await this.fetchEnvironment(loc, format(date, "yyyy-MM-dd"), weeks)
-        if (!environment) return null
-
-        const { predictions } = await api
-            .post<SimulateResponse>("ai/simulate", { json: environment })
-            .json()
-        return predictions
-    }
-
     simulateEnvironment = (loc: Location, date: Date, weeks = 1) => {
-        toast.promise<Prediction | null>(() => this.fetchEnvironmentAndSimulate(loc, date, weeks), {
-            loading: "Loading...",
-            success: (predictions) => {
-                if (!predictions)
-                    return {
-                        message: "Modify your inputs at the side bar to get predictions.",
-                        type: "warning",
-                    }
+        return toast.promise<SimulateResponse | null>(
+            () => this.fetchEnvironmentAndSimulate(loc, date, weeks),
+            {
+                loading: "Simulating...",
+                success: (predictions) => {
+                    if (!predictions)
+                        return {
+                            message: "Modify your inputs at the side bar to get predictions.",
+                            type: "warning",
+                        }
 
-                return { message: "Predictions loaded!", type: "info" }
-            },
-            error: "Error occurred",
-        })
+                    return { message: "Predictions loaded!", type: "info" }
+                },
+                error: "Error occurred",
+            }
+        )
     }
 }

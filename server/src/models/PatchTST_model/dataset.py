@@ -12,7 +12,7 @@ class ClimateHealthDataset(Dataset):
             country_df = country_df.sort_values("date").reset_index(drop=True)
 
             y = df[targets].values.astype("float32")
-
+    
             max_t = len(df) - horizon_len # 522 - 6 = 516
 
             for t in range(seq_len, max_t):
@@ -20,6 +20,7 @@ class ClimateHealthDataset(Dataset):
 
     def __len__(self):
         return len(self.samples)
+
 
     def __getitem__(self, idx):
         """

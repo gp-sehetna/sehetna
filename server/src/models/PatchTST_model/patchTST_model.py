@@ -3,13 +3,17 @@ import logging
 import torch
 import torch.nn as nn
 import numpy as np
+import pandas as pd
 from types import SimpleNamespace
+from torch.utils.data import DataLoader
+from src.models.PatchTST_model.dataset import ClimateHealthDataset
+from src.utils.prediction_utils import collapse_overlapping_predictions
 from transformers import PatchTSTConfig, PatchTSTForPrediction
 
 logger = logging.getLogger(__name__)
 class PatchTSTModel:
     
-    def __init__(self, model_path: str, pipeline_path: str, y_scaler_path: str, device: str = None):
+    def __init__(self, model_path: str, pipeline_path: str, y_scaler_path: str, countries_ids: dict[str, int] ,device: str = None ):
         """
         Initialize PatchTST model.
         
@@ -28,6 +32,8 @@ class PatchTSTModel:
         # Load preprocessing pipeline and scaler
         self.pipeline = joblib.load(pipeline_path)
         self.y_scaler = joblib.load(y_scaler_path)
+        self.countries_ids = countries_ids
+
 
         # Model configuration (from your notebook)
         self.seq_len = 12
@@ -90,65 +96,97 @@ class PatchTSTModel:
         
         logger.info("Model weights loaded successfully")
 
-    def predict(self, series: list[float], horizon: int = 6) -> list[float]:
+    def predict(self, df: pd.DataFrame, return_uncertainty: bool = True) -> tuple[list[float], list[float] | None]:
         """
-        Generate predictions for a given time series.
+        Generate predictions using the ClimateHealthDataset with overlapping window collapse.
         
         Args:
-            series: List of PM2.5 values (or other time series data)
-            horizon: Number of steps to forecast (default: 6)
+            df: DataFrame with preprocessed climate-health data
+                Must contain target columns and date column
+            return_uncertainty: If True, compute uncertainty from overlapping predictions
         
         Returns:
-            List of 5 predicted health outcomes (averaged across horizon)
-    
+            tuple: (predictions, uncertainty)
+                - predictions: List of 5 predicted health outcomes
+                - uncertainty: List of 5 standard deviations (None if return_uncertainty=False)
         """
+
     
 
         try:
-            # For now, return the last horizon prediction
-            # In a full implementation, you'd preprocess the series properly
+
+            logger.info(f"Generating predictions for dataframe with shape: {df.shape}")
+            logger.info(f"Return uncertainty: {return_uncertainty}")
             
-            if len(series) < self.seq_len:
-                logger.warning(f"Series length {len(series)} < seq_len {self.seq_len}, padding with zeros")
-                series = [0.0] * (self.seq_len - len(series)) + series
-
-            # Take last seq_len values
-            series_input = series[-self.seq_len:]
-
-
-            y_past = np.array([series_input] * self.num_targets).T
-            y_past = torch.from_numpy(y_past).float().unsqueeze(0).to(self.device)
-
-
-            # Run inference
-            with torch.no_grad():
-                with torch.amp.autocast(self.device):
-                    outputs = self.model(y_past, y_past[:, :horizon, :])  # Dummy future values
-                    preds = outputs.prediction_outputs  # [1, horizon, num_targets]
-
-
-            # Extract predictions: [horizon, num_targets]
-            preds_np = preds.cpu().numpy()[0]
-
-
-            # Inverse transform to original scale
-            preds_flat = preds_np.reshape(-1, self.num_targets)
-            preds_unscaled = self.y_scaler.inverse_transform(preds_flat)
-            preds_unscaled = preds_unscaled.reshape(horizon, self.num_targets)
-
-
-            # Average across horizon to get single prediction per target
-            final_predictions = preds_unscaled.mean(axis=0).tolist()
+            # Create dataset
+            dataset = ClimateHealthDataset(
+                df=df,
+                targets=self.targets,
+                countries_ids=self.countries_ids,
+                seq_len=self.seq_len,
+                horizon_len=self.horizon_len
+            )
             
-            logger.info(f"Generated predictions: {final_predictions}")
+            num_samples = len(dataset)
+            logger.info(f"Dataset created with {num_samples} samples")
             
-            return final_predictions
+            if num_samples == 0:
+                logger.warning("Dataset has no samples, returning zeros")
+                return [0.0] * self.num_targets, None
+            
+            # If only one sample or uncertainty not needed, use simple prediction
+            if num_samples == 1 or not return_uncertainty:
+                return self._predict_single(dataset)
+            
+            # Otherwise, use all samples and collapse overlapping predictions
+            return self._predict_with_collapse(dataset)
+        
         
         except Exception as e:
             logger.error(f"Error during PatchTST prediction: {e}")
             # Return zeros as fallback
             return [0.0] * self.num_targets
         
+    def _predict_single(self, dataset) -> tuple[list[float], None]:
+        """
+        Simple prediction using the last sample only.
+        
+        Args:
+            dataset: ClimateHealthDataset instance
+        
+        Returns:
+            tuple: (predictions, None)
+        """
+        # Create dataloader (batch_size=1 for inference)
+        dataloader = DataLoader(dataset, batch_size=1, shuffle=False)
+        
+        # Get the last sample (most recent prediction)
+        y_past, y_future = next(iter(dataloader))
+        y_past = y_past.to(self.device)
+        y_future = y_future.to(self.device)
+        
+        # Run inference
+        with torch.no_grad():
+            with torch.amp.autocast(self.device):
+                outputs = self.model(y_past, y_future)
+                preds = outputs.prediction_outputs  # [1, horizon, num_targets]
+        
+        # Extract predictions: [horizon, num_targets]
+        preds_np = preds.cpu().numpy()[0]
+        
+        # Inverse transform to original scale
+        preds_flat = preds_np.reshape(-1, self.num_targets)
+        preds_unscaled = self.y_scaler.inverse_transform(preds_flat)
+        preds_unscaled = preds_unscaled.reshape(self.horizon_len, self.num_targets)
+        
+        # Average across horizon to get single prediction per target
+        final_predictions = preds_unscaled.mean(axis=0).tolist()
+        
+        logger.info(f"Generated predictions (single sample): {final_predictions}")
+        
+        return final_predictions, None
+    
+
 
 
 class PatchTST(nn.Module):
