@@ -1,12 +1,10 @@
 import Flex from "@/components/ui/Flex"
 import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
-import { ArrowLeft, Loader } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { GeoJSONFeature } from "maplibre-gl"
 import { Dispatch } from "react"
 
-import AppLoader from "../GlobalComponents/Loaders/AppLoader"
 import HealthOutcomeCharts from "./HealthOutcomeCharts"
-import { PredictionsStates } from "@/shared/types/map"
 
 export type MainSidebarProps = {
     clickedZone: GeoJSONFeature | null
@@ -15,15 +13,14 @@ export type MainSidebarProps = {
     setDate: Dispatch<Date | undefined>
     closeCountryDetails: () => void
 }
+type MapCountryDetailsProps = MainSidebarProps
 
 const MapCountryDetails = ({
     date,
     setDate,
     clickedZone,
     closeCountryDetails,
-    clickedZonePredictions,
-    loadingPredictions,
-}: MainSidebarProps & PredictionsStates) => {
+}: MapCountryDetailsProps) => {
     return (
         <>
             {clickedZone && (
@@ -35,15 +32,7 @@ const MapCountryDetails = ({
                         </Flex>
 
                         <div className="flex flex-1 items-center justify-center">
-                            {loadingPredictions ? (
-                                <AppLoader />
-                            ) : (
-                                clickedZonePredictions && (
-                                    <HealthOutcomeCharts
-                                        clickedZonePredictions={clickedZonePredictions}
-                                    />
-                                )
-                            )}
+                            <HealthOutcomeCharts />
                         </div>
                     </div>
                     <DatePickerSimple

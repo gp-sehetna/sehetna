@@ -1,85 +1,85 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
 import { Pie, PieChart } from "recharts"
 
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/shadcn/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
 import {
     ChartConfig,
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/shadcn/chart"
+import { Prediction } from "@/features/environment/week/week.types"
+import { toProperCase } from "@/lib/utils"
+import { Contributors } from "@/shared/types/map"
 
 export const description = "A simple pie chart"
 
-const chartData = [
-    { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-    { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-    { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-    { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-    { browser: "other", visitors: 90, fill: "var(--color-other)" },
-]
+type Props = {
+    contributors: Contributors
+    healthOutcome: keyof Prediction
+}
+export default function AppPieChart({ contributors, healthOutcome }: Props) {
+    const pieColors = [
+        "#d55035", // darkest orange
+        "#ff390c",
+        "#ff581d",
+        "#fd692d",
+        "#fc793a",
+        "#ef8470",
+        "#fecefb",
+        "#fee5ff",
+    ]
 
-const chartConfig = {
-    visitors: {
-        label: "Visitors",
-    },
-    chrome: {
-        label: "Chrome",
-        color: "var(--chart-1)",
-    },
-    safari: {
-        label: "Safari",
-        color: "var(--chart-2)",
-    },
-    firefox: {
-        label: "Firefox",
-        color: "var(--chart-3)",
-    },
-    edge: {
-        label: "Edge",
-        color: "var(--chart-4)",
-    },
-    other: {
-        label: "Other",
-        color: "var(--chart-5)",
-    },
-} satisfies ChartConfig
+    const label = toProperCase(healthOutcome)
+    const chartData = structuredClone(contributors)
 
-export default function AppPieChart() {
+    if (!chartData || chartData.length === 0) return null
+
+    // Check if their percentages not close to 100% then add {Others} with the remaining
+    const total = chartData.reduce((acc, item) => acc + item.percent, 0)
+
+    if (Math.abs(total - 100) > 0.05)
+        chartData.push({
+            group: "Others",
+            percent: 100 - total,
+            fill: pieColors[chartData.length % pieColors.length],
+        } as any)
+
+    const sortedData = [...chartData] // they are sorted already
+        .map((item, index) => ({
+            ...item,
+            fill: pieColors[index % pieColors.length],
+        }))
+
+    const chartConfig = sortedData.reduce(
+        (acc, item, index) => {
+            acc[item.group] = {
+                label: item.group,
+                color: pieColors[index % pieColors.length],
+            }
+            return acc
+        },
+        {
+            percent: { label }, // main key
+        } as ChartConfig
+    )
+
     return (
-        <Card className="flex flex-col">
+        <Card className="flex flex-col border-0 bg-transparent">
             <CardHeader className="items-center pb-0">
-                <CardTitle>Pie Chart</CardTitle>
-                <CardDescription>January - June 2024</CardDescription>
+                <CardTitle>
+                    <h6>{label}</h6>
+                </CardTitle>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
-                <ChartContainer
-                    config={chartConfig}
-                    className="mx-auto aspect-square max-h-62.5"
-                >
+                <ChartContainer config={chartConfig} className="mx-auto h-52 w-52">
                     <PieChart>
                         <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                        <Pie data={chartData} dataKey="visitors" nameKey="browser" />
+                        <Pie data={sortedData} dataKey="percent" nameKey="group" />
                     </PieChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className="flex-col gap-2 text-sm">
-                <div className="flex items-center gap-2 leading-none font-medium">
-                    Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-                </div>
-                <div className="text-muted-foreground leading-none">
-                    Showing total visitors for the last 6 months
-                </div>
-            </CardFooter>
         </Card>
     )
 }
