@@ -12,6 +12,7 @@ import {
 import { Prediction } from "@/features/environment/week/week.types"
 import { toProperCase } from "@/lib/utils"
 import { Contributors } from "@/shared/types/map"
+import { useThemeStore } from "@/stores/map/use-theme"
 
 export const description = "A simple pie chart"
 
@@ -20,16 +21,7 @@ type Props = {
     healthOutcome: keyof Prediction
 }
 export default function AppPieChart({ contributors, healthOutcome }: Props) {
-    const pieColors = [
-        "#d55035", // darkest orange
-        "#ff390c",
-        "#ff581d",
-        "#fd692d",
-        "#fc793a",
-        "#ef8470",
-        "#fecefb",
-        "#fee5ff",
-    ]
+    const { getSampledColors } = useThemeStore()
 
     const label = toProperCase(healthOutcome)
     const chartData = structuredClone(contributors)
@@ -39,24 +31,19 @@ export default function AppPieChart({ contributors, healthOutcome }: Props) {
     // Check if their percentages not close to 100% then add {Others} with the remaining
     const total = chartData.reduce((acc, item) => acc + item.percent, 0)
 
-    if (Math.abs(total - 100) > 0.05)
-        chartData.push({
-            group: "Others",
-            percent: 100 - total,
-            fill: pieColors[chartData.length % pieColors.length],
-        } as any)
+    if (Math.abs(total - 100) > 0.05) chartData.push({ group: "Others", percent: 100 - total })
 
-    const sortedData = [...chartData] // they are sorted already
-        .map((item, index) => ({
-            ...item,
-            fill: pieColors[index % pieColors.length],
-        }))
+    const colors = getSampledColors(chartData.length)
+    const sortedData = chartData.map((item, index) => ({
+        ...item,
+        fill: colors[index % colors.length], // Add the fill color
+    }))
 
     const chartConfig = sortedData.reduce(
         (acc, item, index) => {
             acc[item.group] = {
                 label: item.group,
-                color: pieColors[index % pieColors.length],
+                color: colors[index % colors.length],
             }
             return acc
         },
@@ -67,13 +54,13 @@ export default function AppPieChart({ contributors, healthOutcome }: Props) {
 
     return (
         <Card className="border-none bg-transparent shadow-none">
-            <CardHeader className="items-center">
+            <CardHeader className="items-center p-0 pt-4">
                 <CardTitle>
                     <h6>{label}</h6>
                 </CardTitle>
             </CardHeader>
-            <CardContent className="pb-0">
-                <ChartContainer config={chartConfig} className="mx-auto h-52 w-52">
+            <CardContent className="p-0">
+                <ChartContainer config={chartConfig} className="mx-auto h-38 w-38">
                     <PieChart>
                         <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                         <Pie data={sortedData} dataKey="percent" nameKey="group" />

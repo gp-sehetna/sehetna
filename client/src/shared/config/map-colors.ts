@@ -12,7 +12,7 @@ class Colors {
 
 class GradientPalette extends Colors {
     steps: number[] = steps
-    private colors: string[]
+    colors: string[]
 
     oceanColor: string
 

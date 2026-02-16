@@ -2,11 +2,11 @@
 
 import { useEffect } from "react"
 import { toast } from "sonner"
-import { Card, CardContent } from "@/components/ui/shadcn/card" // if using shadcn
 import { Activity, HeartPulse, Thermometer, Droplets, AlertTriangle } from "lucide-react"
-import { usePredictionsStore } from "@/stores/usePredictions"
+import { usePredictionsStore } from "@/stores/map/use-predictions"
+import { RadialChart } from "../charts/RadialChart"
 
-export default function PredictionViewer() {
+export default function PredictionsViewer() {
     const { simulation } = usePredictionsStore()
     const predictions = simulation?.predictions
     useEffect(() => {
@@ -19,52 +19,62 @@ export default function PredictionViewer() {
 
     const prediction = predictions[0]
 
-    const metrics = [
+    const chartMetrics = [
         {
-            label: "Respiratory Disease Rate",
-            value: prediction.respiratory_disease_rate,
+            label: "Respiratory",
+            value: prediction.respiratory_disease_rate.toFixed(2),
             icon: Activity,
+            tooltip:
+                "Estimated respiratory disease rate per 100k\n\nPredicts new or existing cases of respiratory conditions (e.g., asthma, bronchitis, COPD) per 100,000 population.\n\nReflects the potential burden of airborne pollutants, allergens, and temperature extremes on lung health.",
+            color: "var(--chart-1)",
         },
         {
-            label: "Cardio Mortality Rate",
-            value: prediction.cardio_mortality_rate,
+            label: "Cardio Mortality",
+            value: prediction.cardio_mortality_rate.toFixed(2),
             icon: HeartPulse,
+            tooltip:
+                "Projected cardiovascular mortality rate\n\nEstimates expected deaths due to cardiovascular diseases (including ischemic heart disease and stroke) over a specified period.\n\nIntegrates environmental exposures (air quality, temperature, weather) and demographic risk factors.",
+            color: "var(--chart-2)",
         },
         {
-            label: "Vector Disease Risk",
-            value: prediction.vector_disease_risk_score,
+            label: "Vectorborne",
+            value: prediction.vector_disease_risk_score.toFixed(2),
             icon: AlertTriangle,
+            tooltip:
+                "Vector-borne disease composite risk score\n\nRisk index for diseases transmitted by vectors (e.g., dengue, malaria, Zika).\n\nCombines temperature, precipitation, and humidity with historical patterns to assess the likelihood of vector proliferation.",
+            color: "var(--chart-3)",
         },
         {
-            label: "Waterborne Incidents",
-            value: prediction.waterborne_disease_incidents,
+            label: "Waterborne",
+            value: prediction.waterborne_disease_incidents.toFixed(0),
             icon: Droplets,
+            tooltip:
+                "Estimated waterborne disease incidents\n\nForecasts illnesses caused by contaminated water (e.g., cholera, typhoid, and diarrheal infections).\n\nConsiders water quality data, sanitation indicators, and climate factors like rainfall and flooding.",
+            color: "var(--chart-4)",
         },
         {
-            label: "Heat-related Admissions",
-            value: prediction.heat_related_admissions,
+            label: "Heat-related",
+            value: prediction.heat_related_admissions.toFixed(0),
             icon: Thermometer,
+            tooltip:
+                "Heat-related hospital admissions\n\nProjects hospitalizations due to heat stress or illnesses (e.g., heatstroke and dehydration).\n\nIncorporates temperature extremes, consecutive hot days, and population vulnerability.",
+            color: "var(--chart-5)",
         },
     ]
 
     return (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {metrics.map((metric) => {
-                const Icon = metric.icon
-                return (
-                    <Card key={metric.label} className="rounded-2xl shadow-sm">
-                        <CardContent className="flex items-center justify-between p-6">
-                            <div>
-                                <p className="text-muted-foreground text-sm">{metric.label}</p>
-                                <p className="mt-1 text-2xl font-semibold">
-                                    {metric.value.toFixed(2)}
-                                </p>
-                            </div>
-                            <Icon className="text-muted-foreground h-6 w-6" />
-                        </CardContent>
-                    </Card>
-                )
-            })}
+        <div className="glassy grid gap-4 rounded-2xl md:grid-cols-3">
+            {chartMetrics.map((metric) => (
+                <RadialChart
+                    key={metric.label}
+                    value={metric.value}
+                    color={metric.color}
+                    chartLabel={metric.label}
+                    Icon={metric.icon}
+                    tooltip={metric.tooltip}
+                    max={100}
+                />
+            ))}
         </div>
     )
 }

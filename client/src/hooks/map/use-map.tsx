@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react"
 import { WeekClientService } from "@/features/environment/week/week.service.client"
 import { slugify } from "@/lib/utils"
 
-import { useTheme } from "@/hooks/map/use-theme"
+import { useThemeStore } from "@/stores/map/use-theme"
 import {
     colorEachCountry,
     COUNTRIES_SOURCE,
@@ -20,7 +20,7 @@ import { MapLayerMouseEvent } from "react-map-gl/maplibre"
 
 import { Prediction, SimulateResponse } from "@/features/environment/week/week.types"
 import { Coordinates } from "@/shared/types/map"
-import { usePredictionsStore } from "@/stores/usePredictions"
+import { usePredictionsStore } from "@/stores/map/use-predictions"
 import { format } from "date-fns"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
@@ -34,7 +34,8 @@ const useMapHook = () => {
 
     const activeSlug = parseSlug(params.slug)
 
-    const { theme, isInvalid } = useTheme(activeSlug.healthOutcome)
+    const { theme, isInvalid, setHealthOutcome } = useThemeStore()
+
     const [markerCoords, setMarkerCoords] = useState<Coordinates | null>(null)
 
     const [clickedZone, setClickedZone] = useState<GeoJSONFeature | null>(null)
@@ -289,9 +290,10 @@ const useMapHook = () => {
                 : `/map/${healthOutcome}?${params}`
         )
 
-        // you already got the data in memory
+        setHealthOutcome(healthOutcome)
+
         const healthOutcomeKey = healthOutcome.replace(/-/g, "_") as keyof Prediction
-        onOutcomeSelect(healthOutcomeKey) // change healthoutcome in state & curr predictions shown in sidebar
+        onOutcomeSelect(healthOutcomeKey)
     }
 
     const closeCountryDetails = () => {

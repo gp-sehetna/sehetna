@@ -1,7 +1,7 @@
-import { usePredictionsStore } from "@/stores/usePredictions"
+import { usePredictionsStore } from "@/stores/map/use-predictions"
 import AppPieChart from "@/components/ui/GlobalComponents/charts/PieChart"
 import AppLoader from "@/components/ui/GlobalComponents/Loaders/AppLoader"
-import MapPredictionsViewer from "@/components/ui/map/MapPredictionsViewer"
+import PredictionsViewer from "@/components/ui/map/MapPredictionsViewer"
 import Divider from "@/components/ui/GlobalControls/Divider"
 
 const HealthOutcomeCharts = () => {
@@ -17,8 +17,7 @@ const HealthOutcomeCharts = () => {
     return (
         <>
             <AppPieChart contributors={contributors} healthOutcome={healthOutcome} />
-            <Divider className="mb-4 w-full bg-black/10" />
-            <MapPredictionsViewer />
+            <PredictionsViewer />
         </>
     )
 }

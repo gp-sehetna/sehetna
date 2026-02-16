@@ -1,4 +1,4 @@
-import { useTheme } from "@/hooks/map/use-theme"
+import { useThemeStore } from "@/stores/map/use-theme"
 import HorizontalColorbar from "./ColorBar"
 import { LegendItem } from "./LegendItem"
 import { toProperCase, unslugify } from "@/lib/utils"
@@ -8,7 +8,7 @@ export type LegendProps = {
 }
 
 export default function Legend({ healthOutcome }: LegendProps) {
-    const { theme } = useTheme(healthOutcome)
+    const { theme } = useThemeStore()
 
     return (
         <LegendItem label={toProperCase(unslugify(healthOutcome))} unit="%">

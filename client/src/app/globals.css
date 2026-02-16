@@ -167,7 +167,7 @@
     }
 
     .glassy {
-        @apply shadow-neutral-1000/10 border border-neutral-100 bg-neutral-100/40 shadow-2xl backdrop-blur-lg;
+        @apply shadow-neutral-1000/10 border border-neutral-100 bg-neutral-100/40 backdrop-blur-lg;
     }
 
     .base-transition {
