@@ -1,7 +1,7 @@
 from fastapi import Depends, Request
 
 from src.application.services.prediction_service import PredictionService
-from server.src.application.services.sequential_forecast_service import SequentialPredictionService
+from src.application.services.sequential_forecast_service import SequentialForecastService
 from src.core.container import ServiceContainer
 from config import CoreSettings
 from typing import Annotated
@@ -57,6 +57,6 @@ def get_container(settings: Annotated[CoreSettings, Depends(get_settings)]) -> S
 
 def get_sequential_service(
     container: Annotated[ServiceContainer, Depends(get_container)]
-) -> SequentialPredictionService:
+) -> SequentialForecastService:
     """Get the sequential prediction service."""
     return container.get_sequential_service()

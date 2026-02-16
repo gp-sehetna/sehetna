@@ -1,4 +1,6 @@
 # from fastapi import APIRouter, Depends, Query
+from src.domain.schemas.sequential_schemas import ForecastRequest, SequentialForecastResponse
+from src.api.dependencies import get_prediction_service , get_sequential_service
 import logging
 from typing import Annotated
 
