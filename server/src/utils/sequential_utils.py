@@ -172,16 +172,7 @@ def _create_model_config(model_id , seq_len , horizon_len ):
     """Create model configuration matching training setup."""
 
     if model_id == "patchTST":
-        return SimpleNamespace(
-            d_model=128,
-            n_heads=32,
-            num_layers=8,
-            patch_len=6,
-            patch_stride=8,
-            dropout=0.11,
-            seq_len=seq_len,
-            prediction_len=horizon_len,
-        )
+
     elif model_id == "TimesFM":
         
         return SimpleNamespace(

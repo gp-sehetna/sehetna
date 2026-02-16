@@ -21,8 +21,6 @@ class SequentialPredictionService:
 
     def __init__(
         self,
-        lightgbm_model,
-        lightgbm_pipeline,
         sequential_models: dict,  # {model_id: model}
         sequential_pipelines: dict,  # {model_id: pipeline}
         target_scalers: dict,  # {model_id: scaler}
@@ -30,8 +28,6 @@ class SequentialPredictionService:
     ):
         
         """Initialize sequential prediction service."""
-        self.lightgbm_model = lightgbm_model
-        self.lightgbm_pipeline = lightgbm_pipeline
         self.sequential_models = sequential_models
         self.sequential_pipelines = sequential_pipelines
         self.target_scalers = target_scalers
@@ -55,7 +51,7 @@ class SequentialPredictionService:
         """
         Run sequential prediction workflow.
         
-        CORRECTED Workflow:
+        Workflow:
         1. Prepare input DataFrame from request
         2. Fill gaps with LightGBM (last_test_date → today_date)
         3. Combine original data + LightGBM predictions = COMPLETE historical data
@@ -69,7 +65,7 @@ class SequentialPredictionService:
         Returns:
             SequentialPredictionResult
         """
-        logger.info(f"Starting sequential prediction")
+        logger.info("Starting sequential prediction")
         logger.info(f"Model: {req.model_id}")
         logger.info(f"Last test date: {req.last_test_date}")
         logger.info(f"Today: {req.today_date}")

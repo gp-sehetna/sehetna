@@ -1,5 +1,5 @@
 # from fastapi import APIRouter, Depends, Query
-# from src.api.dependencies import get_prediction_service , get_sequential_service
+from src.api.dependencies import get_prediction_service , get_sequential_service
 # from src.application.services.prediction_service import PredictionService
 # from src.domain.schemas.predictions import PredictionQueryParams, PredictionRequest, SimulationResponse 
 # from src.domain.schemas.sequential_schemas import SequentialForecastResponse , SequentialPredictionRequest

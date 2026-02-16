@@ -1,3 +1,4 @@
+import pickle
 import joblib
 import logging
 import torch
@@ -12,6 +13,56 @@ from transformers import PatchTSTConfig, PatchTSTForPrediction
 
 logger = logging.getLogger(__name__)
 class PatchTSTModel:
+
+    model_id = "patchtst"
+    
+    def load(self):
+        
+        try:
+            # Load PatchTST components
+            patchtst_path = getattr(self.settings, 'patchtst_model_path', None)
+            patchtst_pipeline_path = getattr(self.settings, 'patchtst_pipeline_path', None)
+            patchtst_scaler_path = getattr(self.settings, 'patchtst_scaler_path', None)
+
+            if all([patchtst_path, patchtst_pipeline_path, patchtst_scaler_path]):
+                # Load pipeline and scaler
+                pipeline = joblib.load(patchtst_pipeline_path)
+                target_scaler = joblib.load(patchtst_scaler_path)
+                
+
+                # Create model config
+                config = SimpleNamespace(
+                    d_model=128,
+                    n_heads=32,
+                    num_layers=8,
+                    patch_len=6,
+                    patch_stride=8,
+                    dropout=0.11,
+                    seq_len=12,
+                    prediction_len=6,
+                )
+                
+                # Initialize model
+                with open(patchtst_path, 'rb') as f:
+                    checkpoint = pickle.load(f)
+            
+                num_targets = 5
+                model = PatchTST(config, num_targets)
+                state_dict = checkpoint.get('model_state_dict', checkpoint)
+                model.load_state_dict(state_dict)
+                model = model.to(torch.device)
+
+                # Store components
+                self._sequential_models[self.model_id] = model
+                self._sequential_pipelines[self.model_id] = pipeline
+                self._target_scalers[self.model_id] = target_scaler
+
+                logger.info(f"PatchTST model loaded successfully")
+            else:
+                logger.warning("PatchTST paths not configured")            
+
+        except Exception as e:
+            logger.error(f"Error loading PatchTST: {e}", exc_info=True)   
     
     def __init__(self, model_path: str, pipeline_path: str, y_scaler_path: str, countries_ids: dict[str, int] ,device: str = None ):
         """

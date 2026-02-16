@@ -1,6 +1,9 @@
 from datetime import date
 from pydantic import BaseModel, Field
-from src.domain.schemas.predictions import PredictionRequest
+from src.domain.schemas.predictions import SimulationResponse
+
+
+
 class WeeklyPrediction(BaseModel):
     """Single week prediction with uncertainty bounds."""
     
@@ -24,44 +27,10 @@ class HistoricalData(BaseModel):
     model_used: str = Field(default="lightgbm", description="Model used for historical data")
 
 
-class SequentialPredictionRequest(BaseModel):
-    """
-    Request for sequential prediction with model selection.
-    """
-    
-    # Base prediction data
-    request: PredictionRequest = Field(
-        ..., 
-        description="Base prediction request with environmental data"
-    )
-    
-    # Model selection
-    model_id: str = Field(
-        ..., 
-        description="Model ID to use for forecasting (patchtst, timesfm, lstm, etc)"
-    )
-    
-    # Date configuration
-    last_test_date: date = Field(
-        ..., 
-        description="Last date in test data (e.g., 2025-10-01)"
-    )
-    
-    today_date: date = Field(
-        ..., 
-        description="Current date (e.g., 2026-02-12)"
-    )
-    
-    # Optional parameters
-    forecast_horizon: int = Field(
-        default=6, 
-        description="Number of weeks to forecast into the future"
-    )
+""" """
 
-    confidence_level: float = Field(
-        default=0.95, 
-        description="Confidence level for intervals (e.g., 0.95 for 95% CI)"
-    )
+class ForecastRequest(SimulationResponse):
+    model_id: str = Field(..., description="Identifier for the prediction model to use.")
 
 class WeeklyPredictionWithCI(BaseModel):
     """Single week prediction with confidence intervals."""
@@ -101,7 +70,7 @@ class ForecastData(BaseModel):
     model_used: str = Field(..., description="Model used for forecast (patchtst, timesfm, etc)")
     horizon: int = Field(default=6, description="Forecast horizon in weeks")
 
-class SequentialPredictionResult(BaseModel):
+class SequentialForecastResult(BaseModel):
     """
     Complete prediction result with both historical and forecast data.
     """
@@ -110,10 +79,12 @@ class SequentialPredictionResult(BaseModel):
         ..., 
         description="Historical predictions (LightGBM) - higher priority"
     )
+
     forecast: ForecastData = Field(
         ..., 
         description="Future forecasts (sequential model) - lower priority"
     )
+    
     metadata: dict = Field(
         default_factory=dict,
         description="Additional metadata about the prediction"
@@ -122,7 +93,7 @@ class SequentialPredictionResult(BaseModel):
 class SequentialForecastResponse(BaseModel):
     """Response wrapper for sequential forecast endpoint."""
     
-    predictions: SequentialPredictionResult = Field(
+    prediction: SequentialForecastResult = Field(
         ..., 
         description="Complete prediction result with historical and forecast data"
     )
