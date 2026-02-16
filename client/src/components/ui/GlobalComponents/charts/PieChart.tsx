@@ -66,13 +66,13 @@ export default function AppPieChart({ contributors, healthOutcome }: Props) {
     )
 
     return (
-        <Card className="flex flex-col border-0 bg-transparent">
-            <CardHeader className="items-center pb-0">
+        <Card className="border-none bg-transparent shadow-none">
+            <CardHeader className="items-center">
                 <CardTitle>
                     <h6>{label}</h6>
                 </CardTitle>
             </CardHeader>
-            <CardContent className="flex-1 pb-0">
+            <CardContent className="pb-0">
                 <ChartContainer config={chartConfig} className="mx-auto h-52 w-52">
                     <PieChart>
                         <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
