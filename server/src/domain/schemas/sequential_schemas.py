@@ -29,7 +29,7 @@ class HistoricalData(BaseModel):
 
 """ """
 
-class ForecastRequest(SimulationResponse):
+class ForecastRequest(BaseModel):
     model_id: str = Field(..., description="Identifier for the prediction model to use.")
 
 class WeeklyPredictionWithCI(BaseModel):

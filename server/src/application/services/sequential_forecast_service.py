@@ -9,99 +9,31 @@ logger = logging.getLogger(__name__)
 
 class SequentialForecastService:
     """
-    Sequential prediction service with workflow:
+    Sequential forecast service with workflow:
     
-    1. LightGBM fills historical gaps (last_test_date → today_date)
-    2. Sequential model uses COMPLETE data (original + LightGBM filled) 
-       to forecast future (today_date → today_date + horizon)
+    1. this service take the model .
+    2. forecast future using the passed model. 
     
-    The LightGBM output becomes INPUT to the sequential model.
     """
+    model = None
+    def __init__(self, model):
+        self.model = model
+    # # Target columns
+    # self.targets = [
+    #     'respiratory_disease_rate',
+    #     'cardio_mortality_rate',
+    #     'vector_disease_risk_score',
+    #     'waterborne_disease_incidents',
+    #     'heat_related_admissions'
+    # ]
 
-    def __init__(
-        self,
-        sequential_models: dict,  # {model_id: model}
-        sequential_pipelines: dict,  # {model_id: pipeline}
-        target_scalers: dict,  # {model_id: scaler}
-        device: str = 'cpu'
-    ):
+
         
-        """Initialize sequential prediction service."""
-        self.sequential_models = sequential_models
-        self.sequential_pipelines = sequential_pipelines
-        self.target_scalers = target_scalers
-        self.device = device
-
-
-        # Target columns
-        self.targets = [
-            'respiratory_disease_rate',
-            'cardio_mortality_rate',
-            'vector_disease_risk_score',
-            'waterborne_disease_incidents',
-            'heat_related_admissions'
-        ]
-
-
-        logger.info(f"SequentialPredictionService initialized with models: {list(sequential_models.keys())}")
-
     
-    def predict(self, req: ForecastRequest) -> SequentialForecastResult:
-        """
-        Run sequential prediction workflow.
-        
-        Workflow:
-        1. Prepare input DataFrame from request
-        2. Fill gaps with LightGBM (last_test_date → today_date)
-        3. Combine original data + LightGBM predictions = COMPLETE historical data
-        4. Use COMPLETE historical data as input to sequential model
-        5. Sequential model forecasts future (today_date → today_date + horizon)
-        6. Return both historical (from LightGBM) and forecast (from sequential model)
-        
-        Args:
-            req: Sequential prediction request
-        
-        Returns:
-            SequentialForecastResult
-        """
-        logger.info("Starting sequential prediction")
-        logger.info(f"Model: {req.model_id}")
-        logger.info(f"Last test date: {req.last_test_date}")
-        logger.info(f"Today: {req.today_date}")
-        logger.info(f"Forecast horizon: {req.forecast_horizon} weeks")
-
-
-        # Validate model ID
-        if req.model_id not in self.sequential_models:
-            raise ValueError(
-                f"Model '{req.model_id}' not found. "
-                f"Available models: {list(self.sequential_models.keys())}"
-            )
-        
-        # Step 1: Prepare input data
-        original_df = self._request_to_dataframe(req.request)
-        logger.info(f"Original data: {len(original_df)} weeks (up to {req.last_test_date})")
-
-
-        
-        historical_data, forecasted_data  = [], []
-        # Step 5: Create result
-        result = SequentialForecastResult(
-            historical=historical_data,
-            forecast=forecasted_data,
-            metadata={
-                'model_id': req.model_id,
-                'last_test_date': req.last_test_date.isoformat(),
-                'today_date': req.today_date.isoformat(),
-                'forecast_horizon': req.forecast_horizon,
-                'confidence_level': req.confidence_level,
-                'original_weeks': len(original_df),
-                'forecast_weeks': len(forecasted_data.weeks)
-            }
-        )
-        
-        logger.info("Sequential prediction completed successfully")
-        return result
+    def forecast(self, req: ForecastRequest) -> SequentialForecastResult:
+        """ call forecast method of the model and return the result """
+        # return self.model.forecast(req.predictions)
+        return "5od sambosa"
 
 
 

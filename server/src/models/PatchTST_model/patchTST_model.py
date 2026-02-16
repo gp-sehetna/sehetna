@@ -7,7 +7,6 @@ import pandas as pd
 from types import SimpleNamespace
 from torch.utils.data import DataLoader
 from src.models.PatchTST_model.dataset import ClimateHealthDataset
-from src.utils.prediction_utils import collapse_overlapping_predictions
 from transformers import PatchTSTConfig, PatchTSTForPrediction
 
 logger = logging.getLogger(__name__)
@@ -16,52 +15,53 @@ class PatchTSTModel:
     model_id = "patchtst"
     
     def load(self):
+        logger.info("Loading PatchTST model components...")
         
-        try:
-            # Load PatchTST components
-            patchtst_path = getattr(self.settings, 'patchtst_model_path', None)
-            patchtst_pipeline_path = getattr(self.settings, 'patchtst_pipeline_path', None)
-            patchtst_scaler_path = getattr(self.settings, 'patchtst_scaler_path', None)
+        # try:
+        #     # Load PatchTST components
+        #     patchtst_path = getattr(self.settings, 'patchtst_model_path', None)
+        #     patchtst_pipeline_path = getattr(self.settings, 'patchtst_pipeline_path', None)
+        #     patchtst_scaler_path = getattr(self.settings, 'patchtst_scaler_path', None)
 
-            if all([patchtst_path, patchtst_pipeline_path, patchtst_scaler_path]):
-                # Load pipeline and scaler
-                pipeline = joblib.load(patchtst_pipeline_path)
-                target_scaler = joblib.load(patchtst_scaler_path)
+        #     if all([patchtst_path, patchtst_pipeline_path, patchtst_scaler_path]):
+        #         # Load pipeline and scaler
+        #         pipeline = joblib.load(patchtst_pipeline_path)
+        #         target_scaler = joblib.load(patchtst_scaler_path)
                 
 
-                # Create model config
-                config = SimpleNamespace(
-                    d_model=128,
-                    n_heads=32,
-                    num_layers=8,
-                    patch_len=6,
-                    patch_stride=8,
-                    dropout=0.11,
-                    seq_len=12,
-                    prediction_len=6,
-                )
+        #         # Create model config
+        #         config = SimpleNamespace(
+        #             d_model=128,
+        #             n_heads=32,
+        #             num_layers=8,
+        #             patch_len=6,
+        #             patch_stride=8,
+        #             dropout=0.11,
+        #             seq_len=12,
+        #             prediction_len=6,
+        #         )
                 
-                # Initialize model
-                with open(patchtst_path, 'rb') as f:
-                    checkpoint = pickle.load(f)
+        #         # Initialize model
+        #         with open(patchtst_path, 'rb') as f:
+        #             checkpoint = pickle.load(f)
             
-                num_targets = 5
-                model = PatchTST(config, num_targets)
-                state_dict = checkpoint.get('model_state_dict', checkpoint)
-                model.load_state_dict(state_dict)
-                model = model.to(torch.device)
+        #         num_targets = 5
+        #         model = PatchTST(config, num_targets)
+        #         state_dict = checkpoint.get('model_state_dict', checkpoint)
+        #         model.load_state_dict(state_dict)
+        #         model = model.to(torch.device)
 
-                # Store components
-                self._sequential_models[self.model_id] = model
-                self._sequential_pipelines[self.model_id] = pipeline
-                self._target_scalers[self.model_id] = target_scaler
+        #         # Store components
+        #         self._sequential_models[self.model_id] = model
+        #         self._sequential_pipelines[self.model_id] = pipeline
+        #         self._target_scalers[self.model_id] = target_scaler
 
-                logger.info(f"PatchTST model loaded successfully")
-            else:
-                logger.warning("PatchTST paths not configured")            
+        #         logger.info(f"PatchTST model loaded successfully")
+        #     else:
+        #         logger.warning("PatchTST paths not configured")            
 
-        except Exception as e:
-            logger.error(f"Error loading PatchTST: {e}", exc_info=True)   
+        # except Exception as e:
+        #     logger.error(f"Error loading PatchTST: {e}", exc_info=True)   
     
     def __init__(self, model_path: str, pipeline_path: str, y_scaler_path: str, countries_ids: dict[str, int] ,device: str = None ):
         """
@@ -266,3 +266,59 @@ class PatchTST(nn.Module):
         outputs = self.patchtst_model(past_values=y_past, future_values=y_future)
         return outputs
 
+
+
+        """
+        Workflow:
+        1. Prepare input DataFrame from request
+        2. Fill gaps with LightGBM (last_test_date → today_date)
+        3. Combine original data + LightGBM predictions = COMPLETE historical data
+        4. Use COMPLETE historical data as input to sequential model
+        5. Sequential model forecasts future (today_date → today_date + horizon)
+        6. Return both historical (from LightGBM) and forecast (from sequential model)
+        
+        Args:
+            req: Sequential prediction request
+        
+        Returns:
+            SequentialForecastResult
+        
+        logger.info("Starting sequential prediction")
+        logger.info(f"Model: {req.model_id}")
+        logger.info(f"Last test date: {req.last_test_date}")
+        logger.info(f"Today: {req.today_date}")
+        logger.info(f"Forecast horizon: {req.forecast_horizon} weeks")
+
+
+        # Validate model ID
+        if req.model_id not in self.sequential_models:
+            raise ValueError(
+                f"Model '{req.model_id}' not found. "
+                f"Available models: {list(self.sequential_models.keys())}"
+            )
+        
+        # Step 1: Prepare input data
+        original_df = self._request_to_dataframe(req.request)
+        logger.info(f"Original data: {len(original_df)} weeks (up to {req.last_test_date})")
+
+
+        
+        historical_data, forecasted_data  = [], []
+        # Step 5: Create result
+        result = SequentialForecastResult(
+            historical=historical_data,
+            forecast=forecasted_data,
+            metadata={
+                'model_id': req.model_id,
+                'last_test_date': req.last_test_date.isoformat(),
+                'today_date': req.today_date.isoformat(),
+                'forecast_horizon': req.forecast_horizon,
+                'confidence_level': req.confidence_level,
+                'original_weeks': len(original_df),
+                'forecast_weeks': len(forecasted_data.weeks)
+            }
+        )
+        
+        logger.info("Sequential prediction completed successfully")
+        return result
+        """
