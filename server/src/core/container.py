@@ -1,6 +1,10 @@
 import logging
 
+from config import Settings
+from src.application.services.prediction_service import PredictionService
 from src.application.services.sequential_forecast_service import SequentialForecastService
+from src.infrastructure.data.indicator_repository import IndicatorRepository
+from src.infrastructure.ml.model_loader import ModelLoader
 from src.models.PatchTST_model.patchTST_model import  PatchTSTModel
 
 logger = logging.getLogger(__name__)
@@ -134,15 +138,36 @@ class ServiceContainer:
 """
 
 class ServiceContainer:
+        
+    def __init__(self, settings: Settings):
+        self.settings = settings
+        self.indicator_repository = IndicatorRepository(settings)
+        self.model_loader = ModelLoader(settings)
 
-    def __init__(self):
+        # Initialize single-model prediction service (existing LGBM model)
+        self.prediction_service = PredictionService( 
+            indicator_repository=self.indicator_repository,
+            model_loader=self.model_loader,
+            settings=settings,
+        )
         self._model_cache = {}
         self._model_factories = {
             "patchtst": PatchTSTModel,
         }
 
-    def load(self):
-        logger.info("ServiceContainer initialized (lazy model loading enabled)")
+        logger.info("ServiceContainer initialized")
+
+
+
+
+    def load(self) -> None:
+        # Load existing LGBM model and data
+        self.model_loader.load_all()
+        self.indicator_repository.load_all()
+
+
+        logger.info("All models and repositories loaded successfully")
+        
 
     def get_model(self, model_id: str):
         normalized_model_id = model_id.lower()
@@ -159,6 +184,7 @@ class ServiceContainer:
                 
                 self._model_cache[normalized_model_id] = model
             except Exception as e:
+
                 logger.exception(f"Failed to load model {normalized_model_id}")
                 raise
         return self._model_cache[normalized_model_id]
@@ -166,6 +192,6 @@ class ServiceContainer:
     def get_sequential_service(self, model_id: str = "patchtst"):
         model = self.get_model(model_id)
         logger.info(f"Model {model} loaded and cached")
-        
+
         return SequentialForecastService(model=model)
     
