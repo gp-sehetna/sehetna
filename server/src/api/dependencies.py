@@ -1,7 +1,7 @@
 from fastapi import Depends, Request
 
 from src.application.services.prediction_service import PredictionService
-from src.application.services.sequential_prediction_service import SequentialPredictionService
+from server.src.application.services.sequential_forecast_service import SequentialPredictionService
 from src.core.container import ServiceContainer
 from config import CoreSettings
 from typing import Annotated

@@ -167,22 +167,4 @@ def test_model_simplified(model, y_past_batch, target_scaler, device='cpu'):
 
 """
 
-
-def _create_model_config(model_id , seq_len , horizon_len ):
-    """Create model configuration matching training setup."""
-
-    if model_id == "patchTST":
-
-    elif model_id == "TimesFM":
-        
-        return SimpleNamespace(
-            d_model=128,
-            n_heads=32,
-            num_layers=8,
-            patch_len=6,
-            patch_stride=8,
-            dropout=0.11,
-            seq_len=seq_len,
-            prediction_len=horizon_len,
-        )
     

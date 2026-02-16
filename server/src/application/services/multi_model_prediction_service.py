@@ -1,7 +1,7 @@
 import logging
-from domain.schemas.predictions import PredictionRequest , PredictionResult
+from src.domain.schemas.predictions import PredictionRequest , PredictionResult
 
-from infrastructure.ml.model_orchestrator import ModelOrchestrator;
+from src.infrastructure.ml.model_orchestrator import ModelOrchestrator;
 logger = logging.getLogger(__name__)
 
 

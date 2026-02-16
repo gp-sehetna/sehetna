@@ -3,7 +3,6 @@ import joblib
 import logging
 import torch
 import torch.nn as nn
-import numpy as np
 import pandas as pd
 from types import SimpleNamespace
 from torch.utils.data import DataLoader

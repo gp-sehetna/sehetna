@@ -1,4 +1,6 @@
 # from fastapi import APIRouter, Depends, Query
+from server.src.application.services.sequential_forecast_service import SequentialPredictionService
+from src.domain.schemas.sequential_schemas import ForecastRequest, SequentialForecastResponse
 from src.api.dependencies import get_prediction_service , get_sequential_service
 # from src.application.services.prediction_service import PredictionService
 # from src.domain.schemas.predictions import PredictionQueryParams, PredictionRequest, SimulationResponse 
@@ -9,7 +11,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
-from core.container import ServiceContainer
+from src.core.container import ServiceContainer
 from src.api.dependencies import get_prediction_service
 from src.application.services.prediction_service import PredictionService
 from src.domain.schemas.predictions import (
@@ -37,23 +39,23 @@ async def simulate(
 
 
 
-# @router.post("/forecast" , response_model= SequentialForecastResponse)
-# async def forecast( 
-#     req : SequentialPredictionRequest,
-#     prediction_service : SequentialPredictionService = Depends(get_sequential_service),
-# ):
-#     try:
-#         result = prediction_service.predict(req)
-#         logger.info("Forecast completed successfully")
-#         logger.info(f"Historical weeks: {len(result.historical.weeks)}")
-#         logger.info(f"Forecast weeks: {len(result.forecast.weeks)}")
+@router.post("/forecast" , response_model= SequentialForecastResponse)
+async def forecast( 
+    req : ForecastRequest,
+    prediction_service : SequentialPredictionService = Depends(get_sequential_service),
+):
+    try:
+        result = prediction_service.predict(req)
+        logger.info("Forecast completed successfully")
+        logger.info(f"Historical weeks: {len(result.historical.weeks)}")
+        logger.info(f"Forecast weeks: {len(result.forecast.weeks)}")
 
-#         return SequentialForecastResponse(predictions=result)
+        return SequentialForecastResponse(predictions=result)
         
-#     except Exception as e:
-#         logger.error(f"Error during sequential forecast: {e}", exc_info=True)
-#     raise
+    except Exception as e:
+        logger.error(f"Error during sequential forecast: {e}", exc_info=True)
+    raise
 
 
-#     predictions, explanations = prediction_service.simulate(req, query)
-#     return SimulationResponse.build(predictions, query.explainer_method, explanations)
+    predictions, explanations = prediction_service.simulate(req, query)
+    return SimulationResponse.build(predictions, query.explainer_method, explanations)

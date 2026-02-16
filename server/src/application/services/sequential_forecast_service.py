@@ -1,14 +1,13 @@
 import logging
 import pandas as pd
 from datetime import timedelta
-from src.utils.filling_gaps import fill_gaps
-from src.utils.sequential_utils import combine_data , test_model , generate_future_dates
-from src.domain.schemas.sequential_schemas import SequentialPredictionResult , SequentialPredictionRequest , WeeklyPredictionWithCI , ForecastData
+from src.utils.sequential_utils import  test_model , generate_future_dates
+from src.domain.schemas.sequential_schemas import SequentialForecastResult , ForecastRequest , WeeklyPredictionWithCI , ForecastData
 from src.domain.sequential_dataset import SequentialDataset
 
 logger = logging.getLogger(__name__)
 
-class SequentialPredictionService:
+class SequentialForecastService:
     """
     Sequential prediction service with workflow:
     
@@ -47,7 +46,7 @@ class SequentialPredictionService:
         logger.info(f"SequentialPredictionService initialized with models: {list(sequential_models.keys())}")
 
     
-    def predict(self, req: SequentialPredictionRequest) -> SequentialPredictionResult:
+    def predict(self, req: ForecastRequest) -> SequentialForecastResult:
         """
         Run sequential prediction workflow.
         
@@ -63,7 +62,7 @@ class SequentialPredictionService:
             req: Sequential prediction request
         
         Returns:
-            SequentialPredictionResult
+            SequentialForecastResult
         """
         logger.info("Starting sequential prediction")
         logger.info(f"Model: {req.model_id}")
@@ -84,38 +83,10 @@ class SequentialPredictionService:
         logger.info(f"Original data: {len(original_df)} weeks (up to {req.last_test_date})")
 
 
-        # Step 2: Fill historical gaps with LightGBM
-        historical_data, lightgbm_predictions_df = fill_gaps(
-            original_df=original_df,
-            last_test_date=req.last_test_date,
-            today_date=req.today_date
-        )
-
-
-        logger.info(f"LightGBM filled {len(lightgbm_predictions_df)} weeks of gaps")
-
-        # Step 3: Combine original + LightGBM filled = COMPLETE historical data
-        complete_historical_df = combine_data(
-            original_df=original_df,
-            filled_df=lightgbm_predictions_df,
-            last_test_date=req.last_test_date
-        )
-
-        logger.info(f"Complete historical data: {len(complete_historical_df)} weeks")
-
         
-        # Step 4: Use COMPLETE historical data as input to sequential model
-        forecasted_data = self._forecast_with_sequential_model(
-            complete_historical_df=complete_historical_df,
-            model_id=req.model_id,
-            today_date=req.today_date,
-            horizon=req.forecast_horizon,
-            confidence_level=req.confidence_level
-        )
-        logger.info(f"Sequential model forecasted {len(forecasted_data.weeks)} weeks")
-
+        historical_data, forecasted_data  = [], []
         # Step 5: Create result
-        result = SequentialPredictionResult(
+        result = SequentialForecastResult(
             historical=historical_data,
             forecast=forecasted_data,
             metadata={
@@ -125,8 +96,6 @@ class SequentialPredictionService:
                 'forecast_horizon': req.forecast_horizon,
                 'confidence_level': req.confidence_level,
                 'original_weeks': len(original_df),
-                'filled_weeks': len(lightgbm_predictions_df),
-                'total_historical_weeks': len(complete_historical_df),
                 'forecast_weeks': len(forecasted_data.weeks)
             }
         )
