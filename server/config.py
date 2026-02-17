@@ -12,7 +12,7 @@ class CoreSettings(BaseSettings):
     app_name: str = "Sehetna App"
     version: str = "1.0"
     env_state: Literal["development", "production"]
-    log_level: int | str | None
+    log_level: int | str = "INFO"
 
     # Team info
     team_name: str = "Sehetna Team"

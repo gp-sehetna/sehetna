@@ -39,20 +39,18 @@ async def simulate(
 async def forecast( 
     req : ForecastRequest,
     forecast_service : SequentialForecastService = Depends(get_sequential_service),
+    prediction_service : PredictionService = Depends(get_prediction_service),
 ):
-    try:
-        # result = prediction_service.predict(req)
-        logger.info("Forecast completed successfully")
-        # logger.info(f"Historical weeks: {len(result.historical.weeks)}")
-        # logger.info(f"Forecast weeks: {len(result.forecast.weeks)}")
+    # result = prediction_service.predict(req)
+    result = prediction_service.simulate(req)
+    return SimulationResponse(predictions=result)
+    logger.info("Forecast completed successfully")
+    # logger.info(f"Historical weeks: {len(result.historical.weeks)}")
+    # logger.info(f"Forecast weeks: {len(result.forecast.weeks)}")
 
-        # return SequentialForecastResponse(predictions=result)
-        return True
+    # return SequentialForecastResponse(predictions=result)
+    return SequentialForecastResponse()
         
-        
-    except Exception as e:  
-        logger.error(f"Error during sequential forecast: {e}", exc_info=True)
-    raise
 
 
 

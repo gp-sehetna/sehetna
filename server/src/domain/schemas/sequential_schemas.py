@@ -1,6 +1,6 @@
 from datetime import date as Date
 from pydantic import BaseModel, Field
-from src.domain.schemas.predictions import SimulationResponse
+from src.domain.schemas.predictions import PredictionRequest
 
 
 
@@ -29,7 +29,7 @@ class HistoricalData(BaseModel):
 
 """ """
 
-class ForecastRequest(BaseModel):
+class ForecastRequest(PredictionRequest):
     model_id: str = Field(..., description="Identifier for the prediction model to use.")
 
 class WeeklyPredictionWithCI(BaseModel):
@@ -93,7 +93,4 @@ class SequentialForecastResult(BaseModel):
 class SequentialForecastResponse(BaseModel):
     """Response wrapper for sequential forecast endpoint."""
     
-    prediction: SequentialForecastResult = Field(
-        ..., 
-        description="Complete prediction result with historical and forecast data"
-    )
+    ...
