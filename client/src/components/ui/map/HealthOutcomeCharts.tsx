@@ -1,15 +1,25 @@
-import { usePredictionsStore } from "@/stores/usePredictions"
-import AppPieChart from "../GlobalComponents/charts/PieChart"
-import AppLoader from "../GlobalComponents/Loaders/AppLoader"
+import { usePredictionsStore } from "@/stores/map/use-predictions"
+import AppPieChart from "@/components/ui/GlobalComponents/charts/PieChart"
+import AppLoader from "@/components/ui/GlobalComponents/Loaders/AppLoader"
+import PredictionsViewer from "@/components/ui/map/MapPredictionsViewer"
+import Divider from "@/components/ui/GlobalControls/Divider"
 
 const HealthOutcomeCharts = () => {
     const { loading, contributors, healthOutcome } = usePredictionsStore()
 
-    if (loading) return <AppLoader />
+    if (!contributors || contributors.length === 0)
+        return (
+            <div className="flex flex-1 items-center justify-center">
+                {loading ? <AppLoader /> : <p>No data</p>}
+            </div>
+        )
 
-    if (!contributors || contributors.length === 0) return <p>No data</p>
-
-    return <AppPieChart contributors={contributors} healthOutcome={healthOutcome} />
+    return (
+        <>
+            <AppPieChart contributors={contributors} healthOutcome={healthOutcome} />
+            <PredictionsViewer />
+        </>
+    )
 }
 
 export default HealthOutcomeCharts

@@ -5,9 +5,10 @@ type DividerProps = {
     vertical?: boolean
     children?: React.ReactNode
     className?: string
+    stripsClassName?: string
 }
 
-const Divider = ({ vertical = false, children, className }: DividerProps) => {
+const Divider = ({ vertical = false, children, className, stripsClassName }: DividerProps) => {
     if (!children) {
         if (!vertical) {
             return (
@@ -36,9 +37,9 @@ const Divider = ({ vertical = false, children, className }: DividerProps) => {
             >
                 <DividerDecoration side="left" />
 
-                <span className="h-px flex-1 bg-neutral-200" />
+                <span className={cn("h-px flex-1 bg-neutral-200", stripsClassName)} />
                 <span className="text-sm whitespace-nowrap">{children}</span>
-                <span className="h-px flex-1 bg-neutral-200" />
+                <span className={cn("h-px flex-1 bg-neutral-200", stripsClassName)} />
 
                 <DividerDecoration side="right" />
             </div>
@@ -53,9 +54,9 @@ const Divider = ({ vertical = false, children, className }: DividerProps) => {
                 className
             )}
         >
-            <span className="h-full w-px bg-neutral-200" />
+            <span className={cn("h-full w-px bg-neutral-200", stripsClassName)} />
             <span className="text-xs font-bold whitespace-nowrap">{children}</span>
-            <span className="h-full w-px bg-neutral-200" />
+            <span className={cn("h-full w-px bg-neutral-200", stripsClassName)} />
         </div>
     )
 }
