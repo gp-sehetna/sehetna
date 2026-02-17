@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 import pickle
 import joblib
 import logging
@@ -6,18 +7,14 @@ import torch.nn as nn
 import pandas as pd
 from types import SimpleNamespace
 from torch.utils.data import DataLoader
+from src.core.exceptions import AppException, NotFound
+from src.models.SequentialModel import SequentialModel
 from src.models.PatchTST_model.dataset import ClimateHealthDataset
 # from transformers import PatchTSTConfig, PatchTSTForPrediction
 
 logger = logging.getLogger(__name__)
-class PatchTSTModel:
 
-    model_id = "patchtst"
-    
-    def load(self):
-        logger.info("Loading PatchTST model components...")
-    def __init__(self):
-        logger.info("Initializing PatchTST model instance")
+# class PatchTSTModel:
 
     #     """
     
@@ -240,89 +237,41 @@ class PatchTSTModel:
         
     #     return final_predictions, None
     
-
-
-
-# class PatchTST(nn.Module):
-
-#     def __init__(self, config, num_targets):
-#         super().__init__()
-
-#         model_config = PatchTSTConfig(
-#             num_input_channels=num_targets,
-#             context_length=config.seq_len,
-#             prediction_length=config.prediction_len,
-
-#             d_model=config.d_model,
-#             num_attention_heads=config.n_heads,
-#             num_hidden_layers=config.num_layers,
-
-#             patch_length=config.patch_len,
-#             stride=config.patch_stride,
-#             dropout=config.dropout,
-
-#             loss="mse"
-#         )
     
-#         self.patchtst_model = PatchTSTForPrediction(model_config)
+
+class PatchTST(nn.Module, SequentialModel):
+
+    def load(self):
+        logger.info("Loading PatchTST model components...")
+        return "Loading PatchTST model components..."
     
-#     def forward(self, y_past, y_future):
-#         outputs = self.patchtst_model(past_values=y_past, future_values=y_future)
-#         return outputs
+    def transform(self):
+        logger.info("Transforming PatchTST model...")
+    
+    def forecast(self):
+        logger.info("Forecasting PatchTST model...")
+    
+    # def __init__(self, config, num_targets):
+    #     super().__init__()
 
+    #     model_config = PatchTSTConfig(
+    #         num_input_channels=num_targets,
+    #         context_length=config.seq_len,
+    #         prediction_length=config.prediction_len,
 
+    #         d_model=config.d_model,
+    #         num_attention_heads=config.n_heads,
+    #         num_hidden_layers=config.num_layers,
 
-        """
-        Workflow:
-        1. Prepare input DataFrame from request
-        2. Fill gaps with LightGBM (last_test_date → today_date)
-        3. Combine original data + LightGBM predictions = COMPLETE historical data
-        4. Use COMPLETE historical data as input to sequential model
-        5. Sequential model forecasts future (today_date → today_date + horizon)
-        6. Return both historical (from LightGBM) and forecast (from sequential model)
-        
-        Args:
-            req: Sequential prediction request
-        
-        Returns:
-            SequentialForecastResult
-        
-        logger.info("Starting sequential prediction")
-        logger.info(f"Model: {req.model_id}")
-        logger.info(f"Last test date: {req.last_test_date}")
-        logger.info(f"Today: {req.today_date}")
-        logger.info(f"Forecast horizon: {req.forecast_horizon} weeks")
+    #         patch_length=config.patch_len,
+    #         stride=config.patch_stride,
+    #         dropout=config.dropout,
 
-
-        # Validate model ID
-        if req.model_id not in self.sequential_models:
-            raise ValueError(
-                f"Model '{req.model_id}' not found. "
-                f"Available models: {list(self.sequential_models.keys())}"
-            )
-        
-        # Step 1: Prepare input data
-        original_df = self._request_to_dataframe(req.request)
-        logger.info(f"Original data: {len(original_df)} weeks (up to {req.last_test_date})")
-
-
-        
-        historical_data, forecasted_data  = [], []
-        # Step 5: Create result
-        result = SequentialForecastResult(
-            historical=historical_data,
-            forecast=forecasted_data,
-            metadata={
-                'model_id': req.model_id,
-                'last_test_date': req.last_test_date.isoformat(),
-                'today_date': req.today_date.isoformat(),
-                'forecast_horizon': req.forecast_horizon,
-                'confidence_level': req.confidence_level,
-                'original_weeks': len(original_df),
-                'forecast_weeks': len(forecasted_data.weeks)
-            }
-        )
-        
-        logger.info("Sequential prediction completed successfully")
-        return result
-        """
+    #         loss="mse"
+    #     )
+    
+    #     self.patchtst_model = PatchTSTForPrediction(model_config)
+    
+    # def forward(self, y_past, y_future):
+    #     outputs = self.patchtst_model(past_values=y_past, future_values=y_future)
+    #     return outputs

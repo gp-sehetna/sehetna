@@ -5,7 +5,6 @@ from src.application.services.prediction_service import PredictionService
 from src.application.services.sequential_forecast_service import SequentialForecastService
 from src.infrastructure.data.indicator_repository import IndicatorRepository
 from src.infrastructure.ml.model_loader import ModelLoader
-from src.models.PatchTST_model.patchTST_model import  PatchTSTModel
 
 logger = logging.getLogger(__name__)
 from abc import ABC, abstractmethod
@@ -143,6 +142,7 @@ class ServiceContainer:
         self.settings = settings
         self.indicator_repository = IndicatorRepository(settings)
         self.model_loader = ModelLoader(settings)
+        self.forecast_service = SequentialForecastService()
 
         # Initialize single-model prediction service (existing LGBM model)
         self.prediction_service = PredictionService( 
@@ -150,12 +150,7 @@ class ServiceContainer:
             model_loader=self.model_loader,
             settings=settings,
         )
-        self._model_cache = {}
-        self._model_factories = {
-            "patchtst": PatchTSTModel,
-        }
-
-        logger.info("ServiceContainer initialized")
+        
 
 
 
@@ -177,21 +172,5 @@ class ServiceContainer:
                 f"Available models: {list(self._model_factories.keys())}"
             )
 
-        if normalized_model_id not in self._model_cache:
-            try:
-                model = self._model_factories[normalized_model_id]()
-                model.load()
-                
-                self._model_cache[normalized_model_id] = model
-            except Exception as e:
+        
 
-                logger.exception(f"Failed to load model {normalized_model_id}")
-                raise
-        return self._model_cache[normalized_model_id]
-
-    def get_sequential_service(self, model_id: str = "patchtst"):
-        model = self.get_model(model_id)
-        logger.info(f"Model {model} loaded and cached")
-
-        return SequentialForecastService(model=model)
-    

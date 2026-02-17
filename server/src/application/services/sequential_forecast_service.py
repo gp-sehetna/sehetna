@@ -1,6 +1,8 @@
 import logging
 import pandas as pd
 from datetime import timedelta
+from src.domain.schemas.predictions import PredictionResult
+from src.models.ForecastModelFactory import ForecastModelFactory
 from src.utils.sequential_utils import  test_model , generate_future_dates
 from src.domain.schemas.sequential_schemas import SequentialForecastResult , ForecastRequest , WeeklyPredictionWithCI , ForecastData
 from src.domain.sequential_dataset import SequentialDataset
@@ -9,33 +11,27 @@ logger = logging.getLogger(__name__)
 
 class SequentialForecastService:
     """
-    Sequential forecast service with workflow:
     
-    1. this service take the model .
-    2. forecast future using the passed model. 
+        1- call the factory
+        
+            2- load
+        
+                3- forecast
     
     """
-    model = None
-    def __init__(self, model):
-        self.model = model
-    # # Target columns
-    # self.targets = [
-    #     'respiratory_disease_rate',
-    #     'cardio_mortality_rate',
-    #     'vector_disease_risk_score',
-    #     'waterborne_disease_incidents',
-    #     'heat_related_admissions'
-    # ]
-
-
-        
     
-    def forecast(self, req: ForecastRequest) -> SequentialForecastResult:
-        """ call forecast method of the model and return the result """
-        # return self.model.forecast(req.predictions)
-        return "5od sambosa"
-
-
+    
+    def forecast(self, req: ForecastRequest, predictions : list[PredictionResult]) -> str: # SequentialForecastResult
+        
+        """ call forecast method of the passd model """
+        model_id = req.model_id
+        model_class = ForecastModelFactory()
+        
+        model = model_class.getInstance(model_id)
+        res = model.load()
+        # model.forecast()
+        
+        return res
 
 
     def _forecast_with_sequential_model(
@@ -153,6 +149,3 @@ class SequentialForecastService:
                 model_used=model_id,
                 horizon=horizon
             )
-        
-
-

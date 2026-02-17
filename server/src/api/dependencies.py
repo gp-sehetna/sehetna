@@ -20,8 +20,14 @@ def get_settings() -> CoreSettings:
     """Get application settings."""
     return CoreSettings()
 
-def get_container(request: Request) -> ServiceContainer:
-    return request.app.state.services
+
+def get_forecast_service(
+    container: Annotated[ServiceContainer, Depends(get_services)]
+) -> SequentialForecastService:
+    """Get the sequential prediction service."""
+    return container.forecast_service
+
+
 
 # def get_multi_model_service(
 #     container: Annotated[ServiceContainer, Depends(get_container)]
@@ -38,8 +44,3 @@ def get_container(request: Request) -> ServiceContainer:
 #     return container.get_multi_model_service()
 
 
-def get_sequential_service(
-    container: Annotated[ServiceContainer, Depends(get_container)]
-) -> SequentialForecastService:
-    """Get the sequential prediction service."""
-    return container.get_sequential_service()

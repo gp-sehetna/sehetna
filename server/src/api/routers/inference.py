@@ -1,17 +1,18 @@
 # from fastapi import APIRouter, Depends, Query
-from src.domain.schemas.sequential_schemas import ForecastRequest, SequentialForecastResponse
-from src.api.dependencies import get_prediction_service , get_sequential_service
+from src.domain.schemas.sequential_schemas import ForecastRequest
+from src.api.dependencies import  get_forecast_service, get_prediction_service , get_services
 import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
-from src.api.dependencies import get_prediction_service, get_sequential_service
+from src.api.dependencies import get_prediction_service
 from src.application.services.prediction_service import PredictionService
 from src.application.services.sequential_forecast_service import SequentialForecastService
 from src.domain.schemas.predictions import (
     PredictionQueryParams,
     PredictionRequest,
+    PredictionResult,
     SimulationResponse,
 )
 from src.domain.schemas.sequential_schemas import ForecastRequest, SequentialForecastResponse
@@ -27,30 +28,24 @@ async def simulate(
     query: Annotated[PredictionQueryParams, Query()],
     prediction_service: PredictionService = Depends(get_prediction_service),
 ):
-    result = prediction_service.simulate(req, query)
-    return SimulationResponse(predictions=result)
+    predictions, explanations = prediction_service.simulate(req, query)
+    return SimulationResponse.build(predictions, query.explainer_method, explanations)
 
 
 
 # predictions, explanations = prediction_service.simulate(req, query)
 # return SimulationResponse.build(predictions, query.explainer_method, explanations)
 
-@router.post("/forecast" , response_model= SequentialForecastResponse)
+@router.post("/forecast")
 async def forecast( 
     req : ForecastRequest,
-    forecast_service : SequentialForecastService = Depends(get_sequential_service),
     prediction_service : PredictionService = Depends(get_prediction_service),
+    forecast_service : SequentialForecastService = Depends(get_forecast_service),
 ):
     # result = prediction_service.predict(req)
-    result = prediction_service.simulate(req)
-    return SimulationResponse(predictions=result)
-    logger.info("Forecast completed successfully")
-    # logger.info(f"Historical weeks: {len(result.historical.weeks)}")
-    # logger.info(f"Forecast weeks: {len(result.forecast.weeks)}")
-
-    # return SequentialForecastResponse(predictions=result)
-    return SequentialForecastResponse()
-        
+    predictions, _ = prediction_service.simulate(req)
+    
+    return forecast_service.forecast(req, PredictionResult.from_predictions(predictions))
 
 
 

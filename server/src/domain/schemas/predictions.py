@@ -153,7 +153,6 @@ class PredictionResult(BaseModel):
             heat_related_admissions=round(prediction[4]),
         )
 
-    # @classmethod
     # def from_predictions(cls, method: ExplainerMethod, predictions, data: dict[str, list] | None = None):
     #     return cls(
     #         respiratory_disease_rate=float(predictions[0]),
@@ -178,6 +177,8 @@ class PredictionResult(BaseModel):
     #         heat_related_admissions=round(aggregated[4]),
     #         explanations={"method": method, method: explanation_data},
     #     )
+    
+    @classmethod
     def from_predictions(cls, predictions: list[list[float]]):
         return [cls.from_prediction(prediction) for prediction in predictions]
 
