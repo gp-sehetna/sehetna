@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 from abc import ABC, abstractmethod
 
 
-
 class BaseSequentialModel(ABC):
 
     @abstractmethod
@@ -142,7 +141,7 @@ class ServiceContainer:
         self.settings = settings
         self.indicator_repository = IndicatorRepository(settings)
         self.model_loader = ModelLoader(settings)
-        self.forecast_service = SequentialForecastService()
+        self.forecast_service = SequentialForecastService(settings)
 
         # Initialize single-model prediction service (existing LGBM model)
         self.prediction_service = PredictionService( 
@@ -150,6 +149,8 @@ class ServiceContainer:
             model_loader=self.model_loader,
             settings=settings,
         )
+
+        
         
 
 

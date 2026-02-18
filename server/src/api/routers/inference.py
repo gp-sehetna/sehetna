@@ -1,12 +1,10 @@
 # from fastapi import APIRouter, Depends, Query
-from src.domain.schemas.sequential_schemas import ForecastRequest
-from src.api.dependencies import  get_forecast_service, get_prediction_service , get_services
 import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
-from src.api.dependencies import get_prediction_service
+from src.api.dependencies import get_forecast_service, get_prediction_service
 from src.application.services.prediction_service import PredictionService
 from src.application.services.sequential_forecast_service import SequentialForecastService
 from src.domain.schemas.predictions import (
@@ -15,7 +13,7 @@ from src.domain.schemas.predictions import (
     PredictionResult,
     SimulationResponse,
 )
-from src.domain.schemas.sequential_schemas import ForecastRequest, SequentialForecastResponse
+from src.domain.schemas.sequential_schemas import ForecastRequest
 
 __all__ = ["router"]
 
