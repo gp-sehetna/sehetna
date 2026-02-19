@@ -1,4 +1,4 @@
-import { parseISO, startOfDay, differenceInCalendarDays } from "date-fns"
+import { differenceInCalendarDays, parseISO, startOfDay, startOfWeek, subWeeks } from "date-fns"
 import { z } from "zod"
 
 const DATE_FORMAT_REGEX = /^\d{4}-\d{2}-\d{2}$/
@@ -40,9 +40,10 @@ const WeekEnvironmentParamsSchema = WeekEnvironmentQuerySchema.transform((data) 
         const startDate = "2025-10-01"
 
         const start = startOfDay(parseISO(startDate))
-        const end = startOfDay(new Date())
+        const lastWeek = subWeeks(new Date(), 1)
+        const firstDayOfLastWeek = startOfWeek(lastWeek)
 
-        const diffDays = differenceInCalendarDays(end, start)
+        const diffDays = differenceInCalendarDays(firstDayOfLastWeek, start)
         const weeks = Math.max(1, Math.ceil((diffDays + 1) / 7))
 
         return { loc, date: startDate, weeks }

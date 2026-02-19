@@ -30,8 +30,8 @@ Provides health risk predictions based on climate data.\
 
 class PathSettings(CoreSettings):
     # Paths
-    __archive_name: str = "[modelling_phase_v5]-multioutput_lgbm"
-    __patchTST_archive_name: str = "[model-67ual6ug-v0]-patch-tst"
+    __lgbm_archive: str = "[modelling_phase_v5]-multioutput_lgbm"
+    __patchtst_archive: str = "[model-67ual6ug-v0]-patch-tst"
 
     @computed_field
     @property
@@ -51,34 +51,32 @@ class PathSettings(CoreSettings):
     @computed_field
     @property
     def model_path(self) -> str:
-        return os.path.join(self.archive_dir, self.__archive_name, "model.joblib")
+        return os.path.join(self.archive_dir, self.__lgbm_archive, "model.joblib")
 
     @computed_field
-
     @property
     def patchtst_model_path(self) -> str:
-        return os.path.join(self.archive_dir, self.__patchTST_archive_name, "model.pkl")
-    @computed_field
+        return os.path.join(self.archive_dir, self.__patchtst_archive, "model.pkl")
 
+    @computed_field
     @property
     def patchtst_pipeline_path(self) -> str:
-        return os.path.join(self.archive_dir, self.__patchTST_archive_name, "pipeline.joblib")
-    @computed_field
+        return os.path.join(self.archive_dir, self.__patchtst_archive, "pipeline.joblib")
 
+    @computed_field
     @property
     def patchtst_scaler_path(self) -> str:
-        return os.path.join(self.archive_dir, self.__patchTST_archive_name, "y_scaler.joblib")
-    
+        return os.path.join(self.archive_dir, self.__patchtst_archive, "y_scaler.joblib")
+
     @computed_field
-    
     @property
     def shap_background_data_path(self) -> str:
-        return os.path.join(self.archive_dir, self.__archive_name, "shap_background.joblib")
+        return os.path.join(self.archive_dir, self.__lgbm_archive, "shap_background.joblib")
 
     @computed_field
     @property
     def pipeline_path(self) -> str:
-        return os.path.join(self.archive_dir, self.__archive_name, "pipeline.joblib")
+        return os.path.join(self.archive_dir, self.__lgbm_archive, "pipeline.joblib")
 
     @computed_field
     @property

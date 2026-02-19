@@ -1,0 +1,185 @@
+[
+	{
+		"model_id": "patchtst",
+		"coords": "-1.5148936502416617,20.193686127794173",
+		"country_code": "COD",
+		"indicators": {
+			"gdp_per_capita_usd": null,
+			"food_production_index": null,
+			"undernourishment": null
+		},
+		"data": [
+			{
+				"date": "2025-09-28",
+				"pm25_ugm3": 16.18869050627663,
+				"aqi_pm": 58.81080352692377,
+				"temperature_celsius": 24.668155125209264,
+				"precipitation_mm": 5.371428571641445,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2025-10-05",
+				"pm25_ugm3": 14.329761896814619,
+				"aqi_pm": 54.51982296080816,
+				"temperature_celsius": 24.482737677437918,
+				"precipitation_mm": 4.085714390235288,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2025-10-12",
+				"pm25_ugm3": 15.076190490098227,
+				"aqi_pm": 55.94401781899588,
+				"temperature_celsius": 24.457439967564174,
+				"precipitation_mm": 5.971428734915597,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2025-10-19",
+				"pm25_ugm3": 14.78333333276567,
+				"aqi_pm": 54.669116235914686,
+				"temperature_celsius": 24.819940294538224,
+				"precipitation_mm": 4.285714231431484,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2025-10-26",
+				"pm25_ugm3": 13.252380998361678,
+				"aqi_pm": 49.958167132877165,
+				"temperature_celsius": 24.385416303362167,
+				"precipitation_mm": 8.442856763090406,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2025-11-02",
+				"pm25_ugm3": 13.073214350002152,
+				"aqi_pm": 50.83469536190941,
+				"temperature_celsius": 25.016666684831893,
+				"precipitation_mm": 2.1285713336297443,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2025-11-09",
+				"pm25_ugm3": 14.174999992052713,
+				"aqi_pm": 52.552603869211104,
+				"temperature_celsius": 24.236608232770646,
+				"precipitation_mm": 4.057142836706979,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2025-11-16",
+				"pm25_ugm3": 17.159523810659135,
+				"aqi_pm": 61.38651393708729,
+				"temperature_celsius": 24.598511832101003,
+				"precipitation_mm": 4.771428440298353,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2025-11-23",
+				"pm25_ugm3": 17.089880961747397,
+				"aqi_pm": 59.13333645321074,
+				"temperature_celsius": 25.65357208251953,
+				"precipitation_mm": 4.314285700874669,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2025-11-30",
+				"pm25_ugm3": 15.775000033988839,
+				"aqi_pm": 56.653796025684905,
+				"temperature_celsius": 25.040773936680385,
+				"precipitation_mm": 0.8428571500948497,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2025-12-07",
+				"pm25_ugm3": 14.702976187070211,
+				"aqi_pm": 55.88513508297148,
+				"temperature_celsius": 24.30029787336077,
+				"precipitation_mm": 4.928571258272443,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2025-12-14",
+				"pm25_ugm3": 29.97916653610411,
+				"aqi_pm": 85.27251720428467,
+				"temperature_celsius": 24.659821374075754,
+				"precipitation_mm": 2.185714285288538,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2025-12-21",
+				"pm25_ugm3": 18.559523822296235,
+				"aqi_pm": 64.21758028439113,
+				"temperature_celsius": 24.838392530168807,
+				"precipitation_mm": 4.628571251673358,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2025-12-28",
+				"pm25_ugm3": 16.964285680225917,
+				"aqi_pm": 61.89257151739938,
+				"temperature_celsius": 24.071131025041854,
+				"precipitation_mm": 3.071428452219282,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2026-01-04",
+				"pm25_ugm3": 18.17678575856345,
+				"aqi_pm": 62.038162889934725,
+				"temperature_celsius": 25.149702889578684,
+				"precipitation_mm": 1.6142857755933488,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2026-01-11",
+				"pm25_ugm3": 20.955952439989364,
+				"aqi_pm": 67.30358652841477,
+				"temperature_celsius": 24.87797655378069,
+				"precipitation_mm": 6.228571321283068,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2026-01-18",
+				"pm25_ugm3": 20.823214235759917,
+				"aqi_pm": 69.39911497206916,
+				"temperature_celsius": 25.801190784999303,
+				"precipitation_mm": 0.6857143065759114,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2026-01-25",
+				"pm25_ugm3": 14.19285716471218,
+				"aqi_pm": 54.75255765233721,
+				"temperature_celsius": 26.134523119245255,
+				"precipitation_mm": 0.3571428454348019,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			},
+			{
+				"date": "2026-02-01",
+				"pm25_ugm3": 17.590476180825913,
+				"aqi_pm": 61.851926031566805,
+				"temperature_celsius": 25.675000054495676,
+				"precipitation_mm": 0.7142857334443501,
+				"flood_indicator": 0,
+				"heat_wave_days": 0
+			}
+		]
+	}
+]

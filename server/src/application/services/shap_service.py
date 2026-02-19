@@ -45,7 +45,7 @@ class ShapExplanabilityService:
 
         return explanations
 
-    def __shap_percentages(self, explanation_df, col="abs_shap"):
+    def __shap_percentages(self, explanation_df: pd.DataFrame, col="abs_shap"):
         total = explanation_df[col].sum()
         explanation_df = explanation_df.copy()
         explanation_df["percent"] = explanation_df[col] / total * 100

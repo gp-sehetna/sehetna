@@ -12,7 +12,7 @@ from src.domain.types import ExplainerMethod
 __all__ = ["PredictionResult", "PredictionRequest", "SimulationResponse", "EnvironmentData", "WeeklyEnvironmentData"]
 
 with open("src/domain/schemas/examples/prediction_request.json") as f:
-    prediction_request_examples = json.load(f)
+    prediction_request_examples: dict = json.load(f)
 
 
 class IndicatorsData(BaseModel):
@@ -165,7 +165,7 @@ class PredictionResult(BaseModel):
 
     #     # Convert each model's predictions to floats
     #     model_preds = list(predictions.values())
-    
+
     #     # Simple aggregation: average across models for each outcome
     #     aggregated = [sum(x) / len(x) for x in zip(*model_preds)]
 
@@ -177,7 +177,7 @@ class PredictionResult(BaseModel):
     #         heat_related_admissions=round(aggregated[4]),
     #         explanations={"method": method, method: explanation_data},
     #     )
-    
+
     @classmethod
     def from_predictions(cls, predictions: list[list[float]]):
         return [cls.from_prediction(prediction) for prediction in predictions]
@@ -199,5 +199,3 @@ class SimulationResponse(BaseModel):
             predictions=PredictionResult.from_predictions(predictions),
             explanations={"method": method, method: explanations},
         )
-
-

@@ -1,24 +1,22 @@
-from typing import Protocol
+from abc import ABC, abstractmethod
 
 from config import Settings
-from src.domain.schemas.predictions import PredictionResult
 
-#  This is the interface that the models will extend
-#  every unique behaviour should in a seperate function
-    
-class SequentialModel(Protocol):
-    
-    def __init__(self, settings : Settings):
+
+class SequentialModel(ABC):
+    """
+    This is the interface that the models will extend
+    every unique behaviour should in a seperate function
+    """
+
+    def __init__(self, settings: Settings):
         self.settings = settings
 
-    def load(self)-> 'SequentialModel':
-        pass
-    
+    @abstractmethod
+    def load(self) -> "SequentialModel": ...
 
-    def transform(self, predictions : list[PredictionResult]) -> 'SequentialModel':
-        pass
-    
+    @abstractmethod
+    def transform(self, predictions: list[list[float]]) -> "SequentialModel": ...
 
-    def forecast(self):
-        pass
-
+    @abstractmethod
+    def forecast(self): ...

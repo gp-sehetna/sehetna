@@ -114,18 +114,17 @@ class PredictionService(ShapExplanabilityService):
         )
 
     def simulate(self, req: PredictionRequest, query: PredictionQueryParams | None = None):
-        
         df = self.get_df(req)
         df_processed = self.model_loader.pipeline.transform(df)
         X_test = df_processed[self.settings.features]
 
-        
-        explanations = None
-        if query is not None : 
-            logger.info("Explaining...")
-            explanations = self._explain(X_test, query.explainer_method, query.top_k_contributors)
-
         logger.info("Predicting...")
         predictions: list[list[float]] = self.model_loader.model.predict(X_test)
+
+        if query is None:
+            return predictions, None
+
+        logger.info("Explaining...")
+        explanations = self._explain(X_test, query.explainer_method, query.top_k_contributors)
 
         return predictions, explanations

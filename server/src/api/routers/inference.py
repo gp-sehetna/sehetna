@@ -10,7 +10,6 @@ from src.application.services.sequential_forecast_service import SequentialForec
 from src.domain.schemas.predictions import (
     PredictionQueryParams,
     PredictionRequest,
-    PredictionResult,
     SimulationResponse,
 )
 from src.domain.schemas.sequential_schemas import ForecastRequest
@@ -19,6 +18,7 @@ __all__ = ["router"]
 
 router = APIRouter(tags=["inference"])
 logger = logging.getLogger(__name__)
+
 
 @router.post("/simulate", response_model=SimulationResponse)
 async def simulate(
@@ -30,20 +30,12 @@ async def simulate(
     return SimulationResponse.build(predictions, query.explainer_method, explanations)
 
 
-
-# predictions, explanations = prediction_service.simulate(req, query)
-# return SimulationResponse.build(predictions, query.explainer_method, explanations)
-
 @router.post("/forecast")
-async def forecast( 
-    req : ForecastRequest,
-    prediction_service : PredictionService = Depends(get_prediction_service),
-    forecast_service : SequentialForecastService = Depends(get_forecast_service),
+async def forecast(
+    req: ForecastRequest,
+    prediction_service: PredictionService = Depends(get_prediction_service),
+    forecast_service: SequentialForecastService = Depends(get_forecast_service),
 ):
-    # result = prediction_service.predict(req)
     predictions, _ = prediction_service.simulate(req)
-    
-    return forecast_service.forecast(req, PredictionResult.from_predictions(predictions))
 
-
-
+    return forecast_service.forecast(req, predictions)
