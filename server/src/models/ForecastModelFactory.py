@@ -1,5 +1,6 @@
 from config import Settings
 from src.core.exceptions import NotFound
+from src.models.TimesFM_model.timesfm_model import TimesFM
 from src.models.patchtst.model import PatchTST
 from src.models.SequentialModel import SequentialModel
 
@@ -9,7 +10,7 @@ class ForecastModelFactory:
         self._model_cache: dict[str, SequentialModel] = {}
         self._model_factories: dict[str, type[SequentialModel]] = {
             "patchtst": PatchTST,
-            # "timesfm": TimesFM,
+            "timesfm": TimesFM,
         }
 
         self.settings = settings

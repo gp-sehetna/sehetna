@@ -1,103 +1,115 @@
 import logging
 import numpy as np
-import pandas as pd
-
+import timesfm
+from config import Settings
+from src.domain.schemas.predictions import PredictionResult
+from src.models.SequentialModel import SequentialModel
+import torch.nn as nn
 logger = logging.getLogger(__name__)
 
 
-class TimesFMModel:
-    """
-    TimesFM (Time Series Foundation Model) wrapper for climate-health forecasting.
-    This is a placeholder implementation until the actual TimesFM notebook is provided.
-    """
+class TimesFM(nn.Module, SequentialModel):
     
-    def __init__(
-        self, 
-        model_path: str = None, 
-        countries_ids: dict[str, int] = None,
-        device: str = None
-    ):
-        """
-        Initialize TimesFM model.
+    def __init__(self, settings: Settings):
+        nn.Module.__init__(self)
+        SequentialModel.__init__(self, settings)
         
-        Args:
-            model_path: Path to saved model checkpoint
-            countries_ids: Dictionary mapping country names to IDs
-            device: Device to run model on ('cuda' or 'cpu')
-        """
-        self.device = device or 'cpu'
-        self.model_path = model_path
-        self.countries_ids = countries_ids
-        
-        # Target names
-        self.targets = [
-            'respiratory_disease_rate',
-            'cardio_mortality_rate', 
-            'vector_disease_risk_score',
-            'waterborne_disease_incidents',
-            'heat_related_admissions'
+        self.max_context = 512 # temp for now
+        self.max_horizon = 128
+        self._model: timesfm.TimesFM_2p5_200M_torch | None = None
+        self._loaded: bool = False
+        self.transformed_series: dict[str, np.ndarray] = {}
+
+    
+    def load(self) -> None:
+        if self._loaded:
+            return
+
+        self._model = timesfm.TimesFM_2p5_200M_torch.from_pretrained(
+            "google/timesfm-2.5-200m-pytorch"
+        )
+
+        self._model.compile(
+            timesfm.ForecastConfig(
+                max_context=self.max_context,
+                max_horizon=self.max_horizon,
+                normalize_inputs=True,
+                use_continuous_quantile_head=True,
+                fix_quantile_crossing=True,
+            )
+        )
+
+        self._loaded = True
+        logger.info("TimesFM loaded")
+        return self
+
+    
+    def transform(self, predictions: list[list[float]]):
+
+        if predictions is None:
+            raise ValueError("Predictions is None")
+
+        predictions_np = np.asarray(predictions, dtype=np.float32)
+
+        if predictions_np.ndim != 2 or predictions_np.shape[1] != 5:
+            raise ValueError(
+                f"Expected shape (n, 5), got {predictions_np.shape}"
+            )
+
+        targets = [
+            "respiratory_disease_rate",
+            "cardio_mortality_rate",
+            "vector_disease_risk_score",
+            "waterborne_disease_incidents",
+            "heat_related_admissions",
         ]
-        
-        logger.info(f"Initializing TimesFM model (placeholder) on device: {self.device}")
-        
-        # Placeholder: In actual implementation, load the model here
-        # self.model = load_timesfm_model(model_path)
-        
-        logger.warning("TimesFM is using placeholder implementation - predictions will be based on simple statistics")
-    
-    def predict(self, df: pd.DataFrame) -> tuple[list[float], None]:
+
+        transformed: dict[str, np.ndarray] = {}
+
+        for i, name in enumerate(targets):
+            series = predictions_np[:, i]
+
+            if len(series) > self.max_context:
+                logger.info(f"{name}: slicing to last {self.max_context}")
+                series = series[-self.max_context:]
+
+            transformed[name] = series
+
+        self.transformed_series = transformed
+        return self
+
+
+
+    def forecast(
+        self,
+        horizon: int = 128
+    ) -> dict[str, list[float]]:
         """
-        Generate predictions for a given dataframe.
-        
-        Args:
-            df: DataFrame with preprocessed climate-health data
-                Must contain target columns
-        
         Returns:
-            tuple: (predictions, None)
-                - predictions: List of 5 predicted health outcomes
-                - uncertainty: None (placeholder doesn't compute uncertainty)
-        
-        Note:
-            This is a placeholder implementation. Replace with actual TimesFM inference
-            once the model notebook is provided.
+            Dict[str, List[float]]
+            where each key is a target name
+            and value is forecasted horizon values.
         """
-        logger.info(f"TimesFM predict called with dataframe shape: {df.shape}")
-        
-        # TODO: Implement actual TimesFM inference
-        # For now, use simple statistical baseline
-        
-        try:
-            # Check if target columns exist
-            available_targets = [t for t in self.targets if t in df.columns]
-            
-            if not available_targets:
-                logger.warning("No target columns found in dataframe, using zeros")
-                return [0.0] * 5, None
-            
-            # Simple placeholder: use last value or mean from the data
-            predictions = []
-            
-            for target in self.targets:
-                if target in df.columns:
-                    values = df[target].dropna()
-                    if len(values) > 0:
-                        # Use last value with slight trend
-                        last_val = values.iloc[-1]
-                        mean_val = values.mean()
-                        # Weighted combination
-                        pred = 0.7 * last_val + 0.3 * mean_val
-                        predictions.append(float(pred))
-                    else:
-                        predictions.append(0.0)
-                else:
-                    predictions.append(0.0)
-            
-            logger.info(f"TimesFM placeholder predictions: {predictions}")
-            
-            # TimesFM placeholder doesn't return uncertainty
-            return predictions, None
-            
-        except Exception as e:
-            logger.error(f"Error during TimesFM prediction: {e}", exc_info=True)
-            return [0.0] * 5, None
+
+        if not self._loaded or self._model is None:
+            raise RuntimeError("TimesFM not loaded. Call load() first.")
+
+        if horizon > self.max_horizon:
+            raise ValueError(
+                f"Horizon {horizon} exceeds max_horizon {self.max_horizon}"
+            )
+
+        forecast_results: dict[str, list[float]] = {}
+
+        for name, series in self.transformed_series.items():
+
+            input_series = [series]  # TimesFM expects List[np.ndarray]
+
+            point_forecast, _ = self._model.forecast(
+                inputs=input_series,
+                horizon=horizon
+            )
+
+            forecast_results[name] = point_forecast[0].tolist()
+
+        return forecast_results

@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 from config import Settings
 
+from src.domain.schemas.predictions import PredictionResult
+
 
 class SequentialModel(ABC):
     """
