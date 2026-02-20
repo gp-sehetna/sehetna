@@ -1,0 +1,34 @@
+{
+	"Air Quality": {
+		"title": "Air Quality",
+		"description": "Measures the cleanliness of the air a population breathes and how pollution evolves over time.\n\nInfluences:\n  • Health outcomes such as respiratory and cardiovascular disease risk\n  • Population vulnerability to pollution-related illness\n  • Climate stress when combined with heat or humidity\n  • Socioeconomic burden on healthcare systems in affected areas"
+	},
+	"Climate": {
+		"title": "Climate Conditions",
+		"description": "Captures the full spectrum of weather patterns, temperature extremes, and climate anomalies in a region.\n\nInfluences:\n  • Risk of heat-related illness and mortality during extreme events\n  • Flood exposure and infrastructure resilience\n  • Agricultural productivity and food security\n  • Air pollution behavior and dispersion\n  • Seasonal demand on healthcare systems"
+	},
+	"Socioeconomic": {
+		"title": "Socioeconomic Status",
+		"description": "Reflects the economic strength and social welfare of a population, shaping how well communities can cope with environmental pressures.\n\nInfluences:\n  • Ability to access quality healthcare and preventive services\n  • Resilience to food insecurity during climate shocks\n  • Exposure to pollution in lower-income, industrialized areas\n  • Long-term adaptive capacity to environmental and health risks"
+	},
+	"Healthcare": {
+		"title": "Healthcare Access & Capacity",
+		"description": "Describes the availability and quality of medical infrastructure and how well it can respond to environmental health threats.\n\nInfluences:\n  • Population survival rates during heat waves and pollution events\n  • Speed of recovery from climate-driven health crises\n  • Burden placed on health systems by vulnerable groups\n  • Disparity in health outcomes across regions"
+	},
+	"Seasonal": {
+		"title": "Seasonal & Temporal Patterns",
+		"description": "Encodes how conditions shift cyclically throughout the year, capturing rhythms that repeat across months and quarters.\n\nInfluences:\n  • Predictability of pollution peaks and temperature swings\n  • Timing of agricultural cycles and food availability\n  • Seasonal strain on energy grids and healthcare systems\n  • Short-term environmental forecasting and trend detection"
+	},
+	"Geographic & Spatial": {
+		"title": "Geography & Spatial Context",
+		"description": "Defines where a location sits in the world and how its surroundings shape its environmental conditions.\n\nInfluences:\n  • Baseline climate zone and temperature regime\n  • Susceptibility to tropical diseases and extreme weather\n  • How pollution and heat from neighboring regions spill over locally\n  • Inequality in environmental exposure across hemispheres and latitudes"
+	},
+	"Exposure & Risk": {
+		"title": "Exposure & Risk Profile",
+		"description": "Aggregates the most critical risk factors to paint a picture of how vulnerable a population is to environmental and climate hazards.\n\nInfluences:\n  • Overall population resilience and adaptive capacity\n  • Likelihood of compounded crises — e.g. heat waves alongside poor air quality\n  • Priority targeting for public health interventions\n  • Long-term mortality and morbidity projections under climate change scenarios"
+	},
+	"Others": {
+		"title": "Other Factors",
+		"description": "Other factors that represent influences on the system."
+	}
+}

@@ -1,11 +1,10 @@
 "use client"
 import centroid from "@turf/centroid"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo } from "react"
 
 import { WeekClientService } from "@/features/environment/week/week.service.client"
 import { slugify } from "@/lib/utils"
 
-import { useThemeStore } from "@/stores/map/use-theme"
 import {
     colorEachCountry,
     COUNTRIES_SOURCE,
@@ -15,51 +14,35 @@ import {
     parseSlug,
     zoomToCountry,
 } from "@/shared/config/map"
-import { GeoJSONFeature, MapLibreEvent } from "maplibre-gl"
+import { useThemeStore } from "@/stores/map/use-theme"
+import { MapLibreEvent } from "maplibre-gl"
 import { MapLayerMouseEvent } from "react-map-gl/maplibre"
 
 import { Prediction, SimulateResponse } from "@/features/environment/week/week.types"
-import { Coordinates } from "@/shared/types/map"
+import { useMapStore } from "@/stores/map/use-map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
-import { format } from "date-fns"
+import { useSettingsStore } from "@/stores/use-settings"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
+import { useDateUrlSync } from "./use-date"
 
 const useMapHook = () => {
     const router = useRouter()
     const searchParams = useSearchParams()
     const params = useParams<MapPageProps["params"]>()
 
+    const { hoveredZone, markerCoords, setClickedZone, setHoveredZone, setMarkerCoords } =
+        useMapStore()
+    const { explanationMethod } = useSettingsStore()
     const { setLoading, onOutcomeSelect, setSimulation } = usePredictionsStore()
 
     const activeSlug = parseSlug(params.slug)
 
     const { theme, isInvalid, setHealthOutcome } = useThemeStore()
 
-    const [markerCoords, setMarkerCoords] = useState<Coordinates | null>(null)
-
-    const [clickedZone, setClickedZone] = useState<GeoJSONFeature | null>(null)
-    const [hoveredZone, setHoveredZone] = useState<GeoJSONFeature | null>(null)
-
     const weekService = useMemo(() => new WeekClientService(), [])
 
-    const date = useMemo(() => {
-        const value = searchParams.get("date")
-        return value ? new Date(value) : undefined
-    }, [searchParams])
-
-    const setDate = (date?: Date) => {
-        const params = new URLSearchParams(searchParams.toString())
-
-        if (!date) params.delete("date")
-        else params.set("date", format(date, "yyyy-MM-dd"))
-
-        const basePath = activeSlug.country
-            ? `/map/${activeSlug.country}/${activeSlug.healthOutcome}`
-            : `/map/${activeSlug.healthOutcome}`
-
-        router.push(`${basePath}?${params.toString()}`, { scroll: false })
-    }
+    const { date } = useDateUrlSync(activeSlug)
 
     useEffect(() => {
         if (!isInvalid) return
@@ -139,123 +122,13 @@ const useMapHook = () => {
 
             const simulation =
                 process.env.NODE_ENV != "development"
-                    ? await weekService.simulateEnvironment(location, date).unwrap()
-                    : ({
-                          explanations: {
-                              method: "group",
-                              group: {
-                                  respiratory_disease_rate: [
-                                      {
-                                          group: "Air Quality",
-                                          shap_sum: -12.92829562666441,
-                                          abs_shap_sum: 13.218885800920186,
-                                          percent: 49.557748704283746,
-                                      },
-                                      {
-                                          group: "Exposure & Risk",
-                                          shap_sum: 3.39532803102833,
-                                          abs_shap_sum: 4.135468630620453,
-                                          percent: 15.503917520527363,
-                                      },
-                                      {
-                                          group: "Socioeconomic",
-                                          shap_sum: 3.9156775802524497,
-                                          abs_shap_sum: 3.9156775802524497,
-                                          percent: 14.679918447864987,
-                                      },
-                                  ],
-                                  cardio_mortality_rate: [
-                                      {
-                                          group: "Climate",
-                                          shap_sum: -6.2529827134712095,
-                                          abs_shap_sum: 7.833883679182981,
-                                          percent: 57.34417415336522,
-                                      },
-                                      {
-                                          group: "Exposure & Risk",
-                                          shap_sum: 1.2417194426947025,
-                                          abs_shap_sum: 1.6758630513414028,
-                                          percent: 12.267348687941473,
-                                      },
-                                      {
-                                          group: "Socioeconomic",
-                                          shap_sum: 1.398218746184466,
-                                          abs_shap_sum: 1.5193637478516393,
-                                          percent: 11.121770877277156,
-                                      },
-                                  ],
-                                  vector_disease_risk_score: [
-                                      {
-                                          group: "Climate",
-                                          shap_sum: 25.27706281635237,
-                                          abs_shap_sum: 31.474613269420264,
-                                          percent: 77.50368273372627,
-                                      },
-                                      {
-                                          group: "Socioeconomic",
-                                          shap_sum: -0.7396956358927128,
-                                          abs_shap_sum: 2.324741591572092,
-                                          percent: 5.724487643702189,
-                                      },
-                                      {
-                                          group: "Exposure & Risk",
-                                          shap_sum: -0.30526520258310474,
-                                          abs_shap_sum: 1.9024651991625432,
-                                          percent: 4.684666272011195,
-                                      },
-                                  ],
-                                  waterborne_disease_incidents: [
-                                      {
-                                          group: "Socioeconomic",
-                                          shap_sum: 5.513760253619402,
-                                          abs_shap_sum: 6.221129070956668,
-                                          percent: 28.80129612703495,
-                                      },
-                                      {
-                                          group: "Exposure & Risk",
-                                          shap_sum: 5.7520772989727265,
-                                          abs_shap_sum: 5.9828120256033435,
-                                          percent: 27.69798518185862,
-                                      },
-                                      {
-                                          group: "Healthcare",
-                                          shap_sum: 3.7501931951947336,
-                                          abs_shap_sum: 3.9809279218253506,
-                                          percent: 18.430076378280685,
-                                      },
-                                  ],
-                                  heat_related_admissions: [
-                                      {
-                                          group: "Climate",
-                                          shap_sum: -1.035565712622101,
-                                          abs_shap_sum: 16.548716148818475,
-                                          percent: 53.92140341346592,
-                                      },
-                                      {
-                                          group: "Exposure & Risk",
-                                          shap_sum: -3.1285486404789844,
-                                          abs_shap_sum: 3.4534607820943344,
-                                          percent: 11.252561850073626,
-                                      },
-                                      {
-                                          group: "Geographic & Spatial",
-                                          shap_sum: -2.132491319217224,
-                                          abs_shap_sum: 3.157222406407673,
-                                          percent: 10.287315433475273,
-                                      },
-                                  ],
-                              },
-                          },
-                          predictions: [
-                              {
-                                  respiratory_disease_rate: 61.560547003297565,
-                                  cardio_mortality_rate: 26.24754667117697,
-                                  vector_disease_risk_score: 36.601777233290086,
-                                  waterborne_disease_incidents: 29,
-                                  heat_related_admissions: 8,
-                              },
-                          ],
-                      } as SimulateResponse)
+                    ? await weekService.simulateEnvironment(location, date, 1, {
+                          top_k_contributions: 25,
+                          explainer_method: explanationMethod,
+                      })
+                    : await fetch(`/simulation/examples/${explanationMethod}.json`).then(
+                          (res) => res.json() as Promise<SimulateResponse>
+                      )
             const healthOutcome = activeSlug.healthOutcome.replace(/-/g, "_") as keyof Prediction
 
             if (simulation) setSimulation(simulation, healthOutcome)
@@ -296,7 +169,7 @@ const useMapHook = () => {
         onOutcomeSelect(healthOutcomeKey)
     }
 
-    const closeCountryDetails = () => {
+    const closeSidebar = () => {
         setClickedZone(null)
         setMarkerCoords(null)
         router.push(`/map/${activeSlug.healthOutcome}`, { scroll: false })
@@ -308,13 +181,8 @@ const useMapHook = () => {
         onMouseMove,
         onMouseOut,
         onLayerSelect,
-        closeCountryDetails,
+        closeSidebar,
         markerCoords,
-        setMarkerCoords,
-        clickedZone,
-        setClickedZone,
-        setDate,
-        date,
         hoveredZone,
         theme,
         activeSlug,

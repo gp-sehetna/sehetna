@@ -1,0 +1,831 @@
+{
+	"explanations": {
+		"method": "cumulative",
+		"cumulative": {
+			"respiratory_disease_rate": [
+				{
+					"feature": "pm25_ugm3",
+					"shap": -3.029685188351432,
+					"from": 69.65416620307751,
+					"to": 66.62448101472607,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "food_security_index",
+					"shap": 2.486977797417203,
+					"from": 66.62448101472607,
+					"to": 69.11145881214327,
+					"direction": "Increase"
+				},
+				{
+					"feature": "pollution_vulnerability",
+					"shap": 1.7902350609295536,
+					"from": 69.11145881214327,
+					"to": 70.90169387307282,
+					"direction": "Increase"
+				},
+				{
+					"feature": "aqi_pm",
+					"shap": -1.5847910359007074,
+					"from": 70.90169387307282,
+					"to": 69.31690283717211,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "spatial_lag_pm25",
+					"shap": 1.0392420626007515,
+					"from": 69.31690283717211,
+					"to": 70.35614489977286,
+					"direction": "Increase"
+				},
+				{
+					"feature": "healthcare_access_index",
+					"shap": 0.7113159387538326,
+					"from": 70.35614489977286,
+					"to": 71.06746083852669,
+					"direction": "Increase"
+				},
+				{
+					"feature": "temp_change_rate",
+					"shap": -0.43346037905488627,
+					"from": 71.06746083852669,
+					"to": 70.63400045947179,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "heat_wave_days",
+					"shap": -0.29276865759748033,
+					"from": 70.63400045947179,
+					"to": 70.34123180187432,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "temp_precip_interaction",
+					"shap": -0.26435416322696254,
+					"from": 70.34123180187432,
+					"to": 70.07687763864735,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "temperature_celsius",
+					"shap": 0.2552128789573908,
+					"from": 70.07687763864735,
+					"to": 70.33209051760474,
+					"direction": "Increase"
+				},
+				{
+					"feature": "pm25_ugm3_lag_1w",
+					"shap": 0.22649577995951403,
+					"from": 70.33209051760474,
+					"to": 70.55858629756426,
+					"direction": "Increase"
+				},
+				{
+					"feature": "gdp_per_capita_usd",
+					"shap": 0.203989525915531,
+					"from": 70.55858629756426,
+					"to": 70.76257582347979,
+					"direction": "Increase"
+				},
+				{
+					"feature": "month_cos",
+					"shap": -0.1851103803224396,
+					"from": 70.76257582347979,
+					"to": 70.57746544315735,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "distance_to_equator",
+					"shap": 0.16725529305986128,
+					"from": 70.57746544315735,
+					"to": 70.74472073621722,
+					"direction": "Increase"
+				},
+				{
+					"feature": "quarter",
+					"shap": 0.11666158011823427,
+					"from": 70.74472073621722,
+					"to": 70.86138231633545,
+					"direction": "Increase"
+				},
+				{
+					"feature": "month_sin",
+					"shap": 0.1017570204148069,
+					"from": 70.86138231633545,
+					"to": 70.96313933675026,
+					"direction": "Increase"
+				},
+				{
+					"feature": "temp_anomaly_celsius",
+					"shap": -0.09420171493897214,
+					"from": 70.96313933675026,
+					"to": 70.86893762181128,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "is_northern",
+					"shap": 0.08612706647487357,
+					"from": 70.86893762181128,
+					"to": 70.95506468828616,
+					"direction": "Increase"
+				},
+				{
+					"feature": "temp_squared",
+					"shap": -0.08530368266423466,
+					"from": 70.95506468828616,
+					"to": 70.86976100562192,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "pm25_change_rate",
+					"shap": 0.07312684741802514,
+					"from": 70.86976100562192,
+					"to": 70.94288785303995,
+					"direction": "Increase"
+				},
+				{
+					"feature": "spatial_lag_temp",
+					"shap": 0.059785899987909945,
+					"from": 70.94288785303995,
+					"to": 71.00267375302786,
+					"direction": "Increase"
+				},
+				{
+					"feature": "is_tropical",
+					"shap": -0.0007584000984206796,
+					"from": 71.00267375302786,
+					"to": 71.00191535292944,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "flood_indicator",
+					"shap": 0,
+					"from": 71.00191535292944,
+					"to": 71.00191535292944,
+					"direction": "Unchanged"
+				}
+			],
+			"cardio_mortality_rate": [
+				{
+					"feature": "temp_anomaly_celsius",
+					"shap": -6.370738150475955,
+					"from": 30.99891691551743,
+					"to": 24.628178765041476,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "pollution_vulnerability",
+					"shap": -0.9074159033129399,
+					"from": 24.628178765041476,
+					"to": 23.720762861728534,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "healthcare_access_index",
+					"shap": 0.8002627513684274,
+					"from": 23.720762861728534,
+					"to": 24.521025613096963,
+					"direction": "Increase"
+				},
+				{
+					"feature": "temperature_celsius",
+					"shap": -0.6400458605418681,
+					"from": 24.521025613096963,
+					"to": 23.880979752555096,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "food_security_index",
+					"shap": 0.5958203495471389,
+					"from": 23.880979752555096,
+					"to": 24.476800102102235,
+					"direction": "Increase"
+				},
+				{
+					"feature": "pm25_ugm3_lag_1w",
+					"shap": 0.3736897346626938,
+					"from": 24.476800102102235,
+					"to": 24.85048983676493,
+					"direction": "Increase"
+				},
+				{
+					"feature": "gdp_per_capita_usd",
+					"shap": -0.3400810618785181,
+					"from": 24.85048983676493,
+					"to": 24.51040877488641,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "temp_precip_interaction",
+					"shap": 0.32971558739394824,
+					"from": 24.51040877488641,
+					"to": 24.84012436228036,
+					"direction": "Increase"
+				},
+				{
+					"feature": "pm25_change_rate",
+					"shap": -0.2973546794833237,
+					"from": 24.84012436228036,
+					"to": 24.542769682797037,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "spatial_lag_pm25",
+					"shap": -0.2763622549833963,
+					"from": 24.542769682797037,
+					"to": 24.26640742781364,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "temp_change_rate",
+					"shap": -0.23246545976857305,
+					"from": 24.26640742781364,
+					"to": 24.033941968045067,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "pm25_ugm3",
+					"shap": -0.16298140305916603,
+					"from": 24.033941968045067,
+					"to": 23.8709605649859,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "heat_wave_days",
+					"shap": -0.15890687069739215,
+					"from": 23.8709605649859,
+					"to": 23.712053694288507,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "aqi_pm",
+					"shap": -0.10017897374345922,
+					"from": 23.712053694288507,
+					"to": 23.611874720545046,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "quarter",
+					"shap": 0.04473609436186962,
+					"from": 23.611874720545046,
+					"to": 23.656610814906916,
+					"direction": "Increase"
+				},
+				{
+					"feature": "month_cos",
+					"shap": 0.039358996017690516,
+					"from": 23.656610814906916,
+					"to": 23.695969810924606,
+					"direction": "Increase"
+				},
+				{
+					"feature": "month_sin",
+					"shap": -0.02294756492250599,
+					"from": 23.695969810924606,
+					"to": 23.6730222460021,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "distance_to_equator",
+					"shap": -0.022342302757169818,
+					"from": 23.6730222460021,
+					"to": 23.650679943244928,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "is_northern",
+					"shap": 0.009231462628231385,
+					"from": 23.650679943244928,
+					"to": 23.65991140587316,
+					"direction": "Increase"
+				},
+				{
+					"feature": "is_tropical",
+					"shap": 0.008286386020481587,
+					"from": 23.65991140587316,
+					"to": 23.668197791893643,
+					"direction": "Increase"
+				},
+				{
+					"feature": "temp_squared",
+					"shap": -0.0039459409749542824,
+					"from": 23.668197791893643,
+					"to": 23.66425185091869,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "spatial_lag_temp",
+					"shap": -0.0036853503741440365,
+					"from": 23.66425185091869,
+					"to": 23.660566500544544,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "flood_indicator",
+					"shap": 0,
+					"from": 23.660566500544544,
+					"to": 23.660566500544544,
+					"direction": "Unchanged"
+				}
+			],
+			"vector_disease_risk_score": [
+				{
+					"feature": "temperature_celsius",
+					"shap": -3.4631111372326266,
+					"from": 10.962856618311694,
+					"to": 7.499745481079067,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "gdp_per_capita_usd",
+					"shap": -0.7868385504446632,
+					"from": 7.499745481079067,
+					"to": 6.712906930634404,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "temp_anomaly_celsius",
+					"shap": 0.7157323683358118,
+					"from": 6.712906930634404,
+					"to": 7.428639298970215,
+					"direction": "Increase"
+				},
+				{
+					"feature": "healthcare_access_index",
+					"shap": -0.6589400491312699,
+					"from": 7.428639298970215,
+					"to": 6.769699249838945,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "temp_squared",
+					"shap": -0.6284176197566558,
+					"from": 6.769699249838945,
+					"to": 6.14128163008229,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "temp_precip_interaction",
+					"shap": -0.6089188914376791,
+					"from": 6.14128163008229,
+					"to": 5.53236273864461,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "pollution_vulnerability",
+					"shap": 0.3813960968381434,
+					"from": 5.53236273864461,
+					"to": 5.913758835482754,
+					"direction": "Increase"
+				},
+				{
+					"feature": "pm25_ugm3_lag_1w",
+					"shap": -0.33454721492838874,
+					"from": 5.913758835482754,
+					"to": 5.579211620554365,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "food_security_index",
+					"shap": 0.26299634977112873,
+					"from": 5.579211620554365,
+					"to": 5.842207970325494,
+					"direction": "Increase"
+				},
+				{
+					"feature": "distance_to_equator",
+					"shap": -0.20628568946762244,
+					"from": 5.842207970325494,
+					"to": 5.635922280857871,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "quarter",
+					"shap": -0.1882612423732644,
+					"from": 5.635922280857871,
+					"to": 5.447661038484607,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "spatial_lag_pm25",
+					"shap": -0.11705636263330234,
+					"from": 5.447661038484607,
+					"to": 5.330604675851304,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "temp_change_rate",
+					"shap": 0.1039998495238251,
+					"from": 5.330604675851304,
+					"to": 5.434604525375129,
+					"direction": "Increase"
+				},
+				{
+					"feature": "month_sin",
+					"shap": 0.0771661717168172,
+					"from": 5.434604525375129,
+					"to": 5.511770697091946,
+					"direction": "Increase"
+				},
+				{
+					"feature": "spatial_lag_temp",
+					"shap": 0.05131820848269854,
+					"from": 5.511770697091946,
+					"to": 5.563088905574645,
+					"direction": "Increase"
+				},
+				{
+					"feature": "pm25_change_rate",
+					"shap": 0.04415270705765579,
+					"from": 5.563088905574645,
+					"to": 5.607241612632301,
+					"direction": "Increase"
+				},
+				{
+					"feature": "is_northern",
+					"shap": -0.029943032352603042,
+					"from": 5.607241612632301,
+					"to": 5.577298580279698,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "pm25_ugm3",
+					"shap": -0.028601523134639137,
+					"from": 5.577298580279698,
+					"to": 5.548697057145059,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "aqi_pm",
+					"shap": 0.02501635158318095,
+					"from": 5.548697057145059,
+					"to": 5.57371340872824,
+					"direction": "Increase"
+				},
+				{
+					"feature": "month_cos",
+					"shap": -0.022269748168619118,
+					"from": 5.57371340872824,
+					"to": 5.551443660559621,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "heat_wave_days",
+					"shap": 0.007626701465342194,
+					"from": 5.551443660559621,
+					"to": 5.559070362024963,
+					"direction": "Increase"
+				},
+				{
+					"feature": "is_tropical",
+					"shap": -0.000008046948350965976,
+					"from": 5.559070362024963,
+					"to": 5.559062315076612,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "flood_indicator",
+					"shap": 0,
+					"from": 5.559062315076612,
+					"to": 5.559062315076612,
+					"direction": "Unchanged"
+				}
+			],
+			"waterborne_disease_incidents": [
+				{
+					"feature": "healthcare_access_index",
+					"shap": 3.7318887177408033,
+					"from": 21.970520571382554,
+					"to": 25.70240928912336,
+					"direction": "Increase"
+				},
+				{
+					"feature": "food_security_index",
+					"shap": 1.598458740999049,
+					"from": 25.70240928912336,
+					"to": 27.30086803012241,
+					"direction": "Increase"
+				},
+				{
+					"feature": "spatial_lag_pm25",
+					"shap": 1.1759056115765998,
+					"from": 27.30086803012241,
+					"to": 28.47677364169901,
+					"direction": "Increase"
+				},
+				{
+					"feature": "temp_squared",
+					"shap": 0.43924576099409024,
+					"from": 28.47677364169901,
+					"to": 28.9160194026931,
+					"direction": "Increase"
+				},
+				{
+					"feature": "pollution_vulnerability",
+					"shap": -0.42943102713659753,
+					"from": 28.9160194026931,
+					"to": 28.4865883755565,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "pm25_ugm3_lag_1w",
+					"shap": -0.39116494439251254,
+					"from": 28.4865883755565,
+					"to": 28.095423431163987,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "pm25_change_rate",
+					"shap": 0.3679273852141341,
+					"from": 28.095423431163987,
+					"to": 28.46335081637812,
+					"direction": "Increase"
+				},
+				{
+					"feature": "temp_anomaly_celsius",
+					"shap": 0.33986297292722156,
+					"from": 28.46335081637812,
+					"to": 28.803213789305342,
+					"direction": "Increase"
+				},
+				{
+					"feature": "spatial_lag_temp",
+					"shap": 0.3059693079494173,
+					"from": 28.803213789305342,
+					"to": 29.10918309725476,
+					"direction": "Increase"
+				},
+				{
+					"feature": "temp_change_rate",
+					"shap": 0.29887786542749384,
+					"from": 29.10918309725476,
+					"to": 29.408060962682253,
+					"direction": "Increase"
+				},
+				{
+					"feature": "gdp_per_capita_usd",
+					"shap": -0.27090497224224236,
+					"from": 29.408060962682253,
+					"to": 29.13715599044001,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "temperature_celsius",
+					"shap": 0.1741413146450941,
+					"from": 29.13715599044001,
+					"to": 29.311297305085105,
+					"direction": "Increase"
+				},
+				{
+					"feature": "distance_to_equator",
+					"shap": 0.16734724285430275,
+					"from": 29.311297305085105,
+					"to": 29.478644547939407,
+					"direction": "Increase"
+				},
+				{
+					"feature": "month_sin",
+					"shap": 0.14827419667039066,
+					"from": 29.478644547939407,
+					"to": 29.626918744609796,
+					"direction": "Increase"
+				},
+				{
+					"feature": "temp_precip_interaction",
+					"shap": -0.12540774665452772,
+					"from": 29.626918744609796,
+					"to": 29.50151099795527,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "month_cos",
+					"shap": -0.11595413700386416,
+					"from": 29.50151099795527,
+					"to": 29.385556860951404,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "quarter",
+					"shap": -0.10345024963768083,
+					"from": 29.385556860951404,
+					"to": 29.282106611313722,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "pm25_ugm3",
+					"shap": -0.038116527464808314,
+					"from": 29.282106611313722,
+					"to": 29.243990083848914,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "heat_wave_days",
+					"shap": -0.03094873353955336,
+					"from": 29.243990083848914,
+					"to": 29.21304135030936,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "aqi_pm",
+					"shap": -0.01252578685147455,
+					"from": 29.21304135030936,
+					"to": 29.200515563457888,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "is_northern",
+					"shap": 0.008967384926509113,
+					"from": 29.200515563457888,
+					"to": 29.209482948384398,
+					"direction": "Increase"
+				},
+				{
+					"feature": "is_tropical",
+					"shap": 0.0037880818452686073,
+					"from": 29.209482948384398,
+					"to": 29.213271030229667,
+					"direction": "Increase"
+				},
+				{
+					"feature": "flood_indicator",
+					"shap": 0,
+					"from": 29.213271030229667,
+					"to": 29.213271030229667,
+					"direction": "Unchanged"
+				}
+			],
+			"heat_related_admissions": [
+				{
+					"feature": "temperature_celsius",
+					"shap": 3.8915880404047494,
+					"from": 8.523677991328539,
+					"to": 12.415266031733289,
+					"direction": "Increase"
+				},
+				{
+					"feature": "heat_wave_days",
+					"shap": -2.5004202713584527,
+					"from": 12.415266031733289,
+					"to": 9.914845760374837,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "month_sin",
+					"shap": 2.3502969686151847,
+					"from": 9.914845760374837,
+					"to": 12.265142728990021,
+					"direction": "Increase"
+				},
+				{
+					"feature": "temp_squared",
+					"shap": 2.1244593417309443,
+					"from": 12.265142728990021,
+					"to": 14.389602070720965,
+					"direction": "Increase"
+				},
+				{
+					"feature": "healthcare_access_index",
+					"shap": -0.8575390001116466,
+					"from": 14.389602070720965,
+					"to": 13.532063070609318,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "temp_anomaly_celsius",
+					"shap": -0.812529061656387,
+					"from": 13.532063070609318,
+					"to": 12.719534008952932,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "temp_precip_interaction",
+					"shap": -0.7590424357551092,
+					"from": 12.719534008952932,
+					"to": 11.960491573197823,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "pollution_vulnerability",
+					"shap": 0.5490508536811103,
+					"from": 11.960491573197823,
+					"to": 12.509542426878934,
+					"direction": "Increase"
+				},
+				{
+					"feature": "spatial_lag_temp",
+					"shap": -0.46934068412316265,
+					"from": 12.509542426878934,
+					"to": 12.040201742755771,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "food_security_index",
+					"shap": -0.37163992638428683,
+					"from": 12.040201742755771,
+					"to": 11.668561816371485,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "quarter",
+					"shap": 0.33739472606597704,
+					"from": 11.668561816371485,
+					"to": 12.005956542437461,
+					"direction": "Increase"
+				},
+				{
+					"feature": "month_cos",
+					"shap": 0.11562210801392211,
+					"from": 12.005956542437461,
+					"to": 12.121578650451383,
+					"direction": "Increase"
+				},
+				{
+					"feature": "pm25_change_rate",
+					"shap": -0.05230552680390246,
+					"from": 12.121578650451383,
+					"to": 12.06927312364748,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "spatial_lag_pm25",
+					"shap": -0.040271389031258875,
+					"from": 12.06927312364748,
+					"to": 12.029001734616221,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "gdp_per_capita_usd",
+					"shap": 0.03625759678325267,
+					"from": 12.029001734616221,
+					"to": 12.065259331399474,
+					"direction": "Increase"
+				},
+				{
+					"feature": "is_tropical",
+					"shap": 0.030634295842028224,
+					"from": 12.065259331399474,
+					"to": 12.095893627241502,
+					"direction": "Increase"
+				},
+				{
+					"feature": "is_northern",
+					"shap": 0.024232841469056438,
+					"from": 12.095893627241502,
+					"to": 12.120126468710557,
+					"direction": "Increase"
+				},
+				{
+					"feature": "pm25_ugm3",
+					"shap": 0.023468902978165715,
+					"from": 12.120126468710557,
+					"to": 12.143595371688724,
+					"direction": "Increase"
+				},
+				{
+					"feature": "pm25_ugm3_lag_1w",
+					"shap": 0.022236782653017144,
+					"from": 12.143595371688724,
+					"to": 12.165832154341741,
+					"direction": "Increase"
+				},
+				{
+					"feature": "aqi_pm",
+					"shap": -0.014366944850917208,
+					"from": 12.165832154341741,
+					"to": 12.151465209490825,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "temp_change_rate",
+					"shap": -0.010903890273693833,
+					"from": 12.151465209490825,
+					"to": 12.14056131921713,
+					"direction": "Decrease"
+				},
+				{
+					"feature": "distance_to_equator",
+					"shap": 0.006281914708961267,
+					"from": 12.14056131921713,
+					"to": 12.146843233926091,
+					"direction": "Increase"
+				},
+				{
+					"feature": "flood_indicator",
+					"shap": 0,
+					"from": 12.146843233926091,
+					"to": 12.146843233926091,
+					"direction": "Unchanged"
+				}
+			]
+		}
+	},
+	"predictions": [
+		{
+			"respiratory_disease_rate": 70.98492353021321,
+			"cardio_mortality_rate": 23.660567639681158,
+			"vector_disease_risk_score": 5.5583281735546395,
+			"waterborne_disease_incidents": 29,
+			"heat_related_admissions": 12
+		}
+	]
+}

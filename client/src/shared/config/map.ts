@@ -1,7 +1,7 @@
 import { toProperCase, unslugify } from "@/lib/utils"
-import bbox from "@turf/bbox"
-import { Map, GeoJSONFeature, LngLatBoundsLike, PointLike } from "maplibre-gl"
 import { DEFAULT_HEALTH_OUTCOME, HEALTH_OUTCOMES } from "@/shared/config/health-outcomes"
+import bbox from "@turf/bbox"
+import { GeoJSONFeature, LngLatBoundsLike, Map, PointLike } from "maplibre-gl"
 import { GradientPalette } from "./map-colors"
 
 const COUNTRIES_SOURCE = "countries"
@@ -46,7 +46,16 @@ type MapPageProps = {
     }
 }
 
-const parseSlug = (slug: string[] = []) => {
+export type Slug = {
+    country: string | null
+    healthOutcome: string
+}
+
+export type ActiveSlug = {
+    slug: Slug
+}
+
+const parseSlug = (slug: string[] = []): Slug => {
     let country: string | null = null
     let healthOutcome = DEFAULT_HEALTH_OUTCOME as string
 
@@ -104,11 +113,11 @@ const colorEachCountry = (map: Map, features: GeoJSONFeature[], theme: GradientP
 }
 
 export {
+    colorEachCountry,
     COUNTRIES_SOURCE,
     getClickedCountry,
     getCountryBySlug,
-    zoomToCountry,
     parseSlug,
-    colorEachCountry,
+    zoomToCountry,
 }
 export type { GeoJsonProperties, MapPageProps }

@@ -1,5 +1,10 @@
 "use client"
-import { EnvironmentData, Location, SimulateResponse } from "@/features/environment/week/week.types"
+import {
+    EnvironmentData,
+    Location,
+    SimulateQueryParams,
+    SimulateResponse,
+} from "@/features/environment/week/week.types"
 import { toProperCase } from "@/lib/utils"
 import { confirmIncompleteEnvironment } from "@/lib/utils/toast"
 import { api } from "@/shared/api"
@@ -54,7 +59,12 @@ export class WeekClientService {
         return environmentData
     }
 
-    private fetchEnvironmentAndSimulate = async (loc: Location, date?: Date, weeks = 0) => {
+    private fetchEnvironmentAndSimulate = async (
+        loc: Location,
+        date?: Date,
+        weeks = 0,
+        params: SimulateQueryParams = { top_k_contributions: 25, explainer_method: "group" }
+    ) => {
         const formattedDate = date ? format(date, "yyyy-MM-dd") : null
         const environment = await this.fetchEnvironment(loc, formattedDate, weeks)
         if (!environment) return null
@@ -62,28 +72,38 @@ export class WeekClientService {
         const result = await api
             .post<SimulateResponse>("ai/simulate", {
                 json: environment,
-                searchParams: { top_k_contributors: 3, explainer_method: "group" },
+                searchParams: {
+                    top_k_contributors: params.top_k_contributions,
+                    explainer_method: params.explainer_method,
+                },
             })
             .json()
         return result
     }
 
-    simulateEnvironment = (loc: Location, date: Date, weeks = 1) => {
-        return toast.promise<SimulateResponse | null>(
-            () => this.fetchEnvironmentAndSimulate(loc, date, weeks),
-            {
-                loading: "Simulating...",
-                success: (predictions) => {
-                    if (!predictions)
-                        return {
-                            message: "Modify your inputs at the side bar to get predictions.",
-                            type: "warning",
-                        }
+    simulateEnvironment = async (
+        loc: Location,
+        date: Date,
+        weeks = 1,
+        params: SimulateQueryParams = { top_k_contributions: 25, explainer_method: "group" }
+    ) => {
+        return await toast
+            .promise<SimulateResponse | null>(
+                () => this.fetchEnvironmentAndSimulate(loc, date, weeks, params),
+                {
+                    loading: "Simulating...",
+                    success: (predictions) => {
+                        if (!predictions)
+                            return {
+                                message: "Modify your inputs at the side bar to get predictions.",
+                                type: "warning",
+                            }
 
-                    return { message: "Predictions loaded!", type: "info" }
-                },
-                error: "Error occurred",
-            }
-        )
+                        return { message: "Predictions loaded!", type: "info" }
+                    },
+                    error: "Error occurred",
+                }
+            )
+            .unwrap()
     }
 }

@@ -5,21 +5,18 @@ import MapMarker from "@/components/ui/map/MapMarker"
 import MapSources from "@/components/ui/map/MapSources"
 import useMapHook from "@/hooks/map/use-map"
 import "maplibre-gl/dist/maplibre-gl.css"
-import { Map, NavigationControl } from "react-map-gl/maplibre"
+import { Map } from "react-map-gl/maplibre"
 
 export default function MapView({ children }: { children: React.ReactNode }) {
     const {
         theme,
         activeSlug,
-        date,
-        setDate,
-        clickedZone,
-        closeCountryDetails,
         onLayerSelect,
         onMapLoad,
         onMapClick,
         onMouseMove,
         onMouseOut,
+        closeSidebar,
         markerCoords,
     } = useMapHook()
 
@@ -39,14 +36,10 @@ export default function MapView({ children }: { children: React.ReactNode }) {
             {children}
 
             <MapControls
-                clickedZone={clickedZone}
-                closeCountryDetails={closeCountryDetails}
-                date={date}
-                setDate={setDate}
-                healthOutcome={activeSlug.healthOutcome}
+                closeSidebar={closeSidebar}
+                slug={activeSlug}
                 onLayerSelect={onLayerSelect}
             />
-            <NavigationControl position="top-right" showCompass={false} visualizePitch />
         </Map>
     )
 }

@@ -14,13 +14,16 @@
         width: 38px !important;
         height: 38px !important;
         background-color: transparent !important;
-        border: none !important; /* Removes the internal line between buttons */
+        border: none !important;
+        /* Removes the internal line between buttons */
         transition: background-color 0.2s ease;
         transition: all 0.3s ease-in-out;
+
         &:hover {
             color: var(--color-neutral-1000) !important;
             background-color: --alpha(var(--color-neutral-100) / 60%) !important;
         }
+
         .maplibregl-ctrl-icon {
             /* 1. Remove default icon */
             background-image: none !important;
@@ -65,4 +68,9 @@
     border: none !important;
     outline: none !important;
     background-color: transparent !important;
+}
+
+
+.maplibregl-ctrl-top-right {
+    top: 3rem !important;
 }

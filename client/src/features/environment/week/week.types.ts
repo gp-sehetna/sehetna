@@ -1,5 +1,3 @@
-import { Coordinates } from "@/shared/types/map"
-
 type Reducer = (values: number[]) => number | null
 type AggResult<T> = { date: string } & { [K in keyof T]: number | null }
 
@@ -51,16 +49,52 @@ interface GroupExplanationItem {
     percent: number
 }
 
-type GroupedByPrediction = Record<keyof Prediction, GroupExplanationItem[]>
-type ExplanationMethod = "cumulative" | "group"
-
-interface Explanations extends Record<ExplanationMethod, GroupedByPrediction> {
-    method: ExplanationMethod
+interface CumulativeExplanationItem {
+    feature: string
+    shap: number
+    from: number
+    to: number
+    direction: "Increase" | "Decrease"
 }
+
+type ExplanationItemMap = {
+    group: GroupExplanationItem
+    cumulative: CumulativeExplanationItem
+}
+
+type ExplanationItems<Method extends ExplanationMethod> = Record<
+    keyof Prediction,
+    ExplanationItemMap[Method][]
+>
+
+type ExplanationsByMethod = {
+    [Method in ExplanationMethod]: ExplanationItems<Method>
+}
+
+type Explanations = {
+    method: ExplanationMethod
+} & ExplanationsByMethod
 
 type SimulateResponse = {
     predictions: Prediction[]
     explanations: Explanations
+}
+
+type ExplanationMethod = "cumulative" | "group"
+interface SimulateQueryParams {
+    top_k_contributions: number
+    explainer_method: ExplanationMethod
+}
+
+interface Coordinates {
+    lat: number
+    lng: number
+}
+
+interface WaterfallItem extends CumulativeExplanationItem {
+    base: number
+    value: number
+    isLast: boolean
 }
 
 const HEAT_WAVE_DAY_THRESHOLD = 28
@@ -69,12 +103,20 @@ const PRECIPITATION_THRESHOLD = 132.5 // Precipitation in mm ranges between 0-20
 export { HEAT_WAVE_DAY_THRESHOLD, PRECIPITATION_THRESHOLD }
 export type {
     AggResult,
+    Coordinates,
+    CumulativeExplanationItem,
     EnvironmentData,
+    ExplanationItems,
+    ExplanationMethod,
+    Explanations,
+    ExplanationsByMethod,
     GroupExplanationItem,
     Location,
     Prediction,
     Reducer,
+    SimulateQueryParams,
     SimulateResponse,
+    WaterfallItem,
     WeeklyEnvironmentData,
     WeekParams,
 }

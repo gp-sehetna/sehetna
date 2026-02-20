@@ -1,0 +1,236 @@
+{
+	"explanations": {
+		"method": "group",
+		"group": {
+			"respiratory_disease_rate": [
+				{
+					"group": "Air Quality",
+					"shap_sum": -8.842225133834654,
+					"abs_shap_sum": 13.590297762348419,
+					"percent": 43.411756757739276
+				},
+				{
+					"group": "Exposure & Risk",
+					"shap_sum": 3.970608914631594,
+					"abs_shap_sum": 4.620533476649726,
+					"percent": 14.759461410406058
+				},
+				{
+					"group": "Socioeconomic",
+					"shap_sum": 4.524979161287483,
+					"abs_shap_sum": 4.524979161287483,
+					"percent": 14.45423037219066
+				},
+				{
+					"group": "Climate",
+					"shap_sum": 1.3038014418289823,
+					"abs_shap_sum": 3.268329014915653,
+					"percent": 10.440087971645903
+				},
+				{
+					"group": "Healthcare",
+					"shap_sum": 1.3942764689147589,
+					"abs_shap_sum": 2.0442010309328906,
+					"percent": 6.5298317572288225
+				},
+				{
+					"group": "Geographic & Spatial",
+					"shap_sum": 0.7701733287546811,
+					"abs_shap_sum": 1.6334705185454366,
+					"percent": 5.217827163323248
+				},
+				{
+					"group": "Seasonal",
+					"shap_sum": 1.2322846649718122,
+					"abs_shap_sum": 1.6237587181819253,
+					"percent": 5.186804567466038
+				}
+			],
+			"cardio_mortality_rate": [
+				{
+					"group": "Climate",
+					"shap_sum": -6.246418845486805,
+					"abs_shap_sum": 8.12728722454278,
+					"percent": 51.256748055770565
+				},
+				{
+					"group": "Exposure & Risk",
+					"shap_sum": 1.4848331847279406,
+					"abs_shap_sum": 2.133645188235496,
+					"percent": 13.456361370315234
+				},
+				{
+					"group": "Socioeconomic",
+					"shap_sum": 1.7619905399014897,
+					"abs_shap_sum": 1.884552777245517,
+					"percent": 11.885398440130853
+				},
+				{
+					"group": "Healthcare",
+					"shap_sum": 0.6151527703275861,
+					"abs_shap_sum": 1.2639647738351414,
+					"percent": 7.971506626244723
+				},
+				{
+					"group": "Air Quality",
+					"shap_sum": -0.294253729264492,
+					"abs_shap_sum": 1.2491396270813493,
+					"percent": 7.878008169618971
+				},
+				{
+					"group": "Seasonal",
+					"shap_sum": 0.7089582693327611,
+					"abs_shap_sum": 0.8891331729820741,
+					"percent": 5.607538379835457
+				},
+				{
+					"group": "Geographic & Spatial",
+					"shap_sum": -0.30476868205929347,
+					"abs_shap_sum": 0.3083108956843353,
+					"percent": 1.9444389580841925
+				}
+			],
+			"vector_disease_risk_score": [
+				{
+					"group": "Climate",
+					"shap_sum": 31.266626877647905,
+					"abs_shap_sum": 36.77896502772612,
+					"percent": 76.38814983436698
+				},
+				{
+					"group": "Seasonal",
+					"shap_sum": 1.8344869031452256,
+					"abs_shap_sum": 2.990225105511854,
+					"percent": 6.210554408644472
+				},
+				{
+					"group": "Air Quality",
+					"shap_sum": 1.4301665150020564,
+					"abs_shap_sum": 1.916468288021424,
+					"percent": 3.980412897095715
+				},
+				{
+					"group": "Socioeconomic",
+					"shap_sum": 0.8065738696950575,
+					"abs_shap_sum": 1.9115399892975256,
+					"percent": 3.970177056553006
+				},
+				{
+					"group": "Exposure & Risk",
+					"shap_sum": 0.9433930928010522,
+					"abs_shap_sum": 1.7960003680211232,
+					"percent": 3.7302067937896464
+				},
+				{
+					"group": "Geographic & Spatial",
+					"shap_sum": 1.3981029381123515,
+					"abs_shap_sum": 1.4006004407615547,
+					"percent": 2.9089800717969996
+				},
+				{
+					"group": "Healthcare",
+					"shap_sum": 0.5010680907971254,
+					"abs_shap_sum": 1.3536753660171963,
+					"percent": 2.8115189377531595
+				}
+			],
+			"waterborne_disease_incidents": [
+				{
+					"group": "Socioeconomic",
+					"shap_sum": 4.376653668547042,
+					"abs_shap_sum": 5.480922819638981,
+					"percent": 24.90865462912997
+				},
+				{
+					"group": "Exposure & Risk",
+					"shap_sum": 4.680976620828733,
+					"abs_shap_sum": 5.17659986735729,
+					"percent": 23.525625609465518
+				},
+				{
+					"group": "Healthcare",
+					"shap_sum": 3.316692354294064,
+					"abs_shap_sum": 3.8123156008226218,
+					"percent": 17.325486193288455
+				},
+				{
+					"group": "Climate",
+					"shap_sum": -1.7621853707593982,
+					"abs_shap_sum": 2.8078280859350344,
+					"percent": 12.760482559601819
+				},
+				{
+					"group": "Air Quality",
+					"shap_sum": 0.44866606288022015,
+					"abs_shap_sum": 1.8981914144607435,
+					"percent": 8.626538982334495
+				},
+				{
+					"group": "Geographic & Spatial",
+					"shap_sum": 1.4547031534989947,
+					"abs_shap_sum": 1.630843304163136,
+					"percent": 7.411546185630183
+				},
+				{
+					"group": "Seasonal",
+					"shap_sum": -1.0084164131006401,
+					"abs_shap_sum": 1.1973890571929224,
+					"percent": 5.441665840549567
+				}
+			],
+			"heat_related_admissions": [
+				{
+					"group": "Climate",
+					"shap_sum": -0.4297062962517155,
+					"abs_shap_sum": 18.813410258716722,
+					"percent": 54.339539739781564
+				},
+				{
+					"group": "Geographic & Spatial",
+					"shap_sum": -5.063015256811995,
+					"abs_shap_sum": 5.205164573597503,
+					"percent": 15.034289015626761
+				},
+				{
+					"group": "Seasonal",
+					"shap_sum": 0.9671458889536735,
+					"abs_shap_sum": 3.2088353100766835,
+					"percent": 9.268209827590287
+				},
+				{
+					"group": "Exposure & Risk",
+					"shap_sum": -2.642883796108654,
+					"abs_shap_sum": 3.188024991682032,
+					"percent": 9.208102536681679
+				},
+				{
+					"group": "Healthcare",
+					"shap_sum": -2.375095382453001,
+					"abs_shap_sum": 2.920236578026379,
+					"percent": 8.434638345682476
+				},
+				{
+					"group": "Socioeconomic",
+					"shap_sum": -0.4421197999926517,
+					"abs_shap_sum": 0.9872609955660301,
+					"percent": 2.8515461771339656
+				},
+				{
+					"group": "Air Quality",
+					"shap_sum": -0.04155256202542659,
+					"abs_shap_sum": 0.2990209356842751,
+					"percent": 0.8636743575032562
+				}
+			]
+		}
+	},
+	"predictions": [
+		{
+			"respiratory_disease_rate": 64.95040629344543,
+			"cardio_mortality_rate": 26.247294346828088,
+			"vector_disease_risk_score": 43.713313733659426,
+			"waterborne_disease_incidents": 25,
+			"heat_related_admissions": 7
+		}
+	]
+}

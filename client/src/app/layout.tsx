@@ -1,7 +1,6 @@
 import "@/app/globals.css"
 import { Toaster } from "@/components/ui/shadcn/sonner"
 import { plusJakarta } from "@/fonts/fonts"
-import "animate.css"
 import type { Metadata } from "next"
 export const metadata: Metadata = {
     metadataBase: new URL("https://sehetna.from-masr.com"),

@@ -1,5 +1,5 @@
+import { Coordinates } from "@/features/environment/week/week.types"
 import { Marker } from "react-map-gl/maplibre"
-import { Coordinates } from "@/shared/types/map"
 
 type Props = {
     coords: Coordinates | null
@@ -15,7 +15,7 @@ const MapMarker = ({ coords }: Props) => {
                     color="var(--color-danger-100)"
                     scale={0.7}
                     anchor="bottom"
-                ></Marker>
+                />
             )}
         </>
     )

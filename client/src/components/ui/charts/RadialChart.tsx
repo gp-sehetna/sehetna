@@ -1,7 +1,6 @@
 "use client"
 
-import { Label, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts"
-import { ChartContainer, ChartConfig } from "@/components/ui/shadcn/chart"
+import { ChartConfig, ChartContainer } from "@/components/ui/shadcn/chart"
 import {
     Tooltip,
     TooltipContent,
@@ -9,6 +8,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/shadcn/tooltip"
 import { LucideIcon } from "lucide-react"
+import { Label, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts"
 
 type RadialChartProps = {
     value: number | string
@@ -53,22 +53,22 @@ export function RadialChart({
     } satisfies ChartConfig
 
     return (
-        <ChartContainer config={chartConfig} className="mx-auto aspect-square h-40 w-full">
+        <ChartContainer config={chartConfig} className="mx-auto aspect-square h-35 w-full">
             <RadialBarChart
                 data={chartData}
                 startAngle={startAngle}
                 endAngle={endAngle}
-                innerRadius={40}
-                outerRadius={50}
+                innerRadius={30}
+                outerRadius={35}
             >
                 <PolarGrid
                     gridType="circle"
                     stroke="none"
                     className="last:fill-background/30"
-                    polarRadius={[20, 45]}
+                    polarRadius={[15, 32]}
                 />
 
-                <RadialBar dataKey="value" background cornerRadius={10} />
+                <RadialBar dataKey="value" cornerRadius={10} />
 
                 <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
                     <Label
@@ -77,19 +77,24 @@ export function RadialChart({
 
                             const centerX = viewBox.cx
                             const centerY = viewBox.cy
-                            const size = 28
-                            const posX = centerX - size / 2
-                            const posY = centerY - 58
+                            const helpSize = 28
+                            const posX = centerX - helpSize / 2
+                            const posY = centerY - 50
 
                             return (
                                 <>
-                                    <foreignObject x={posX} y={posY} width={size} height={size}>
+                                    <foreignObject
+                                        x={posX}
+                                        y={posY}
+                                        width={helpSize}
+                                        height={helpSize}
+                                    >
                                         <TooltipProvider delayDuration={200}>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
                                                     <div className="glassy flex h-full w-full cursor-pointer items-center justify-center rounded-full p-0.5 shadow-2xl">
                                                         <Icon
-                                                            size={size - 10}
+                                                            size={helpSize - 10}
                                                             className="hover:text-neutral-1000 text-neutral-800"
                                                         />
                                                     </div>
@@ -112,14 +117,14 @@ export function RadialChart({
                                         <tspan
                                             x={centerX}
                                             y={centerY}
-                                            className="fill-foreground text-2xl font-bold"
+                                            className="fill-foreground text-lg font-bold"
                                         >
                                             {safeValue}
                                         </tspan>
 
                                         <tspan
                                             x={centerX}
-                                            y={centerY + 60}
+                                            y={centerY + 50}
                                             className="fill-foreground text-xs font-bold"
                                         >
                                             {chartLabel}
