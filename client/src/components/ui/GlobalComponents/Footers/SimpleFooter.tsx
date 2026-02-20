@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 import FooterLink from "./FooterLink"
+import { simpleFooterItems } from "../nav/navigation-items"
 
 type SimpleFooterProps = {
     className?: string
-    // [key: string]: string[]
 }
 
 export default function SimpleFooter({ className }: SimpleFooterProps) {
@@ -16,16 +16,11 @@ export default function SimpleFooter({ className }: SimpleFooterProps) {
             )}
         >
             <div className="flex w-3/4 justify-evenly">
-                <FooterLink href="/more-about-us">About Us</FooterLink>
-                <FooterLink href="/methodology">Methodology</FooterLink>
-                <FooterLink href="/support/services-and-policies#terms">
-                    Terms of Service
-                </FooterLink>
-                <FooterLink href="/support/services-and-policies#privacy-policy">
-                    Privacy Policy
-                </FooterLink>
-                <FooterLink href="/support/services-and-policies#cookie-use">Cookie Use</FooterLink>
-                <FooterLink href="/support">Help & Support</FooterLink>
+                {simpleFooterItems.map((item) => (
+                    <FooterLink key={item.href} href={item.href}>
+                        {item.title}
+                    </FooterLink>
+                ))}
                 <div className="flex gap-1">
                     <FooterLink href="/">@GradProject</FooterLink>
                     <Image

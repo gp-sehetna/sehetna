@@ -5,13 +5,11 @@ type ComingSoonProps = {
 
 export default function ComingSoon({ title, description }: ComingSoonProps) {
     return (
-        <main className="mx-auto max-w-4xl px-6 py-24">
+        <div className="mx-auto max-w-4xl px-6 py-24">
             <div className="text-center">
                 {/* App Branding */}
                 <div className="mb-8 flex items-center justify-center gap-3">
-                    <h3 className="special-gradient bg-clip-text text-2xl font-bold text-transparent">
-                        Sehetna
-                    </h3>
+                    <h3 className="text-primary text-2xl font-bold">Sehetna</h3>
                 </div>
 
                 {/* Page Title */}
@@ -56,6 +54,6 @@ export default function ComingSoon({ title, description }: ComingSoonProps) {
                     </p>
                 </div>
             </div>
-        </main>
+        </div>
     )
 }

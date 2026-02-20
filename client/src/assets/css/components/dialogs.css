@@ -1,0 +1,3 @@
+.dialog-shadow {
+    @apply shadow-2xl/10;
+}
