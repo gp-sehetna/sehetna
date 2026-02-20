@@ -44,7 +44,7 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
                 <div className="flex flex-wrap items-start justify-between gap-4">
                     <CardTitle className="text-lg font-semibold">{label}</CardTitle>
                     <MetaTooltip
-                        title="Cumulative SHAP Explanation"
+                        title="Cumulative Explanation"
                         description="How each feature contributed to shifting the model prediction from its
                             baseline."
                         trigger={
@@ -144,7 +144,7 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
                         {/* Invisible spacer bar to offset the visible bar */}
                         <Bar dataKey="base" stackId="waterfall" fill="transparent" />
 
-                        {/* Visible SHAP bar */}
+                        {/* Visible bar */}
                         <Bar dataKey="value" stackId="waterfall" radius={[3, 3, 0, 0]}>
                             {waterfallData.map((entry, index) => (
                                 <Cell

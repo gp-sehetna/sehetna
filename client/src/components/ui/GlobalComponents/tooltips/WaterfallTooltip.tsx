@@ -17,7 +17,7 @@ const WaterfallTooltip = ({ active, payload }: any) => {
             <p className="font-semibold">{d.feature}</p>
             {[
                 {
-                    label: "SHAP value",
+                    label: "Impact Value",
                     value: `${isPositive ? "+" : ""}${d.shap.toFixed(4)}`,
                     className: `font-mono font-medium ${colorClass}`,
                 },

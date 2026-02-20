@@ -1,7 +1,7 @@
 import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
 import { ArrowLeft } from "lucide-react"
 
-import HealthOutcomeCharts from "@/components/ui/map/HealthOutcomeCharts"
+import HealthOutcomeCharts from "@/components/ui/map/MapSidebarContent"
 import { Card, CardContent, CardHeader } from "@/components/ui/shadcn/card"
 import { useDateUrlSync } from "@/hooks/map/use-date"
 import { ActiveSlug } from "@/shared/config/map"

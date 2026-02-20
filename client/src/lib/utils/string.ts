@@ -28,3 +28,13 @@ export function unslugify(slug: string): string {
 export function toProperCase(value: string): string {
     return value.replace(/[_\s]+/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())
 }
+
+export function getInitials(name: string) {
+    return name
+        .replaceAll(/&\s/g, "")
+        .split(" ")
+        .slice(0, 2)
+        .map((word) => word[0])
+        .join("")
+        .toUpperCase()
+}

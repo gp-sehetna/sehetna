@@ -6,7 +6,7 @@ import MetaTooltip from "@/components/ui/GlobalComponents/tooltips/MetaTooltip"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
 import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/shadcn/chart"
 import { GroupExplanationItem, Prediction } from "@/features/environment/week/week.types"
-import { toProperCase } from "@/lib/utils"
+import { getInitials, toProperCase } from "@/lib/utils"
 import { useThemeStore } from "@/stores/map/use-theme"
 import { HelpCircle } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -42,13 +42,7 @@ export default function GroupPieChart({ items, healthOutcome }: Props) {
     const sortedData = chartData.map((item, index) => ({
         ...item,
         group: metadata?.[item.group]?.title || item.group,
-        initials: (metadata?.[item.group]?.title || item.group)
-            .replaceAll(/&\s/g, "")
-            .split(" ")
-            .slice(0, 2)
-            .map((word) => word[0])
-            .join("")
-            .toUpperCase(),
+        initials: getInitials(metadata?.[item.group]?.title || item.group),
         description: metadata?.[item.group]?.description || "No Description",
         fill: colors[index % colors.length], // Add the fill color
     }))
