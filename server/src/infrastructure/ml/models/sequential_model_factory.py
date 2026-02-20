@@ -1,11 +1,11 @@
 from config import Settings
 from src.core.exceptions import NotFound
-from src.models.TimesFM_model.timesfm_model import TimesFM
-from src.models.patchtst.model import PatchTST
-from src.models.SequentialModel import SequentialModel
+from src.infrastructure.ml.models.patchtst.model import PatchTST
+from src.infrastructure.ml.models.sequential_model import SequentialModel
+from src.infrastructure.ml.models.timesfm.model import TimesFM
 
 
-class ForecastModelFactory:
+class SequentialModelFactory:
     def __init__(self, settings: Settings):
         self._model_cache: dict[str, SequentialModel] = {}
         self._model_factories: dict[str, type[SequentialModel]] = {

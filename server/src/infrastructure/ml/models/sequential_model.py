@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 
 from config import Settings
 
-from src.domain.schemas.predictions import PredictionResult
-
 
 class SequentialModel(ABC):
     """
@@ -21,4 +19,4 @@ class SequentialModel(ABC):
     def transform(self, predictions: list[list[float]]) -> "SequentialModel": ...
 
     @abstractmethod
-    def forecast(self): ...
+    def forecast(self) -> dict: ...

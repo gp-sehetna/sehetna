@@ -3,6 +3,7 @@ import logging
 import os
 from typing import Literal
 
+import torch
 from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -24,6 +25,7 @@ Provides health risk predictions based on climate data.\
 
     # Paths
     resources_path: str
+    device: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model_config = SettingsConfigDict(env_file=".env")
 

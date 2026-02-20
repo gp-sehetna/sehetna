@@ -5,8 +5,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 
 from src.api.dependencies import get_forecast_service, get_prediction_service
+from src.application.services.forecast_service import ForecastService
 from src.application.services.prediction_service import PredictionService
-from src.application.services.sequential_forecast_service import SequentialForecastService
 from src.domain.schemas.predictions import (
     PredictionQueryParams,
     PredictionRequest,
@@ -34,7 +34,7 @@ async def simulate(
 async def forecast(
     req: ForecastRequest,
     prediction_service: PredictionService = Depends(get_prediction_service),
-    forecast_service: SequentialForecastService = Depends(get_forecast_service),
+    forecast_service: ForecastService = Depends(get_forecast_service),
 ):
     predictions, _ = prediction_service.simulate(req)
 

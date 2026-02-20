@@ -3,8 +3,8 @@ from typing import Annotated
 
 from fastapi import Depends, Request
 
+from src.application.services.forecast_service import ForecastService
 from src.application.services.prediction_service import PredictionService
-from src.application.services.sequential_forecast_service import SequentialForecastService
 from src.core.container import ServiceContainer
 
 logger = logging.getLogger(__name__)
@@ -18,5 +18,5 @@ def get_prediction_service(services: ServiceContainer = Depends(get_services)) -
     return services.prediction_service
 
 
-def get_forecast_service(container: Annotated[ServiceContainer, Depends(get_services)]) -> SequentialForecastService:
+def get_forecast_service(container: Annotated[ServiceContainer, Depends(get_services)]) -> ForecastService:
     return container.forecast_service
