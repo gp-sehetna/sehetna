@@ -3,6 +3,7 @@ import logging
 from config import Settings
 from src.application.services.forecast_service import ForecastService
 from src.application.services.prediction_service import PredictionService
+from src.infrastructure.data.historical_repository import HistoricalRepository
 from src.infrastructure.data.indicator_repository import IndicatorRepository
 from src.infrastructure.ml.model_loader import ModelLoader
 
@@ -13,9 +14,10 @@ class ServiceContainer:
 
     def __init__(self, settings: Settings):
         self.settings = settings
+        self.historical_repository = HistoricalRepository(settings)
         self.indicator_repository = IndicatorRepository(settings)
         self.model_loader = ModelLoader(settings)
-        self.forecast_service = ForecastService(settings)
+        self.forecast_service = ForecastService(self.historical_repository, settings)
 
         # Initialize single-model prediction service (existing LGBM model)
         self.prediction_service = PredictionService(

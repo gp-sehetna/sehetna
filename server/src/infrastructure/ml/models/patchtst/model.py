@@ -210,7 +210,7 @@ class PatchTST(nn.Module, SequentialModel):
             final_preds.append(preds_at_t.mean(dim=0))
 
             # Standard deviation across overlapping predictions (uncertainty!)
-            final_std.append(preds_at_t.std(dim=0))
+            final_std.append(preds_at_t.std(dim=0, unbiased=False))
 
         collapsed_preds = torch.stack(final_preds)
         prediction_std = torch.stack(final_std)

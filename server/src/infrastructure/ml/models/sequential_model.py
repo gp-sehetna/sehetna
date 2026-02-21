@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import pandas as pd
+
 from config import Settings
 
 
@@ -16,7 +18,7 @@ class SequentialModel(ABC):
     def load(self) -> "SequentialModel": ...
 
     @abstractmethod
-    def transform(self, predictions: list[list[float]]) -> "SequentialModel": ...
+    def transform(self, predictions: list[list[float]], historical_df: pd.DataFrame | None = None) -> "SequentialModel": ...
 
     @abstractmethod
     def forecast(self) -> dict: ...
