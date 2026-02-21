@@ -1,4 +1,4 @@
-import { LucideIcon, Telescope, Waypoints, ShieldCheck, Info } from "lucide-react"
+import { Info, LucideIcon, Map, ShieldCheck, Telescope, Waypoints } from "lucide-react"
 
 type NavigationRouteItem = {
     title: string
@@ -69,4 +69,4 @@ const groupedNavItems = getGroupedRoutes({
     Company: ["about", "support", "policies"],
 })
 
-export { compactSidebarItems, simpleFooterItems, groupedNavItems, policiesItems }
+export { compactSidebarItems, groupedNavItems, policiesItems, simpleFooterItems }

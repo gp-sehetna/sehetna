@@ -23,7 +23,7 @@ const BottomRightContent = ({ slug, onLayerSelect }: BottomRightProps) => {
 
 const BottomLeftContent = (props: BottomLeftProps) => {
     return (
-        <div className="absolute inset-0 flex max-h-screen w-full flex-col gap-2 overflow-hidden p-4 backdrop-blur-xs md:w-1/3 md:min-w-md md:backdrop-blur-none">
+        <div className="absolute flex max-h-screen w-full flex-col gap-2 overflow-hidden p-4 backdrop-blur-xs md:w-1/3 md:min-w-md md:backdrop-blur-none">
             <MapSidebar {...props} />
         </div>
     )

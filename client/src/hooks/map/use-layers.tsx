@@ -64,7 +64,7 @@ const useLayers = (theme: GradientPalette) => {
                     "#bdbdbd",
                     "#cccccc",
                 ],
-                "fill-opacity": 0.5,
+                "fill-opacity": 0.3,
             },
         }),
         []
@@ -91,7 +91,7 @@ const useLayers = (theme: GradientPalette) => {
             filter: ["all"],
             paint: {
                 "fill-color": "rgba(255, 168, 70, 1)",
-                "fill-opacity": 0.45,
+                "fill-opacity": 0.5,
                 "fill-antialias": false,
             },
         }),
@@ -119,7 +119,7 @@ const useLayers = (theme: GradientPalette) => {
                     "#d8f3dc",
                     "#ccc",
                 ],
-                "fill-opacity": 0.75,
+                "fill-opacity": 0.3,
             },
         }),
         []

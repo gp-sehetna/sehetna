@@ -20,7 +20,7 @@ const MapSidebar = ({ slug, closeSidebar }: MapSidebarProps) => {
                 <Card className="glassy flex h-full min-w-full flex-col overflow-hidden rounded-2xl border bg-neutral-100/40">
                     <CardHeader className="flex flex-row items-center gap-2 border-b p-4">
                         <ArrowLeft className="cursor-pointer" onClick={closeSidebar} />
-                        <h5>{clickedZone.properties.countryName}</h5>
+                        <h5>{clickedZone.properties.name}</h5>
                     </CardHeader>
 
                     <CardContent className="flex flex-col gap-4 overflow-y-auto p-4">
