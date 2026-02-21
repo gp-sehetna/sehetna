@@ -150,6 +150,10 @@
     --radius-4xl: calc(var(--radius) + 16px);
 }
 
+@utility glassy {
+    @apply shadow-neutral-1000/10 border border-neutral-100 bg-neutral-100/40 backdrop-blur-lg;
+}
+
 @layer base {
     .lucide {
         stroke-width: 1;
@@ -164,10 +168,6 @@
         font-family: var(--font-heading);
         font-weight: bold;
         color: var(--color-neutral-1000);
-    }
-
-    .glassy {
-        @apply shadow-neutral-1000/10 border border-neutral-100 bg-neutral-100/40 backdrop-blur-lg;
     }
 
     .base-transition {

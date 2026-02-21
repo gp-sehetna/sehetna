@@ -1,12 +1,12 @@
-import AppLayout from "@/components/ui/layouts/AppLayout"
+import MapLayout from "@/components/ui/layouts/MapLayout"
 import MapView from "@/components/ui/map/MapView"
 
-const MapLayout = ({ children }: { children: React.ReactNode }) => {
+const MainMapLayout = ({ children }: { children: React.ReactNode }) => {
     return (
-        <AppLayout>
+        <MapLayout>
             <MapView>{children}</MapView>
-        </AppLayout>
+        </MapLayout>
     )
 }
 
-export default MapLayout
+export default MainMapLayout
