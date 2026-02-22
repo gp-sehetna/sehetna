@@ -1,5 +1,5 @@
 import logging
-
+import pandas as pd
 import numpy as np
 import timesfm
 
@@ -42,49 +42,73 @@ class TimesFM(SequentialModel):
         logger.info("TimesFM loaded")
         return self
 
-    def transform(self, predictions: list[list[float]]):
+    def transform(
+        self,
+        predictions: list[list[float]], # [time steps as ROWs, targets as COLs]
+        historical_indicators: pd.DataFrame
+    ):
 
         if predictions is None:
             raise ValueError("Predictions is None")
 
+        if historical_indicators is None:
+            raise ValueError("Historical indicators is None")
+
         predictions_np = np.asarray(predictions, dtype=np.float32)
 
-        if predictions_np.ndim != 2 or predictions_np.shape[1] != 5:
-            raise ValueError(f"Expected shape (n, 5), got {predictions_np.shape}")
 
         transformed: dict[str, np.ndarray] = {}
 
         for i, name in enumerate(self.settings.targets):
-            series = predictions_np[:, i]
 
-            if len(series) > self.seq_len:
-                logger.info(f"{name}: slicing to last {self.seq_len}")
-                series = series[-self.seq_len :]
+            if name not in historical_indicators.columns:
+                raise ValueError(f"{name} not found in historical_indicators")
 
-            transformed[name] = series
+            
+            historical_series = (
+                historical_indicators[name]
+                .values
+                .astype(np.float32)
+            )
 
-        self.transformed_series = transformed
-        return self
+            # get all time steps predictions for this target
+            predicted_series = predictions_np[:, i]
+
+            
+            full_series = np.concatenate([historical_series, predicted_series])
+
+
+            
+            if len(full_series) > self.seq_len:
+                full_series = full_series[-self.seq_len:]
+
+            transformed[name] = full_series.astype(np.float32)
+
+        self.transformed_series = transformed # {"target1": np.ndarray(shape=(<=512,), dtype=float32),"target2": ...}
+        return self 
+        
 
     def forecast(self) -> dict[str, list[float]]:
-        """
-        Returns:
-            Dict[str, List[float]]
-            where each key is a target name
-            and value is forecasted horizon values.
-        """
-
+        
         if not self._loaded or self.__model is None:
             raise RuntimeError("TimesFM not loaded. Call load() first.")
 
-        forecast_results: dict[str, list[float]] = {}
+        forecast_results = self._forecast_targets()
+        
+        return forecast_results
+    
+    
+    def _forecast_targets(self):
+        forecast_results: dict[str, tuple[np.ndarray, np.ndarray]] = {}
 
         for name, series in self.transformed_series.items():
-
-            input_series = [series]  # TimesFM expects List[np.ndarray]
-
-            point_forecast, _ = self.__model.forecast(inputs=input_series, horizon=self.horizon_len)
-
-            forecast_results[name] = point_forecast[0].tolist()
-
+            
+            forecast_results[name] = self._forecast_single_target(series)
+            
         return forecast_results
+    
+    def _forecast_single_target(self, series):
+        input_series = [series]
+        point_forecast, quantile_forecasts = self.__model.forecast(inputs=input_series, horizon=self.horizon_len)
+        
+        return point_forecast.tolist(), quantile_forecasts.tolist()

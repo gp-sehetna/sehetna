@@ -15,4 +15,7 @@ class ForecastService:
     def forecast(self, req: ForecastRequest, predictions: list[list[float]]):
         factory = SequentialModelFactory(self.settings)
         model = factory.get_instance(req.model_id)
-        return model.load().transform(predictions, self.historical_repository.get_indicators()).forecast()
+        
+        
+        historical_indicators = self.historical_repository.get_indicators(req.country_code)
+        return model.load().transform(predictions, historical_indicators).forecast()
