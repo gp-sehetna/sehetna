@@ -68,8 +68,8 @@ class TimesFM(SequentialModel):
     def _forecast_single_target(self, series):
         point_forecast, quantile_forecasts = self._model.forecast(inputs=[series], horizon=self.horizon_len)
 
-        logger.info(f"Point forecast: {point_forecast.shape}")  # [1, horizon]
-        logger.info(f"Quantile forecasts: {quantile_forecasts.shape}")  # [1, horizon, num_quantiles]
+        logger.debug(f"Point forecast: {point_forecast.shape}")  # [1, horizon]
+        logger.debug(f"Quantile forecasts: {quantile_forecasts.shape}")  # [1, horizon, num_quantiles=10]
 
         return (
             point_forecast[0, ...],
