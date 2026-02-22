@@ -1,5 +1,5 @@
 import { Document, Schema, model, models } from "mongoose"
-import { PurposeEnum } from "../enums/enums.db"
+import { PurposeEnum } from "../enums/auth.enum"
 
 export interface IOtp extends Document {
     email: string
