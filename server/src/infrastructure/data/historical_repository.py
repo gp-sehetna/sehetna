@@ -1,27 +1,30 @@
 import logging
 import os
+
 import pandas as pd
+
 from config import Settings
+from src.core.exceptions import BadRequest
+
 logger = logging.getLogger(__name__)
+
 
 class HistoricalRepository:
     def __init__(self, settings: Settings):
         self.settings = settings
+        self.df: pd.DataFrame | None = None
         self._historical_df: pd.DataFrame | None = None
 
-    def load_all(self, country_code:str) -> None:
-        logger.info(f"Loading historical data from {self.settings.resources_path}")
-        path = os.path.join(self.settings.resources_path, "data", "main.csv")
-
-        df = pd.read_csv(path, parse_dates=["date"])
-        
-        df = df[df["country_code"] == country_code]
-        
-        self._historical_df = df.reset_index(drop=True)
-
+    def load_all(self):
+        self.df = pd.read_csv(os.path.join(self.settings.data_path, "main.csv"), parse_dates=["date"])
 
     def get_indicators(self, country_code: str) -> pd.DataFrame:
-        if self._historical_df is None or self._historical_df.empty:
-            self.load_all(country_code)
+        if self.df is None or self.df.empty:
+            self.load_all()
 
-        return self._historical_df.copy()
+        return self.__filter_by_country_code(self.df, country_code)[self.settings.targets]
+
+    def __filter_by_country_code(self, df: pd.DataFrame, country_code: str):
+        if country_code not in df["country_code"].unique():
+            raise BadRequest(f"Country code {country_code} not found in data. Please try a different country or model.")
+        return df[df["country_code"] == country_code].reset_index(drop=True)
