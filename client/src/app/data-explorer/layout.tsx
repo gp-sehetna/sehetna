@@ -1,7 +1,7 @@
-import AppLayout from "@/components/ui/layouts/AppLayout"
+import MapLayout from "@/components/ui/layouts/MapLayout"
 
 const DataExplorerLayout = ({ children }: { children: React.ReactNode }) => {
-    return <AppLayout children={children} />
+    return <MapLayout children={children} />
 }
 
 export default DataExplorerLayout

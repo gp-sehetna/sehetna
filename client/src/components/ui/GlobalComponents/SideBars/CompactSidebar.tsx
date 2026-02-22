@@ -1,4 +1,4 @@
-import { Info, LogIn, LucideProps, Map, ShieldCheck, Telescope, Waypoints } from "lucide-react"
+import { LogIn } from "lucide-react"
 
 import {
     Sidebar,
@@ -13,22 +13,10 @@ import {
     SidebarRail,
     SidebarTrigger,
 } from "@/components/ui/shadcn/sidebar"
-import { ForwardRefExoticComponent, RefAttributes } from "react"
 import Logo from "@/components/ui/GlobalControls/Logo"
 import NavLink from "@/components/ui/NavLink"
+import { compactSidebarItems } from "../nav/navigation-items"
 
-type LinkType = {
-    title: string
-    url: string
-    icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>
-}
-const navigations: LinkType[] = [
-    { title: "Live Map", url: "/map", icon: Map },
-    { title: "Data Explorer", url: "/data-explorer", icon: Telescope },
-    { title: "Methodology", url: "/methodology", icon: Waypoints },
-    { title: "Security", url: "/settings/security", icon: ShieldCheck },
-    { title: "Help & Support", url: "/support", icon: Info },
-]
 const CompactSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
     return (
         <>
@@ -41,7 +29,7 @@ const CompactSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
                     <SidebarGroup>
                         <SidebarGroupLabel>Pages</SidebarGroupLabel>
                         <SidebarMenu>
-                            {navigations.map((navigation) => (
+                            {compactSidebarItems.map((navigation) => (
                                 <SidebarMenuItem key={navigation.title}>
                                     <SidebarMenuButton
                                         className="rounded-lg"
@@ -49,8 +37,8 @@ const CompactSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
                                         size="sm"
                                         tooltip={navigation.title}
                                     >
-                                        <NavLink href={navigation.url}>
-                                            <navigation.icon />
+                                        <NavLink href={navigation.href}>
+                                            {navigation.icon && <navigation.icon />}
                                             <span>{navigation.title}</span>
                                         </NavLink>
                                     </SidebarMenuButton>

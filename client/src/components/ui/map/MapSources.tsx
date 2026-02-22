@@ -1,6 +1,6 @@
 import useLayers from "@/hooks/map/use-layers"
 import { GradientPalette } from "@/shared/config/map-colors"
-import { Source, Layer } from "react-map-gl/maplibre"
+import { Layer, Source } from "react-map-gl/maplibre"
 
 type Props = {
     theme: GradientPalette
@@ -9,7 +9,9 @@ type Props = {
 const MapSources = ({ theme }: Props) => {
     const {
         backgroundLayer,
+        continentsFillLayer,
         countriesHoverLayer,
+        countriesIncomeLayer,
         countryBondariesHoverableLayer,
         countriesLayer,
         boundariesLayer,
@@ -19,6 +21,8 @@ const MapSources = ({ theme }: Props) => {
         <>
             <Layer {...backgroundLayer} />
             <Source id="countries" type="geojson" promoteId="id" data="/geo/countries.geojson">
+                <Layer {...countriesIncomeLayer} />
+                <Layer {...continentsFillLayer} />
                 <Layer {...countriesLayer} />
                 <Layer {...countriesHoverLayer} />
                 <Layer {...countryBondariesHoverableLayer} />

@@ -1,5 +1,5 @@
 import { EmailSchema } from "@/features/auth/auth.validation"
-import { PurposeEnum } from "@/shared/db/enums/enums.db"
+import { PurposeEnum } from "@/shared/db/enums/auth.enum"
 import { MainService } from "@/shared/db/main.service"
 import { UserNotFoundException } from "@/shared/http/errors"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"

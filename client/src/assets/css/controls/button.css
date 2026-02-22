@@ -22,12 +22,10 @@
     --pos2: 70%;
 
     /* Use var(--angle) here */
-    background-image: linear-gradient(
-        var(--angle),
-        var(--color-secondary) var(--pos1),
-        #e74767 var(--pos2),
-        var(--color-primary) 100%
-    );
+    background-image: linear-gradient(var(--angle),
+            var(--color-secondary) var(--pos1),
+            #e74767 var(--pos2),
+            var(--color-primary) 100%);
 
     transition:
         --angle 0.7s ease,

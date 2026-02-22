@@ -2,6 +2,7 @@ import BaseAuthentication from "@/components/ui/Authentication/BaseAuthenticatio
 import GoogleIcon from "@/components/ui/Authentication/Globals/GoogleIcon"
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
+import { policiesItems } from "@/components/ui/GlobalComponents/nav/navigation-items"
 import AppLink from "@/components/ui/GlobalControls/AppLink"
 import Divider from "@/components/ui/GlobalControls/Divider"
 import { LogIn } from "lucide-react"
@@ -27,17 +28,11 @@ const SignUpPage = () => {
                         </WideButton>
                         <p className="w-75 text-xs font-extralight">
                             By signing up, you agree to the&thinsp;
-                            <AppLink href="/support/services-and-policies#terms">
-                                Terms of Service
-                            </AppLink>
+                            <AppLink href={policiesItems[1].href}>{policiesItems[1].title}</AppLink>
                             &thinsp; and&thinsp;
-                            <AppLink href="/support/services-and-policies#privacy-policy">
-                                Privacy Policy
-                            </AppLink>
+                            <AppLink href={policiesItems[0].href}>{policiesItems[0].title}</AppLink>
                             , including&thinsp;
-                            <AppLink href="/support/services-and-policies#cookie-use">
-                                Cookie Use
-                            </AppLink>
+                            <AppLink href={policiesItems[2].href}>{policiesItems[2].title}</AppLink>
                             .
                         </p>
                     </Flex>
