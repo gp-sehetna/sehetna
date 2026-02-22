@@ -5,25 +5,33 @@ type DividerProps = {
     vertical?: boolean
     children?: React.ReactNode
     className?: string
+    stripsClassName?: string
+    hideDecorations?: boolean // New Prop
 }
 
-const Divider = ({ vertical = false, children, className }: DividerProps) => {
+const Divider = ({
+    vertical = false,
+    children,
+    className,
+    stripsClassName,
+    hideDecorations = false, // Default to showing them
+}: DividerProps) => {
+    // 1. Simple Divider (No text/children)
     if (!children) {
-        if (!vertical) {
-            return (
-                <div
-                    data-component="divider"
-                    className={cn("shrink-0 bg-neutral-200", "h-px w-fit", className)}
-                />
-            )
-        }
         return (
             <div
                 data-component="divider"
-                className={cn("shrink-0 bg-neutral-200", "h-1/2 w-px", className)}
+                className={cn(
+                    "bg-border shrink-0",
+                    // Changed w-fit to w-full for horizontal
+                    vertical ? "h-1/2 w-px" : "h-[0.5px] w-full",
+                    className
+                )}
             />
         )
     }
+
+    // 2. Horizontal Divider with Text
     if (!vertical) {
         return (
             <div
@@ -34,16 +42,18 @@ const Divider = ({ vertical = false, children, className }: DividerProps) => {
                     className
                 )}
             >
-                <DividerDecoration side="left" />
+                {!hideDecorations && <DividerDecoration side="left" />}
 
-                <span className="h-px flex-1 bg-neutral-200" />
+                <span className={cn("bg-border h-px flex-1", stripsClassName)} />
                 <span className="text-sm whitespace-nowrap">{children}</span>
-                <span className="h-px flex-1 bg-neutral-200" />
+                <span className={cn("bg-border h-px flex-1", stripsClassName)} />
 
-                <DividerDecoration side="right" />
+                {!hideDecorations && <DividerDecoration side="right" />}
             </div>
         )
     }
+
+    // 3. Vertical Divider with Text
     return (
         <div
             data-component="divider"
@@ -53,9 +63,9 @@ const Divider = ({ vertical = false, children, className }: DividerProps) => {
                 className
             )}
         >
-            <span className="h-full w-px bg-neutral-200" />
+            <span className={cn("bg-border h-full w-px", stripsClassName)} />
             <span className="text-xs font-bold whitespace-nowrap">{children}</span>
-            <span className="h-full w-px bg-neutral-200" />
+            <span className={cn("bg-border h-full w-px", stripsClassName)} />
         </div>
     )
 }

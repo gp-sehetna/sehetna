@@ -29,6 +29,7 @@ const buttonVariants = cva(
                 glassy: "glassy base-transition hover:text-neutral-1000 text-neutral-800 hover:bg-neutral-100/60 active:bg-neutral-100/40",
 
                 ghost: "hover:text-neutral-1000 text-neutral-600",
+                text: "text-neutral-1000",
                 link: "text-primary-foregroud underline-offset-2 hover:underline",
             },
             size: {

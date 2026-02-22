@@ -46,8 +46,8 @@ interface Prediction {
 
 interface GroupExplanationItem {
     group: string
-    shap_sum: number
-    abs_shap_sum: number
+    shap_sum?: number
+    abs_shap_sum?: number
     percent: number
 }
 
