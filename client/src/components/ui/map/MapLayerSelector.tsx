@@ -9,12 +9,13 @@ import { Dispatch } from "react"
 export type LayerSelectorProps = {
     healthOutcome: string
     onLayerSelect: Dispatch<string>
+    className?: string
 }
 
-const MapLayerSelector = ({ healthOutcome, onLayerSelect }: LayerSelectorProps) => {
+const MapLayerSelector = ({ healthOutcome, onLayerSelect, className }: LayerSelectorProps) => {
     const { theme } = useThemeStore()
     return (
-        <Card className="mb-3 p-1.5">
+        <Card className={cn(className, "mb-3 p-1.5")}>
             <div className="flex flex-col gap-0.5">
                 {HEALTH_OUTCOMES.map((outcome) => (
                     <Button

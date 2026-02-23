@@ -1,5 +1,5 @@
-import { buildSteps } from "@/lib/utils/array"
-import { scaleLinear } from "d3"
+import { buildSteps, spreadOverDomain } from "@/lib/utils/array"
+import { extent, scaleLinear } from "d3"
 
 const start = 0,
     end = 100,
@@ -29,6 +29,19 @@ class GradientPalette extends Colors {
 
     get colorScale() {
         return scaleLinear<string>().domain(this.steps).range(this.colors).unknown(this.oceanColor)
+    }
+
+    get domain(): [number, number] {
+        return extent(this.colorScale.domain()) as [number, number]
+    }
+
+    get gradientCSS(): string {
+        const spread = spreadOverDomain(this.domain, 20)
+        const gradientStops = spread.map(
+            (value, index, arr) => `${this.colorScale(value)} ${(index / (arr.length - 1)) * 100}%`
+        )
+
+        return `linear-gradient(to right, ${gradientStops.join(", ")})`
     }
 }
 
