@@ -34,7 +34,7 @@ interface DateRangeSliderProps {
 }
 
 const DATA_START = new Date("2015-01-05")
-const DATA_END = new Date("2025-02-17")
+const DATA_END = new Date()
 
 export function DateRangeSlider({
     dataStart = DATA_START,

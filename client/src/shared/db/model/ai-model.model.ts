@@ -6,10 +6,10 @@ export interface IAiModel extends Document {
     model_type: AiModelEnum
     version: string
     task_type: TaskEnum
-    input_features: string[]
-    target_variables: string[]
+    features: string[]
+    targets: string[]
     training_data: {
-        dataset_ids: Schema.Types.ObjectId[]
+        data_store_ids: Schema.Types.ObjectId[]
     }
     status: ModelStatusEnum
     createdAt: Date
@@ -21,10 +21,10 @@ const AiModelSchema = new Schema<IAiModel>(
         version: { type: String, default: "1.0.0" },
         model_type: { type: String, enum: AiModelEnum, required: true },
         task_type: { type: String, enum: TaskEnum, required: true },
-        target_variables: { type: [String], required: true },
-        input_features: { type: [String], default: [] },
+        features: { type: [String], default: [] },
+        targets: { type: [String], required: true },
         training_data: {
-            dataset_ids: { type: [Schema.Types.ObjectId], ref: "DataStore", default: [] },
+            data_store_ids: { type: [Schema.Types.ObjectId], ref: "DataStore", default: [] },
         },
         status: { type: String, enum: ModelStatusEnum, default: ModelStatusEnum.active },
     },

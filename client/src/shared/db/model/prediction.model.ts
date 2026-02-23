@@ -1,7 +1,7 @@
 import type { IHealthOutcomes } from "@/shared/config/health-outcomes"
-import { Document, Schema, model, models } from "mongoose"
+import { Document, Schema, Types, model, models } from "mongoose"
 import { PredictionTypeEnum } from "../enums/prediction.enum"
-import { nullableNumber } from "@/lib/utils/object"
+import { IntervalPrediction, nullableNumber } from "@/lib/utils/object"
 
 export const HealthOutcomesSchema = new Schema<IHealthOutcomes>(
     {
@@ -17,23 +17,32 @@ export const HealthOutcomesSchema = new Schema<IHealthOutcomes>(
 export interface IPrediction extends Document {
     user_id: Schema.Types.ObjectId
     model_id: Schema.Types.ObjectId
-    location_id: string
+    location_id: Types.ObjectId
     base_date: Date
     prediction_type: PredictionTypeEnum
-    input_snapshot: Record<string, any>
-    predicted_targets: IHealthOutcomes
+    features_snapshot: Record<string, unknown>
+    health_outcomes: IHealthOutcomes
     createdAt: Date
 }
 
+const IntervalPredictionSchema = new Schema<IntervalPrediction>(
+    {
+        point: { type: Number, required: true },
+        lower: nullableNumber,
+        upper: nullableNumber,
+    },
+    { _id: false }
+)
+
 const PredictionSchema = new Schema<IPrediction>(
     {
-        user_id: { type: Schema.Types.ObjectId, required: true },
-        model_id: { type: Schema.Types.ObjectId, required: true, index: true },
-        location_id: { type: String, required: true },
+        user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
+        model_id: { type: Schema.Types.ObjectId, ref: "AiModel", required: true, index: true },
+        location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
         base_date: { type: Date, required: true },
         prediction_type: { enum: PredictionTypeEnum, default: PredictionTypeEnum.forecasted },
-        input_snapshot: { type: Schema.Types.Mixed, default: () => ({}) },
-        predicted_targets: { type: HealthOutcomesSchema, default: () => ({}) },
+        features_snapshot: { type: Schema.Types.Mixed, default: () => ({}) },
+        health_outcomes: { type: IntervalPredictionSchema, required: true },
     },
     { timestamps: { createdAt: true } }
 )
@@ -44,5 +53,5 @@ PredictionSchema.index(
     { unique: true, name: "model_location_index" }
 )
 
-export const PredictionsModel =
+export const PredictionModel =
     models.Prediction || model<IPrediction>("Prediction", PredictionSchema)

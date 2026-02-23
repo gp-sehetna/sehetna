@@ -104,7 +104,7 @@ function formatSelectedDate(date: Date, granularity: Granularity): string {
 /** How many axis labels to show at most so they don't crowd */
 function maxLabels(preset: RangePreset, granularity: Granularity): number {
     if (granularity === "yearly") return 11
-    if (granularity === "monthly") return 8
+    if (granularity === "monthly") return 7
     // weekly
     if (preset === "Last 30 days") return 5
     if (preset === "Last 90 days") return 6

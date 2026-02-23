@@ -41,7 +41,7 @@ const DataStoreSchema = new Schema<IDataStore>(
             start: { type: Date, required: true },
             end: { type: Date, required: true },
         },
-        file_path: { type: String, required: true },
+        file_path: { type: String, required: false },
         status: { type: String, enum: StatusEnum, default: StatusEnum.pending },
         notes: { type: String, trim: true, default: "" },
     },

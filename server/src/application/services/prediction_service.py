@@ -134,9 +134,9 @@ class PredictionService(ShapExplanabilityService):
         predictions: np.ndarray[np.ndarray[float]] = self.model_loader.model.predict(X_test)
 
         if query is None:
-            return predictions, None
+            return df, predictions, None
 
         logger.info("Explaining...")
         explanations = self._explain(X_test, query.explainer_method, query.top_k_contributors)
 
-        return predictions, explanations
+        return df, predictions, explanations

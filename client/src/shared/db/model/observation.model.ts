@@ -1,9 +1,9 @@
-import { Document, InferSchemaType, Schema, model, models } from "mongoose"
+import { Document, InferSchemaType, Schema, Types, model, models } from "mongoose"
 import { nullableNumber } from "@/lib/utils/object"
 import { HealthOutcomesSchema } from "./prediction.model"
 
 export interface IObservation extends Document {
-    location_id: string
+    location_id: Types.ObjectId
     base_date: Date
     climate: {
         temperature_celsius: number | null
@@ -21,14 +21,13 @@ export interface IObservation extends Document {
         uhs_service_coverage_index: number | null
     }
     targets: InferSchemaType<typeof HealthOutcomesSchema>
-    /** Which source tags contributed to this row e.g. ["kaggle", "merra2"] */
-    source_tags: string[]
+    data_source_tags: string[]
     createdAt: Date
 }
 
 const ObservationSchema = new Schema<IObservation>(
     {
-        location_id: { type: String, required: true, uppercase: true, trim: true },
+        location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
         base_date: { type: Date, required: true },
         climate: {
             temperature_celsius: nullableNumber,
@@ -47,7 +46,7 @@ const ObservationSchema = new Schema<IObservation>(
         },
         targets: { type: HealthOutcomesSchema, required: true },
 
-        source_tags: { type: [String], default: [] },
+        data_source_tags: { type: [String], default: [] },
     },
     { timestamps: { createdAt: true } }
 )
