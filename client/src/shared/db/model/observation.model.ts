@@ -1,6 +1,11 @@
 import { Document, InferSchemaType, Schema, Types, model, models } from "mongoose"
 import { nullableNumber } from "@/lib/utils/object"
-import { HealthOutcomesSchema } from "./prediction.model"
+import { IHealthOutcomes, mapHealthOutcomes } from "@/shared/config/health-outcomes"
+
+const HealthOutcomesSchema = new Schema<IHealthOutcomes>(
+    mapHealthOutcomes(() => nullableNumber),
+    { _id: false }
+)
 
 export interface IObservation extends Document {
     location_id: Types.ObjectId

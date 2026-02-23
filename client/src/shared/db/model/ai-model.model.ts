@@ -17,7 +17,13 @@ export interface IAiModel extends Document {
 
 const AiModelSchema = new Schema<IAiModel>(
     {
-        display_name: { type: String, required: true, trim: true },
+        display_name: {
+            type: String,
+            trim: true,
+            default: function () {
+                return `${(this as IAiModel).model_type}-${(this as IAiModel).version}`
+            },
+        },
         version: { type: String, default: "1.0.0" },
         model_type: { type: String, enum: AiModelEnum, required: true },
         task_type: { type: String, enum: TaskEnum, required: true },
@@ -31,7 +37,7 @@ const AiModelSchema = new Schema<IAiModel>(
     { timestamps: { createdAt: true } }
 )
 
-AiModelSchema.index({ model_type: 1, task_type: 1, status: 1 })
-AiModelSchema.index({ display_name: 1, version: 1 }, { unique: true })
+// TODO: Ensure search index is correct
+// AiModelSchema.searchIndex({ definition: { display_name: "text", version: "text" }, type: "search" })
 
 export const AiModelModel = models.AiModel || model<IAiModel>("AiModel", AiModelSchema)

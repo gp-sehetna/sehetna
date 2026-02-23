@@ -1,6 +1,6 @@
 // app/sitemap.ts
 import { slugify } from "@/lib/utils"
-import { HEALTH_OUTCOMES } from "@/shared/config/health-outcomes"
+import { HEALTH_OUTCOMES_WITH_HYPHEN } from "@/shared/config/health-outcomes"
 import fs from "fs"
 import { GeoJSONFeature } from "maplibre-gl"
 import type { MetadataRoute } from "next"
@@ -56,7 +56,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Map – health outcome only
     // /map/[healthOutcome]
     // --------------------
-    HEALTH_OUTCOMES.forEach((outcome) => {
+    HEALTH_OUTCOMES_WITH_HYPHEN.forEach((outcome) => {
         routes.push({
             url: `${BASE_URL}/map/${outcome}`,
             lastModified: new Date(),
@@ -89,7 +89,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         })
 
         // /map/country/outcome
-        HEALTH_OUTCOMES.forEach((outcome) => {
+        HEALTH_OUTCOMES_WITH_HYPHEN.forEach((outcome) => {
             routes.push({
                 url: `${BASE_URL}/map/${country}/${outcome}`,
                 lastModified: new Date(),

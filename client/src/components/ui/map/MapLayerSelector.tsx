@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/shadcn/button"
 import { Card } from "@/components/ui/shadcn/card"
 import { cn, toProperCase, unslugify } from "@/lib/utils"
-import { HEALTH_OUTCOMES } from "@/shared/config/health-outcomes"
+import { HEALTH_OUTCOMES_WITH_HYPHEN } from "@/shared/config/health-outcomes"
 import { useThemeStore } from "@/stores/map/use-theme"
 import { Check } from "lucide-react"
 import { Dispatch } from "react"
@@ -16,7 +16,7 @@ const MapLayerSelector = ({ healthOutcome, onLayerSelect }: LayerSelectorProps) 
     return (
         <Card className="mb-3 p-1.5">
             <div className="flex flex-col gap-0.5">
-                {HEALTH_OUTCOMES.map((outcome) => (
+                {HEALTH_OUTCOMES_WITH_HYPHEN.map((outcome) => (
                     <Button
                         key={outcome}
                         onClick={() => onLayerSelect(outcome)}

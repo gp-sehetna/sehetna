@@ -1,14 +1,15 @@
-import { Explanations, Prediction, SimulateResponse } from "@/features/environment/week/week.types"
+import { Explanations, SimulateResponse } from "@/features/environment/week/week.types"
+import { HEALTH_OUTCOMES_KEYS, IHealthOutcomes } from "@/shared/config/health-outcomes"
 import { create } from "zustand"
 
 type PredictionsState = {
-    healthOutcome: keyof Prediction
+    healthOutcome: keyof IHealthOutcomes
     simulation: SimulateResponse | null
     explanations: Explanations | null
     loading: boolean
     setLoading: (loading: boolean) => void
-    setSimulation: (simulation: SimulateResponse, healthOutcome: keyof Prediction) => void
-    onOutcomeSelect: (healthOutcome: keyof Prediction) => void
+    setSimulation: (simulation: SimulateResponse, healthOutcome: keyof IHealthOutcomes) => void
+    onOutcomeSelect: (healthOutcome: keyof IHealthOutcomes) => void
     reset: () => void
 }
 
@@ -20,7 +21,7 @@ export const usePredictionsStore = create<PredictionsState>((set, get) => {
     }
 
     return {
-        healthOutcome: "respiratory_disease_rate",
+        healthOutcome: HEALTH_OUTCOMES_KEYS[0],
         simulation: null,
         contributors: null,
         explanations: null,
@@ -28,12 +29,12 @@ export const usePredictionsStore = create<PredictionsState>((set, get) => {
 
         setLoading: (loading) => set({ loading }),
 
-        setSimulation: (simulation: SimulateResponse, healthOutcome: keyof Prediction) => {
+        setSimulation: (simulation: SimulateResponse, healthOutcome: keyof IHealthOutcomes) => {
             setExplanations(simulation)
             set({ healthOutcome, simulation })
         },
 
-        onOutcomeSelect: (healthOutcome: keyof Prediction) => {
+        onOutcomeSelect: (healthOutcome: keyof IHealthOutcomes) => {
             const { simulation } = get()
             if (!simulation) return
 
@@ -41,6 +42,6 @@ export const usePredictionsStore = create<PredictionsState>((set, get) => {
             set({ healthOutcome })
         },
 
-        reset: () => set({ healthOutcome: "respiratory_disease_rate", loading: false }),
+        reset: () => set({ healthOutcome: HEALTH_OUTCOMES_KEYS[0], loading: false }),
     }
 })

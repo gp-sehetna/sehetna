@@ -5,15 +5,16 @@ import { Pie, PieChart } from "recharts"
 import MetaTooltip from "@/components/ui/GlobalComponents/tooltips/MetaTooltip"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
 import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/shadcn/chart"
-import { GroupExplanationItem, Prediction } from "@/features/environment/week/week.types"
+import { GroupExplanationItem } from "@/features/environment/week/week.types"
 import { getInitials, toProperCase } from "@/lib/utils"
 import { useThemeStore } from "@/stores/map/use-theme"
 import { HelpCircle } from "lucide-react"
 import { useEffect, useState } from "react"
+import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 
 type Props = {
     items: GroupExplanationItem[]
-    healthOutcome: keyof Prediction
+    healthOutcome: keyof IHealthOutcomes
 }
 export default function GroupPieChart({ items, healthOutcome }: Props) {
     const [metadata, setMetadata] =

@@ -2,7 +2,7 @@ import { Document, Schema, model, models } from "mongoose"
 import {
     DataSourcesEnum,
     GranularityEnum,
-    GeographicLevelEnum,
+    GeoLevelEnum,
     StatusEnum,
 } from "../enums/data-store.enum"
 
@@ -12,7 +12,7 @@ export interface IDataStore extends Document {
     description: string
     version: string
     granularity: GranularityEnum
-    geographicLevel: GeographicLevelEnum
+    geographic_level: GeoLevelEnum
     variables: string[]
     date_range: {
         start: Date
@@ -20,7 +20,7 @@ export interface IDataStore extends Document {
     }
     file_path: string
     status: StatusEnum
-    notes?: string
+    notes: string
     createdAt: Date
 }
 
@@ -31,7 +31,7 @@ const DataStoreSchema = new Schema<IDataStore>(
         description: { type: String, required: true, trim: true },
         version: { type: String, required: true, default: "1.0" },
         granularity: { type: String, enum: GranularityEnum, required: true },
-        geographicLevel: { type: String, enum: GeographicLevelEnum, required: true },
+        geographic_level: { type: String, enum: GeoLevelEnum, default: GeoLevelEnum.country },
         variables: {
             type: [String],
             required: true,
@@ -41,7 +41,7 @@ const DataStoreSchema = new Schema<IDataStore>(
             start: { type: Date, required: true },
             end: { type: Date, required: true },
         },
-        file_path: { type: String, required: false },
+        file_path: { type: String, default: "" },
         status: { type: String, enum: StatusEnum, default: StatusEnum.pending },
         notes: { type: String, trim: true, default: "" },
     },

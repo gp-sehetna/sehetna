@@ -15,7 +15,7 @@ enum GranularityEnum {
     annual = "annual",
 }
 
-enum GeographicLevelEnum {
+enum GeoLevelEnum {
     country = "country",
     region = "region",
     state = "state",
@@ -27,4 +27,4 @@ enum StatusEnum {
     pending = "pending",
 }
 
-export { DataSourcesEnum, GranularityEnum, GeographicLevelEnum, StatusEnum }
+export { DataSourcesEnum, GranularityEnum, GeoLevelEnum, StatusEnum }

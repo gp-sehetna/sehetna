@@ -1,16 +1,22 @@
-import type { IHealthOutcomes } from "@/shared/config/health-outcomes"
-import { Document, Schema, Types, model, models } from "mongoose"
+import { IHealthOutcomes, mapHealthOutcomes } from "@/shared/config/health-outcomes"
+import { Document, InferSchemaType, Schema, Types, model, models } from "mongoose"
 import { PredictionTypeEnum } from "../enums/prediction.enum"
 import { IntervalPrediction, nullableNumber } from "@/lib/utils/object"
 
-export const HealthOutcomesSchema = new Schema<IHealthOutcomes>(
+const IntervalPredictionSchema = new Schema<IntervalPrediction>(
     {
-        respiratory_disease_rate: nullableNumber,
-        cardio_mortality_rate: nullableNumber,
-        vector_disease_risk_score: nullableNumber,
-        waterborne_disease_incidents: nullableNumber,
-        heat_related_admissions: nullableNumber,
+        point: { type: Number, required: true },
+        lower: nullableNumber,
+        upper: nullableNumber,
     },
+    { _id: false }
+)
+const IntervalPredictionObject = { type: IntervalPredictionSchema, required: true }
+
+const HealthOutcomesWithIntervalsSchema = new Schema<
+    IHealthOutcomes<InferSchemaType<typeof IntervalPredictionSchema>>
+>(
+    mapHealthOutcomes(() => IntervalPredictionObject),
     { _id: false }
 )
 
@@ -25,24 +31,19 @@ export interface IPrediction extends Document {
     createdAt: Date
 }
 
-const IntervalPredictionSchema = new Schema<IntervalPrediction>(
-    {
-        point: { type: Number, required: true },
-        lower: nullableNumber,
-        upper: nullableNumber,
-    },
-    { _id: false }
-)
-
 const PredictionSchema = new Schema<IPrediction>(
     {
         user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
-        model_id: { type: Schema.Types.ObjectId, ref: "AiModel", required: true, index: true },
+        model_id: { type: Schema.Types.ObjectId, ref: "AiModel", required: true },
         location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
         base_date: { type: Date, required: true },
-        prediction_type: { enum: PredictionTypeEnum, default: PredictionTypeEnum.forecasted },
+        prediction_type: {
+            type: String,
+            enum: PredictionTypeEnum,
+            default: PredictionTypeEnum.forecasted,
+        },
         features_snapshot: { type: Schema.Types.Mixed, default: () => ({}) },
-        health_outcomes: { type: IntervalPredictionSchema, required: true },
+        health_outcomes: { type: HealthOutcomesWithIntervalsSchema, required: true },
     },
     { timestamps: { createdAt: true } }
 )

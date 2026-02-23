@@ -4,8 +4,9 @@ import MetaTooltip from "@/components/ui/GlobalComponents/tooltips/MetaTooltip"
 import WaterfallTooltip from "@/components/ui/GlobalComponents/tooltips/WaterfallTooltip"
 import { Badge } from "@/components/ui/shadcn/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
-import { CumulativeExplanationItem, Prediction } from "@/features/environment/week/week.types"
+import { CumulativeExplanationItem } from "@/features/environment/week/week.types"
 import { buildWaterfallData, toProperCase } from "@/lib/utils"
+import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 import { HelpCircle } from "lucide-react"
 import { useMemo } from "react"
 import {
@@ -22,7 +23,7 @@ import {
 
 interface ShapWaterfallChartProps {
     items: CumulativeExplanationItem[]
-    healthOutcome: keyof Prediction
+    healthOutcome: keyof IHealthOutcomes
 }
 
 export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps) {
