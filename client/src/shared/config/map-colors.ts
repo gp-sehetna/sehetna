@@ -1,11 +1,11 @@
+import { buildSteps } from "@/lib/utils/array"
 import { scaleLinear } from "d3"
 
 const start = 0,
     end = 100,
-    step = 5,
-    arrayLength = Math.floor((end - start) / step) + 1
+    step = 5
 
-const steps = Array.from({ length: arrayLength }, (_, index) => start + index * step)
+const steps = buildSteps(start, end, step)
 
 class Colors {
     static strokeColor = "#fff"

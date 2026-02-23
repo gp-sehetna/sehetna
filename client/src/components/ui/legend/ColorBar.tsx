@@ -1,5 +1,5 @@
-import { ScaleLinear, scaleLinear } from "d3-scale"
 import { extent } from "d3-array"
+import { ScaleLinear, scaleLinear } from "d3-scale"
 
 const spreadOverDomain = (scale: any, count: number) => {
     const [x1, x2] = (extent(scale.domain()) as unknown as [number, number]) ?? [0, 0]
@@ -12,7 +12,7 @@ type HorizontalColorbarProps = {
     ticks?: number
 }
 function HorizontalColorbar({ colorScale, id, ticks = 5 }: HorizontalColorbarProps) {
-    const width = 280
+    const width = 220
     const height = 10
 
     const linearScale = scaleLinear()
