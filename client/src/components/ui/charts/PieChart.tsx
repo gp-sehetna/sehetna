@@ -114,6 +114,7 @@ export default function GroupPieChart({ items, healthOutcome }: Props) {
                     {sortedData.map((item) => {
                         return (
                             <MetaTooltip
+                                side="bottom"
                                 key={item.group}
                                 title={item.group}
                                 description={item.description}
