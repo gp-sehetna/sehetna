@@ -124,7 +124,13 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
                             tickFormatter={(v) => v.toFixed(1)}
                         />
 
-                        <Tooltip content={WaterfallTooltip} cursor={{ opacity: 0.08 }} />
+                        <Tooltip
+                            content={(props) => {
+                                const { active, payload } = props
+                                return <WaterfallTooltip active={active} payload={payload} />
+                            }}
+                            cursor={{ opacity: 0.08 }}
+                        />
 
                         {/* Baseline reference */}
                         <ReferenceLine
