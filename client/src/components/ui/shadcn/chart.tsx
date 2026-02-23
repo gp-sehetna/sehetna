@@ -165,7 +165,7 @@ const ChartTooltipContent = React.forwardRef<
             <div
                 ref={ref}
                 className={cn(
-                    "border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl",
+                    "border-border/50 bg-background grid min-w-32 items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl",
                     className
                 )}
             >
@@ -248,59 +248,61 @@ ChartTooltipContent.displayName = "ChartTooltip"
 
 const ChartLegend = RechartsPrimitive.Legend
 
-const ChartLegendContent = React.forwardRef<
-    HTMLDivElement,
-    React.ComponentProps<"div"> &
-        Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
-            hideIcon?: boolean
-            nameKey?: string
+type ChartLegendContentProps = {
+    payload?: ReadonlyArray<any> // or your specific type
+    verticalAlign?: "top" | "middle" | "bottom"
+    hideIcon?: boolean
+    nameKey?: string
+} & React.ComponentProps<"div">
+
+const ChartLegendContent = React.forwardRef<HTMLDivElement, ChartLegendContentProps>(
+    ({ className, hideIcon = false, payload, verticalAlign = "bottom", nameKey }, ref) => {
+        const { config } = useChart()
+
+        if (!payload?.length) {
+            return null
         }
->(({ className, hideIcon = false, payload, verticalAlign = "bottom", nameKey }, ref) => {
-    const { config } = useChart()
 
-    if (!payload?.length) {
-        return null
+        return (
+            <div
+                ref={ref}
+                className={cn(
+                    "flex items-center justify-center gap-4",
+                    verticalAlign === "top" ? "pb-3" : "pt-3",
+                    className
+                )}
+            >
+                {payload
+                    .filter((item) => item.type !== "none")
+                    .map((item) => {
+                        const key = `${nameKey || item.dataKey || "value"}`
+                        const itemConfig = getPayloadConfigFromPayload(config, item, key)
+
+                        return (
+                            <div
+                                key={item.value}
+                                className={cn(
+                                    "[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3"
+                                )}
+                            >
+                                {itemConfig?.icon && !hideIcon ? (
+                                    <itemConfig.icon />
+                                ) : (
+                                    <div
+                                        className="h-2 w-2 shrink-0 rounded-[2px]"
+                                        style={{
+                                            backgroundColor: item.color,
+                                        }}
+                                    />
+                                )}
+                                {itemConfig?.label}
+                            </div>
+                        )
+                    })}
+            </div>
+        )
     }
-
-    return (
-        <div
-            ref={ref}
-            className={cn(
-                "flex items-center justify-center gap-4",
-                verticalAlign === "top" ? "pb-3" : "pt-3",
-                className
-            )}
-        >
-            {payload
-                .filter((item) => item.type !== "none")
-                .map((item) => {
-                    const key = `${nameKey || item.dataKey || "value"}`
-                    const itemConfig = getPayloadConfigFromPayload(config, item, key)
-
-                    return (
-                        <div
-                            key={item.value}
-                            className={cn(
-                                "[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3"
-                            )}
-                        >
-                            {itemConfig?.icon && !hideIcon ? (
-                                <itemConfig.icon />
-                            ) : (
-                                <div
-                                    className="h-2 w-2 shrink-0 rounded-[2px]"
-                                    style={{
-                                        backgroundColor: item.color,
-                                    }}
-                                />
-                            )}
-                            {itemConfig?.label}
-                        </div>
-                    )
-                })}
-        </div>
-    )
-})
+)
 ChartLegendContent.displayName = "ChartLegend"
 
 // Helper to extract item config from a payload.
