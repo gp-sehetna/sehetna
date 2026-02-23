@@ -53,7 +53,7 @@
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.1",
     "react-map-gl": "^8.1.0",
-    "recharts": "^3.7.0",
+    "recharts": "^2.15.4",
     "resend": "^6.9.1",
     "sonner": "^2.0.7",
     "styled-components": "^6.3.8",
