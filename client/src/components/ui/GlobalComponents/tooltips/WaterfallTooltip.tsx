@@ -1,7 +1,10 @@
 import { Badge } from "@/components/ui/shadcn/badge"
 import { WaterfallItem } from "@/features/environment/week/week.types"
+import { TooltipContentProps } from "recharts"
 
-const WaterfallTooltip = ({ active, payload }: any) => {
+type WaterfallTooltipProps = Pick<TooltipContentProps<number, string>, "active" | "payload">
+
+const WaterfallTooltip = ({ active, payload }: WaterfallTooltipProps) => {
     if (!active || !payload?.length) return null
     const d: WaterfallItem = payload[0]?.payload
     if (!d) return null
@@ -13,7 +16,7 @@ const WaterfallTooltip = ({ active, payload }: any) => {
         : "border-emerald-400 text-emerald-500"
 
     return (
-        <div className="bg-popover text-popover-foreground min-w-[200px] space-y-1.5 rounded-md border p-3 text-sm shadow-md">
+        <div className="bg-popover text-popover-foreground min-w-50 space-y-1.5 rounded-md border p-3 text-sm shadow-md">
             <p className="font-semibold">{d.feature}</p>
             {[
                 {

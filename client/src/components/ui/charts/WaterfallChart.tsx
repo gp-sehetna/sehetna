@@ -14,9 +14,9 @@ import {
     CartesianGrid,
     Cell,
     ComposedChart,
-    Tooltip as RechartsTooltip,
     ReferenceLine,
     ResponsiveContainer,
+    Tooltip,
     XAxis,
     YAxis,
 } from "recharts"
@@ -124,10 +124,7 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
                             tickFormatter={(v) => v.toFixed(1)}
                         />
 
-                        <RechartsTooltip
-                            content={<WaterfallTooltip />}
-                            cursor={{ opacity: 0.08 }}
-                        />
+                        <Tooltip content={WaterfallTooltip} cursor={{ opacity: 0.08 }} />
 
                         {/* Baseline reference */}
                         <ReferenceLine
