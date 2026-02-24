@@ -50,7 +50,7 @@ export class AuthService extends OTPService {
         const email = await this.getEmailByOtpId(otpId)
         const hashedPassword = await hash(password, 10)
         const user = { firstName, lastName, email, password: hashedPassword }
-        const createdUser = await this.userRepository.create([user])
+        const createdUser = await this.userRepository.create(user)
         this.emailService.sendWelcome(email)
 
         return createdUser

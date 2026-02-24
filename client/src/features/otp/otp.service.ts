@@ -83,7 +83,7 @@ export class OTPService {
     }
 
     getEmailByOtpId = async (id: string) => {
-        const otpRecord = await this.otpRepository.getOtpById(id)
+        const otpRecord = await this.otpRepository.findById(id)
         if (!otpRecord) throw new NotFoundException("Otp record not found with the provided id")
         return otpRecord.email
     }

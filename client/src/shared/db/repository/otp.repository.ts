@@ -7,10 +7,6 @@ export class OtpRepository extends DatabaseRepository<IOtp> {
         super(model)
     }
 
-    async create(data: Partial<IOtp>) {
-        return await this.model.create(data)
-    }
-
     async invalidatePrevious(email: string, purpose: IOtp["purpose"]) {
         return await this.model.updateMany({ email, purpose, used: false }, { used: true }).exec()
     }
@@ -36,9 +32,5 @@ export class OtpRepository extends DatabaseRepository<IOtp> {
         return await this.model
             .findByIdAndUpdate(id, { used: true, verified: true }, { new: true })
             .exec()
-    }
-
-    async getOtpById(id: string) {
-        return await this.model.findById(id).exec()
     }
 }
