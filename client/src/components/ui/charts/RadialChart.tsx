@@ -73,10 +73,10 @@ export function RadialChart({
                 <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
                     <Label
                         content={({ viewBox }) => {
-                            if (!viewBox) return null
+                            if (!viewBox || !("cx" in viewBox) || !("cy" in viewBox)) return null
 
-                            const centerX = "cx" in viewBox ? viewBox.cx : viewBox.x
-                            const centerY = "cy" in viewBox ? viewBox.cy : viewBox.y
+                            const centerX = viewBox.cx
+                            const centerY = viewBox.cy
                             const helpSize = 28
                             const posX = centerX - helpSize / 2
                             const posY = centerY - 50
