@@ -108,7 +108,10 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
                             tickFormatter={(v) => v.toFixed(0)}
                         />
 
-                        <Tooltip content={WaterfallTooltip} wrapperStyle={{ outline: "none" }} />
+                        <Tooltip
+                            content={({ active, payload }) => WaterfallTooltip({ active, payload })}
+                            wrapperStyle={{ outline: "none" }}
+                        />
 
                         {/* Baseline reference */}
                         <ReferenceLine
