@@ -72,12 +72,14 @@ export function RadialChart({
 
                 <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
                     <Label
-                        content={({ viewBox, cx, cy }) => {
-                            if (!viewBox || !cx || !cy) return null
+                        content={({ viewBox }) => {
+                            if (!viewBox) return null
 
+                            const centerX = "cx" in viewBox ? viewBox.cx : viewBox.x
+                            const centerY = "cy" in viewBox ? viewBox.cy : viewBox.y
                             const helpSize = 28
-                            const posX = Number(cx) - helpSize / 2
-                            const posY = Number(cy) - 50
+                            const posX = centerX - helpSize / 2
+                            const posY = centerY - 50
 
                             return (
                                 <>
@@ -107,22 +109,22 @@ export function RadialChart({
                                         </TooltipProvider>
                                     </foreignObject>
                                     <text
-                                        x={cx}
-                                        y={cy}
+                                        x={centerX}
+                                        y={centerY}
                                         textAnchor="middle"
                                         dominantBaseline="central"
                                     >
                                         <tspan
-                                            x={cx}
-                                            y={cy}
+                                            x={centerX}
+                                            y={centerY}
                                             className="fill-foreground text-lg font-bold"
                                         >
                                             {safeValue}
                                         </tspan>
 
                                         <tspan
-                                            x={cx}
-                                            y={Number(cy) + 50}
+                                            x={centerX}
+                                            y={centerY + 50}
                                             className="fill-foreground text-xs font-bold"
                                         >
                                             {chartLabel}
