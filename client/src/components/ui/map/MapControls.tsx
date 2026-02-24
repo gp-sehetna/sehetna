@@ -6,6 +6,7 @@ import { ActiveSlug } from "@/shared/config/map"
 import { Dispatch } from "react"
 import { NavigationControl } from "react-map-gl/maplibre"
 import MapSidebar, { MapSidebarProps } from "./MapSidebar"
+import MapThemeSelector from "./MapThemeSelector"
 
 type BottomRightProps = ActiveSlug & {
     onLayerSelect: Dispatch<string>
@@ -14,9 +15,12 @@ type BottomLeftProps = MapSidebarProps
 
 const BottomRightContent = ({ slug, onLayerSelect }: BottomRightProps) => {
     return (
-        <div className={cn("absolute right-4 bottom-4 z-10 flex w-80 flex-col")}>
-            <MapLayerSelector healthOutcome={slug.healthOutcome} onLayerSelect={onLayerSelect} />
-            <Legend healthOutcome={slug.healthOutcome} />
+        <div className={cn(" h-fit absolute right-4 bottom-4 z-10 flex gap-2 items-end")}>
+            <MapThemeSelector />
+            <div className="flex w-80 flex-col">
+                <MapLayerSelector healthOutcome={slug.healthOutcome} onLayerSelect={onLayerSelect} />
+                <Legend healthOutcome={slug.healthOutcome} />
+            </div>
         </div>
     )
 }
@@ -32,7 +36,7 @@ const BottomLeftContent = (props: BottomLeftProps) => {
 const TopRightContent = () => {
     return (
         <>
-            <div className="absolute right-0 z-10 mt-[10px] mr-[10px] flex">
+            <div className="absolute right-0 z-10 mt-2.5 mr-2.5 flex">
                 <MapCog />
             </div>
             <NavigationControl position="top-right" showCompass={false} visualizePitch />
