@@ -29,6 +29,7 @@ class ServiceContainer:
     def load(self) -> None:
         # Load existing LGBM model and data
         self.model_loader.load_all()
+        self.historical_repository.load_all()
         self.indicator_repository.load_all()
 
         logger.info("All models and repositories loaded successfully")

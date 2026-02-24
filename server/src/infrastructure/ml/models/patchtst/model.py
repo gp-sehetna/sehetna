@@ -1,32 +1,30 @@
 import logging
-import os
 import pickle
 from pathlib import Path
 
 import joblib
+import numpy as np
 import pandas as pd
 import torch
-import torch.nn as nn
 from sklearn.preprocessing import StandardScaler
 from torch.utils.data import DataLoader
 from transformers import PatchTSTConfig, PatchTSTForPrediction
 
 from config import Settings
 from src.infrastructure.ml.models.patchtst.dataset import ClimateHealthDataset
-from src.infrastructure.ml.models.patchtst.types import PatchTSTForPredictionOutput
 from src.infrastructure.ml.models.sequential_model import SequentialModel
 
 logger = logging.getLogger(__name__)
 
 
-class PatchTST(nn.Module, SequentialModel):
+class PatchTST(SequentialModel):
     def __init__(self, settings: Settings):
-        nn.Module.__init__(self)
         SequentialModel.__init__(self, settings)
 
-        # Model components (will be loaded)
-        self.__model: PatchTSTForPrediction | None = None
+        # Model components
+        self._model: PatchTSTForPrediction | None = None
         self.__target_scaler: StandardScaler | None = None
+        self._is_loaded = False
 
         # Model configuration
         self.seq_len = 12
@@ -34,139 +32,69 @@ class PatchTST(nn.Module, SequentialModel):
         self.num_targets = len(self.settings.targets)
 
     def load(self):
-        # Validate paths
-        if not os.path.exists(self.settings.patchtst_model_path):
-            raise FileNotFoundError(f"Model checkpoint not found at: {self.settings.patchtst_model_path}")
-
-        if not os.path.exists(self.settings.patchtst_scaler_path):
-            raise FileNotFoundError(f"Scaler not found at: {self.settings.patchtst_scaler_path}")
+        if self._is_loaded:
+            return self
 
         # Load target scaler
         self.__target_scaler = joblib.load(self.settings.patchtst_scaler_path)
-        logger.info("Target scaler loaded successfully")
 
         # Initialize model architecture
         model_config = PatchTSTConfig(num_input_channels=self.num_targets, loss="mse", **self.__create_model_config())
-        self.__model = PatchTSTForPrediction(model_config)
-        logger.info("Model architecture initialized")
+        self._model = PatchTSTForPrediction(model_config).to(self.settings.device).eval()
 
         # Load model weights
         self.__load_checkpoint(self.settings.patchtst_model_path)
-        logger.info("Model weights loaded successfully")
 
-        # Move model to device and set to eval mode
-        self.__model = self.__model.to(self.settings.device).eval()
+        self._is_loaded = True
 
         return self
 
-    def transform(self, predictions: list[list[float]]) -> dict:
-        """
-        Transform LightGBM predictions into model input.
-
-         Workflow:
-        1. Take LightGBM predictions (weekly forecasts for each target)
-        2. Scale target values
-        3. Create sequences
-        4. Return batched data ready for forecasting
-        Returns:
-            dict containing:
-                - 'y_past_batch': Tensor [num_samples, seq_len, num_targets]
-                - 'y_future_batch': Tensor [num_samples, horizon, num_targets]
-                - 'num_samples': int
-                - 'horizon': int
-                - 'total_weeks': int
-        """
-
+    def _transform(self, predictions: np.ndarray[np.ndarray[float]], _) -> dict:
         # Convert predictions to DataFrame
         predictions_df = pd.DataFrame(predictions, columns=self.settings.targets)
-        logger.info(f"Predictions DataFrame created: {predictions_df.shape}")
 
         # Scale target values
         historical_y_scaled_df = self.__target_scaler.transform(predictions_df)
-        logger.info(f"Target data scaled: {historical_y_scaled_df.shape}")
 
         # Create sequences
         self.dataset = ClimateHealthDataset(historical_y_scaled_df, self.settings.targets, self.seq_len)
-        logger.info(f"Dataset created with {len(self.dataset)} samples")
 
         return self
 
-    def forecast(self):
-        """
-        Generate future forecasts using PatchTST model.
+    def _forecast(self):
+        predictions_unscaled = self.__run_inference()
+        collapsed_preds, (lower, upper) = self.__post_transform_forecasts(predictions_unscaled)
 
-        This function:
-        1. Takes transformed data (batched sequences)
-        2. Runs model inference on all sequences
-        3. Collapses overlapping predictions
-        4. Inverse scales to original values
-        5. Returns formatted response with confidence intervals
+        return self.horizon_len, {
+            name: {"point": collapsed_preds[:, i].tolist(), "lower": lower[:, i].tolist(), "upper": upper[:, i].tolist()}
+            for i, name in enumerate(self.settings.targets)
+        }
 
-        Args:
-            req: ForecastRequest containing:
-                - model_id: Model identifier
-
-        Returns:
-            ForecastResponse with:
-                - forecasts: List of weekly predictions with CI
-                - lower_bound: Lower bound of CI
-                - upper_bound: Upper bound of CI
-        """
-
+    def __run_inference(self) -> np.ndarray[np.ndarray[float]]:
         if self.dataset is None or len(self.dataset) == 0:
             raise ValueError(f"No samples created! Need at least {self.seq_len} weeks of LightGBM predictions. ")
-
-        logger.info("PatchTST Forecast: Generating future predictions")
-
-        """Use the whole dataset as input to the model (no batches as the test data is small)"""
 
         loader = DataLoader(self.dataset, batch_size=len(self.dataset))
 
         # Run model inference
         with torch.no_grad():
             y_past = next(iter(loader))
-            model_outputs = self.forward(y_past)
+            model_outputs = self._model.forward(past_values=y_past)
             predictions_scaled = model_outputs.prediction_outputs  # [num_samples, horizon, num_targets]
 
-        logger.info(f"Predictions shape: {predictions_scaled.shape}")
+        # Flatten - 2D format
+        preds_flat_scaled = predictions_scaled.contiguous().view(-1, predictions_scaled.size(-1))
 
-        # Move to CPU for processing
-        predictions_scaled = predictions_scaled.cpu()
+        # Inverse transform flattened versions
+        preds_flat_unscaled = torch.from_numpy(self.__target_scaler.inverse_transform(preds_flat_scaled.numpy())).float()
 
-        collapsed_preds, (lower_bound, upper_bound) = self.__post_transform_forecasts(all_preds=predictions_scaled)
+        # Reshape unscaled back to 3D
+        original_shape = predictions_scaled.shape
+        preds_3d_unscaled = preds_flat_unscaled.reshape(original_shape)
 
-        logger.info(
-            f"Predictions collapsed\n"
-            f"- Collapsed shape: {collapsed_preds.shape}\n"
-            f"- Lower bound shape: {lower_bound.shape}\n"
-            f"- Upper bound shape: {upper_bound.shape}"
-        )
+        logger.info(f"Predictions shape: {preds_3d_unscaled.shape}")
 
-        # Flatten for inverse transform
-        collapsed_preds_flat = collapsed_preds.reshape(-1, self.num_targets)
-        lower_bound_flat = lower_bound.reshape(-1, self.num_targets)
-        upper_bound_flat = upper_bound.reshape(-1, self.num_targets)
-
-        # Inverse transform
-        forecasts_unscaled = self.__target_scaler.inverse_transform(collapsed_preds_flat.numpy())
-        lower_bound_unscaled = self.__target_scaler.inverse_transform(lower_bound_flat.numpy())
-        upper_bound_unscaled = self.__target_scaler.inverse_transform(upper_bound_flat.numpy())
-
-        # Reshape back
-        forecasts_unscaled = forecasts_unscaled.reshape(self.horizon_len, self.num_targets)
-        lower_bound_unscaled = lower_bound_unscaled.reshape(self.horizon_len, self.num_targets)
-        upper_bound_unscaled = upper_bound_unscaled.reshape(self.horizon_len, self.num_targets)
-
-        logger.info("Inverse scaling completed")
-        logger.info(f"- Final forecasts shape: {forecasts_unscaled.shape}")
-
-        response = {
-            "forecasts": forecasts_unscaled.tolist(),
-            "lower_bound": lower_bound_unscaled.tolist(),
-            "upper_bound": upper_bound_unscaled.tolist(),
-        }
-
-        return response
+        return preds_3d_unscaled.cpu()
 
     def __create_model_config(self) -> dict:
         return dict(
@@ -184,7 +112,7 @@ class PatchTST(nn.Module, SequentialModel):
         with open(model_path, "rb") as f:
             checkpoint = pickle.load(f)
 
-        self.__model.load_state_dict(checkpoint.get("model_state_dict"), strict=False)
+        self._model.load_state_dict(checkpoint.get("model_state_dict"), strict=False)
 
     def __collapse_overlapping_forecasts(self, all_preds: torch.Tensor):
         S, H, _ = all_preds.shape
@@ -223,24 +151,6 @@ class PatchTST(nn.Module, SequentialModel):
         return lower_bound, upper_bound
 
     def __post_transform_forecasts(self, all_preds: torch.Tensor, z_score=1.96):
-        """
-        This function averages the overlapping predictions and
-        computes uncertainty estimates (standard deviation) & confidence intervals (lower and upper bounds)
-
-        Args:
-            all_preds: Tensor of shape (num_samples, horizon, num_targets)
-            z_score: Z-score for computing confidence intervals
-
-        Returns:
-            collapsed_forecasts: Tensor of shape (horizon, num_targets)
-            (lower_bound, upper_bound): Tuple of lower and upper bounds
-        """
         collapsed_forecasts, uncertainity = self.__collapse_overlapping_forecasts(all_preds)
         lower_bound, upper_bound = self.__compute_confidence_intervals(collapsed_forecasts, uncertainity, z_score)
         return collapsed_forecasts, (lower_bound, upper_bound)
-
-    def forward(self, y_past, y_future=None) -> PatchTSTForPredictionOutput:
-        if not self.__model:
-            raise RuntimeError("Model not initialized")
-
-        return self.__model.forward(past_values=y_past, future_values=y_future)

@@ -1,6 +1,7 @@
 import logging
 
 import numpy as np
+import pandas as pd
 import timesfm
 
 from config import Settings
@@ -14,21 +15,20 @@ class TimesFM(SequentialModel):
     def __init__(self, settings: Settings):
         SequentialModel.__init__(self, settings)
 
+        # Model components
+        self._model: timesfm.TimesFM_2p5_200M_torch | None = None
+        self._is_loaded: bool = False
+
         # Model configuration
         self.seq_len = 512
         self.horizon_len = 128
 
-        # Model components
-        self.__model: timesfm.TimesFM_2p5_200M_torch | None = None
-        self._loaded: bool = False
-
     def load(self) -> None:
-        if self._loaded:
-            return
+        if self._is_loaded:
+            return self
 
-        self.__model = timesfm.TimesFM_2p5_200M_torch.from_pretrained("google/timesfm-2.5-200m-pytorch")
-
-        self.__model.compile(
+        self._model = timesfm.TimesFM_2p5_200M_torch.from_pretrained("google/timesfm-2.5-200m-pytorch")
+        self._model.compile(
             timesfm.ForecastConfig(
                 max_context=self.seq_len,
                 max_horizon=self.horizon_len,
@@ -38,53 +38,40 @@ class TimesFM(SequentialModel):
             )
         )
 
-        self._loaded = True
-        logger.info("TimesFM loaded")
+        self._is_loaded = True
         return self
 
-    def transform(self, predictions: list[list[float]]):
+    def _transform(self, predictions: np.ndarray[np.ndarray[float]], historical_indicators: pd.DataFrame):
+        if historical_indicators.empty:
+            raise ValueError("Historical indicators is empty")
 
-        if predictions is None:
-            raise ValueError("Predictions is None")
+        historical_values = historical_indicators[self.settings.targets].values  # (N, 5)
+        combined = np.vstack((historical_values, predictions))  # (N + B, 5)
+        self.transformed = dict(zip(self.settings.targets, combined.T))
 
-        predictions_np = np.asarray(predictions, dtype=np.float32)
-
-        if predictions_np.ndim != 2 or predictions_np.shape[1] != 5:
-            raise ValueError(f"Expected shape (n, 5), got {predictions_np.shape}")
-
-        transformed: dict[str, np.ndarray] = {}
-
-        for i, name in enumerate(self.settings.targets):
-            series = predictions_np[:, i]
-
-            if len(series) > self.seq_len:
-                logger.info(f"{name}: slicing to last {self.seq_len}")
-                series = series[-self.seq_len :]
-
-            transformed[name] = series
-
-        self.transformed_series = transformed
         return self
 
-    def forecast(self) -> dict[str, list[float]]:
-        """
-        Returns:
-            Dict[str, List[float]]
-            where each key is a target name
-            and value is forecasted horizon values.
-        """
+    def _forecast(self):
+        return self.horizon_len, {
+            name: {"point": point.tolist(), "lower": lower.tolist(), "upper": upper.tolist()}
+            for name, (point, (lower, upper)) in self._forecast_targets().items()
+        }
 
-        if not self._loaded or self.__model is None:
-            raise RuntimeError("TimesFM not loaded. Call load() first.")
+    def _forecast_targets(self):
+        forecast_results: dict[str, tuple[np.ndarray, np.ndarray]] = {}
 
-        forecast_results: dict[str, list[float]] = {}
-
-        for name, series in self.transformed_series.items():
-
-            input_series = [series]  # TimesFM expects List[np.ndarray]
-
-            point_forecast, _ = self.__model.forecast(inputs=input_series, horizon=self.horizon_len)
-
-            forecast_results[name] = point_forecast[0].tolist()
+        for name, series in self.transformed.items():
+            forecast_results[name] = self._forecast_single_target(series)
 
         return forecast_results
+
+    def _forecast_single_target(self, series):
+        point_forecast, quantile_forecasts = self._model.forecast(inputs=[series], horizon=self.horizon_len)
+
+        logger.debug(f"Point forecast: {point_forecast.shape}")  # [1, horizon]
+        logger.debug(f"Quantile forecasts: {quantile_forecasts.shape}")  # [1, horizon, num_quantiles=10]
+
+        return (
+            point_forecast[0, ...],
+            (quantile_forecasts[0, :, 1], quantile_forecasts[0, :, 9]),  # Get only the 10th and 90th quantiles
+        )

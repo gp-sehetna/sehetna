@@ -1,4 +1,4 @@
-import { PurposeEnum } from "@/shared/db/enums/enums.db"
+import { PurposeEnum } from "@/shared/db/enums/auth.enum"
 import { z } from "zod"
 
 const OtpSchema = z.strictObject({

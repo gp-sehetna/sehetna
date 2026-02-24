@@ -117,7 +117,7 @@ class Settings(PathSettings):
 
 
 class DevelopmentSettings(Settings):
-    log_level: int | str = logging.INFO
+    log_level: int | str = logging.DEBUG
     model_config = SettingsConfigDict(env_file=".env.development", frozen=True)
 
 

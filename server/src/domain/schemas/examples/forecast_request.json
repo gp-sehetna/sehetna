@@ -1,8 +1,8 @@
 [
 	{
-		"model_id": "patchtst",
+		"model_id": "timesfm",
 		"coords": "-1.5148936502416617,20.193686127794173",
-		"country_code": "COD",
+		"country_code": "USA",
 		"indicators": {
 			"gdp_per_capita_usd": null,
 			"food_production_index": null,

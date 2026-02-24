@@ -1,4 +1,4 @@
-import { RoleEnum } from "@/shared/db/enums/enums.db"
+import { RoleEnum } from "@/shared/db/enums/auth.enum"
 import { DUser } from "@/shared/db/model/user.model"
 import { BadRequestException, UnauthorizedException } from "@/shared/http/errors"
 import { sign, JwtPayload, verify } from "jsonwebtoken"

@@ -1,5 +1,6 @@
 import logging
 
+import numpy as np
 import pandas as pd
 
 from src.application.services.shap_service import ShapExplanabilityService
@@ -114,17 +115,28 @@ class PredictionService(ShapExplanabilityService):
         )
 
     def simulate(self, req: PredictionRequest, query: PredictionQueryParams | None = None):
+        """
+        Run a prediction given a prediction request and an optional explanation query.
+
+        Args:
+            req: PredictionRequest
+            query: PredictionQueryParams | None
+
+        Returns:
+            tuple[np.ndarray[np.ndarray[float]], dict[str, list] | None]
+        """
+
         df = self.get_df(req)
         df_processed = self.model_loader.pipeline.transform(df)
         X_test = df_processed[self.settings.features]
 
         logger.info("Predicting...")
-        predictions: list[list[float]] = self.model_loader.model.predict(X_test)
+        predictions: np.ndarray[np.ndarray[float]] = self.model_loader.model.predict(X_test)
 
         if query is None:
-            return predictions, None
+            return df, predictions, None
 
         logger.info("Explaining...")
         explanations = self._explain(X_test, query.explainer_method, query.top_k_contributors)
 
-        return predictions, explanations
+        return df, predictions, explanations

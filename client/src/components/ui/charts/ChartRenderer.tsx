@@ -1,12 +1,13 @@
 import GroupPieChart from "@/components/ui/charts/PieChart"
 import { WaterfallChart } from "@/components/ui/charts/WaterfallChart"
-import { ExplanationMethod, Explanations, Prediction } from "@/features/environment/week/week.types"
+import { ExplanationMethod, Explanations } from "@/features/environment/week/week.types"
+import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 
 type ChartRendererProps = {
     method: ExplanationMethod
     contributors: number
     explanations: Explanations
-    healthOutcome: keyof Prediction
+    healthOutcome: keyof IHealthOutcomes
 }
 
 const ChartRenderer = ({
