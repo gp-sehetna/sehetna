@@ -11,7 +11,6 @@ import { HelpCircle } from "lucide-react"
 import { useMemo } from "react"
 import {
     Bar,
-    BarShapeProps,
     CartesianGrid,
     ComposedChart,
     ReferenceLine,
@@ -134,7 +133,7 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
                         <Bar
                             dataKey="value"
                             stackId="waterfall"
-                            shape={({ x, y, width, height, payload }: BarShapeProps) => {
+                            shape={({ x, y, width, height, payload }: any) => {
                                 const fill = payload?.isLast
                                     ? "hsl(var(--primary))"
                                     : payload?.direction === "Increase"
