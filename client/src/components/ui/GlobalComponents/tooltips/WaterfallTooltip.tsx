@@ -1,11 +1,8 @@
 import { Badge } from "@/components/ui/shadcn/badge"
 import { WaterfallItem } from "@/features/environment/week/week.types"
 import { cn } from "@/lib/utils"
-import { TooltipContentProps } from "recharts"
 
-type WaterfallTooltipProps = Pick<TooltipContentProps<number, string>, "active" | "payload">
-
-const WaterfallTooltip = ({ active, payload }: WaterfallTooltipProps) => {
+const WaterfallTooltip = ({ active, payload }: any) => {
     if (!active || !payload?.length) return null
     const d: WaterfallItem | undefined = payload[0]?.payload
     if (!d) return null
