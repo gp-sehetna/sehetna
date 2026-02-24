@@ -32,6 +32,7 @@ const ConfirmPasswordSchema = PasswordSchema.extend({
     path: ["confirmPassword"],
 })
 
+// TODO: double check on constraints of both fields, both should have the same min/max
 const NameSchema = z.strictObject({
     firstName: z.string().min(2, "Min username length is 2 chars"),
     lastName: z.string().max(20, "Max username length is 20 chars"),
