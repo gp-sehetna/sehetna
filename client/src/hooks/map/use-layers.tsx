@@ -7,7 +7,7 @@ import {
     LayerSpecification,
     LineLayerSpecification,
 } from "maplibre-gl"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo } from "react"
 
 const useLayers = (theme: GradientPalette) => {
     const backgroundLayer = useMemo<BackgroundLayerSpecification>(
