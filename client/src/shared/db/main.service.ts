@@ -6,8 +6,9 @@ import { UserRepository } from "@/shared/db/repository/user.repository"
 
 import { EmailService } from "@/shared/email/email.service"
 import { AuthService } from "@/features/auth/auth.service"
+import { SimulateService } from "@/features/environment/simulate/simulate.service"
 import { WeekService } from "@/features/environment/week/week.service"
-import { OtpRepository } from "./repository/otp.repository"
+import { OtpRepository } from "@/shared/db/repository/otp.repository"
 import { OtpModel } from "@/shared/db/model/otp.model"
 
 type MainServiceOptions = {
@@ -24,6 +25,7 @@ export class MainService {
         new EmailService()
     )
     public readonly weekService: WeekService = new WeekService()
+    public readonly simulateService: SimulateService = new SimulateService()
 
     private constructor() {}
     public static async getInstance(

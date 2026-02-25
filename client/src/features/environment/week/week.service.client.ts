@@ -1,14 +1,8 @@
 "use client"
-import {
-    EnvironmentData,
-    Location,
-    SimulateQueryParams,
-    SimulateResponse,
-} from "@/features/environment/week/week.types"
+import { EnvironmentData, Location } from "@/features/environment/week/week.types"
 import { toProperCase } from "@/lib/utils"
 import { confirmIncompleteEnvironment } from "@/lib/utils/toast"
 import { api } from "@/shared/api"
-import { format } from "date-fns"
 import { SearchParamsOption } from "ky"
 import { toast } from "sonner"
 
@@ -28,7 +22,7 @@ export class WeekClientService {
         return Array.from(nullKeys)
     }
 
-    private fetchEnvironment = async (location: Location, date: string | null, weeks: number) => {
+    public fetchEnvironment = async (location: Location, date: string | null, weeks: number) => {
         const { lat, lng, iso } = location,
             coords = `${lat},${lng}`,
             isNotSimulation = !date || weeks == 0,
@@ -57,53 +51,5 @@ export class WeekClientService {
         if (result === null) return null // user chose "Modify"
 
         return environmentData
-    }
-
-    private fetchEnvironmentAndSimulate = async (
-        loc: Location,
-        date?: Date,
-        weeks = 0,
-        params: SimulateQueryParams = { top_k_contributions: 25, explainer_method: "group" }
-    ) => {
-        const formattedDate = date ? format(date, "yyyy-MM-dd") : null
-        const environment = await this.fetchEnvironment(loc, formattedDate, weeks)
-        if (!environment) return null
-
-        const result = await api
-            .post<SimulateResponse>("ai/simulate", {
-                json: environment,
-                searchParams: {
-                    top_k_contributors: params.top_k_contributions,
-                    explainer_method: params.explainer_method,
-                },
-            })
-            .json()
-        return result
-    }
-
-    simulateEnvironment = async (
-        loc: Location,
-        date: Date,
-        weeks = 1,
-        params: SimulateQueryParams = { top_k_contributions: 25, explainer_method: "group" }
-    ) => {
-        return await toast
-            .promise<SimulateResponse | null>(
-                () => this.fetchEnvironmentAndSimulate(loc, date, weeks, params),
-                {
-                    loading: "Simulating...",
-                    success: (predictions) => {
-                        if (!predictions)
-                            return {
-                                message: "Modify your inputs at the side bar to get predictions.",
-                                type: "warning",
-                            }
-
-                        return { message: "Predictions loaded!", type: "info" }
-                    },
-                    error: "Error occurred",
-                }
-            )
-            .unwrap()
     }
 }

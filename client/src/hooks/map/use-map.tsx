@@ -2,7 +2,7 @@
 import centroid from "@turf/centroid"
 import { useEffect, useMemo } from "react"
 
-import { WeekClientService } from "@/features/environment/week/week.service.client"
+import { SimulateClientService } from "@/features/environment/simulate/simulate.service.client"
 import { slugify } from "@/lib/utils"
 
 import {
@@ -26,6 +26,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { useDateUrlSync } from "./use-date"
 import { IHealthOutcomes } from "@/shared/config/health-outcomes"
+import { WeekClientService } from "@/features/environment/week/week.service.client"
 
 const useMapHook = () => {
     const router = useRouter()
@@ -41,7 +42,7 @@ const useMapHook = () => {
 
     const { theme, isInvalid, setHealthOutcome } = useThemeStore()
 
-    const weekService = useMemo(() => new WeekClientService(), [])
+    const simulateService = useMemo(() => new SimulateClientService(new WeekClientService()), [])
 
     const { date } = useDateUrlSync(activeSlug)
 
@@ -123,7 +124,7 @@ const useMapHook = () => {
 
             const simulation =
                 process.env.NODE_ENV != "development"
-                    ? await weekService.simulateEnvironment(location, date, 1, {
+                    ? await simulateService.simulateEnvironment(location, date, 1, {
                           top_k_contributions: 25,
                           explainer_method: explanationMethod,
                       })
