@@ -23,9 +23,4 @@ class ClimateHealthDataset(Dataset):
         return len(self.samples)
 
     def __getitem__(self, idx):
-        """
-        ## Shapes returned
-        - y_past   : [seq_len, num_targets]
-        """
-        s = self.samples[idx]
-        return torch.from_numpy(s["y_past"])
+        return torch.from_numpy(self.samples[idx]["y_past"])

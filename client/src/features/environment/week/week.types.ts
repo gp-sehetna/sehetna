@@ -1,3 +1,5 @@
+import { IHealthOutcomes } from "@/shared/config/health-outcomes"
+
 type Reducer = (values: number[]) => number | null
 type AggResult<T> = { date: string } & { [K in keyof T]: number | null }
 
@@ -34,14 +36,6 @@ interface EnvironmentData {
     data: Array<WeeklyEnvironmentData>
 }
 
-interface Prediction {
-    respiratory_disease_rate: number
-    cardio_mortality_rate: number
-    vector_disease_risk_score: number
-    waterborne_disease_incidents: number
-    heat_related_admissions: number
-}
-
 interface GroupExplanationItem {
     group: string
     shap_sum?: number
@@ -63,7 +57,7 @@ type ExplanationItemMap = {
 }
 
 type ExplanationItems<Method extends ExplanationMethod> = Record<
-    keyof Prediction,
+    keyof IHealthOutcomes,
     ExplanationItemMap[Method][]
 >
 
@@ -76,7 +70,7 @@ type Explanations = {
 } & ExplanationsByMethod
 
 type SimulateResponse = {
-    predictions: Prediction[]
+    predictions: IHealthOutcomes[]
     explanations: Explanations
 }
 
@@ -112,7 +106,6 @@ export type {
     ExplanationsByMethod,
     GroupExplanationItem,
     Location,
-    Prediction,
     Reducer,
     SimulateQueryParams,
     SimulateResponse,

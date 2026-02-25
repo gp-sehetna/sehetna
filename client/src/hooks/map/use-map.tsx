@@ -18,13 +18,14 @@ import { useThemeStore } from "@/stores/map/use-theme"
 import { MapLibreEvent } from "maplibre-gl"
 import { MapLayerMouseEvent } from "react-map-gl/maplibre"
 
-import { Prediction, SimulateResponse } from "@/features/environment/week/week.types"
+import { SimulateResponse } from "@/features/environment/week/week.types"
 import { useMapStore } from "@/stores/map/use-map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
 import { useSettingsStore } from "@/stores/use-settings"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { useDateUrlSync } from "./use-date"
+import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 
 const useMapHook = () => {
     const router = useRouter()
@@ -129,7 +130,10 @@ const useMapHook = () => {
                     : await fetch(`/simulation/examples/${explanationMethod}.json`).then(
                           (res) => res.json() as Promise<SimulateResponse>
                       )
-            const healthOutcome = activeSlug.healthOutcome.replace(/-/g, "_") as keyof Prediction
+            const healthOutcome = activeSlug.healthOutcome.replace(
+                /-/g,
+                "_"
+            ) as keyof IHealthOutcomes
 
             if (simulation) setSimulation(simulation, healthOutcome)
         } finally {
@@ -165,7 +169,7 @@ const useMapHook = () => {
 
         setHealthOutcome(healthOutcome)
 
-        const healthOutcomeKey = healthOutcome.replace(/-/g, "_") as keyof Prediction
+        const healthOutcomeKey = healthOutcome.replace(/-/g, "_") as keyof IHealthOutcomes
         onOutcomeSelect(healthOutcomeKey)
     }
 

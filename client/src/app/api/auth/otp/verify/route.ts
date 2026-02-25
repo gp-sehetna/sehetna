@@ -1,5 +1,5 @@
 import { PurposeAndOtpSchema } from "@/features/auth/auth.validation"
-import { PurposeEnum } from "@/shared/db/enums/enums.db"
+import { PurposeEnum } from "@/shared/db/enums/auth.enum"
 import { MainService } from "@/shared/db/main.service"
 import { UnauthorizedException } from "@/shared/http/errors"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"

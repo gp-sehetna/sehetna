@@ -2,6 +2,7 @@ import json
 from datetime import date
 from typing import Annotated, Literal
 
+import numpy as np
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StringConstraints, model_validator
 
 from src.core.exceptions import BadRequest
@@ -153,33 +154,8 @@ class PredictionResult(BaseModel):
             heat_related_admissions=round(prediction[4]),
         )
 
-    # def from_predictions(cls, method: ExplainerMethod, predictions, data: dict[str, list] | None = None):
-    #     return cls(
-    #         respiratory_disease_rate=float(predictions[0]),
-    #         cardio_mortality_rate=float(predictions[1]),
-    #         vector_disease_risk_score=float(predictions[2]),
-    #         waterborne_disease_incidents=round(predictions[3]),
-    #         heat_related_admissions=round(predictions[4]),
-    #         explanations={"method": method, method: data},
-    #     )
-
-    #     # Convert each model's predictions to floats
-    #     model_preds = list(predictions.values())
-
-    #     # Simple aggregation: average across models for each outcome
-    #     aggregated = [sum(x) / len(x) for x in zip(*model_preds)]
-
-    #     return cls(
-    #         respiratory_disease_rate=float(aggregated[0]),
-    #         cardio_mortality_rate=float(aggregated[1]),
-    #         vector_disease_risk_score=float(aggregated[2]),
-    #         waterborne_disease_incidents=round(aggregated[3]),
-    #         heat_related_admissions=round(aggregated[4]),
-    #         explanations={"method": method, method: explanation_data},
-    #     )
-
     @classmethod
-    def from_predictions(cls, predictions: list[list[float]]):
+    def from_predictions(cls, predictions: np.ndarray[np.ndarray[float]]):
         return [cls.from_prediction(prediction) for prediction in predictions]
 
 
@@ -194,7 +170,7 @@ class SimulationResponse(BaseModel):
     predictions: list[PredictionResult] = Field(..., description="Predicted health outcomes.")
 
     @classmethod
-    def build(cls, predictions: list[list[float]], method: ExplainerMethod, explanations: dict[str, list] | None):
+    def build(cls, predictions: np.ndarray[np.ndarray[float]], method: ExplainerMethod, explanations: dict[str, list] | None):
         return cls(
             predictions=PredictionResult.from_predictions(predictions),
             explanations={"method": method, method: explanations},

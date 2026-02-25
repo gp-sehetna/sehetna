@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/shadcn/card"
 import { useDateUrlSync } from "@/hooks/map/use-date"
 import { ActiveSlug } from "@/shared/config/map"
 import { useMapStore } from "@/stores/map/use-map"
+import { DateRangeSlider } from "./view/DateFilterSlider"
 
 export type MapSidebarProps = ActiveSlug & {
     closeSidebar: () => void
@@ -30,7 +31,8 @@ const MapSidebar = ({ slug, closeSidebar }: MapSidebarProps) => {
             )}
 
             <div className="glassy flex min-w-full shrink-0 flex-col rounded-2xl border p-4">
-                <DatePickerSimple date={date} setDate={setDate} className="relative w-full" />
+                <DatePickerSimple date={date} setDate={setDate} />
+                <DateRangeSlider />
             </div>
         </>
     )

@@ -5,15 +5,16 @@ import { Pie, PieChart } from "recharts"
 import MetaTooltip from "@/components/ui/GlobalComponents/tooltips/MetaTooltip"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
 import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/shadcn/chart"
-import { GroupExplanationItem, Prediction } from "@/features/environment/week/week.types"
+import { GroupExplanationItem } from "@/features/environment/week/week.types"
 import { getInitials, toProperCase } from "@/lib/utils"
+import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 import { useThemeStore } from "@/stores/map/use-theme"
 import { HelpCircle } from "lucide-react"
 import { useEffect, useState } from "react"
 
 type Props = {
     items: GroupExplanationItem[]
-    healthOutcome: keyof Prediction
+    healthOutcome: keyof IHealthOutcomes
 }
 export default function GroupPieChart({ items, healthOutcome }: Props) {
     const [metadata, setMetadata] =
@@ -38,19 +39,23 @@ export default function GroupPieChart({ items, healthOutcome }: Props) {
 
     if (Math.abs(total - 100) > 0.05) chartData.push({ group: "Others", percent: 100 - total })
 
+    const getTitle = (item: GroupExplanationItem) => {
+        return metadata?.[item.group]?.title || item.group
+    }
+
     const colors = getSampledColors(chartData.length)
     const sortedData = chartData.map((item, index) => ({
         ...item,
-        group: metadata?.[item.group]?.title || item.group,
-        initials: getInitials(metadata?.[item.group]?.title || item.group),
+        group: getTitle(item),
+        initials: getInitials(getTitle(item)),
         description: metadata?.[item.group]?.description || "No Description",
         fill: colors[index % colors.length], // Add the fill color
     }))
 
     const chartConfig = sortedData.reduce<ChartConfig>(
         (acc, item, index) => {
-            acc[item.group] = {
-                label: metadata?.[item.group]?.title || item.group,
+            acc[getTitle(item)] = {
+                label: getTitle(item),
                 color: colors[index % colors.length],
             }
             return acc
@@ -92,15 +97,15 @@ export default function GroupPieChart({ items, healthOutcome }: Props) {
                             content={({ active, payload }) => {
                                 if (!active || !payload?.length) return null
 
-                                const { name, value } = payload[0]
+                                const item = payload[0]?.payload as GroupExplanationItem
 
                                 return (
                                     <div className="glassy max-w-sm rounded-xl p-2 shadow-xl">
                                         <p className="text-sm">
                                             <span className="font-semibold">
-                                                {chartConfig[name].label}
+                                                {chartConfig[getTitle(item)].label}
                                             </span>
-                                            <span>: {value.toFixed(2)}%</span>
+                                            <span>: {item.percent.toFixed(2)}%</span>
                                         </p>
                                     </div>
                                 )
@@ -113,10 +118,11 @@ export default function GroupPieChart({ items, healthOutcome }: Props) {
                     {sortedData.map((item) => {
                         return (
                             <MetaTooltip
-                                key={item.group}
-                                title={item.group}
+                                side="bottom"
+                                key={getTitle(item)}
+                                title={getTitle(item)}
                                 description={item.description}
-                                bgColor={chartConfig[item.group]?.color}
+                                bgColor={chartConfig[getTitle(item)]?.color}
                                 initial={item.initials}
                             />
                         )

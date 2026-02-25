@@ -1,5 +1,5 @@
 import { Document, Schema, model, models } from "mongoose"
-import { PurposeEnum } from "../enums/enums.db"
+import { PurposeEnum } from "../enums/auth.enum"
 
 export interface IOtp extends Document {
     email: string
@@ -16,11 +16,7 @@ const OtpSchema = new Schema<IOtp>(
     {
         email: { type: String, required: true, index: true },
         otpHash: { type: String, required: true },
-        purpose: {
-            type: String,
-            enum: PurposeEnum,
-            required: true,
-        },
+        purpose: { type: String, enum: PurposeEnum, required: true },
         expiresAt: { type: Date, required: true },
         used: { type: Boolean, default: false },
         verified: { type: Boolean, default: false },
