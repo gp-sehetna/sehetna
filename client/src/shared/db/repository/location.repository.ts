@@ -7,17 +7,17 @@ export class LocationRepository extends DatabaseRepository<ILocation> {
         super(model)
     }
     async getRecursiveLocations(location: Partial<ILocation>) {
-        const children = await this.model.find({ parent_id: location._id as any }).exec()
+        const children = await this.find({ parent_id: location._id as any })
         return [location, ...children]
     }
     async getLocationsByLevel(level: ILocation["geographic_level"]) {
-        return await this.model.find({ geographic_level: level }).exec()
+        return await this.find({ geographic_level: level })
     }
     /**
      * Uses name to get locations with name using LIKE operator: `%name%`
      * @todo For Scalability, add support for fuzzy search
      **/
     async getLocationsByName(name: string) {
-        return await this.model.find({ name: { $regex: name, $options: "i" } }).exec()
+        return await this.find({ name: { $regex: name, $options: "i" } })
     }
 }

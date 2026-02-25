@@ -22,7 +22,7 @@ export abstract class DatabaseRepository<T extends Document> {
         const operations = docs.map((doc) => {
             const filter: QueryFilter<T> = {
                 [uniqueKey]: doc[uniqueKey],
-            } as QueryFilter<T>
+            }
 
             const update: UpdateQuery<T> = {
                 $set: doc,
