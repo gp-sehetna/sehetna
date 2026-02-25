@@ -8,13 +8,11 @@ export class DataStoreRepository extends DatabaseRepository<IDataStore> {
     }
 
     async findDataStores(filter: QueryFilter<IDataStore> = {}) {
-        
         return await this.find(filter, {
             variables: 0,
             file_path: 0,
             notes: 0,
             createdAt: 0,
         })
-
     }
 }

@@ -1,7 +1,7 @@
 import { Document, model, models, Schema } from "mongoose"
 import { ProviderEnum, GenderEnum, RoleEnum } from "../enums/auth.enum"
 
-export interface DUser extends Document {
+export interface IUser extends Document {
     firstName: string
     lastName: string
     email: string
@@ -13,7 +13,7 @@ export interface DUser extends Document {
     updatedAt: Date
 }
 
-const userSchema = new Schema<DUser>(
+const userSchema = new Schema<IUser>(
     {
         firstName: { type: String, required: true, minLength: 2, maxLength: 20 },
         lastName: { type: String, required: true, minLength: 2, maxLength: 20 },
@@ -23,7 +23,7 @@ const userSchema = new Schema<DUser>(
         gender: { type: String, enum: GenderEnum, default: GenderEnum.Male },
         role: { type: String, enum: RoleEnum, default: RoleEnum.user },
     },
-    { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+    { timestamps: true }
 )
 
-export const UserModel = models.User || model<DUser>("User", userSchema)
+export const UserModel = models.User || model<IUser>("User", userSchema)

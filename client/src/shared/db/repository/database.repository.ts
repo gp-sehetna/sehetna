@@ -15,15 +15,11 @@ export abstract class DatabaseRepository<T extends Document> {
     async create(data: Partial<T>) {
         return await this.model.create(data)
     }
-    // async bulkWrite(operations: AnyBulkWriteOperation<Document>[])  {
-    //     return await this.model.bulkWrite(operations)
-    // }
     //TODO: Version that returns inserted vs updated counts
-
     async bulkUpsert(docs: Partial<T>[], uniqueKey: keyof T = "_id" as keyof T) {
         if (!docs.length) return
 
-        const operations= docs.map((doc) => {
+        const operations = docs.map((doc) => {
             const filter: QueryFilter<T> = {
                 [uniqueKey]: doc[uniqueKey],
             } as QueryFilter<T>
@@ -39,7 +35,7 @@ export abstract class DatabaseRepository<T extends Document> {
                     upsert: true,
                 },
             }
-        }) as AnyBulkWriteOperation<Document>[] 
+        }) as AnyBulkWriteOperation<Document>[]
 
         return this.model.bulkWrite(operations)
     }
@@ -52,12 +48,9 @@ export abstract class DatabaseRepository<T extends Document> {
         return await this.model.findOne(filter).exec()
     }
 
-
-    async find(filter: QueryFilter<T> = {} , projection?: ProjectionType<T>) {
-        return await this.model.find(filter , projection).exec()
+    async find(filter: QueryFilter<T> = {}, projection?: ProjectionType<T>) {
+        return await this.model.find(filter, projection).exec()
     }
-
-
 
     async updateById(id: string, update: UpdateQuery<T>, options: QueryOptions = { new: true }) {
         return await this.model.findByIdAndUpdate(id, update, options).exec()

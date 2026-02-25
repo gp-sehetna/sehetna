@@ -1,14 +1,17 @@
-import { ProjectionType, PopulateOptions, QueryFilter } from "mongoose"
+import { ProjectionType, QueryFilter, PopulateOptions } from "mongoose"
 
 type SortType = "asc" | "desc"
 
-interface PaginationOptions<T> {
+interface Pagination {
     page?: number
     limit?: number
-    filter?: QueryFilter<T>
     sort?: Record<string, SortType>
+}
+
+interface PaginationOptions<T> extends Pagination {
+    filter?: QueryFilter<T>
     select?: ProjectionType<T>
-    populate?: PopulateOptions | PopulateOptions[]
+    populate?: PopulateOptions | (PopulateOptions | string)[]
     lean?: boolean
 }
 
@@ -22,4 +25,4 @@ interface PaginationResult<T> {
     hasPrevPage: boolean
 }
 
-export type { PaginationOptions, PaginationResult, SortType }
+export type { PaginationOptions, Pagination, PaginationResult, SortType }

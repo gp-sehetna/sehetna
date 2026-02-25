@@ -30,7 +30,6 @@ export interface IObservation extends Document {
     createdAt: Date
 }
 
-
 const ObservationSchema = new Schema<IObservation>(
     {
         location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
@@ -56,7 +55,6 @@ const ObservationSchema = new Schema<IObservation>(
     },
     { timestamps: { createdAt: true } }
 )
-
 
 /**
  * Indexes
