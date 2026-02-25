@@ -64,4 +64,12 @@ export class EmailService {
             variables: { timestamp, device_info: deviceName },
         })
     }
+
+    async sendContact() {
+        await this.send({
+            to,
+            templateAlias: "password-changed",
+            variables: { timestamp, device_info: deviceName },
+        })
+    }
 }
