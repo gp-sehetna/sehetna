@@ -1,5 +1,6 @@
 export { buildWaterfallData } from "@/lib/utils/charts"
 export { default as cn } from "@/lib/utils/cn"
 export { getWeekRange } from "@/lib/utils/date"
+export { toDMS } from "@/lib/utils/location"
 export { generateOtp } from "@/lib/utils/number"
 export { getInitials, slugify, toProperCase, unslugify } from "@/lib/utils/string"
