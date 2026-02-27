@@ -1,7 +1,6 @@
 "use client"
 
 import * as SliderPrimitive from "@radix-ui/react-slider"
-import { GripVertical } from "lucide-react"
 import * as React from "react"
 
 import { cn } from "@/lib/utils/index"
@@ -15,11 +14,12 @@ const Slider = React.forwardRef<
         className={cn("relative flex w-full touch-none items-center select-none", className)}
         {...props}
     >
-        <SliderPrimitive.Track className="bg-primary/20 relative h-2 w-full grow overflow-hidden rounded-full">
-            {/* <SliderPrimitive.Range className="absolute h-full bg-primary" /> */}
+        <SliderPrimitive.Track className="bg-background relative h-2.5 w-full grow overflow-hidden rounded-full">
+            {/* <SliderPrimitive.Range className="bg-primary absolute h-full transition-all" /> */}
         </SliderPrimitive.Track>
-        <SliderPrimitive.Thumb className="border-primary-200 bg-primary-300 text-background focus-visible:ring-ring block flex h-6 w-6 items-center justify-center rounded-full border border-2 shadow transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50">
-            <GripVertical size={18} />
+
+        <SliderPrimitive.Thumb className="bg-background border-primary focus-visible:ring-primary/60 relative flex h-5 w-5 cursor-grab items-center justify-center rounded-full border-2 shadow-xl transition-all duration-200 hover:scale-110 hover:shadow-2xl focus-visible:ring-4 focus-visible:outline-none active:scale-95 active:cursor-grabbing disabled:pointer-events-none disabled:opacity-50">
+            <div className="bg-primary h-2 w-2 rounded-full" />
         </SliderPrimitive.Thumb>
     </SliderPrimitive.Root>
 ))
