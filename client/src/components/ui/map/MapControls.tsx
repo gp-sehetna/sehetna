@@ -1,10 +1,11 @@
 import Legend from "@/components/ui/legend/Legend"
 import MapCog from "@/components/ui/map/MapCog"
 import MapLayerSelector from "@/components/ui/map/MapLayerSelector"
-import { cn } from "@/lib/utils"
+import { cn, toDMS } from "@/lib/utils"
 import { ActiveSlug } from "@/shared/config/map"
+import { useMapStore } from "@/stores/map/use-map"
 import { useThemeStore } from "@/stores/map/use-theme"
-import { Dispatch, useState } from "react"
+import { Dispatch, memo, useMemo, useState } from "react"
 import { NavigationControl } from "react-map-gl/maplibre"
 import { MapLegendDrawer } from "../drawers/MapLegendDrawer"
 import MapSidebar, { MapSidebarProps } from "./MapSidebar"
@@ -80,6 +81,36 @@ const BottomLeftContent = (props: BottomLeftProps) => {
     )
 }
 
+const TopCenterContent = memo(() => {
+    const markerCoords = useMapStore((s) => s.markerCoords)
+    const hoveredCoords = useMapStore((s) => s.hoveredCoords)
+
+    const markerText = useMemo(() => {
+        if (!markerCoords) return null
+        return `${toDMS(markerCoords.lat, "lat")}, ${toDMS(markerCoords.lng, "lng")}`
+    }, [markerCoords])
+
+    const hoveredText = useMemo(() => {
+        if (!hoveredCoords) return null
+        return `${toDMS(hoveredCoords.lat, "lat")}, ${toDMS(hoveredCoords.lng, "lng")}`
+    }, [hoveredCoords])
+
+    if (!markerText && !hoveredText) return null
+
+    return (
+        <div className="absolute top-0 z-10 flex w-full justify-center">
+            <small className="text-muted-foreground">
+                {markerText}
+                {markerText && hoveredText && " ("}
+                {hoveredText}
+                {markerText && hoveredText && ")"}
+            </small>
+        </div>
+    )
+})
+
+TopCenterContent.displayName = "TopCenterContent"
+
 const TopRightContent = () => {
     return (
         <>
@@ -94,6 +125,7 @@ const TopRightContent = () => {
 const MapControls = (props: BottomLeftProps & BottomRightProps) => {
     return (
         <>
+            <TopCenterContent />
             <TopRightContent />
             <BottomLeftContent slug={props.slug} closeSidebar={props.closeSidebar} />
             <BottomRightContent slug={props.slug} onLayerSelect={props.onLayerSelect} />

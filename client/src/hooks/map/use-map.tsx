@@ -19,21 +19,27 @@ import { MapLibreEvent } from "maplibre-gl"
 import { MapLayerMouseEvent } from "react-map-gl/maplibre"
 
 import { SimulateResponse } from "@/features/environment/week/week.types"
+import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 import { useMapStore } from "@/stores/map/use-map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
 import { useSettingsStore } from "@/stores/use-settings"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { useDateUrlSync } from "./use-date"
-import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 
 const useMapHook = () => {
     const router = useRouter()
     const searchParams = useSearchParams()
     const params = useParams<MapPageProps["params"]>()
 
-    const { hoveredZone, markerCoords, setClickedZone, setHoveredZone, setMarkerCoords } =
-        useMapStore()
+    const {
+        hoveredZone,
+        markerCoords,
+        setClickedZone,
+        setHoveredZone,
+        setMarkerCoords,
+        setHoveredCoords,
+    } = useMapStore()
     const { explanationMethod } = useSettingsStore()
     const { setLoading, onOutcomeSelect, setSimulation } = usePredictionsStore()
 
@@ -66,6 +72,7 @@ const useMapHook = () => {
 
         // Reset currently hovered zone if we are no longer hovering anything
         if (!isHoveringAZone && hoveredZone) {
+            setHoveredCoords(null)
             setHoveredZone(null)
             map.setFeatureState({ source: COUNTRIES_SOURCE, id: hoveredZone.id }, { hover: false })
         }
@@ -82,6 +89,7 @@ const useMapHook = () => {
             map.setFeatureState({ source: COUNTRIES_SOURCE, id: hoveredZone.id }, { hover: false })
 
         if (isHoveringANewZone) {
+            setHoveredCoords({ lat: e.lngLat.lat, lng: e.lngLat.lng })
             setHoveredZone(feature)
             map.setFeatureState({ source: COUNTRIES_SOURCE, id: feature.id }, { hover: true })
         }
@@ -94,6 +102,7 @@ const useMapHook = () => {
 
         // Reset hovered state when mouse leaves map (e.g. cursor moving into panel)
         map.setFeatureState({ source: COUNTRIES_SOURCE, id: hoveredZone.id }, { hover: false })
+        setHoveredCoords(null)
         setHoveredZone(null)
     }
 

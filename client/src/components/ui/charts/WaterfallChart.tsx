@@ -55,7 +55,7 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
 
                 {/* Summary badges */}
                 <div className="flex flex-wrap gap-2 pt-2">
-                    <Badge variant="outline" className="font-mono text-xs">
+                    <Badge variant="glassy" className="font-mono text-xs">
                         Baseline {baseline.toFixed(3)}
                     </Badge>
                     <Badge className="font-mono text-xs">Final {finalValue.toFixed(3)}</Badge>
@@ -73,20 +73,16 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
             </CardHeader>
 
             {/* Legend above chart to define colors for increase and decrease */}
-            <CardContent className="-ml-8 px-0 pt-2 pb-4">
+            <CardContent className="px-0 pt-2 pb-4">
                 <div className="mb-4 flex justify-center">
                     <div className="bg-muted/40 border-border flex items-center gap-2 rounded-lg border px-4 py-1 text-xs backdrop-blur-sm">
-                        <div className="flex items-center gap-2">
-                            <span className="h-3 w-3 rounded-sm bg-rose-500 opacity-90" />
-                            <span className="text-muted-foreground">Increases prediction</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="h-3 w-3 rounded-sm bg-emerald-500 opacity-90" />
-                            <span className="text-muted-foreground">Decreases prediction</span>
-                        </div>
+                        <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500 opacity-90" />
+                        <span className="text-muted-foreground">Increases prediction</span>
+                        <span className="h-2.5 w-2.5 rounded-sm bg-rose-500 opacity-90" />
+                        <span className="text-muted-foreground">Decreases prediction</span>
                     </div>
                 </div>
-                <ResponsiveContainer width="100%" height={320}>
+                <ResponsiveContainer className="-ml-8" width="100%" height={320}>
                     <ComposedChart
                         data={waterfallData}
                         margin={{ top: 8, right: 32, left: 32, bottom: 40 }}
