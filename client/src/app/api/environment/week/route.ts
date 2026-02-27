@@ -8,7 +8,7 @@ export const GET = globalErrorHandler<IEnvironmentData>(async (request) => {
 
     const query = WeekEnvironmentParamsSchema.parse({
         coords: params.get("coords"),
-        iso: params.get("iso"),
+        country_code: params.get("iso"),
         date: params.get("date"),
         weeks: params.get("weeks"),
     })

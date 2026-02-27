@@ -19,7 +19,6 @@ import { MapLibreEvent } from "maplibre-gl"
 import { MapLayerMouseEvent } from "react-map-gl/maplibre"
 
 import { IEnvironmentData } from "@/features/environment/week/week.dto"
-import { SimulateResponse } from "@/features/environment/week/week.types"
 import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 import { useMapStore } from "@/stores/map/use-map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
@@ -136,24 +135,25 @@ const useMapHook = () => {
             setLoading(true)
 
             const simulation =
-                process.env.NODE_ENV != "development"
-                    ? await weekService.fetchEnvironmentAndSimulate(location, date, 1, {
-                          top_k_contributions: 25,
-                          explainer_method: explanationMethod,
-                      })
-                    : await fetch(`/simulation/examples/${explanationMethod}.json`).then(
-                          (res) => res.json() as Promise<SimulateResponse>
-                      )
+                // process.env.NODE_ENV != "development"
+                //     ?
+                await weekService.fetchEnvironmentAndSimulate(location, date, 1, {
+                    top_k_contributions: 25,
+                    explainer_method: explanationMethod,
+                })
+            // : await fetch(`/simulation/examples/${explanationMethod}.json`).then(
+            //       (res) => res.json() as Promise<SimulateResponse>
+            //   )
 
             const healthOutcome = unslugify(activeSlug.healthOutcome, "_") as keyof IHealthOutcomes
             if (simulation) setSimulation(simulation, healthOutcome)
 
-            if (process.env.NODE_ENV != "development") return
-            const environment = await fetch(
-                `/environment/examples/egypt_2026-02-09.json`
-            ).then<IEnvironmentData>((res) => res.json())
+            // if (process.env.NODE_ENV != "development") return
+            // const environment = await fetch(
+            //     `/environment/examples/egypt_2026-02-09.json`
+            // ).then<IEnvironmentData>((res) => res.json())
 
-            if (environment) setEnvironment(environment)
+            // if (environment) setEnvironment(environment)
         } finally {
             setLoading(false)
         }
