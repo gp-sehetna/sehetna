@@ -7,18 +7,15 @@ export class UserRepository extends DatabaseRepository<DUser> {
         super(model)
     }
 
-    async create(data: Partial<DUser>[]) {
-        return await this.model.create(data, { validateBeforeSave: true })
+    async create(data: Partial<DUser>) {
+        return await this.model.create(data)
     }
 
     async findByEmail(email: string) {
-        return await this.model.findOne({ email }).exec()
+        return await this.findOne({ email })
     }
 
     async updateUserPasswordByEmail(email: string, password: string) {
         return await this.model.findOneAndUpdate({ email }, { password }, { new: true }).exec()
-    }
-    async findById(userId: string) {
-        return await this.model.findById(userId).exec()
     }
 }

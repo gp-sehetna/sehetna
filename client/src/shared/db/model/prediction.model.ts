@@ -33,7 +33,7 @@ export interface IPrediction extends Document {
 
 const PredictionSchema = new Schema<IPrediction>(
     {
-        user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
+        user_id: { type: Schema.Types.ObjectId, ref: "User", required: true }, 
         model_id: { type: Schema.Types.ObjectId, ref: "AiModel", required: true },
         location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
         base_date: { type: Date, required: true },
@@ -47,6 +47,8 @@ const PredictionSchema = new Schema<IPrediction>(
     },
     { timestamps: { createdAt: true } }
 )
+
+
 
 // create an index on model_id and location_id
 PredictionSchema.index(

@@ -37,6 +37,7 @@ export function globalErrorHandler<T = any, Args extends any[] = any[]>(handler:
     }
 }
 
+
 const handleError = (err: unknown) => {
     const notProduction = process.env.NODE_ENV !== "production"
     if (err instanceof ApplicationException) {

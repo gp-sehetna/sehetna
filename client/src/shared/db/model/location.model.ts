@@ -47,7 +47,7 @@ const LocationSchema = new Schema<ILocation>(
  * - code is unique only at country level; combined with level for safety
  * - parent_id index enables fast "get all children of X" queries
  */
-LocationSchema.index({ code: 1, level: 1 }, { unique: true })
+LocationSchema.index({ code: 1, geographic_level: 1 }, { unique: true })
 LocationSchema.index({ parent_id: 1 })
 
 export const LocationModel = models.Location || model<ILocation>("Location", LocationSchema)
