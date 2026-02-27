@@ -113,7 +113,7 @@ export function DateRangeSlider({
             {/* ── Row 1: Selected date label + controls ── */}
             <div className="flex flex-wrap items-center justify-between gap-3">
                 {/* Date display */}
-                <span className="min-w-40 font-semibold tracking-tight">
+                <span className="font-semibold tracking-tight">
                     {formatSelectedDate(selectedDate, granularity)}
                 </span>
 

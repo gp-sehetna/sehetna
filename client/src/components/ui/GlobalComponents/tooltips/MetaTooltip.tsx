@@ -18,6 +18,8 @@ const MetaTooltip = ({ title, description, initial, bgColor, side, trigger }: Me
     if (typeof description == "string")
         description = <p className="text-muted-foreground mt-2 text-xs">{description}</p>
 
+    if (!side) side = "right"
+
     return (
         <TooltipProvider delayDuration={100}>
             <Tooltip>
