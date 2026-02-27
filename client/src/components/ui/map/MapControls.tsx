@@ -26,8 +26,11 @@ const BottomRightContent = ({ slug, onLayerSelect }: BottomRightProps) => {
 
     return (
         <div className={cn("absolute right-4 bottom-4 w-[calc(100%-30px)] md:w-65")}>
-            <div className="hidden flex-col gap-2 md:flex">
+            <div className=" max-w-fit ml-auto md:max-w-full mb-2">
                 <MapThemeSelector />
+            </div>
+            <div className="hidden flex-col gap-2 md:flex">
+                {/* <MapThemeSelector /> */}
                 <MapLayerSelector
                     healthOutcome={slug.healthOutcome}
                     onLayerSelect={onLayerSelect}

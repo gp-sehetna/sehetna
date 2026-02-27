@@ -1,5 +1,5 @@
 import { Colors, GradientPalette } from "@/shared/config/map-colors"
-import { MAP_LAYER_IDS } from "@/shared/db/enums/enums.map"
+import { MAP_LAYER_IDS } from "@/shared/config/map-theme-config"
 import { useMapTheme } from "@/stores/map/use-map-themes"
 import {
     BackgroundLayerSpecification,

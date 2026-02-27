@@ -7,17 +7,16 @@ import {
     CardTitle,
 } from "@/components/ui/shadcn/card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/shadcn/popover"
-import { toProperCase, unslugify } from "@/lib/utils"
-import { MAP_LAYER_IDS } from "@/shared/db/enums/enums.map"
 import { useMapTheme } from "@/stores/map/use-map-themes"
 import { Palette } from "lucide-react"
+import { ThemeOption } from "./ThemeOption"
+import { AVAILABLE_THEMES } from "@/shared/config/map-theme-config"
 
 const buttonStyles =
     "transition-base rounded-md p-2 hover:bg-neutral-100/50 w-full active:bg-neutral-100/75 select-none text-black cursor-pointer"
 
-const MapThemeSelector = () => {
-    const themes = [{ name: MAP_LAYER_IDS.CONTINENTS }, { name: MAP_LAYER_IDS.INCOME }]
-    const { toggleTheme } = useMapTheme()
+const MapThemeSelector = ({isPhone=false} : {isPhone?: boolean}) => {
+    const { toggleTheme, isThemeActive } = useMapTheme()
 
     return (
         <Popover>
@@ -27,17 +26,23 @@ const MapThemeSelector = () => {
                     Theme
                 </Button>
             </PopoverTrigger>
-            <PopoverContent side="left" className="shadow-xl" align="start">
-                <Card className="border-0 bg-transparent shadow-none">
-                    <CardHeader className="px-0 pt-0">
+            <PopoverContent side={isPhone ? "top" : "left"} className="shadow-xl -translate-y-1/6 md:translate-0 max-w-48 sm:max-w-none  h-auto min-h-fit max-h-none overflow-visible" align="start">
+                <Card className="flex flex-col gap-4 border-0 bg-transparent shadow-none ">
+                    <CardHeader className="p-0">
                         <CardTitle>Theme</CardTitle>
                         <CardDescription>Select a theme for the map</CardDescription>
                     </CardHeader>
-                    <CardContent className="flex flex-col gap-2 overflow-y-auto p-0">
-                        {themes.map((theme) => (
-                            <Button key={theme.name} onClick={() => toggleTheme(theme.name)}>
-                                {toProperCase(unslugify(theme.name))}
-                            </Button>
+
+                    {/* even the vertical gap here isn't working */}
+                    <CardContent className="flex flex-wrap w-full gap-4 p-0">
+                        {AVAILABLE_THEMES.map((theme) => (
+                            <button  key={theme.id} onClick={() => toggleTheme(theme.id)}>
+                                <ThemeOption
+                                    themeName={theme.name}
+                                    colors={theme.colors}
+                                    active={isThemeActive(theme.id)}
+                                />
+                            </button>
                         ))}
                     </CardContent>
                 </Card>
