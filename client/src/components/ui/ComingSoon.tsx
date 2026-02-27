@@ -1,43 +1,64 @@
+import { ComingSoonBadge } from "@/components/ui/ComingSoonBadge"
+import { cn } from "@/lib/utils"
+
 type ComingSoonProps = {
     title: string
     description?: string
+    isCompact?: boolean
+    isSection?: boolean
 }
 
-export default function ComingSoon({ title, description }: ComingSoonProps) {
+export default function ComingSoon({
+    title,
+    description,
+    isCompact = false,
+    isSection = false,
+}: ComingSoonProps) {
     return (
-        <div className="mx-auto max-w-4xl px-6 py-24">
+        <div className={cn("mx-auto max-w-4xl", !isCompact ? "px-6 py-24" : "px-2 py-6")}>
             <div className="text-center">
                 {/* App Branding */}
-                <div className="mb-8 flex items-center justify-center gap-3">
+                <div
+                    className={cn(
+                        "flex items-center justify-center gap-2",
+                        !isCompact ? "mb-8" : "mb-4"
+                    )}
+                >
                     <h3 className="text-primary text-2xl font-bold">Sehetna</h3>
                 </div>
 
                 {/* Page Title */}
-                <h1 className="mb-4 bg-clip-text text-5xl font-bold">{title} Page</h1>
+                <h1
+                    className={cn(
+                        "bg-clip-text font-bold",
+                        !isCompact ? "mb-4 text-5xl" : "mb-8 text-3xl!"
+                    )}
+                >
+                    {title} {isSection ? "Section" : "Page"}
+                </h1>
 
                 {/* Description */}
-                {description && <p className="mb-24 text-xl text-gray-600">{description}</p>}
+                {description && (
+                    <p className={cn("mbtext-xl text-gray-600", !isCompact ? "mb-24" : "mb-12")}>
+                        {description}
+                    </p>
+                )}
 
                 {/* Coming Soon Badge */}
-                <div className="bg-primary-50 ring-primary-200 mb-2 inline-flex items-center gap-2 rounded-full px-6 py-1 ring-1">
-                    <div className="flex h-2 w-2">
-                        <span className="bg-primary-400 absolute inline-flex h-2 w-2 animate-ping rounded-full opacity-75"></span>
-                        <span className="bg-primary-500 relative inline-flex h-2 w-2 rounded-full"></span>
-                    </div>
-                    <span className="text-primary-700 text-sm font-medium">
-                        Under Active Development
-                    </span>
-                </div>
+                {!isCompact && <ComingSoonBadge />}
 
                 {/* Message */}
-                <p className="mb-12 text-base text-gray-500">
+                <p className={cn("text-base text-gray-500", !isCompact ? "mb-12" : "mb-6")}>
                     We are working hard to bring you this feature. It will be available soon!
                 </p>
 
                 {/* Progress Illustration */}
                 <div className="mx-auto max-w-md">
                     <svg
-                        className="text-primary-500 mx-auto h-32 w-32"
+                        className={cn(
+                            "text-primary-500 mx-auto",
+                            !isCompact ? "h-32 w-32" : "h-16 w-16"
+                        )}
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"

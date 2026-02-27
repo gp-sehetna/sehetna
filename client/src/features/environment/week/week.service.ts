@@ -1,3 +1,12 @@
+import { IEnvironmentData } from "@/features/environment/week/week.dto"
+import {
+    AggResult,
+    HEAT_WAVE_DAY_THRESHOLD,
+    PRECIPITATION_THRESHOLD,
+    Reducer,
+    WeeklyEnvironmentData,
+    WeekParams,
+} from "@/features/environment/week/week.types"
 import { getWeekRange } from "@/lib/utils/date"
 import { externalApi } from "@/shared/api"
 import {
@@ -8,18 +17,9 @@ import {
 import { ValidationException } from "@/shared/http/errors"
 import { SearchParamsOption } from "ky"
 import { fetchWeatherApi } from "openmeteo"
-import {
-    AggResult,
-    EnvironmentData,
-    HEAT_WAVE_DAY_THRESHOLD,
-    PRECIPITATION_THRESHOLD,
-    Reducer,
-    WeeklyEnvironmentData,
-    WeekParams,
-} from "./week.types"
 
 export class WeekService {
-    async getWeeklyEnvironmentData(query: WeekParams): Promise<EnvironmentData> {
+    async getWeeklyEnvironmentData(query: WeekParams): Promise<IEnvironmentData> {
         try {
             const [air, weather] = await Promise.all([
                 this.fetchWeeklyAirData(query),

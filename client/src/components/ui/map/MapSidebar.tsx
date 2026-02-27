@@ -2,18 +2,25 @@ import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimpl
 import { ArrowLeft } from "lucide-react"
 
 import HealthOutcomeCharts from "@/components/ui/map/MapSidebarContent"
+import { DateRangeSlider } from "@/components/ui/map/view/DateFilterSlider"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/shadcn/tabs"
+import { IEnvironmentData } from "@/features/environment/week/week.dto"
 import { useDateUrlSync } from "@/hooks/map/use-date"
 import { ActiveSlug } from "@/shared/config/map"
 import { useMapStore } from "@/stores/map/use-map"
-import { DateRangeSlider } from "./view/DateFilterSlider"
+import { usePredictionsStore } from "@/stores/map/use-predictions"
+import ComingSoon from "../ComingSoon"
+import MapModifyInputs from "./simulation/MapModifyInputs"
 
 export type MapSidebarProps = ActiveSlug & {
+    onSubmitForm: (data: IEnvironmentData) => void
     closeSidebar: () => void
 }
 
-const MapSidebar = ({ slug, closeSidebar }: MapSidebarProps) => {
-    const { clickedZone } = useMapStore()
+const MapSidebar = ({ slug, closeSidebar, onSubmitForm }: MapSidebarProps) => {
+    const isModifying = usePredictionsStore((s) => s.modifying)
+    const clickedZone = useMapStore((s) => s.clickedZone)
     const { date, setDate } = useDateUrlSync(slug)
     return (
         <>
@@ -26,8 +33,27 @@ const MapSidebar = ({ slug, closeSidebar }: MapSidebarProps) => {
                         </CardTitle>
                     </CardHeader>
 
-                    <CardContent className="flex flex-col gap-4 overflow-y-auto p-4">
-                        <HealthOutcomeCharts />
+                    <CardContent className="flex h-screen flex-col gap-4 overflow-y-auto p-4">
+                        <Tabs defaultValue="live">
+                            <TabsList className="w-full">
+                                <TabsTrigger className="w-full" value="live">
+                                    Live Data
+                                </TabsTrigger>
+                                <TabsTrigger className="w-full" value="simulation">
+                                    Simulation
+                                </TabsTrigger>
+                            </TabsList>
+                            <TabsContent className="h-full" value="simulation">
+                                {!isModifying ? (
+                                    <HealthOutcomeCharts />
+                                ) : (
+                                    <MapModifyInputs onSubmitForm={onSubmitForm} />
+                                )}
+                            </TabsContent>
+                            <TabsContent value="live">
+                                <ComingSoon title="Live Data" isCompact isSection />
+                            </TabsContent>
+                        </Tabs>
                     </CardContent>
                 </Card>
             )}

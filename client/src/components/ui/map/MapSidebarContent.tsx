@@ -6,19 +6,27 @@ import { useSettingsStore } from "@/stores/use-settings"
 
 const HealthOutcomeCharts = () => {
     const { explanationMethod, contributors } = useSettingsStore()
-    const { loading, simulation, explanations, healthOutcome } = usePredictionsStore()
+    const { loading, simulation, setModifying, explanations, healthOutcome } = usePredictionsStore()
 
     const hasSimulation = simulation && simulation.predictions.length > 0
 
     if (!hasSimulation)
         return (
-            <div className="flex h-screen items-center justify-center">
+            <div className="flex h-full items-center justify-center">
                 {loading ? <AppLoader /> : <p>No data</p>}
             </div>
         )
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+            <div
+                onClick={() => setModifying(true)}
+                className="glassy base-transition flex cursor-pointer items-center justify-center rounded-2xl hover:scale-101"
+            >
+                <small className="text-center">
+                    Click this section to modify the simulation inputs.
+                </small>
+            </div>
             <div className="glassy rounded-2xl">
                 {explanations?.[explanationMethod] ? (
                     <ChartRenderer

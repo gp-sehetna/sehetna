@@ -1,6 +1,6 @@
 "use client"
+import { IEnvironmentData } from "@/features/environment/week/week.dto"
 import {
-    EnvironmentData,
     Location,
     SimulateQueryParams,
     SimulateResponse,
@@ -13,7 +13,11 @@ import { SearchParamsOption } from "ky"
 import { toast } from "sonner"
 
 export class WeekClientService {
-    private getNullEnvironmentDataKeys(environmentData: EnvironmentData): string[] {
+    constructor(
+        private setEnvironment: (_: IEnvironmentData) => void,
+        private setModifying: (_: boolean) => void
+    ) {}
+    private getNullEnvironmentDataKeys(environmentData: IEnvironmentData): string[] {
         const nullKeys = new Set<string>()
 
         // Check all weekly data rows
@@ -36,8 +40,10 @@ export class WeekClientService {
                 ? { coords, iso }
                 : { coords, iso, date, weeks },
             environmentData = await api
-                .get<EnvironmentData>("api/environment/week", { searchParams })
+                .get<IEnvironmentData>("api/environment/week", { searchParams })
                 .json()
+
+        this.setEnvironment(environmentData)
 
         // Validate Environment Data and ensure non-null values.
         if (!environmentData || !environmentData.data.length) {
@@ -54,34 +60,35 @@ export class WeekClientService {
         if (!nullKeys.length || isNotSimulation) return environmentData
 
         const result = await confirmIncompleteEnvironment(environmentData)
-        if (result === null) return null // user chose "Modify"
+        if (result) return environmentData
 
+        this.setModifying(true)
         return environmentData
     }
 
-    private fetchEnvironmentAndSimulate = async (
-        loc: Location,
-        date?: Date,
-        weeks = 0,
-        params: SimulateQueryParams = { top_k_contributions: 25, explainer_method: "group" }
-    ) => {
-        const formattedDate = date ? format(date, "yyyy-MM-dd") : null
-        const environment = await this.fetchEnvironment(loc, formattedDate, weeks)
-        if (!environment) return null
-
+    private simulate = async (environment: IEnvironmentData, params: SimulateQueryParams) => {
         const result = await api
             .post<SimulateResponse>("ai/simulate", {
                 json: environment,
-                searchParams: {
-                    top_k_contributors: params.top_k_contributions,
-                    explainer_method: params.explainer_method,
-                },
+                searchParams: { ...params },
             })
             .json()
         return result
     }
 
-    simulateEnvironment = async (
+    simulateEnvironment = async (environment: IEnvironmentData, params: SimulateQueryParams) => {
+        return await toast
+            .promise<SimulateResponse>(() => this.simulate(environment, params), {
+                loading: "Simulating...",
+                success: () => {
+                    return { message: "Predictions loaded!", type: "info" }
+                },
+                error: "Error occurred",
+            })
+            .unwrap()
+    }
+
+    fetchEnvironmentAndSimulate = async (
         loc: Location,
         date: Date,
         weeks = 1,
@@ -89,7 +96,13 @@ export class WeekClientService {
     ) => {
         return await toast
             .promise<SimulateResponse | null>(
-                () => this.fetchEnvironmentAndSimulate(loc, date, weeks, params),
+                async () => {
+                    const formattedDate = date ? format(date, "yyyy-MM-dd") : null
+                    const environment = await this.fetchEnvironment(loc, formattedDate, weeks)
+                    if (!environment) return null
+
+                    return await this.simulate(environment, params)
+                },
                 {
                     loading: "Simulating...",
                     success: (predictions) => {

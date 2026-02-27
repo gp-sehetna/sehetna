@@ -1,22 +1,36 @@
+import { refineCoords } from "@/lib/utils"
 import { differenceInCalendarDays, parseISO, startOfDay, startOfWeek, subWeeks } from "date-fns"
 import { z } from "zod"
 
 const DATE_FORMAT_REGEX = /^\d{4}-\d{2}-\d{2}$/
 
-const WeekEnvironmentQuerySchema = z.object({
-    coords: z.string().refine(
-        (val) => {
-            const parts = val.split(",")
-            if (parts.length !== 2) return false
+const CoordinatesSchema = z.object({
+    coords: z.string().refine(refineCoords, { message: "coords must be in format lat,lng" }),
+    country_code: z.string().length(3), // ISO-Alpha-3 country code
+})
 
-            const [lat, lng] = parts.map(Number)
-            return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180
-        },
-        { message: "coords must be in format lat,lng" }
-    ),
-    iso: z.string().length(3), // ISO-Alpha-3 country code
+const WeekEnvironmentQuerySchema = CoordinatesSchema.extend({
     date: z.string().regex(DATE_FORMAT_REGEX, "date must be YYYY-MM-DD").nullable(),
     weeks: z.coerce.number().min(0).default(0),
+})
+
+const EnvironmentDataSchema = CoordinatesSchema.extend({
+    indicators: z.object({
+        gdp_per_capita_usd: z.number().min(0).max(10000000).nullable(),
+        food_production_index: z.number().min(0).max(100).nullable(),
+        undernourishment: z.number().min(0).max(100).nullable(),
+    }),
+    data: z.array(
+        z.object({
+            date: z.string().regex(DATE_FORMAT_REGEX, "date must be YYYY-MM-DD"),
+            pm25_ugm3: z.number().min(0).max(500).nullable(),
+            aqi_pm: z.number().min(0).max(400).nullable(),
+            temperature_celsius: z.number().min(-50).max(50).nullable(),
+            precipitation_mm: z.number().min(0).max(300).nullable(),
+            heat_wave_days: z.number().min(0).max(7).nullable(),
+            flood_indicator: z.number().min(0).max(1).nullable(),
+        })
+    ),
 })
 
 const WeekEnvironmentParamsSchema = WeekEnvironmentQuerySchema.transform((data) => {
@@ -25,7 +39,7 @@ const WeekEnvironmentParamsSchema = WeekEnvironmentQuerySchema.transform((data) 
     const loc = {
         lat: Number(latStr),
         lng: Number(lngStr),
-        iso: data.iso,
+        iso: data.country_code,
     }
 
     if (!data.date || !data.weeks) {
@@ -52,4 +66,4 @@ const WeekEnvironmentParamsSchema = WeekEnvironmentQuerySchema.transform((data) 
     return { loc, date: data.date, weeks: data.weeks }
 })
 
-export { WeekEnvironmentParamsSchema, WeekEnvironmentQuerySchema }
+export { EnvironmentDataSchema, WeekEnvironmentParamsSchema, WeekEnvironmentQuerySchema }

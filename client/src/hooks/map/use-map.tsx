@@ -3,7 +3,7 @@ import centroid from "@turf/centroid"
 import { useEffect, useMemo } from "react"
 
 import { WeekClientService } from "@/features/environment/week/week.service.client"
-import { slugify } from "@/lib/utils"
+import { slugify, unslugify } from "@/lib/utils"
 
 import {
     colorEachCountry,
@@ -18,6 +18,7 @@ import { useThemeStore } from "@/stores/map/use-theme"
 import { MapLibreEvent } from "maplibre-gl"
 import { MapLayerMouseEvent } from "react-map-gl/maplibre"
 
+import { IEnvironmentData } from "@/features/environment/week/week.dto"
 import { SimulateResponse } from "@/features/environment/week/week.types"
 import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 import { useMapStore } from "@/stores/map/use-map"
@@ -40,14 +41,18 @@ const useMapHook = () => {
         setMarkerCoords,
         setHoveredCoords,
     } = useMapStore()
-    const { explanationMethod } = useSettingsStore()
-    const { setLoading, onOutcomeSelect, setSimulation } = usePredictionsStore()
+    const explanationMethod = useSettingsStore((s) => s.explanationMethod)
+    const { setLoading, onOutcomeSelect, setSimulation, setEnvironment, setModifying } =
+        usePredictionsStore()
 
     const activeSlug = parseSlug(params.slug)
 
     const { theme, isInvalid, setHealthOutcome } = useThemeStore()
 
-    const weekService = useMemo(() => new WeekClientService(), [])
+    const weekService = useMemo(
+        () => new WeekClientService(setEnvironment, setModifying),
+        [setEnvironment, setModifying]
+    )
 
     const { date } = useDateUrlSync(activeSlug)
 
@@ -61,6 +66,8 @@ const useMapHook = () => {
 
     const onMouseMove = (e: MapLayerMouseEvent) => {
         const map = e.target
+        setHoveredCoords({ lat: e.lngLat.lat, lng: e.lngLat.lng })
+
         if (!e.features) return
 
         const feature = e.features[0]
@@ -72,7 +79,6 @@ const useMapHook = () => {
 
         // Reset currently hovered zone if we are no longer hovering anything
         if (!isHoveringAZone && hoveredZone) {
-            setHoveredCoords(null)
             setHoveredZone(null)
             map.setFeatureState({ source: COUNTRIES_SOURCE, id: hoveredZone.id }, { hover: false })
         }
@@ -89,7 +95,6 @@ const useMapHook = () => {
             map.setFeatureState({ source: COUNTRIES_SOURCE, id: hoveredZone.id }, { hover: false })
 
         if (isHoveringANewZone) {
-            setHoveredCoords({ lat: e.lngLat.lat, lng: e.lngLat.lng })
             setHoveredZone(feature)
             map.setFeatureState({ source: COUNTRIES_SOURCE, id: feature.id }, { hover: true })
         }
@@ -97,12 +102,12 @@ const useMapHook = () => {
 
     const onMouseOut = (e: MapLayerMouseEvent) => {
         const map = e.target
+        setHoveredCoords(null)
 
         if (!hoveredZone?.id) return
 
         // Reset hovered state when mouse leaves map (e.g. cursor moving into panel)
         map.setFeatureState({ source: COUNTRIES_SOURCE, id: hoveredZone.id }, { hover: false })
-        setHoveredCoords(null)
         setHoveredZone(null)
     }
 
@@ -132,19 +137,23 @@ const useMapHook = () => {
 
             const simulation =
                 process.env.NODE_ENV != "development"
-                    ? await weekService.simulateEnvironment(location, date, 1, {
+                    ? await weekService.fetchEnvironmentAndSimulate(location, date, 1, {
                           top_k_contributions: 25,
                           explainer_method: explanationMethod,
                       })
                     : await fetch(`/simulation/examples/${explanationMethod}.json`).then(
                           (res) => res.json() as Promise<SimulateResponse>
                       )
-            const healthOutcome = activeSlug.healthOutcome.replace(
-                /-/g,
-                "_"
-            ) as keyof IHealthOutcomes
 
+            const healthOutcome = unslugify(activeSlug.healthOutcome, "_") as keyof IHealthOutcomes
             if (simulation) setSimulation(simulation, healthOutcome)
+
+            if (process.env.NODE_ENV != "development") return
+            const environment = await fetch(
+                `/environment/examples/egypt_2026-02-09.json`
+            ).then<IEnvironmentData>((res) => res.json())
+
+            if (environment) setEnvironment(environment)
         } finally {
             setLoading(false)
         }
@@ -188,12 +197,24 @@ const useMapHook = () => {
         router.push(`/map/${activeSlug.healthOutcome}`, { scroll: false })
     }
 
+    const onSubmitSimulationForm = async (data: IEnvironmentData) => {
+        const simulation = await weekService.simulateEnvironment(data, {
+            explainer_method: explanationMethod,
+            top_k_contributions: 25,
+        })
+
+        const healthOutcome = unslugify(activeSlug.healthOutcome, "_") as keyof IHealthOutcomes
+        if (simulation) setSimulation(simulation, healthOutcome)
+    }
+
     return {
         onMapLoad,
         onMapClick,
+        onSubmitSimulationForm,
         onMouseMove,
         onMouseOut,
         onLayerSelect,
+        weekService,
         closeSidebar,
         markerCoords,
         hoveredZone,
