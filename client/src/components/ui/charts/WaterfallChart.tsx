@@ -12,11 +12,10 @@ import { useMemo } from "react"
 import {
     Bar,
     CartesianGrid,
-    Cell,
     ComposedChart,
-    Tooltip as RechartsTooltip,
     ReferenceLine,
     ResponsiveContainer,
+    Tooltip,
     XAxis,
     YAxis,
 } from "recharts"
@@ -56,16 +55,16 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
 
                 {/* Summary badges */}
                 <div className="flex flex-wrap gap-2 pt-2">
-                    <Badge variant="outline" className="font-mono text-xs">
-                        Baseline: {baseline.toFixed(3)}
+                    <Badge variant="glassy" className="font-mono text-xs">
+                        Baseline {baseline.toFixed(3)}
                     </Badge>
-                    <Badge className="font-mono text-xs">Final: {finalValue.toFixed(3)}</Badge>
+                    <Badge className="font-mono text-xs">Final {finalValue.toFixed(3)}</Badge>
                     <Badge
                         variant="outline"
                         className={`font-mono text-xs ${
                             isNetPositive
-                                ? "border-rose-400 text-rose-500"
-                                : "border-emerald-400 text-emerald-500"
+                                ? "border-emerald-400 text-emerald-500"
+                                : "border-rose-400 text-rose-500"
                         }`}
                     >
                         Net {isNetPositive ? "▲" : "▼"} {Math.abs(totalShift).toFixed(3)}
@@ -73,72 +72,53 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
                 </div>
             </CardHeader>
 
-            <CardContent className="pt-2 pb-4">
-                <div className="text-muted-foreground mt-1 mb-4 flex items-center justify-center gap-4 text-xs">
-                    <span className="flex items-center gap-2">
-                        <span className="inline-block h-3 w-3 rounded-sm bg-rose-500 opacity-85" />
-                        Increases prediction
-                    </span>
-                    <span className="flex items-center gap-2">
-                        <span className="inline-block h-3 w-3 rounded-sm bg-emerald-500 opacity-85" />
-                        Decreases prediction
-                    </span>
-                    <span className="flex items-center gap-2">
-                        <span className="bg-primary inline-block h-3 w-3 rounded-sm" />
-                        Final value
-                    </span>
+            {/* Legend above chart to define colors for increase and decrease */}
+            <CardContent className="px-0 pt-2 pb-4">
+                <div className="mb-4 flex justify-center">
+                    <div className="bg-muted/40 border-border flex items-center gap-2 rounded-lg border px-4 py-1 text-xs backdrop-blur-sm">
+                        <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500 opacity-90" />
+                        <span className="text-muted-foreground">Increases prediction</span>
+                        <span className="h-2.5 w-2.5 rounded-sm bg-rose-500 opacity-90" />
+                        <span className="text-muted-foreground">Decreases prediction</span>
+                    </div>
                 </div>
-                <ResponsiveContainer width="100%" height={420}>
+                <ResponsiveContainer className="-ml-8" width="100%" height={320}>
                     <ComposedChart
                         data={waterfallData}
-                        margin={{ top: 8, right: 16, left: 8, bottom: 80 }}
+                        margin={{ top: 8, right: 32, left: 32, bottom: 40 }}
                     >
-                        <CartesianGrid
-                            strokeDasharray="3 3"
-                            vertical={false}
-                            stroke="hsl(var(--border))"
-                            opacity={0.6}
-                        />
+                        <CartesianGrid strokeDasharray="3 3 1 3" opacity={0.4} />
 
                         <XAxis
                             dataKey="feature"
-                            tick={{
-                                fontSize: 11,
-                                fill: "hsl(var(--muted-foreground))",
-                            }}
-                            angle={-40}
-                            textAnchor="end"
-                            interval={0}
                             tickLine={false}
-                            axisLine={{ stroke: "hsl(var(--border))" }}
+                            axisLine={false}
+                            angle={-65}
+                            textAnchor="middle"
+                            interval={0}
                         />
 
                         <YAxis
                             domain={[yMin, yMax]}
-                            tick={{
-                                fontSize: 11,
-                                fill: "hsl(var(--muted-foreground))",
-                            }}
-                            tickLine={false}
                             axisLine={false}
-                            tickFormatter={(v) => v.toFixed(1)}
+                            tickFormatter={(v) => v.toFixed(0)}
                         />
 
-                        <RechartsTooltip
-                            content={<WaterfallTooltip />}
-                            cursor={{ opacity: 0.08 }}
+                        <Tooltip
+                            content={({ active, payload }) => WaterfallTooltip({ active, payload })}
+                            wrapperStyle={{ outline: "none" }}
                         />
 
                         {/* Baseline reference */}
                         <ReferenceLine
                             y={baseline}
-                            stroke="hsl(var(--primary))"
                             strokeDasharray="4 4"
-                            strokeWidth={3}
+                            strokeWidth={4}
+                            opacity={0.75}
                             label={{
                                 value: "Baseline",
+                                position: "insideTopLeft",
                                 fontSize: 10,
-                                fill: "hsl(var(--primary-foreground))",
                             }}
                         />
 
@@ -146,21 +126,29 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
                         <Bar dataKey="base" stackId="waterfall" fill="transparent" />
 
                         {/* Visible bar */}
-                        <Bar dataKey="value" stackId="waterfall" radius={[3, 3, 0, 0]}>
-                            {waterfallData.map((entry, index) => (
-                                <Cell
-                                    key={index}
-                                    fill={
-                                        entry.isLast
-                                            ? "hsl(var(--primary))"
-                                            : entry.direction === "Increase"
-                                              ? "hsl(347 80% 60%)" // rose for positive
-                                              : "hsl(152 60% 48%)" // emerald for negative
-                                    }
-                                    opacity={entry.isLast ? 1 : 0.85}
-                                />
-                            ))}
-                        </Bar>
+                        <Bar
+                            dataKey="value"
+                            stackId="waterfall"
+                            shape={({ x, y, width, height, payload }: any) => {
+                                const fill = payload?.isLast
+                                    ? "hsl(var(--primary))"
+                                    : payload?.direction === "Increase"
+                                      ? "hsl(152 60% 48%)"
+                                      : "hsl(347 80% 60%)"
+
+                                return (
+                                    <rect
+                                        x={x}
+                                        y={y}
+                                        width={width}
+                                        height={height}
+                                        fill={fill}
+                                        opacity={payload?.isLast ? 1 : 0.9}
+                                        rx={6}
+                                    />
+                                )
+                            }}
+                        />
                     </ComposedChart>
                 </ResponsiveContainer>
             </CardContent>

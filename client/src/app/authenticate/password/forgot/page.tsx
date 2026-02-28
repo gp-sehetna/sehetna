@@ -1,8 +1,8 @@
 "use client"
-import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
+import { FormInputField } from "@/components/ui/forms/inputs/FormInputField"
 import { EmailInputsDTO } from "@/features/auth/auth.dto"
 import { AuthClientService } from "@/features/auth/auth.service.client"
 import { EmailSchema } from "@/features/auth/auth.validation"
@@ -41,7 +41,7 @@ const ForgotPasswordPage = () => {
                 onSubmit={handleSubmit(onSubmit)}
             >
                 <Flex direction="col" gap={6}>
-                    <AuthenticationField
+                    <FormInputField
                         label="Email Address"
                         id="forgot-password-email"
                         type="email"

@@ -1,18 +1,18 @@
 "use client"
-import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
-import { LogIn, Mail } from "lucide-react"
-import { useForm } from "react-hook-form"
-import Link from "next/link"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter } from "next/navigation"
-import { hideEmail } from "@/lib/utils/email"
-import { EmailSchema } from "@/features/auth/auth.validation"
+import { FormInputField } from "@/components/ui/forms/inputs/FormInputField"
 import { EmailInputsDTO } from "@/features/auth/auth.dto"
-import { useMemo } from "react"
 import { AuthClientService } from "@/features/auth/auth.service.client"
+import { EmailSchema } from "@/features/auth/auth.validation"
+import { hideEmail } from "@/lib/utils/email"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { LogIn, Mail } from "lucide-react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useMemo } from "react"
+import { useForm } from "react-hook-form"
 
 const SignupRawPage = () => {
     const router = useRouter()
@@ -39,7 +39,7 @@ const SignupRawPage = () => {
             onSubmit={handleSubmit(onSubmit)}
         >
             <Flex direction="col" gap={6}>
-                <AuthenticationField
+                <FormInputField
                     label="Email Address"
                     type="email"
                     placeholder="abc@example.com"

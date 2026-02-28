@@ -1,4 +1,10 @@
-import { WeekEnvironmentQuerySchema } from "@/features/environment/week/week.validation"
+import {
+    EnvironmentDataSchema,
+    WeekEnvironmentQuerySchema,
+} from "@/features/environment/week/week.validation"
 import { z } from "zod"
 
-export type SingleWeekEnvironmentParams = z.infer<typeof WeekEnvironmentQuerySchema>
+type SingleWeekEnvironmentParams = z.infer<typeof WeekEnvironmentQuerySchema>
+type IEnvironmentData = z.infer<typeof EnvironmentDataSchema>
+
+export type { IEnvironmentData, SingleWeekEnvironmentParams }

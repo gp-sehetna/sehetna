@@ -6,14 +6,15 @@ export interface IAiModel extends Document {
     model_type: AiModelEnum
     version: string
     task_type: TaskEnum
-    features: string[]
-    targets: string[]
-    training_data: {
+    features: string[] // not selected
+    targets: string[] 
+    training_data: { // not selected
         data_store_ids: Schema.Types.ObjectId[]
     }
-    status: ModelStatusEnum
-    createdAt: Date
+    status: ModelStatusEnum 
+    createdAt: Date // not selected
 }
+
 
 const AiModelSchema = new Schema<IAiModel>(
     {

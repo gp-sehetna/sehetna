@@ -25,17 +25,6 @@ interface WeeklyEnvironmentData {
     flood_indicator: number | null
 }
 
-interface EnvironmentData {
-    coords: string
-    country_code: string
-    indicators: {
-        gdp_per_capita_usd: number | null
-        food_production_index: number | null
-        undernourishment: number | null
-    }
-    data: Array<WeeklyEnvironmentData>
-}
-
 interface GroupExplanationItem {
     group: string
     shap_sum?: number
@@ -99,7 +88,6 @@ export type {
     AggResult,
     Coordinates,
     CumulativeExplanationItem,
-    EnvironmentData,
     ExplanationItems,
     ExplanationMethod,
     Explanations,

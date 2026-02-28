@@ -17,8 +17,8 @@ export function slugify(value: string): string {
  * "united-states" → "united states"
  * "respiratory-disease-rate" → "respiratory_disease_rate"
  */
-export function unslugify(slug: string): string {
-    return String(slug).replace(/-/g, " ")
+export function unslugify(slug: string, delimiter = " "): string {
+    return String(slug).replace(/-/g, delimiter)
 }
 
 /**

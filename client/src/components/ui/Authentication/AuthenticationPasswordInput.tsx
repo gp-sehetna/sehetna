@@ -1,10 +1,10 @@
 "use client"
 
-import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
+import { FormInputField } from "@/components/ui/forms/inputs/FormInputField"
 import ShowHidePasswordButton from "@/components/ui/GlobalControls/ShowHidePasswordButton"
+import { InputProps } from "@/components/ui/shadcn/input"
 import { KeyRound } from "lucide-react"
 import { useState } from "react"
-import { InputProps } from "@/components/ui/shadcn/input"
 import RHF from "react-hook-form"
 
 type AuthenticationPasswordInputProps = {
@@ -33,7 +33,7 @@ const AuthenticationPasswordInput = ({
     )
     return (
         <>
-            <AuthenticationField
+            <FormInputField
                 {...props}
                 id={id}
                 label={label}

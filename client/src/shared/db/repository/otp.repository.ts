@@ -1,6 +1,7 @@
 import { IOtp } from "@/shared/db/model/otp.model"
 import { DatabaseRepository } from "@/shared/db/repository/database.repository"
 import { Model } from "mongoose"
+import { IPrediction } from "../model/prediction.model"
 
 export class OtpRepository extends DatabaseRepository<IOtp> {
     constructor(model: Model<IOtp>) {
@@ -34,3 +35,4 @@ export class OtpRepository extends DatabaseRepository<IOtp> {
             .exec()
     }
 }
+

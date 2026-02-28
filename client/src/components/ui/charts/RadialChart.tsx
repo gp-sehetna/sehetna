@@ -1,12 +1,7 @@
 "use client"
 
 import { ChartConfig, ChartContainer } from "@/components/ui/shadcn/chart"
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/shadcn/tooltip"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/shadcn/popover"
 import { LucideIcon } from "lucide-react"
 import { Label, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts"
 
@@ -73,7 +68,14 @@ export function RadialChart({
                 <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
                     <Label
                         content={({ viewBox }) => {
-                            if (!viewBox || !("cx" in viewBox)) return null
+                            if (
+                                !viewBox ||
+                                !("cx" in viewBox) ||
+                                !("cy" in viewBox) ||
+                                !viewBox.cx ||
+                                !viewBox.cy
+                            )
+                                return null
 
                             const centerX = viewBox.cx
                             const centerY = viewBox.cy
@@ -89,24 +91,22 @@ export function RadialChart({
                                         width={helpSize}
                                         height={helpSize}
                                     >
-                                        <TooltipProvider delayDuration={200}>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <div className="glassy flex h-full w-full cursor-pointer items-center justify-center rounded-full p-0.5 shadow-2xl">
-                                                        <Icon
-                                                            size={helpSize - 10}
-                                                            className="hover:text-neutral-1000 text-neutral-800"
-                                                        />
-                                                    </div>
-                                                </TooltipTrigger>
-                                                <TooltipContent
-                                                    className="glassy text-neutral-1000 bg-background/75 max-w-3xs whitespace-pre-line"
-                                                    side="top"
-                                                >
-                                                    {tooltip}
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </TooltipProvider>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <div className="glassy flex h-full w-full cursor-pointer items-center justify-center rounded-full p-0.5 shadow-2xl">
+                                                    <Icon
+                                                        size={helpSize - 10}
+                                                        className="hover:text-neutral-1000 text-neutral-800"
+                                                    />
+                                                </div>
+                                            </PopoverTrigger>
+                                            <PopoverContent
+                                                className="glassy text-neutral-1000 bg-background/75 max-w-3xs text-xs whitespace-pre-line"
+                                                side="top"
+                                            >
+                                                {tooltip}
+                                            </PopoverContent>
+                                        </Popover>
                                     </foreignObject>
                                     <text
                                         x={centerX}
