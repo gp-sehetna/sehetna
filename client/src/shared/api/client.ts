@@ -16,7 +16,7 @@ const api = core.extend({
     },
     hooks: {
         beforeRequest: [
-            (request, options, { retryCount }) => {
+            (request, _options, { retryCount }) => {
                 // Only set default auth header on initial request, not on retries
                 // (retries may have refreshed token set by beforeRetry)
                 if (retryCount === 0) {

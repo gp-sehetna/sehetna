@@ -1,4 +1,4 @@
-import ComingSoon from "@/components/ui/ComingSoon"
+import DataStoreCardGrid from "../../components/ui/GlobalComponents/CardGrid/DataStoreCardGrid"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -12,10 +12,15 @@ export const metadata: Metadata = {
 
 const DataExplorerPage = () => {
     return (
-        <ComingSoon
-            title="Data Explorer"
-            description="An interactive data explorer for healthcare datasets and insights."
-        />
+        <section className="flex w-full flex-col gap-4 p-8">
+            <div className="space-y-2">
+                <h2 className="font-semibold">Data Explorer</h2>
+                <p className="text-muted-foreground">
+                    Explore available datastore entries, metadata, and time coverage.
+                </p>
+            </div>
+            <DataStoreCardGrid />
+        </section>
     )
 }
 

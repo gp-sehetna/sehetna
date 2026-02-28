@@ -26,13 +26,20 @@ export interface IDataStore extends Document {
 
 const DataStoreSchema = new Schema<IDataStore>(
     {
-        alias_name: { type: String, required: true, unique: true, trim: true },
-        source: { type: String, enum: DataSourcesEnum, required: true }, 
-        description: { type: String, required: true, trim: true }, 
-        version: { type: String, required: true, default: "1.0" },  
-        granularity: { type: String, enum: GranularityEnum, required: true },
+        alias_name: {
+            type: String,
+            trim: true,
+            default: function () {
+                return `${(this as IDataStore).source}-${(this as IDataStore).version}`
+            },
+        },
+        source: { type: String, enum: DataSourcesEnum, required: true },
+        description: { type: String, required: true, trim: true },
+        version: { type: String, required: true, default: "1.0" },
+        granularity: { type: String, enum: GranularityEnum, default: GranularityEnum.weekly },
         geographic_level: { type: String, enum: GeoLevelEnum, default: GeoLevelEnum.country },
-        variables: { // not selected
+        variables: {
+            // not selected
             type: [String],
             required: true,
             validate: [(val: string[]) => val.length > 0, "At least one variable is required"],
@@ -45,10 +52,10 @@ const DataStoreSchema = new Schema<IDataStore>(
         status: { type: String, enum: StatusEnum, default: StatusEnum.pending },
         notes: { type: String, trim: true, default: "" }, // not selected
     },
-    { timestamps: { createdAt: true } } 
+    { timestamps: { createdAt: true } }
 )
 
 DataStoreSchema.index({ source: 1, status: 1 })
 DataStoreSchema.index({ alias_name: 1, version: 1 }, { unique: true })
 
-export const DataStoresModel = models.DataStore || model<IDataStore>("DataStore", DataStoreSchema)
+export const DataStoreModel = models.DataStore || model<IDataStore>("DataStore", DataStoreSchema)

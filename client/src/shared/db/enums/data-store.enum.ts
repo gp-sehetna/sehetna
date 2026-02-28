@@ -1,4 +1,5 @@
 enum DataSourcesEnum {
+    openmeteo = "openmeteo",
     kaggle = "kaggle",
     cdc = "cdc",
     dhs = "dhs",

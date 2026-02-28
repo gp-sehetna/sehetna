@@ -1,7 +1,7 @@
 /**
  * "United States" → "united-states"
  */
-export function slugify(value: string): string {
+function slugify(value: string): string {
     return (
         String(value)
             .trim()
@@ -17,7 +17,7 @@ export function slugify(value: string): string {
  * "united-states" → "united states"
  * "respiratory-disease-rate" → "respiratory_disease_rate"
  */
-export function unslugify(slug: string, delimiter = " "): string {
+function unslugify(slug: string, delimiter = " "): string {
     return String(slug).replace(/-/g, delimiter)
 }
 
@@ -25,11 +25,17 @@ export function unslugify(slug: string, delimiter = " "): string {
  * "united states" → "United States"
  * "united_states" → "United States"
  */
-export function toProperCase(value: string): string {
+function toProperCase(value: string): string {
     return value.replace(/[_\s]+/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())
 }
 
-export function getInitials(name: string) {
+/**
+ * Returns the initials of a given name.
+ * e.g. "John Doe" -> "JD"
+ * @param {string} name - The name to get the initials from.
+ * @returns {string} The initials of the given name.
+ */
+function getInitials(name: string) {
     return name
         .replaceAll(/&\s/g, "")
         .split(" ")
@@ -38,3 +44,24 @@ export function getInitials(name: string) {
         .join("")
         .toUpperCase()
 }
+
+function stringToColor(str: string) {
+    let hash = 0
+
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash)
+    }
+
+    let color = "#"
+
+    for (let i = 0; i < 3; i++) {
+        const value = (hash >> (i * 8)) & 255
+        // Blend with white to make color lighter
+        const lightValue = Math.floor((value + 200) / 1.3)
+        color += ("00" + lightValue.toString(16)).slice(-2)
+    }
+
+    return color
+}
+
+export { slugify, unslugify, getInitials, stringToColor, toProperCase }

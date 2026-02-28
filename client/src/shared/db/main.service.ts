@@ -10,6 +10,7 @@ import { WeekService } from "@/features/environment/week/week.service"
 import { OtpRepository } from "./repository/otp.repository"
 import { OtpModel } from "@/shared/db/model/otp.model"
 import { EngagementsService } from "@/features/engagements/engagements.service"
+import { DataStoreService } from "@/features/datastores/datastore.service"
 
 type MainServiceOptions = {
     db?: boolean
@@ -27,6 +28,7 @@ export class MainService {
     )
     public readonly weekService: WeekService = new WeekService()
     public readonly engagementService = new EngagementsService(MainService.emailService)
+    public readonly dataStoreService = new DataStoreService()
 
     private constructor() {}
     public static async getInstance(
