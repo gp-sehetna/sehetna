@@ -107,11 +107,17 @@ function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
     )
 }
 
-function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>) {
+type FieldLabelProps = React.ComponentProps<typeof Label> & {
+    required?: boolean
+}
+
+function FieldLabel({ required, className, ...props }: FieldLabelProps) {
     return (
         <Label
+            data-required={required}
             data-slot="field-label"
             className={cn(
+                "data-[required=true]:after:text-destructive data-[required=true]:after:content-['*']",
                 "group/field-label text-neutral-1000 peer/field-label flex w-full gap-2 px-3 text-xs leading-snug font-bold group-data-[disabled=true]/field:opacity-50",
                 "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border *:data-[slot=field]:p-4",
                 "has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10",

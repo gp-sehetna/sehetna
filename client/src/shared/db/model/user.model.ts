@@ -1,5 +1,9 @@
 import { Document, model, models, Schema } from "mongoose"
 import { ProviderEnum, GenderEnum, RoleEnum } from "../enums/auth.enum"
+import {
+    NAME_MAX_LENGTH as maxLength,
+    FIELD_REQUIRED as minLength,
+} from "@/features/auth/auth.validation"
 
 export interface DUser extends Document {
     firstName: string
@@ -15,8 +19,8 @@ export interface DUser extends Document {
 
 const userSchema = new Schema<DUser>(
     {
-        firstName: { type: String, required: true, minLength: 2, maxLength: 20 },
-        lastName: { type: String, required: true, minLength: 2, maxLength: 20 },
+        firstName: { type: String, required: true, minLength, maxLength },
+        lastName: { type: String, required: true, minLength, maxLength },
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
         provider: { type: String, enum: ProviderEnum, default: ProviderEnum.SYSTEM },

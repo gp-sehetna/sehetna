@@ -1,19 +1,17 @@
+import { ContactUsDTO } from "@/features/engagements/engagements.dto"
 import { ContactUsSchema } from "@/features/engagements/engagements.validation"
 import { MainService } from "@/shared/db/main.service"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 
 export const POST = globalErrorHandler(async (request) => {
-    const formData = await request.formData()
+    const contactData: ContactUsDTO = await request.json()
 
-    const query = ContactUsSchema.parse({
-        name: formData.get("name"),
-        email: formData.get("email"),
-        phone: formData.get("phone"),
-        message: formData.get("message"),
-    })
+    const { name, email, phone, message } = contactData
+
+    const query = ContactUsSchema.parse({ name, email, phone, message })
 
     const mainService = await MainService.getInstance()
-    const data = await mainService.weekService.getWeeklyEnvironmentData(query)
+    await mainService.engagementService.sendContact(query)
 
     return [undefined, "Contact us form submitted successfully"]
 })

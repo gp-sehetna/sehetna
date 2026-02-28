@@ -9,6 +9,7 @@ import { AuthService } from "@/features/auth/auth.service"
 import { WeekService } from "@/features/environment/week/week.service"
 import { OtpRepository } from "./repository/otp.repository"
 import { OtpModel } from "@/shared/db/model/otp.model"
+import { EngagementsService } from "@/features/engagements/engagements.service"
 
 type MainServiceOptions = {
     db?: boolean
@@ -17,13 +18,15 @@ type MainServiceOptions = {
 export class MainService {
     private static instance: MainService | null = null
     private static initialized = false
+    private static emailService = new EmailService()
 
     public readonly authService: AuthService = new AuthService(
         new UserRepository(UserModel),
         new OtpRepository(OtpModel),
-        new EmailService()
+        MainService.emailService
     )
     public readonly weekService: WeekService = new WeekService()
+    public readonly engagementService = new EngagementsService(MainService.emailService)
 
     private constructor() {}
     public static async getInstance(

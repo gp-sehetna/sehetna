@@ -1,21 +1,16 @@
-import ComingSoon from "@/components/ui/ComingSoon"
+import ContactUsForm from "./ContactUsForm"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
     title: "Contact Us",
-    description: "Contains contact information for Sehetna",
+    description: "Reach out to Sehetna for support, partnerships, or general questions.",
     alternates: {
         canonical: "/support/contact-us",
     },
 }
 
 const ContactUsPage = () => {
-    return (
-        <ComingSoon
-            title="Contact Us"
-            description="Review Sehetna's terms of service, privacy policy, and cookie usage guidelines."
-        />
-    )
+    return <ContactUsForm />
 }
 
 export default ContactUsPage
