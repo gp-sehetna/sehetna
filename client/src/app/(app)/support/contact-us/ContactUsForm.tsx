@@ -37,7 +37,7 @@ const ContactUsForm = () => {
     return (
         <section className="mx-auto w-full max-w-3xl px-6 py-24">
             <div className="mb-8 space-y-2 text-center">
-                <h1 className="text-3xl font-semibold">Contact Us</h1>
+                <h1 className="text-3xl font-semibold">Send Us a Message</h1>
                 <p className="text-muted-foreground">
                     Send us your message and our team will get back to you.
                 </p>
@@ -48,7 +48,7 @@ const ContactUsForm = () => {
                 noValidate
                 onSubmit={handleSubmit(onSubmit)}
             >
-                <Field className="gap-1">
+                <Field>
                     <FieldLabel required htmlFor="contact-name">
                         Name
                     </FieldLabel>
@@ -64,7 +64,7 @@ const ContactUsForm = () => {
                     <FieldError errors={[formState.errors.name]} />
                 </Field>
 
-                <Field className="gap-1">
+                <Field>
                     <FieldLabel required htmlFor="contact-email">
                         Email
                     </FieldLabel>
@@ -80,7 +80,7 @@ const ContactUsForm = () => {
                     <FieldError errors={[formState.errors.email]} />
                 </Field>
 
-                <Field className="gap-1">
+                <Field>
                     <FieldLabel htmlFor="contact-phone">Phone Number</FieldLabel>
                     <InputGroup rounded="xxl">
                         <InputGroupInput
@@ -93,7 +93,7 @@ const ContactUsForm = () => {
                     <FieldError errors={[formState.errors.phone]} />
                 </Field>
 
-                <Field className="gap-1">
+                <Field>
                     <FieldLabel required htmlFor="contact-message">
                         Message
                     </FieldLabel>

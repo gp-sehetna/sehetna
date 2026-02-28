@@ -2,7 +2,7 @@ import ContactUsForm from "./ContactUsForm"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-    title: "Contact Us",
+    title: "Get in Touch",
     description: "Reach out to Sehetna for support, partnerships, or general questions.",
     alternates: {
         canonical: "/support/contact-us",

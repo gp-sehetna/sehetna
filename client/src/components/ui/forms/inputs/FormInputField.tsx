@@ -23,7 +23,7 @@ export function FormInputField({
     ...props
 }: FormInputProps) {
     return (
-        <Field className={cn("gap-1", className)}>
+        <Field className={cn(className)}>
             <FieldLabel className="px-3 text-xs font-bold text-neutral-500" htmlFor={id}>
                 {label}
                 <div className="hover:text-neutral-1000 ml-auto pl-0 font-light italic">
