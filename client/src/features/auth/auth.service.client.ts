@@ -7,6 +7,7 @@ import {
     PasswordInputsDTO,
 } from "@/features/auth/auth.dto"
 import { api } from "@/shared/api"
+import { LoginResponse } from "./auth.types"
 
 export class AuthClientService {
     updatePassword = async (json: PasswordInputsDTO) => {
@@ -16,7 +17,7 @@ export class AuthClientService {
         await api.post("api/auth/password/forgot", { json }).json()
     }
     login = async (json: ILoginInputsDTO) => {
-        await api.post("api/auth/login", { json }).json()
+        return await api.post<LoginResponse>("api/auth/login", { json }).json()
     }
     signup = async (json: PasswordAndNameInputsDTO) => {
         await api.post("api/auth/signup", { json }).json()

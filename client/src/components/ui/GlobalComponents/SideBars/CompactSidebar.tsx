@@ -3,7 +3,6 @@ import { LogIn } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarGroup,
     SidebarGroupLabel,
     SidebarHeader,
@@ -18,6 +17,8 @@ import NavLink from "@/components/ui/NavLink"
 import { compactSidebarItems } from "../nav/navigation-items"
 import { Avatar, AvatarFallback } from "@/components/ui/shadcn/avatar"
 import { getInitials, stringToColor } from "@/lib/utils/string"
+import SidebarFooterActions from "./SidebarFooterActions"
+import { UserWithoutPassword } from "@/features/auth/auth.types"
 
 const CompactSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
     return (
@@ -49,18 +50,7 @@ const CompactSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
                         </SidebarMenu>
                     </SidebarGroup>
                 </SidebarContent>
-                <SidebarFooter>
-                    <SidebarMenu>
-                        <SidebarMenuItem>
-                            {/* Check if user is logged in */}
-                            {true ? (
-                                <GuestButton />
-                            ) : (
-                                <AuthenticatedUserButton name="Hello World" />
-                            )}
-                        </SidebarMenuItem>
-                    </SidebarMenu>
-                </SidebarFooter>
+                <SidebarFooterActions />
                 <SidebarRail />
             </Sidebar>
         </>
@@ -69,7 +59,7 @@ const CompactSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
 
 export default CompactSidebar
 
-const GuestButton = () => {
+export const GuestButton = () => {
     return (
         <SidebarMenuButton variant="black" className="rounded-xl" asChild>
             <NavLink href="/authenticate/login">
@@ -79,13 +69,13 @@ const GuestButton = () => {
         </SidebarMenuButton>
     )
 }
-const AuthenticatedUserButton = ({ name }: { name: string }) => {
+export const AuthenticatedUserButton = ({ user }: { user: UserWithoutPassword }) => {
     return (
         <SidebarMenuButton variant="text" size="lg" className="rounded-xl">
-            <ProfilePictureAvatar name={name} />
+            <ProfilePictureAvatar name={user.fullName} />
             <div className="flex items-center justify-between gap-2">
                 <div className="w-24">
-                    <p className="min-w-0 truncate text-xs">{name}</p>
+                    <p className="min-w-0 truncate text-xs">{user.fullName}</p>
                 </div>
                 <a className="base-transition bg-background shrink-0 rounded-xl border px-3 py-1 text-xs font-bold hover:scale-103 hover:shadow-2xl">
                     Settings
@@ -94,12 +84,12 @@ const AuthenticatedUserButton = ({ name }: { name: string }) => {
         </SidebarMenuButton>
     )
 }
-const ProfilePictureAvatar = ({ name }: { name: string }) => {
+export const ProfilePictureAvatar = ({ name }: { name: string }) => {
     return (
-        <Avatar>
+        <Avatar className="base-transition cursor-pointer hover:scale-106">
             <AvatarFallback
                 style={{ backgroundColor: stringToColor(name) }}
-                className="font-semibold text-white"
+                className="text-background font-semibold"
             >
                 {getInitials(name)}
             </AvatarFallback>

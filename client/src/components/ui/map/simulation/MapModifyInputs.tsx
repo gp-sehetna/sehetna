@@ -30,6 +30,7 @@ import {
     X,
 } from "lucide-react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
+import WideButton from "../../Authentication/Globals/WideButton"
 
 const FieldRow = ({
     label,
@@ -55,7 +56,7 @@ const FieldRow = ({
             {unit && (
                 <div className="glassy text-muted-foreground flex items-center justify-center gap-2 rounded px-1.5">
                     <small>{unit}</small>
-                    <span className={cn(color, "h-2 w-2 rounded-sm")}></span>
+                    {color && <span className={cn(color, "h-2 w-2 rounded-sm")}></span>}
                 </div>
             )}
         </div>
@@ -304,7 +305,7 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
                                 <FieldRow
                                     label="Heat Wave Days"
                                     icon={Flame}
-                                    unit="days / week"
+                                    unit={`days / week ${f.value}`}
                                     error={form.formState.errors.data?.[i]?.heat_wave_days?.message}
                                 >
                                     <div className="flex gap-1.5">
@@ -314,10 +315,10 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
                                                 type="button"
                                                 onClick={() => f.onChange(d)}
                                                 className={cn(
-                                                    "flex h-8 flex-1 items-center justify-center rounded text-xs font-semibold transition-all",
+                                                    "flex h-8 flex-1 items-center justify-center rounded-lg text-xs font-semibold transition-all",
                                                     f.value === d
-                                                        ? "bg-orange-500 text-white shadow-md"
-                                                        : "bg-muted text-muted-foreground hover:bg-muted/80"
+                                                        ? "text-background bg-primary shadow-md"
+                                                        : "text-muted-foreground hover:bg-background/70 bg-background/40"
                                                 )}
                                             >
                                                 {d}
@@ -365,7 +366,7 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
             <Card className="glassy bg-transparent">
                 <CardHeader className="pt-4 pb-2">
                     <CardTitle className="flex items-center gap-2 text-sm">
-                        <Globe2 className="h-4 w-4 text-violet-400" />
+                        <Globe2 className="h-4 w-4 text-violet-500" />
                         Geogrphic Indicators
                     </CardTitle>
                 </CardHeader>
@@ -430,22 +431,20 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
                         )}
                     />
                 </CardContent>
-                <CardFooter>
-                    <Field orientation="horizontal">
-                        <Button
-                            type="button"
-                            form="simulation-modify-form"
-                            variant="glassy"
-                            onClick={() => form.reset()}
-                        >
-                            Reset
-                        </Button>
-                        <Button type="submit" form="simulation-modify-form">
-                            Submit
-                        </Button>
-                    </Field>
-                </CardFooter>
             </Card>
+            <div className="glassy sticky bottom-0 flex gap-2 rounded-2xl p-4">
+                <Button
+                    className="rounded-full"
+                    form="simulation-modify-form"
+                    variant="glassy"
+                    onClick={() => form.reset()}
+                >
+                    Reset
+                </Button>
+                <WideButton type="submit" form="simulation-modify-form">
+                    Predict
+                </WideButton>
+            </div>
         </form>
     )
 }

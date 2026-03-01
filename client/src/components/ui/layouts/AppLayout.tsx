@@ -8,6 +8,7 @@ import MobileNav from "../GlobalComponents/nav/MobileNav"
 import NavActions from "../GlobalComponents/nav/NavActions"
 import { groupedNavItems } from "../GlobalComponents/nav/navigation-items"
 import ComplexFooter from "../GlobalComponents/Footers/ComplexFooter"
+import { ProfilePictureAvatar } from "../GlobalComponents/SideBars/CompactSidebar"
 
 const SCROLL_THRESHOLD = 60 // Adjust this value as needed for when the header should transform
 
