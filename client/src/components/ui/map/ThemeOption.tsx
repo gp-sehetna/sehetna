@@ -1,4 +1,4 @@
-import { ThEME_SVG_PATHS } from "@/shared/config/map-theme-config"
+import { THEME_SVG_PATHS } from "@/shared/config/map-theme-config"
 
 type ThemeOptionProps = {
     themeName: string
@@ -21,7 +21,7 @@ export const ThemeOption = ({ themeName, colors, active = false }: ThemeOptionPr
                     className="w-full"
                 >
                     <g clipPath="url(#background_clip)">
-                        {ThEME_SVG_PATHS.map((path, index) => (
+                        {THEME_SVG_PATHS.map((path, index) => (
                             <path
                                 key={path}
                                 d={path}

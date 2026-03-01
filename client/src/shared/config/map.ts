@@ -92,7 +92,7 @@ const zoomToCountry = (country: GeoJSONFeature, map: Map, centroid: [number, num
 }
 
 const getClickedCountry = (map: Map, point: PointLike) => {
-    const features = map.queryRenderedFeatures(point, { layers: ["countries-fill"] })
+    const features = map.queryRenderedFeatures(point, { layers: ["land"] })
 
     if (!features.length) return null
 

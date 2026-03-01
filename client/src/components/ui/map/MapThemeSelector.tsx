@@ -2,14 +2,15 @@ import { ThemeOption } from "@/components/ui/map/ThemeOption"
 import { Button } from "@/components/ui/shadcn/button"
 import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/shadcn/popover"
-import { AVAILABLE_THEMES } from "@/shared/config/map-theme-config"
-import { useMapTheme } from "@/stores/map/use-map-themes"
+import { MAP_THEME_DEFINITIONS } from "@/shared/config/map-theme-config"
+import { useThemeStore } from "@/stores/map/use-theme"
 import { Layers } from "lucide-react"
 
 const MapThemes = () => {
-    const { toggleTheme, isThemeActive } = useMapTheme()
-    return AVAILABLE_THEMES.map((theme) => (
-        <button key={theme.id} onClick={() => toggleTheme(theme.id)}>
+    const { toggleTheme, isThemeActive } = useThemeStore()
+
+    return MAP_THEME_DEFINITIONS.map((theme) => (
+        <button key={theme.id} type="button" onClick={() => toggleTheme(theme.id)}>
             <ThemeOption
                 themeName={theme.name}
                 colors={theme.colors}

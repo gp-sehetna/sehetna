@@ -1,5 +1,7 @@
 import useLayers from "@/hooks/map/use-layers"
+import { COUNTRIES_SOURCE } from "@/shared/config/map"
 import { GradientPalette } from "@/shared/config/map-colors"
+import { useThemeStore } from "@/stores/map/use-theme"
 import { Layer, Source } from "react-map-gl/maplibre"
 
 type Props = {
@@ -7,22 +9,21 @@ type Props = {
 }
 
 const MapSources = ({ theme }: Props) => {
-    const {
-        backgroundLayer,
-        countriesLayer,
-        countriesHoverLayer,
-        countryBondariesHoverableLayer,
-        boundariesLayer,
-    } = useLayers(theme)
+    const activeThemeIds = useThemeStore((state) => state.activeThemeIds)
+    const { backgroundLayer, layers } = useLayers(theme, activeThemeIds)
 
     return (
         <>
             <Layer {...backgroundLayer} />
-            <Source id="countries" type="geojson" promoteId="id" data="/geo/countries.geojson">
-                <Layer {...countriesLayer} />
-                <Layer {...countriesHoverLayer} />
-                <Layer {...countryBondariesHoverableLayer} />
-                <Layer {...boundariesLayer} />
+            <Source
+                id={COUNTRIES_SOURCE}
+                type="geojson"
+                promoteId="id"
+                data="/geo/countries.geojson"
+            >
+                {layers.map((layer) => (
+                    <Layer key={layer.id} {...layer} />
+                ))}
             </Source>
         </>
     )
