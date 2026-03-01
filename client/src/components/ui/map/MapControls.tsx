@@ -1,15 +1,14 @@
+import { MapDrawer } from "@/components/ui/drawers/MapLegendDrawer"
 import Legend from "@/components/ui/legend/Legend"
 import MapCog from "@/components/ui/map/MapCog"
 import MapLayerSelector from "@/components/ui/map/MapLayerSelector"
+import MapSidebar, { MapSidebarProps } from "@/components/ui/map/MapSidebar"
+import { MapThemeSelector, MapThemes } from "@/components/ui/map/MapThemeSelector"
 import { cn, toDMS } from "@/lib/utils"
 import { ActiveSlug } from "@/shared/config/map"
 import { useMapStore } from "@/stores/map/use-map"
-import { useThemeStore } from "@/stores/map/use-theme"
 import { Dispatch, memo, useMemo, useState } from "react"
 import { NavigationControl } from "react-map-gl/maplibre"
-import { MapLegendDrawer } from "../drawers/MapLegendDrawer"
-import MapSidebar, { MapSidebarProps } from "./MapSidebar"
-import MapThemeSelector from "./MapThemeSelector"
 
 type BottomRightProps = ActiveSlug & {
     onLayerSelect: Dispatch<string>
@@ -17,7 +16,6 @@ type BottomRightProps = ActiveSlug & {
 type BottomLeftProps = MapSidebarProps
 
 const BottomRightContent = ({ slug, onLayerSelect }: BottomRightProps) => {
-    const { theme } = useThemeStore()
     const [isOpen, setIsOpen] = useState(false)
 
     const onChange = (healthOutcome: string) => {
@@ -27,47 +25,33 @@ const BottomRightContent = ({ slug, onLayerSelect }: BottomRightProps) => {
 
     return (
         <div className={cn("absolute right-4 bottom-4 w-[calc(100%-30px)] md:w-65")}>
-            <div className=" max-w-fit ml-auto md:max-w-full mb-2">
+            <div className="mb-2 ml-auto max-w-fit md:max-w-full">
                 <MapThemeSelector />
             </div>
             <div className="hidden flex-col gap-2 md:flex">
-                {/* <MapThemeSelector /> */}
                 <MapLayerSelector
+                    className="transition-shadow hover:shadow-md"
                     healthOutcome={slug.healthOutcome}
                     onLayerSelect={onLayerSelect}
                 />
                 <Legend healthOutcome={slug.healthOutcome} />
             </div>
             <div className="md:hidden">
-                <MapLegendDrawer
+                <MapDrawer
                     title="Map Layers"
                     description="Select a layer to view on the map"
                     isOpen={isOpen}
                     setIsOpen={setIsOpen}
-                    trigger={
-                        <div
-                            tabIndex={0}
-                            className="group relative h-3 w-full cursor-pointer overflow-hidden rounded-full border shadow-md transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-lg focus-visible:scale-[1.02] focus-visible:ring-2 focus-visible:outline-none"
-                            style={{ background: theme.gradientCSS }}
-                        >
-                            <div
-                                className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                                style={{
-                                    background:
-                                        "linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)",
-                                    backgroundSize: "200% 100%",
-                                    animation: "shimmer 2s linear infinite",
-                                }}
-                            />
-                        </div>
-                    }
                 >
+                    <div className="flex justify-center gap-2 p-2">
+                        <MapThemes />
+                    </div>
                     <MapLayerSelector
                         className="border-0"
                         healthOutcome={slug.healthOutcome}
                         onLayerSelect={onChange}
                     />
-                </MapLegendDrawer>
+                </MapDrawer>
             </div>
         </div>
     )

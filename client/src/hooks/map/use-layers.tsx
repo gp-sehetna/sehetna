@@ -1,10 +1,8 @@
 import { Colors, GradientPalette } from "@/shared/config/map-colors"
 import { MAP_LAYER_IDS } from "@/shared/config/map-theme-config"
-import { useMapTheme } from "@/stores/map/use-map-themes"
 import {
     BackgroundLayerSpecification,
     FillLayerSpecification,
-    LayerSpecification,
     LineLayerSpecification,
 } from "maplibre-gl"
 import { useMemo } from "react"
@@ -147,37 +145,8 @@ const useLayers = (theme: GradientPalette) => {
         }),
         []
     )
-    const { mapThemes } = useMapTheme()
-
-    // We Need to mix them in one fill color layer to avoid bugs with layer ordering of Maplibre
-    const layers = useMemo<LayerSpecification[]>(() => {
-        const themes: LayerSpecification[] = []
-
-        const isIncome = mapThemes.includes(MAP_LAYER_IDS.INCOME)
-        const isContinent = mapThemes.includes(MAP_LAYER_IDS.CONTINENTS)
-
-        if (isIncome) themes.push(countriesIncomeLayer)
-        if (isContinent) themes.push(continentsFillLayer)
-
-        return [
-            ...themes,
-            countriesLayer,
-            countriesHoverLayer,
-            countryBondariesHoverableLayer,
-            boundariesLayer,
-        ]
-    }, [
-        mapThemes,
-        countriesIncomeLayer,
-        continentsFillLayer,
-        countriesLayer,
-        countriesHoverLayer,
-        countryBondariesHoverableLayer,
-        boundariesLayer,
-    ])
 
     return {
-        layers,
         backgroundLayer,
         continentsFillLayer,
         countriesHoverLayer,

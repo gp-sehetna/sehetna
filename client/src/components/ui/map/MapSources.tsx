@@ -7,15 +7,22 @@ type Props = {
 }
 
 const MapSources = ({ theme }: Props) => {
-    const { backgroundLayer, layers } = useLayers(theme)
+    const {
+        backgroundLayer,
+        countriesLayer,
+        countriesHoverLayer,
+        countryBondariesHoverableLayer,
+        boundariesLayer,
+    } = useLayers(theme)
 
     return (
         <>
             <Layer {...backgroundLayer} />
             <Source id="countries" type="geojson" promoteId="id" data="/geo/countries.geojson">
-                {layers.map((layer) => (
-                    <Layer key={layer.id} {...layer} />
-                ))}
+                <Layer {...countriesLayer} />
+                <Layer {...countriesHoverLayer} />
+                <Layer {...countryBondariesHoverableLayer} />
+                <Layer {...boundariesLayer} />
             </Source>
         </>
     )

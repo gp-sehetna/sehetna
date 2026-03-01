@@ -193,7 +193,7 @@ const useMapHook = () => {
 
         setHealthOutcome(healthOutcome)
 
-        const healthOutcomeKey = healthOutcome.replace(/-/g, "_") as keyof IHealthOutcomes
+        const healthOutcomeKey = unslugify(healthOutcome, "_") as keyof IHealthOutcomes
         onOutcomeSelect(healthOutcomeKey)
     }
 

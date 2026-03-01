@@ -20,6 +20,11 @@ const buttonVariants = cva(
                     "hover:bg-neutral-200",
                     "active:bg-neutral-300"
                 ),
+                white: cn(
+                    "text-neutral-1000 border border-neutral-200 bg-white",
+                    "hover:bg-neutral-100",
+                    "active:bg-neutral-200"
+                ),
                 black: cn(
                     "border-neutral-1000 border bg-black text-neutral-100",
                     "hover:bg-neutral-1000/90 shadow-md",
