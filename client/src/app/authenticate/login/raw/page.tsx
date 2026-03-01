@@ -1,9 +1,9 @@
 "use client"
-import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
 import AuthenticationPasswordInput from "@/components/ui/Authentication/AuthenticationPasswordInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
+import { FormInputField } from "@/components/ui/forms/inputs/FormInputField"
 import { ILoginInputsDTO } from "@/features/auth/auth.dto"
 import { AuthClientService } from "@/features/auth/auth.service.client"
 import { LoginSchema } from "@/features/auth/auth.validation"
@@ -39,7 +39,7 @@ const LoginRawPage = () => {
                 onSubmit={handleSubmit(onSubmit)}
             >
                 <Flex direction="col" gap={4}>
-                    <AuthenticationField
+                    <FormInputField
                         {...register("email")}
                         errors={[formState.errors.email]}
                         label="Email Address"

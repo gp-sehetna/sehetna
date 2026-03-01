@@ -40,11 +40,12 @@ export default function ComplexFooter() {
                     <div
                         className={cn(
                             fancyBoxVariants({ shape: "soft" }),
+                            "items-center border lg:items-start",
                             "bg-primary-300 text-background flex flex-col gap-6 px-10 py-4 lg:col-span-4"
                         )}
                     >
                         <Logo withText size={22} />
-                        <p className="text-background max-w-xs text-sm leading-relaxed font-light">
+                        <p className="text-background max-w-sm text-center text-sm leading-relaxed font-light lg:text-start">
                             Advanced health monitoring and data insights. Empowering policy makers
                             and researchers with real-time geospatial intelligence.
                         </p>

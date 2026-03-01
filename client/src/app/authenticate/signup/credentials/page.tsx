@@ -1,9 +1,9 @@
 "use client"
-import { AuthenticationField } from "@/components/ui/Authentication/AuthenticationInput"
 import AuthenticationPasswordInput from "@/components/ui/Authentication/AuthenticationPasswordInput"
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
+import { FormInputField } from "@/components/ui/forms/inputs/FormInputField"
 
 import { PasswordAndNameInputsDTO } from "@/features/auth/auth.dto"
 import { AuthClientService } from "@/features/auth/auth.service.client"
@@ -40,14 +40,14 @@ const SignupCredentialsPage = () => {
                 onSubmit={handleSubmit(onSubmit)}
             >
                 <div className="grid w-full grid-cols-1 gap-6 xl:grid-cols-2">
-                    <AuthenticationField
+                    <FormInputField
                         {...register("firstName")}
                         errors={[formState.errors.firstName]}
                         label="First Name"
                         type="text"
                         placeholder="Enter your first name"
                     />
-                    <AuthenticationField
+                    <FormInputField
                         {...register("lastName")}
                         errors={[formState.errors.lastName]}
                         label="Last Name"

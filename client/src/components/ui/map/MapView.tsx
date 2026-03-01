@@ -11,6 +11,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
     const {
         theme,
         activeSlug,
+        onSubmitSimulationForm,
         onLayerSelect,
         onMapLoad,
         onMapClick,
@@ -36,6 +37,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
             {children}
 
             <MapControls
+                onSubmitForm={onSubmitSimulationForm}
                 closeSidebar={closeSidebar}
                 slug={activeSlug}
                 onLayerSelect={onLayerSelect}

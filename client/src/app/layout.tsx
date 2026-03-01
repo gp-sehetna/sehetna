@@ -1,7 +1,9 @@
 import "@/app/globals.css"
 import { Toaster } from "@/components/ui/shadcn/sonner"
 import { plusJakarta } from "@/fonts/fonts"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import type { Metadata } from "next"
+import Providers from "./providers"
 export const metadata: Metadata = {
     metadataBase: new URL("https://sehetna.from-masr.com"),
     title: {
@@ -83,7 +85,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <meta name="apple-mobile-web-app-title" content="Sehetna" />
             </head>
             <body className={plusJakarta.className}>
-                {children}
+                <Providers>{children}</Providers>
                 <Toaster position="top-center" />
             </body>
         </html>

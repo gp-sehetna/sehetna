@@ -1,9 +1,4 @@
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/shadcn/tooltip"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/shadcn/popover"
 
 type MetaTooltipProps = {
     title?: string
@@ -21,33 +16,31 @@ const MetaTooltip = ({ title, description, initial, bgColor, side, trigger }: Me
     if (!side) side = "right"
 
     return (
-        <TooltipProvider delayDuration={100}>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    {/* If not children then put a default trigger */}
-                    {trigger ? (
-                        trigger
-                    ) : (
-                        <div
-                            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-[10px] font-semibold text-white shadow-md transition hover:scale-105"
-                            style={{
-                                backgroundColor: bgColor,
-                            }}
-                        >
-                            {initial}
-                        </div>
-                    )}
-                </TooltipTrigger>
+        <Popover>
+            <PopoverTrigger asChild>
+                {/* If not children then put a default trigger */}
+                {trigger ? (
+                    trigger
+                ) : (
+                    <div
+                        className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-[10px] font-semibold text-white shadow-md transition hover:scale-105"
+                        style={{
+                            backgroundColor: bgColor,
+                        }}
+                    >
+                        {initial}
+                    </div>
+                )}
+            </PopoverTrigger>
 
-                <TooltipContent
-                    side={side}
-                    className="glassy text-neutral-1000 bg-background/75 max-w-xs text-xs whitespace-pre-line"
-                >
-                    {title && <p className="font-semibold">{title}</p>}
-                    {description}
-                </TooltipContent>
-            </Tooltip>
-        </TooltipProvider>
+            <PopoverContent
+                side={side}
+                className="glassy text-neutral-1000 bg-background/75 max-w-xs text-xs whitespace-pre-line"
+            >
+                {title && <p className="font-semibold">{title}</p>}
+                {description}
+            </PopoverContent>
+        </Popover>
     )
 }
 

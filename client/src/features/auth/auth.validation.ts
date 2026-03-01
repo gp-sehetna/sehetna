@@ -1,6 +1,10 @@
 import { PurposeEnum } from "@/shared/db/enums/auth.enum"
 import { z } from "zod"
 
+const FIELD_REQUIRED = 2
+const NAME_MAX_LENGTH = 50
+const DESC_MAX_LENGTH = 6000
+
 const OtpSchema = z.strictObject({
     otp: z
         .string()
@@ -32,9 +36,15 @@ const ConfirmPasswordSchema = PasswordSchema.extend({
     path: ["confirmPassword"],
 })
 
+// TODO: double check on constraints of both fields, both should have the same min/max
+const baseName = z
+    .string()
+    .min(FIELD_REQUIRED, `Min length is ${FIELD_REQUIRED} chars`)
+    .max(NAME_MAX_LENGTH, `Max length is ${NAME_MAX_LENGTH} chars`)
+
 const NameSchema = z.strictObject({
-    firstName: z.string().min(2, "Min username length is 2 chars"),
-    lastName: z.string().max(20, "Max username length is 20 chars"),
+    firstName: baseName,
+    lastName: baseName,
 })
 
 const LoginSchema = EmailSchema.extend(PasswordSchema.shape)
@@ -50,4 +60,7 @@ export {
     PasswordSchema,
     PurposeAndOtpSchema,
     SignupSchema,
+    FIELD_REQUIRED,
+    NAME_MAX_LENGTH,
+    DESC_MAX_LENGTH,
 }

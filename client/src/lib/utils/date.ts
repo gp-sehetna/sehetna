@@ -111,6 +111,21 @@ function maxLabels(preset: RangePreset, granularity: Granularity): number {
     return 7
 }
 
+const formatDate = (date?: string | Date, opts?: Intl.DateTimeFormatOptions) => {
+    if (!date) return "unknown"
+    const parsedDate = new Date(date)
+    if (Number.isNaN(parsedDate.getTime())) return "N/A"
+
+    return parsedDate.toLocaleDateString(
+        "en-US",
+        opts ?? {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+        }
+    )
+}
+
 export {
     ALLOWED_GRANULARITIES,
     buildTicks,
@@ -121,6 +136,7 @@ export {
     GRANULARITY_LABELS,
     maxLabels,
     rangePreset,
+    formatDate,
 }
 
 export type { Granularity, RangePreset }

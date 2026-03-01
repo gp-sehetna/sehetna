@@ -11,6 +11,17 @@ const customRules: Linter.Config = {
 
         // Allow using 'any' type
         "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-unused-vars": [
+            "warn",
+            {
+                args: "all",
+                argsIgnorePattern: "^_",
+                varsIgnorePattern: "^_",
+                caughtErrorsIgnorePattern: "^_",
+                destructuredArrayIgnorePattern: "^_",
+                ignoreRestSiblings: true,
+            },
+        ],
     },
 }
 

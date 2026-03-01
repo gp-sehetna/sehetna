@@ -1,0 +1,22 @@
+{
+	"success": true,
+	"message": "Weekly environment data fetched successfully",
+	"coords": "29.741501345803073,30.156456821322934",
+	"country_code": "EGY",
+	"indicators": {
+		"gdp_per_capita_usd": null,
+		"food_production_index": null,
+		"undernourishment": null
+	},
+	"data": [
+		{
+			"date": "2026-02-08",
+			"pm25_ugm3": 44.56428587720508,
+			"aqi_pm": 103.27571937016079,
+			"temperature_celsius": 18.52321434020996,
+			"precipitation_mm": 0,
+			"flood_indicator": 0,
+			"heat_wave_days": 0
+		}
+	]
+}
