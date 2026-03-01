@@ -7,14 +7,14 @@ export interface IAiModel extends Document {
     version: string
     task_type: TaskEnum
     features: string[] // not selected
-    targets: string[] 
-    training_data: { // not selected
+    targets: string[]
+    training_data: {
+        // not selected
         data_store_ids: Schema.Types.ObjectId[]
     }
-    status: ModelStatusEnum 
+    status: ModelStatusEnum
     createdAt: Date // not selected
 }
-
 
 const AiModelSchema = new Schema<IAiModel>(
     {
@@ -35,7 +35,7 @@ const AiModelSchema = new Schema<IAiModel>(
         },
         status: { type: String, enum: ModelStatusEnum, default: ModelStatusEnum.active },
     },
-    { timestamps: { createdAt: true } }
+    { timestamps: { createdAt: true, updatedAt: false }}
 )
 
 // TODO: Ensure search index is correct

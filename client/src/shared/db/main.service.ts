@@ -11,6 +11,7 @@ import { OtpRepository } from "./repository/otp.repository"
 import { OtpModel } from "@/shared/db/model/otp.model"
 import { EngagementsService } from "@/features/engagements/engagements.service"
 import { DataStoreService } from "@/features/datastores/datastore.service"
+import { AiModelsService } from "@/features/aimodels/aimodels.service"
 
 type MainServiceOptions = {
     db?: boolean
@@ -29,6 +30,7 @@ export class MainService {
     public readonly weekService: WeekService = new WeekService()
     public readonly engagementService = new EngagementsService(MainService.emailService)
     public readonly dataStoreService = new DataStoreService()
+    public readonly aiModelService = new AiModelsService()
 
     private constructor() {}
     public static async getInstance(
