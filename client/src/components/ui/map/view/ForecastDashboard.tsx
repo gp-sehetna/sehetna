@@ -23,14 +23,6 @@ import {
     SelectValue,
 } from "@/components/ui/shadcn/select"
 import { Separator } from "@/components/ui/shadcn/separator"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/shadcn/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/shadcn/tabs"
 import { Forecasts } from "@/features/environment/forecast/forecast.dto"
 import { HealthOutcomesKeys } from "@/shared/config/health-outcomes"
@@ -330,64 +322,6 @@ function DetailedForecastChart({
     )
 }
 
-// ─── ForecastTable ────────────────────────────────────────────────────────────
-
-function ForecastTable({ data }: { data: FormattedPoint[] }) {
-    return (
-        <div className="rounded-md border">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className="w-25">Date</TableHead>
-                        <TableHead className="text-right">Forecast</TableHead>
-                        <TableHead className="text-right">Lower</TableHead>
-                        <TableHead className="text-right">Upper</TableHead>
-                        <TableHead className="text-right">CI Width</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {data.map((row) => {
-                        const hasCI = row.range !== undefined
-                        const ciWidth = hasCI ? (row.range![1] - row.range![0]).toFixed(2) : null
-
-                        return (
-                            <TableRow key={row.date}>
-                                <TableCell className="font-medium">{row.date}</TableCell>
-                                <TableCell className="text-right font-semibold tabular-nums">
-                                    {row.point}
-                                </TableCell>
-                                <TableCell className="text-muted-foreground text-right tabular-nums">
-                                    {hasCI ? (
-                                        row.lower
-                                    ) : (
-                                        <span className="text-muted-foreground/50">—</span>
-                                    )}
-                                </TableCell>
-                                <TableCell className="text-muted-foreground text-right tabular-nums">
-                                    {hasCI ? (
-                                        row.upper
-                                    ) : (
-                                        <span className="text-muted-foreground/50">—</span>
-                                    )}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    {hasCI ? (
-                                        <Badge variant="outline" className="font-mono text-xs">
-                                            ±{(Number(ciWidth) / 2).toFixed(2)}
-                                        </Badge>
-                                    ) : (
-                                        <span className="text-muted-foreground/50">—</span>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        )
-                    })}
-                </TableBody>
-            </Table>
-        </div>
-    )
-}
-
 export function ForecastDashboard({ forecasts }: { forecasts: Forecasts["forecasts"] }) {
     const [selectedOutcome, setSelectedOutcome] = useState<HealthOutcomesKeys>(
         "respiratory_disease_rate"
@@ -506,21 +440,6 @@ export function ForecastDashboard({ forecasts }: { forecasts: Forecasts["forecas
                                 data={selectedData}
                                 outcomeKey={selectedOutcome}
                             />
-                        </CardContent>
-                    </Card>
-
-                    {/* Table card */}
-                    <Card>
-                        <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-semibold">
-                                Raw Forecast Values
-                            </CardTitle>
-                            <CardDescription className="text-xs">
-                                Exact numeric values for each forecast step
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <ForecastTable data={selectedData} />
                         </CardContent>
                     </Card>
                 </TabsContent>
