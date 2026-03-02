@@ -1,5 +1,6 @@
 import { ILocation, LocationModel } from "@/shared/db/model/location.model"
 import { DatabaseRepository } from "@/shared/db/repository/database.repository"
+import { NotFoundException } from "@/shared/http/errors"
 
 export class LocationRepository extends DatabaseRepository<ILocation> {
     constructor(protected override readonly model: typeof LocationModel) {
@@ -18,8 +19,8 @@ export class LocationRepository extends DatabaseRepository<ILocation> {
     }
 
     async findByCode(code: string) {
-        const location = await this.findOne({ code })
-        if (!location) throw new Error("Location not found")
+        const location = await this.model.findOne({ code }).lean().exec()
+        if (!location) throw new NotFoundException("Location not found")
         return location
     }
 }

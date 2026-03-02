@@ -10,8 +10,8 @@ import { useDateUrlSync } from "@/hooks/map/use-date"
 import { ActiveSlug } from "@/shared/config/map"
 import { useMapStore } from "@/stores/map/use-map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
-import ComingSoon from "../ComingSoon"
 import MapModifyInputs from "./simulation/MapModifyInputs"
+import { ForecastDashboard } from "./view/ForecastDashboard"
 
 export type MapSidebarProps = ActiveSlug & {
     onSubmitForm: (data: IEnvironmentData) => void
@@ -20,6 +20,7 @@ export type MapSidebarProps = ActiveSlug & {
 
 const MapSidebar = ({ slug, closeSidebar, onSubmitForm }: MapSidebarProps) => {
     const isModifying = usePredictionsStore((s) => s.modifying)
+    const forecasts = usePredictionsStore((s) => s.forecasts)
     const clickedZone = useMapStore((s) => s.clickedZone)
     const { date, setDate } = useDateUrlSync(slug)
     return (
@@ -51,7 +52,8 @@ const MapSidebar = ({ slug, closeSidebar, onSubmitForm }: MapSidebarProps) => {
                                 )}
                             </TabsContent>
                             <TabsContent value="live">
-                                <ComingSoon title="Live Data" isCompact isSection />
+                                {forecasts && <ForecastDashboard forecasts={forecasts} />}
+                                {/* <ComingSoon title="Live Data" isCompact isSection /> */}
                             </TabsContent>
                         </Tabs>
                     </CardContent>

@@ -9,15 +9,18 @@ export class PredictionRepository extends DatabaseRepository<IPrediction> {
     }
 
     async findPredictions(filter: QueryFilter<IPrediction> = {}) {
-        return await this.find(filter, {
-            base_date: 1,
-            prediction_type: 1,
-            features_snapshot: 1,
-            health_outcomes: 1,
-        })
+        return await this.model
+            .find(filter, {
+                base_date: 1,
+                prediction_type: 1,
+                features_snapshot: 1,
+                health_outcomes: 1,
+            })
+            .lean()
+            .exec()
     }
 
-    async insertPredictions(predictions: IPrediction[]) {
+    async insertPredictions(predictions: IPrediction[]): Promise<IPrediction[]> {
         return await this.model.insertMany(predictions, { lean: true })
     }
 

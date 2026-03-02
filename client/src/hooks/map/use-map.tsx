@@ -42,8 +42,14 @@ const useMapHook = () => {
         setHoveredCoords,
     } = useMapStore()
     const explanationMethod = useSettingsStore((s) => s.explanationMethod)
-    const { setLoading, onOutcomeSelect, setSimulation, setEnvironment, setModifying } =
-        usePredictionsStore()
+    const {
+        setLoading,
+        setForecasts,
+        onOutcomeSelect,
+        setSimulation,
+        setEnvironment,
+        setModifying,
+    } = usePredictionsStore()
 
     const activeSlug = parseSlug(params.slug)
 
@@ -55,6 +61,11 @@ const useMapHook = () => {
     )
 
     const { date } = useDateUrlSync(activeSlug)
+
+    useEffect(() => {
+        const fetchForecasts = async () => setForecasts(await weekService.getForecasts())
+        fetchForecasts()
+    }, [setForecasts, weekService])
 
     useEffect(() => {
         if (!isInvalid) return

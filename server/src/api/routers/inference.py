@@ -26,7 +26,7 @@ async def simulate(
     query: Annotated[PredictionQueryParams, Query()],
     prediction_service: PredictionService = Depends(get_prediction_service),
 ):
-    features_df, predictions, explanations = prediction_service.simulate(req, query)
+    _, predictions, explanations = prediction_service.simulate(req, query)
     return SimulationResponse.build(predictions, query.explainer_method, explanations)
 
 
@@ -36,7 +36,7 @@ async def forecast(
     prediction_service: PredictionService = Depends(get_prediction_service),
     forecast_service: ForecastService = Depends(get_forecast_service),
 ):
-    features_df, predictions, _ = prediction_service.simulate(req)
+    __, predictions, _ = prediction_service.simulate(req)
     horizon_len, forecasts = forecast_service.forecast(req, predictions)
 
     return ForecastResponse(horizon=horizon_len, forecasts=forecasts)

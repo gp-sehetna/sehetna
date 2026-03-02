@@ -19,26 +19,27 @@ const HealthOutcomesWithIntervalsSchema = new Schema<IHealthOutcomes<IIntervalPr
     { _id: false }
 )
 
-const PredictionSchema = new Schema({
-    user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    model_id: { type: Schema.Types.ObjectId, ref: "AiModel", required: true },
-    location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
-    base_date: { type: Date, default: new Date(), required: false },
-    prediction_type: {
-        type: String,
-        enum: PredictionTypeEnum,
-        default: PredictionTypeEnum.forecasted,
-        required: false,
+const PredictionSchema = new Schema(
+    {
+        user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
+        model_id: { type: Schema.Types.ObjectId, ref: "AiModel", required: true },
+        location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
+        base_date: { type: Date, default: new Date() },
+        prediction_type: {
+            type: String,
+            enum: PredictionTypeEnum,
+            default: PredictionTypeEnum.forecasted,
+        },
+        features_snapshot: { type: Schema.Types.Mixed, default: () => ({}) },
+        health_outcomes: { type: HealthOutcomesWithIntervalsSchema, required: true },
     },
-    features_snapshot: { type: Schema.Types.Mixed, default: () => ({}), required: false },
-    health_outcomes: { type: HealthOutcomesWithIntervalsSchema, required: true },
-    createdAt: { type: Date, default: new Date(), required: false },
-})
+    { timestamps: { createdAt: true } }
+)
 
 export type IPrediction = InferSchemaType<typeof PredictionSchema>
 export type PredictionMeta = Omit<
     IPrediction,
-    "health_outcomes" | "createdAt" | "base_date" | "prediction_type" | "_id"
+    "health_outcomes" | "createdAt" | "base_date" | "prediction_type" | "_id" | "features_snapshot"
 >
 
 PredictionSchema.index(

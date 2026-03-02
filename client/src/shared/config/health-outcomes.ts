@@ -26,4 +26,4 @@ export {
     HEALTH_OUTCOMES_WITH_HYPHEN,
     mapHealthOutcomes,
 }
-export type { IHealthOutcomes }
+export type { HealthOutcomesKeys, IHealthOutcomes }

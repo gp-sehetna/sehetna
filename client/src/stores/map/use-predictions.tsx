@@ -1,3 +1,4 @@
+import { Forecasts } from "@/features/environment/forecast/forecast.dto"
 import { IEnvironmentData } from "@/features/environment/week/week.dto"
 import { Explanations, SimulateResponse } from "@/features/environment/week/week.types"
 import { HEALTH_OUTCOMES_KEYS, IHealthOutcomes } from "@/shared/config/health-outcomes"
@@ -9,11 +10,13 @@ type PredictionsState = {
     environment: IEnvironmentData | null
     modifying: boolean
     explanations: Explanations | null
+    forecasts: Forecasts["forecasts"] | null
     loading: boolean
 
     setLoading: (loading: boolean) => void
     setSimulation: (simulation: SimulateResponse, healthOutcome: keyof IHealthOutcomes) => void
     setModifying: (modifying: boolean) => void
+    setForecasts: (forecasts: Forecasts["forecasts"]) => void
     setEnvironment: (environment: IEnvironmentData) => void
     onOutcomeSelect: (healthOutcome: keyof IHealthOutcomes) => void
     reset: () => void
@@ -32,6 +35,7 @@ export const usePredictionsStore = create<PredictionsState>((set, get) => {
         contributors: null,
         modifying: false,
         explanations: null,
+        forecasts: null,
         environment: null,
         loading: false,
 
@@ -39,6 +43,7 @@ export const usePredictionsStore = create<PredictionsState>((set, get) => {
 
         setModifying: (modifying) => set({ modifying }),
         setEnvironment: (environment) => set({ environment }),
+        setForecasts: (forecasts) => set({ forecasts }),
         setSimulation: (simulation: SimulateResponse, healthOutcome: keyof IHealthOutcomes) => {
             setExplanations(simulation)
             set({ healthOutcome, simulation })
