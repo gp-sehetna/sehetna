@@ -23,7 +23,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
 
     return (
         <Map
-            interactiveLayerIds={["countries-hover-layer", "country-boundaries-hover-layer"]}
+            interactiveLayerIds={["land-hover", "land-hover-boundaries"]}
             reuseMaps
             onClick={onMapClick}
             onLoad={onMapLoad}

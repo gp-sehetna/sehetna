@@ -1,11 +1,16 @@
+import { GradientPalette, blue, darkBlue, green, mix, red } from "@/shared/config/map-colors"
+import { DEFAULT_MAP_THEME_IDS, MapThemeId } from "@/shared/config/map-theme-config"
 import { create } from "zustand"
-import { GradientPalette, blue, green, mix, red, darkBlue } from "@/shared/config/map-colors"
 
 export interface ThemeState {
     healthOutcome?: string
     theme: GradientPalette
     isInvalid: boolean
+    activeThemeIds: MapThemeId[]
     setHealthOutcome: (healthOutcome?: string) => void
+    toggleTheme: (themeId: MapThemeId) => void
+    resetMapThemes: () => void
+    isThemeActive: (themeId: MapThemeId) => boolean
     getSampledColors: (numberOfItems: number) => string[]
 }
 
@@ -38,10 +43,25 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
     healthOutcome: undefined,
     theme: darkBlueTheme,
     isInvalid: false,
+    activeThemeIds: [...DEFAULT_MAP_THEME_IDS],
     setHealthOutcome: (healthOutcome) => {
-        const theme = getTheme(healthOutcome) || blueTheme
-        set({ healthOutcome, theme, isInvalid: theme === null })
+        const nextTheme = getTheme(healthOutcome)
+        set({
+            healthOutcome,
+            theme: nextTheme ?? blueTheme,
+            isInvalid: nextTheme === null,
+        })
     },
+    toggleTheme: (themeId) => {
+        const { activeThemeIds } = get()
+
+        if (activeThemeIds.includes(themeId))
+            return set({ activeThemeIds: activeThemeIds.filter((id) => id !== themeId) })
+
+        set({ activeThemeIds: [...activeThemeIds, themeId] })
+    },
+    resetMapThemes: () => set({ activeThemeIds: [...DEFAULT_MAP_THEME_IDS] }),
+    isThemeActive: (themeId) => get().activeThemeIds.includes(themeId),
     getSampledColors: (numberOfItems) => {
         const { theme } = get()
 

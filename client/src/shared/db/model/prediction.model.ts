@@ -1,9 +1,9 @@
+import { nullableNumber } from "@/lib/utils/object"
 import { IHealthOutcomes, mapHealthOutcomes } from "@/shared/config/health-outcomes"
-import { Document, InferSchemaType, Schema, Types, model, models } from "mongoose"
-import { PredictionTypeEnum } from "../enums/prediction.enum"
-import { IntervalPrediction, nullableNumber } from "@/lib/utils/object"
+import { PredictionTypeEnum } from "@/shared/db/enums/prediction.enum"
+import { InferSchemaType, Model, Schema, model, models } from "mongoose"
 
-const IntervalPredictionSchema = new Schema<IntervalPrediction>(
+const IntervalPredictionSchema = new Schema(
     {
         point: { type: Number, required: true },
         lower: nullableNumber,
@@ -11,50 +11,41 @@ const IntervalPredictionSchema = new Schema<IntervalPrediction>(
     },
     { _id: false }
 )
-const IntervalPredictionObject = { type: IntervalPredictionSchema, required: true }
 
-const HealthOutcomesWithIntervalsSchema = new Schema<
-    IHealthOutcomes<InferSchemaType<typeof IntervalPredictionSchema>>
->(
-    mapHealthOutcomes(() => IntervalPredictionObject),
+type IIntervalPredictionSchema = InferSchemaType<typeof IntervalPredictionSchema>
+
+const HealthOutcomesWithIntervalsSchema = new Schema<IHealthOutcomes<IIntervalPredictionSchema>>(
+    mapHealthOutcomes(() => ({ type: IntervalPredictionSchema, required: true })),
     { _id: false }
 )
 
-export interface IPrediction extends Document {
-    user_id: Schema.Types.ObjectId
-    model_id: Schema.Types.ObjectId
-    location_id: Types.ObjectId
-    base_date: Date
-    prediction_type: PredictionTypeEnum
-    features_snapshot: Record<string, unknown>
-    health_outcomes: IHealthOutcomes
-    createdAt: Date
-}
-
-const PredictionSchema = new Schema<IPrediction>(
-    {
-        user_id: { type: Schema.Types.ObjectId, ref: "User", required: true }, 
-        model_id: { type: Schema.Types.ObjectId, ref: "AiModel", required: true },
-        location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
-        base_date: { type: Date, required: true },
-        prediction_type: {
-            type: String,
-            enum: PredictionTypeEnum,
-            default: PredictionTypeEnum.forecasted,
-        },
-        features_snapshot: { type: Schema.Types.Mixed, default: () => ({}) },
-        health_outcomes: { type: HealthOutcomesWithIntervalsSchema, required: true },
+const PredictionSchema = new Schema({
+    user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    model_id: { type: Schema.Types.ObjectId, ref: "AiModel", required: true },
+    location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
+    base_date: { type: Date, default: new Date(), required: false },
+    prediction_type: {
+        type: String,
+        enum: PredictionTypeEnum,
+        default: PredictionTypeEnum.forecasted,
+        required: false,
     },
-    { timestamps: { createdAt: true } }
-)
+    features_snapshot: { type: Schema.Types.Mixed, default: () => ({}), required: false },
+    health_outcomes: { type: HealthOutcomesWithIntervalsSchema, required: true },
+    createdAt: { type: Date, default: new Date(), required: false },
+})
 
+export type IPrediction = InferSchemaType<typeof PredictionSchema>
+export type PredictionMeta = Omit<
+    IPrediction,
+    "health_outcomes" | "createdAt" | "base_date" | "prediction_type" | "_id"
+>
 
-
-// create an index on model_id and location_id
 PredictionSchema.index(
     { model_id: 1, location_id: 1 },
     { unique: true, name: "model_location_index" }
 )
+PredictionSchema.index({ user_id: 1 }, { unique: true, name: "user_model_index" })
 
-export const PredictionModel =
+export const PredictionModel: Model<IPrediction> =
     models.Prediction || model<IPrediction>("Prediction", PredictionSchema)

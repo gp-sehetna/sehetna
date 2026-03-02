@@ -1,5 +1,5 @@
 import { RoleEnum } from "@/shared/db/enums/auth.enum"
-import { DUser } from "@/shared/db/model/user.model"
+import { IUser } from "@/shared/db/model/user.model"
 import { BadRequestException, UnauthorizedException } from "@/shared/http/errors"
 import { sign, JwtPayload, verify } from "jsonwebtoken"
 
@@ -39,7 +39,7 @@ export const getSignatures = (level: SignatureLevelEnum) => {
     return signatures
 }
 
-export const createTokens = async (user: DUser) => {
+export const createTokens = async (user: IUser) => {
     const signatureLevel = detectSignatureLevel(user.role)
     const signatures = getSignatures(signatureLevel)
     const payload = { _id: user._id }

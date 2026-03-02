@@ -1,37 +1,13 @@
-import { Document, InferSchemaType, Schema, Types, model, models } from "mongoose"
 import { nullableNumber } from "@/lib/utils/object"
 import { IHealthOutcomes, mapHealthOutcomes } from "@/shared/config/health-outcomes"
+import { InferSchemaType, Model, Require_id, Schema, model, models } from "mongoose"
 
 const HealthOutcomesSchema = new Schema<IHealthOutcomes>(
     mapHealthOutcomes(() => nullableNumber),
     { _id: false }
 )
 
-export interface IObservation extends Document {
-    location_id: Types.ObjectId
-    base_date: Date
-    climate: {
-        temperature_celsius: number | null
-        precipitation_mm: number | null
-        heat_wave_days: number | null
-        flood_indicator: number | null
-    }
-    air_quality: {
-        pm25_ugm3: number | null
-        aqi_pm: number | null
-    }
-    health_indicators: {
-        healthcare_access_index: number | null
-        food_security_index: number | null
-        uhs_service_coverage_index: number | null
-    }
-    targets: InferSchemaType<typeof HealthOutcomesSchema>
-    data_source_tags: string[]
-    createdAt: Date
-}
-
-
-const ObservationSchema = new Schema<IObservation>(
+const ObservationSchema = new Schema(
     {
         location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
         base_date: { type: Date, required: true },
@@ -57,16 +33,15 @@ const ObservationSchema = new Schema<IObservation>(
     { timestamps: { createdAt: true } }
 )
 
+export type IObservation = Require_id<InferSchemaType<typeof ObservationSchema>>
 
 /**
  * Indexes
  * - Primary pattern: fetch a country's full timeline in order
- * - datasource_id: provenance — all rows from a given source
  * - Temporal range with country filter
  */
-ObservationSchema.index({ location_code: 1, date: 1 }, { unique: true })
-ObservationSchema.index({ datasource_id: 1 })
-ObservationSchema.index({ year: 1, week: 1, location_code: 1 })
+ObservationSchema.index({ location_id: 1, base_date: 1 }, { unique: true })
+ObservationSchema.index({ data_source_tags: 1 })
 
-export const ObservationModel =
+export const ObservationModel: Model<IObservation> =
     models.Observation || model<IObservation>("Observation", ObservationSchema)

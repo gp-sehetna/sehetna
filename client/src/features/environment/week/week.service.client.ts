@@ -32,7 +32,7 @@ export class WeekClientService {
         return Array.from(nullKeys)
     }
 
-    private fetchEnvironment = async (location: Location, date: string | null, weeks: number) => {
+    public fetchEnvironment = async (location: Location, date: string | null, weeks: number) => {
         const { lat, lng, iso } = location,
             coords = `${lat},${lng}`,
             isNotSimulation = !date || weeks == 0,
