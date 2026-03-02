@@ -1,9 +1,9 @@
-import { IntervalPrediction, nullableNumber } from "@/lib/utils/object"
+import { nullableNumber } from "@/lib/utils/object"
 import { IHealthOutcomes, mapHealthOutcomes } from "@/shared/config/health-outcomes"
 import { PredictionTypeEnum } from "@/shared/db/enums/prediction.enum"
-import { InferSchemaType, Model, Require_id, Schema, model, models } from "mongoose"
+import { InferSchemaType, Model, Schema, model, models } from "mongoose"
 
-const IntervalPredictionSchema = new Schema<IntervalPrediction>(
+const IntervalPredictionSchema = new Schema(
     {
         point: { type: Number, required: true },
         lower: nullableNumber,
@@ -11,33 +11,35 @@ const IntervalPredictionSchema = new Schema<IntervalPrediction>(
     },
     { _id: false }
 )
-const IntervalPredictionObject = { type: IntervalPredictionSchema, required: true }
 
-const HealthOutcomesWithIntervalsSchema = new Schema<
-    IHealthOutcomes<InferSchemaType<typeof IntervalPredictionSchema>>
->(
-    mapHealthOutcomes(() => IntervalPredictionObject),
+type IIntervalPredictionSchema = InferSchemaType<typeof IntervalPredictionSchema>
+
+const HealthOutcomesWithIntervalsSchema = new Schema<IHealthOutcomes<IIntervalPredictionSchema>>(
+    mapHealthOutcomes(() => ({ type: IntervalPredictionSchema, required: true })),
     { _id: false }
 )
 
-const PredictionSchema = new Schema(
-    {
-        user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
-        model_id: { type: Schema.Types.ObjectId, ref: "AiModel", required: true },
-        location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
-        base_date: { type: Date, required: true },
-        prediction_type: {
-            type: String,
-            enum: PredictionTypeEnum,
-            default: PredictionTypeEnum.forecasted,
-        },
-        features_snapshot: { type: Schema.Types.Mixed, default: () => ({}) },
-        health_outcomes: { type: HealthOutcomesWithIntervalsSchema, required: true },
+const PredictionSchema = new Schema({
+    user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    model_id: { type: Schema.Types.ObjectId, ref: "AiModel", required: true },
+    location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
+    base_date: { type: Date, default: new Date(), required: false },
+    prediction_type: {
+        type: String,
+        enum: PredictionTypeEnum,
+        default: PredictionTypeEnum.forecasted,
+        required: false,
     },
-    { timestamps: { createdAt: true } }
-)
+    features_snapshot: { type: Schema.Types.Mixed, default: () => ({}), required: false },
+    health_outcomes: { type: HealthOutcomesWithIntervalsSchema, required: true },
+    createdAt: { type: Date, default: new Date(), required: false },
+})
 
-export type IPrediction = Require_id<InferSchemaType<typeof PredictionSchema>>
+export type IPrediction = InferSchemaType<typeof PredictionSchema>
+export type PredictionMeta = Omit<
+    IPrediction,
+    "health_outcomes" | "createdAt" | "base_date" | "prediction_type" | "_id"
+>
 
 PredictionSchema.index(
     { model_id: 1, location_id: 1 },

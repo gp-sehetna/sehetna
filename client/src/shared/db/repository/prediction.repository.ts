@@ -17,6 +17,10 @@ export class PredictionRepository extends DatabaseRepository<IPrediction> {
         })
     }
 
+    async insertPredictions(predictions: IPrediction[]) {
+        return await this.model.insertMany(predictions, { lean: true })
+    }
+
     async findUserRelatedPredictions(
         filter: QueryFilter<IPrediction> = {},
         pagination: Pagination = {}

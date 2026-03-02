@@ -13,7 +13,13 @@ export class LocationRepository extends DatabaseRepository<ILocation> {
      * Uses name to get locations with name using LIKE operator: `%name%`
      * @todo For Scalability, add support for fuzzy search
      **/
-    async byName(name: string) {
+    async findByName(name: string) {
         return await this.find({ name: { $regex: name, $options: "i" } })
+    }
+
+    async findByCode(code: string) {
+        const location = await this.findOne({ code })
+        if (!location) throw new Error("Location not found")
+        return location
     }
 }

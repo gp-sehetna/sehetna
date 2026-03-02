@@ -1,43 +1,11 @@
 import { PaginationOptions, PaginationResult } from "@/shared/db/types/pagination.type"
-import {
-    AnyBulkWriteOperation,
-    Model,
-    ProjectionType,
-    QueryFilter,
-    QueryOptions,
-    Require_id,
-    UpdateQuery,
-} from "mongoose"
+import { Model, ProjectionType, QueryFilter, QueryOptions, UpdateQuery } from "mongoose"
 
-export abstract class DatabaseRepository<T extends Require_id<Record<string, any>>> {
+export abstract class DatabaseRepository<T extends Record<string, any>> {
     constructor(protected readonly model: Model<T>) {}
 
     async create(data: Partial<T>) {
         return await this.model.create(data)
-    }
-    //TODO: Version that returns inserted vs updated counts
-    async bulkUpsert(docs: Partial<T>[], uniqueKey: keyof T = "_id") {
-        if (!docs.length) return
-
-        const operations = docs.map((doc) => {
-            const filter: QueryFilter<T> = {
-                [uniqueKey]: doc[uniqueKey],
-            }
-
-            const update: UpdateQuery<T> = {
-                $set: doc,
-            }
-
-            return {
-                updateOne: {
-                    filter,
-                    update,
-                    upsert: true,
-                },
-            }
-        }) as AnyBulkWriteOperation[]
-
-        return this.model.bulkWrite(operations)
     }
 
     async findById(id: string) {

@@ -7,6 +7,12 @@ export class AiModelRepository extends DatabaseRepository<IAiModel> {
         super(model)
     }
 
+    override async findById(id: string) {
+        const model = await this.model.findById(id).exec()
+        if (!model) throw new Error("Model not found")
+        return model
+    }
+
     async findAiModels(filter: QueryFilter<IAiModel> = {}) {
         return await this.find(filter, {
             features: 0,
