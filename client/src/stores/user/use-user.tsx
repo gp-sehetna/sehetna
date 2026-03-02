@@ -2,14 +2,14 @@ import { UserWithoutPassword } from "@/features/auth/auth.types"
 import { create } from "zustand"
 
 type UserState = {
-    user?: UserWithoutPassword
+    user: UserWithoutPassword | null
 
-    setUser: (newUser: UserWithoutPassword) => void
+    setUser: (newUser: UserWithoutPassword | null) => void
 }
 
-export const useUserStore = create<UserState>((set, get) => {
+export const useUserStore = create<UserState>((set) => {
     return {
-        user: undefined,
+        user: null,
         setUser: (user) => set({ user }),
     }
 })

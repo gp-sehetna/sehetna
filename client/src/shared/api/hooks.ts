@@ -1,6 +1,7 @@
-import { AfterResponseHook } from "ky"
+import ky, { AfterResponseHook } from "ky"
 import { toast } from "sonner"
-import { AppResponseType } from "../http/response"
+import { AppResponseType, BaseErrorResponse } from "../http/response"
+import { UnauthorizedException } from "@/shared/http/errors"
 
 const handleErrors: AfterResponseHook = async (_request, _options, response) => {
     // No content to process
@@ -19,11 +20,6 @@ const handleErrors: AfterResponseHook = async (_request, _options, response) => 
         case 400:
         case 422:
             toast.warning(data?.message || "An error occurred. Please try again.")
-            break
-        // Unauthorized
-        case 401:
-            toast.error(data?.message || "You are not authorized. Please login.")
-            // Redirect to login could be handled here
             break
         // Forbidden
         case 403:
@@ -55,4 +51,24 @@ const handleErrors: AfterResponseHook = async (_request, _options, response) => 
     return response
 }
 
-export { handleErrors }
+const handleUnAuthorized: AfterResponseHook = async (request, options, response) => {
+    if (response.status !== 401) return response
+
+    const data: BaseErrorResponse = await response.clone().json()
+
+    if (data.cause === "expired") {
+        const refreshResponse = await fetch("/api/auth/refresh", { credentials: "include" })
+        const refreshData: AppResponseType = await refreshResponse.json()
+
+        if (!refreshData.success && typeof window !== "undefined") {
+            window.location.href = refreshData.destination || "/authenticate/login/raw"
+            return
+        }
+
+        return ky(request, options)
+    }
+
+    return response
+}
+
+export { handleErrors, handleUnAuthorized }

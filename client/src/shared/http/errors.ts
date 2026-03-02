@@ -1,3 +1,5 @@
+import { ErrDetails } from "@/shared/http/types"
+
 class ApplicationException extends Error {
     public readonly status: number
     public readonly err_details: any
@@ -5,7 +7,7 @@ class ApplicationException extends Error {
     constructor(message = "Application error", status = 500, err_details?: any, cause?: unknown) {
         super(message, { cause })
         this.status = status
-        this.err_details = err_details
+        this.err_details = { ...err_details }
         this.name = this.constructor.name
         Error.captureStackTrace?.(this, this.constructor)
     }
@@ -22,8 +24,8 @@ class BadRequestException extends ApplicationException {
 }
 
 class UnauthorizedException extends ApplicationException {
-    constructor(message = "Client has not been authenticated", err_details?: any, cause?: unknown) {
-        super(message, 401, err_details, cause)
+    constructor(message = "Client has not been authenticated", details?: ErrDetails) {
+        super(message, 401, details, details?.cause)
     }
 }
 

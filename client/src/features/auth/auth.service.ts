@@ -5,6 +5,7 @@ import { OtpRepository } from "@/shared/db/repository/otp.repository"
 import { UserRepository } from "@/shared/db/repository/user.repository"
 import { EmailService } from "@/shared/email/email.service"
 import { UserNotFoundException, ValidationException } from "@/shared/http/errors"
+import logger from "@/shared/logger"
 import { compare, hash } from "bcrypt"
 import { NextRequest, userAgent } from "next/server"
 
@@ -41,6 +42,14 @@ export class AuthService extends OTPService {
         return await this.userRepository.findByEmail(email)
     }
 
+    getUserById = async (id: string) => {
+        const user = await this.userRepository.findById(id)
+        if (!user) throw new UserNotFoundException()
+        const { password: _p, __v, ...safeUser } = user.toObject()
+        logger.info(safeUser, "User: ")
+        return { user: safeUser }
+    }
+
     checkUserExistsByEmail = async (email: string) => {
         return await this.userRepository.findByEmail(email)
     }
@@ -65,8 +74,13 @@ export class AuthService extends OTPService {
     login = async ({ email, password }: ILoginInputsDTO) => {
         const [user, isPasswordValid] = await this.getUserAndComparePassword(email, password)
         if (!isPasswordValid) throw new ValidationException("Invalid credentials")
-        const { password: _p, ...safeUser } = user.toObject()
-        return { user: safeUser, tokens: await createTokens(user) }
+        const { password: _p, __v, ...safeUser } = user.toObject()
+        return { user: safeUser, tokens: await createTokens(user._id.toString(), user.role) }
+    }
+
+    refresh = async (id: string) => {
+        const { user } = await this.getUserById(id)
+        return { user, tokens: await createTokens(user._id.toString(), user.role) }
     }
 
     checkOldPassword = async (userId: string, password: string) => {

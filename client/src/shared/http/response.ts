@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { ErrDetails } from "@/shared/http/types"
 
 interface MessageField {
     message: string
@@ -9,10 +10,9 @@ interface BaseSuccessResponse extends MessageField {
 
 type SuccessResponseWithData<T = any> = BaseSuccessResponse & { data: T }
 
-interface BaseErrorResponse extends MessageField {
+interface BaseErrorResponse extends MessageField, ErrDetails {
     success: false
     status_code: number
-    err_details?: unknown
 }
 
 type AppResponseType = BaseSuccessResponse | BaseErrorResponse
@@ -28,9 +28,14 @@ const successResponse = <T = unknown>(
     )
 }
 
-const errorResponse = (message: string, status = 400, err_details?: unknown) => {
+const errorResponse = (message: string, status = 400, details?: ErrDetails) => {
     return NextResponse.json<BaseErrorResponse>(
-        { success: false, status_code: status, message, err_details },
+        {
+            success: false,
+            status_code: status,
+            message,
+            ...details,
+        },
         { status }
     )
 }

@@ -15,13 +15,15 @@ const userSchema = new Schema(
         gender: { type: String, enum: GenderEnum, default: GenderEnum.Male },
         role: { type: String, enum: RoleEnum, default: RoleEnum.user },
     },
-    { timestamps: true }
+    { timestamps: true, toObject: { virtuals: true }, toJSON: { virtuals: true } }
 )
 
 userSchema.virtual("fullName").get(function () {
     return `${this.firstName} ${this.lastName}`
 })
 
-export type IUser = Require_id<InferSchemaType<typeof userSchema>>
+export type IUser = Require_id<InferSchemaType<typeof userSchema>> & {
+    fullName: string
+}
 
 export const UserModel: Model<IUser> = models.User || model<IUser>("User", userSchema)

@@ -37,21 +37,23 @@ export function globalErrorHandler<T = any, Args extends any[] = any[]>(handler:
     }
 }
 
-
 const handleError = (err: unknown) => {
     const notProduction = process.env.NODE_ENV !== "production"
     if (err instanceof ApplicationException) {
         // Case 1: Known Application Exception
         const log = `[APPLICATION API (${err.name}):${err.status}] ${err.message}`
-        // logger.error({ error_details: err.err_details }, log)
+
         logger.error(log)
-        return errorResponse(err.message, err.status, err.err_details)
+        return errorResponse(err.message, err.status, {
+            err_details: err.err_details,
+            cause: err.cause,
+        })
     } else if (err instanceof ZodError) {
         // Case 2: Zod Validation Error
         const log = `[VALIDATION (${err.name}):422]: ${err.message}`
         // logger.error({ error_details: z.treeifyError(err) }, log)
         logger.error(log)
-        return errorResponse(err.message, 422, z.treeifyError(err))
+        return errorResponse(err.message, 422, { err_details: z.treeifyError(err) })
     }
 
     // Determine the message to send back
@@ -65,7 +67,7 @@ const handleError = (err: unknown) => {
 
         // logger.error({ error_details: stack }, log)
         logger.error(log)
-        return errorResponse(message, 500, stack)
+        return errorResponse(message, 500, { err_details: stack })
     }
     // Case 4: Unknown Error Type example: throw "string error"
     const message = notProduction ? String(err) : "Unknown error occurred",
