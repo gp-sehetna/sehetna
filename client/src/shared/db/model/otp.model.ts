@@ -1,18 +1,7 @@
-import { Document, Schema, model, models } from "mongoose"
-import { PurposeEnum } from "../enums/auth.enum"
+import { PurposeEnum } from "@/shared/db/enums/auth.enum"
+import { InferSchemaType, Model, Require_id, Schema, model, models } from "mongoose"
 
-export interface IOtp extends Document {
-    email: string
-    otpHash: string
-    purpose: PurposeEnum
-    expiresAt: Date
-    used: boolean
-    verified: boolean
-    attempts: number
-    createdAt: Date
-}
-
-const OtpSchema = new Schema<IOtp>(
+const OtpSchema = new Schema(
     {
         email: { type: String, required: true, index: true },
         otpHash: { type: String, required: true },
@@ -25,10 +14,12 @@ const OtpSchema = new Schema<IOtp>(
     { timestamps: true }
 )
 
+export type IOtp = Require_id<InferSchemaType<typeof OtpSchema>>
+
 // Auto-delete expired OTPs which are still not verified.
 OtpSchema.index(
     { expiresAt: 1 },
     { expireAfterSeconds: 0, partialFilterExpression: { verified: false } }
 )
 
-export const OtpModel = models.Otp || model<IOtp>("Otp", OtpSchema)
+export const OtpModel: Model<IOtp> = models.Otp || model<IOtp>("Otp", OtpSchema)

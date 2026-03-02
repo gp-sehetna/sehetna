@@ -1,22 +1,22 @@
+import { PaginationOptions, PaginationResult } from "@/shared/db/types/pagination.type"
 import {
-    Document,
-    Model,
-    QueryOptions,
-    QueryFilter,
-    UpdateQuery,
     AnyBulkWriteOperation,
+    Model,
     ProjectionType,
+    QueryFilter,
+    QueryOptions,
+    Require_id,
+    UpdateQuery,
 } from "mongoose"
-import { PaginationOptions, PaginationResult } from "../types/pagination.type"
 
-export abstract class DatabaseRepository<T extends Document> {
+export abstract class DatabaseRepository<T extends Require_id<Record<string, any>>> {
     constructor(protected readonly model: Model<T>) {}
 
     async create(data: Partial<T>) {
         return await this.model.create(data)
     }
     //TODO: Version that returns inserted vs updated counts
-    async bulkUpsert(docs: Partial<T>[], uniqueKey: keyof T = "_id" as keyof T) {
+    async bulkUpsert(docs: Partial<T>[], uniqueKey: keyof T = "_id") {
         if (!docs.length) return
 
         const operations = docs.map((doc) => {
@@ -35,7 +35,7 @@ export abstract class DatabaseRepository<T extends Document> {
                     upsert: true,
                 },
             }
-        }) as AnyBulkWriteOperation<Document>[]
+        }) as AnyBulkWriteOperation[]
 
         return this.model.bulkWrite(operations)
     }

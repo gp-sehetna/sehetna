@@ -1,9 +1,9 @@
-import { Document, model, models, Schema } from "mongoose"
-import { ProviderEnum, GenderEnum, RoleEnum } from "../enums/auth.enum"
 import {
     NAME_MAX_LENGTH as maxLength,
     FIELD_REQUIRED as minLength,
 } from "@/features/auth/auth.validation"
+import { GenderEnum, ProviderEnum, RoleEnum } from "@/shared/db/enums/auth.enum"
+import { Document, Model, model, models, Schema } from "mongoose"
 
 export interface IUser extends Document {
     firstName: string
@@ -30,4 +30,4 @@ const userSchema = new Schema<IUser>(
     { timestamps: true }
 )
 
-export const UserModel = models.User || model<IUser>("User", userSchema)
+export const UserModel: Model<IUser> = models.User || model<IUser>("User", userSchema)

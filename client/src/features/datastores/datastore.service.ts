@@ -1,9 +1,8 @@
+import { IDataStore } from "@/shared/db/model/data-store.model"
 import { DataStoreRepository } from "@/shared/db/repository/data-store.repository"
-import { DataStoreModel, IDataStore } from "@/shared/db/model/data-store.model"
 
 export class DataStoreService {
-    private readonly dataStoreRepository = new DataStoreRepository(DataStoreModel)
-    constructor() {}
+    constructor(private readonly dataStoreRepository: DataStoreRepository) {}
     async findAll() {
         return await this.dataStoreRepository.find()
     }

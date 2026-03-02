@@ -1,9 +1,8 @@
-import { IOtp } from "@/shared/db/model/otp.model"
+import { IOtp, OtpModel } from "@/shared/db/model/otp.model"
 import { DatabaseRepository } from "@/shared/db/repository/database.repository"
-import { Model } from "mongoose"
 
 export class OtpRepository extends DatabaseRepository<IOtp> {
-    constructor(model: Model<IOtp>) {
+    constructor(protected override readonly model: typeof OtpModel) {
         super(model)
     }
 

@@ -1,15 +1,7 @@
-import { Document, model, models, Schema } from "mongoose"
 import { DESC_MAX_LENGTH, NAME_MAX_LENGTH as maxLength } from "@/features/auth/auth.validation"
+import { InferSchemaType, Model, model, models, Require_id, Schema } from "mongoose"
 
-export interface IEngagement extends Document {
-    name: string
-    email: string
-    phone: string
-    message: string
-    createdAt: Date
-}
-
-const EngagementSchema = new Schema<IEngagement>(
+const EngagementSchema = new Schema(
     {
         name: { type: String, required: true, maxLength },
         email: { type: String, required: true },
@@ -19,5 +11,7 @@ const EngagementSchema = new Schema<IEngagement>(
     { timestamps: { createdAt: true } }
 )
 
-export const EngagementModel =
+export type IEngagement = Require_id<InferSchemaType<typeof EngagementSchema>>
+
+export const EngagementModel: Model<IEngagement> =
     models.Engagement || model<IEngagement>("Engagement", EngagementSchema)

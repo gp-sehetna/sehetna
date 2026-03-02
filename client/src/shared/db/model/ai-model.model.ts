@@ -1,28 +1,13 @@
-import { Document, Schema, model, models } from "mongoose"
-import { AiModelEnum, ModelStatusEnum, TaskEnum } from "../enums/ai-model.enum"
+import { AiModelEnum, ModelStatusEnum, TaskEnum } from "@/shared/db/enums/ai-model.enum"
+import { InferSchemaType, Model, Require_id, Schema, model, models } from "mongoose"
 
-export interface IAiModel extends Document {
-    display_name: string
-    model_type: AiModelEnum
-    version: string
-    task_type: TaskEnum
-    features: string[] // not selected
-    targets: string[]
-    training_data: {
-        // not selected
-        data_store_ids: Schema.Types.ObjectId[]
-    }
-    status: ModelStatusEnum
-    createdAt: Date // not selected
-}
-
-const AiModelSchema = new Schema<IAiModel>(
+const AiModelSchema = new Schema(
     {
         display_name: {
             type: String,
             trim: true,
-            default: function () {
-                return `${(this as IAiModel).model_type}-${(this as IAiModel).version}`
+            default: function (this) {
+                return `${this.model_type}-${this.version}`
             },
         },
         version: { type: String, default: "1.0.0" },
@@ -38,7 +23,10 @@ const AiModelSchema = new Schema<IAiModel>(
     { timestamps: { createdAt: true } }
 )
 
+export type IAiModel = Require_id<InferSchemaType<typeof AiModelSchema>>
+
 // TODO: Ensure search index is correct
 // AiModelSchema.searchIndex({ definition: { display_name: "text", version: "text" }, type: "search" })
 
-export const AiModelModel = models.AiModel || model<IAiModel>("AiModel", AiModelSchema)
+export const AiModelModel: Model<IAiModel> =
+    models.AiModel || model<IAiModel>("AiModel", AiModelSchema)

@@ -1,10 +1,10 @@
+import { IPrediction, PredictionModel } from "@/shared/db/model/prediction.model"
+import { DatabaseRepository } from "@/shared/db/repository/database.repository"
+import { Pagination, PaginationResult } from "@/shared/db/types/pagination.type"
 import { QueryFilter } from "mongoose"
-import { DatabaseRepository } from "./database.repository"
-import { IPrediction } from "../model/prediction.model"
-import { Pagination, PaginationResult } from "../types/pagination.type"
 
 export class PredictionRepository extends DatabaseRepository<IPrediction> {
-    constructor(protected override readonly model: any) {
+    constructor(protected override readonly model: typeof PredictionModel) {
         super(model)
     }
 

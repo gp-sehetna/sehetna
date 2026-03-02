@@ -1,36 +1,18 @@
-import { Document, Schema, model, models } from "mongoose"
 import {
     DataSourcesEnum,
     GeoLevelEnum,
     GranularityEnum,
     StatusEnum,
-} from "../enums/data-store.enum"
+} from "@/shared/db/enums/data-store.enum"
+import { InferSchemaType, Model, Require_id, Schema, model, models } from "mongoose"
 
-export interface IDataStore extends Document {
-    alias_name: string
-    source: DataSourcesEnum
-    description: string
-    version: string
-    granularity: GranularityEnum
-    geographic_level: GeoLevelEnum
-    variables: string[]
-    date_range: {
-        start: Date
-        end: Date
-    }
-    file_path: string
-    status: StatusEnum
-    notes: string
-    createdAt: Date
-}
-
-const DataStoreSchema = new Schema<IDataStore>(
+const DataStoreSchema = new Schema(
     {
         alias_name: {
             type: String,
             trim: true,
-            default: function () {
-                return `${(this as IDataStore).source}-${(this as IDataStore).version}`
+            default: function (this) {
+                return `${this.source}-${this.version}`
             },
         },
         source: { type: String, enum: DataSourcesEnum, required: true },
@@ -55,7 +37,10 @@ const DataStoreSchema = new Schema<IDataStore>(
     { timestamps: { createdAt: true } }
 )
 
+export type IDataStore = Require_id<InferSchemaType<typeof DataStoreSchema>>
+
 DataStoreSchema.index({ source: 1, status: 1 })
 DataStoreSchema.index({ alias_name: 1, version: 1 }, { unique: true })
 
-export const DataStoreModel = models.DataStore || model<IDataStore>("DataStore", DataStoreSchema)
+export const DataStoreModel: Model<IDataStore> =
+    models.DataStore || model<IDataStore>("DataStore", DataStoreSchema)

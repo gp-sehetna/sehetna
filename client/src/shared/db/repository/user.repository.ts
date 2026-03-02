@@ -1,10 +1,10 @@
-import { IUser } from "@/shared/db/model/user.model"
+import { IUser, UserModel } from "@/shared/db/model/user.model"
 import { DatabaseRepository } from "@/shared/db/repository/database.repository"
-import { Model, QueryFilter } from "mongoose"
-import { Pagination, PaginationResult } from "../types/pagination.type"
+import { Pagination, PaginationResult } from "@/shared/db/types/pagination.type"
+import { QueryFilter } from "mongoose"
 
 export class UserRepository extends DatabaseRepository<IUser> {
-    constructor(protected override readonly model: Model<IUser>) {
+    constructor(protected override readonly model: typeof UserModel) {
         super(model)
     }
 

@@ -1,7 +1,7 @@
-import { IHealthOutcomes, mapHealthOutcomes } from "@/shared/config/health-outcomes"
-import { Document, InferSchemaType, Schema, Types, model, models } from "mongoose"
-import { PredictionTypeEnum } from "../enums/prediction.enum"
 import { IntervalPrediction, nullableNumber } from "@/lib/utils/object"
+import { IHealthOutcomes, mapHealthOutcomes } from "@/shared/config/health-outcomes"
+import { PredictionTypeEnum } from "@/shared/db/enums/prediction.enum"
+import { InferSchemaType, Model, Require_id, Schema, model, models } from "mongoose"
 
 const IntervalPredictionSchema = new Schema<IntervalPrediction>(
     {
@@ -20,18 +20,7 @@ const HealthOutcomesWithIntervalsSchema = new Schema<
     { _id: false }
 )
 
-export interface IPrediction extends Document {
-    user_id: Schema.Types.ObjectId
-    model_id: Schema.Types.ObjectId
-    location_id: Types.ObjectId
-    base_date: Date
-    prediction_type: PredictionTypeEnum
-    features_snapshot: Record<string, unknown>
-    health_outcomes: IHealthOutcomes
-    createdAt: Date
-}
-
-const PredictionSchema = new Schema<IPrediction>(
+const PredictionSchema = new Schema(
     {
         user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
         model_id: { type: Schema.Types.ObjectId, ref: "AiModel", required: true },
@@ -48,11 +37,13 @@ const PredictionSchema = new Schema<IPrediction>(
     { timestamps: { createdAt: true } }
 )
 
-// create an index on model_id and location_id
+export type IPrediction = Require_id<InferSchemaType<typeof PredictionSchema>>
+
 PredictionSchema.index(
     { model_id: 1, location_id: 1 },
     { unique: true, name: "model_location_index" }
 )
+PredictionSchema.index({ user_id: 1 }, { unique: true, name: "user_model_index" })
 
-export const PredictionModel =
+export const PredictionModel: Model<IPrediction> =
     models.Prediction || model<IPrediction>("Prediction", PredictionSchema)
