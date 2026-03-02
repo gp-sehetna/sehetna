@@ -14,6 +14,7 @@ export const GET = globalErrorHandler(async (req: NextRequest) => {
     if (!token)
         throw new UnauthorizedException("Login expired, please log in again", {
             cause: "login-expired",
+            destination: "/authenticate/login/raw",
         })
 
     const decoded = decodeToken(token, process.env.JWT_REFRESH_SECRET)

@@ -1,7 +1,6 @@
 import ky, { AfterResponseHook } from "ky"
 import { toast } from "sonner"
 import { AppResponseType, BaseErrorResponse } from "../http/response"
-import { UnauthorizedException } from "@/shared/http/errors"
 
 const handleErrors: AfterResponseHook = async (_request, _options, response) => {
     // No content to process
@@ -57,12 +56,13 @@ const handleUnAuthorized: AfterResponseHook = async (request, options, response)
     const data: BaseErrorResponse = await response.clone().json()
 
     if (data.cause === "expired") {
-        const refreshResponse = await fetch("/api/auth/refresh", { credentials: "include" })
-        const refreshData: AppResponseType = await refreshResponse.json()
+        const { cause, err_details } = await ky
+            .get<BaseErrorResponse>("/api/auth/refresh", { credentials: "include" })
+            .json()
 
-        if (!refreshData.success && typeof window !== "undefined") {
-            window.location.href = refreshData.destination || "/authenticate/login/raw"
-            return
+        if (cause == "login-expired") {
+            window.location.href = err_details.destination || "/authenticate/login/raw"
+            return response
         }
 
         return ky(request, options)
