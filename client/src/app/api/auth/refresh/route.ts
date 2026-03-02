@@ -14,10 +14,16 @@ export const GET = globalErrorHandler(async (req: NextRequest) => {
     if (!token)
         throw new UnauthorizedException("Login expired, please log in again", {
             cause: "login-expired",
-            destination: "/authenticate/login/raw",
         })
 
-    const decoded = decodeToken(token, process.env.JWT_REFRESH_SECRET)
+    let decoded: ReturnType<typeof decodeToken>
+    try {
+        decoded = decodeToken(token, process.env.JWT_REFRESH_SECRET)
+    } catch {
+        throw new UnauthorizedException("Login expired, please log in again", {
+            cause: "login-expired",
+        })
+    }
 
     const { user } = await mainService.authService.getUserById(decoded.sub)
     const tokens = await createTokens(user._id.toString(), user.role)

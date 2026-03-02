@@ -1,5 +1,5 @@
 import { BadRequestException, UnauthorizedException } from "@/shared/http/errors"
-import { sign, JwtPayload, verify } from "jsonwebtoken"
+import { JwtPayload, sign, verify } from "jsonwebtoken"
 
 export const EXPIRE = {
     access: 30 * 60,
