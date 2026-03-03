@@ -15,6 +15,7 @@
     --font-body: "Plus Jakarta Sans", sans-serif;
 
     /* ================= Primary ================= */
+    --color-primary-50: #fffaf8;
     --color-primary-100: #ffe6d7;
     --color-primary-200: #ffae81;
     --color-primary-300: #ff752a;

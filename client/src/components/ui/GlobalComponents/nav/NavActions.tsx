@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/shadcn/button"
 import { useUserStore } from "@/stores/user/use-user"
 import Link from "next/link"
 
-export default function MobileNav() {
+export default function NavActions() {
     const { user } = useUserStore()
     if (user) return <ProfilePictureAvatar name={user.fullName} />
 
