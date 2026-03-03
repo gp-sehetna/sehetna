@@ -20,7 +20,7 @@ const AiModelSchema = new Schema(
         },
         status: { type: String, enum: ModelStatus, default: ModelStatus.active },
     },
-    { timestamps: { createdAt: true } }
+    { timestamps: { createdAt: true, updatedAt: false } }
 )
 
 export type IAiModel = Require_id<InferSchemaType<typeof AiModelSchema>>

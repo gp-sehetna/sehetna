@@ -19,6 +19,7 @@ import { OtpRepository } from "@/shared/db/repository/otp.repository"
 import { PredictionRepository } from "@/shared/db/repository/prediction.repository"
 import { UserRepository } from "@/shared/db/repository/user.repository"
 import { EmailService } from "@/shared/email/email.service"
+import { AiModelsService } from "@/features/aimodels/aimodels.service"
 
 type MainServiceOptions = {
     db?: boolean
@@ -27,22 +28,24 @@ type MainServiceOptions = {
 export class MainService {
     private static instance: MainService | null = null
     private static initialized = false
-    private static emailService = new EmailService()
+    private emailService = new EmailService()
+    private aiModelRepository = new AiModelRepository(AiModelModel)
 
     public readonly authService = new AuthService(
         new UserRepository(UserModel),
         new OtpRepository(OtpModel),
-        MainService.emailService
+        this.emailService
     )
     public readonly weekService = new WeekService()
     public readonly engagementService = new EngagementsService(
         new EngagementRepository(EngagementModel),
-        MainService.emailService
+        this.emailService
     )
     public readonly dataStoreService = new DataStoreService(new DataStoreRepository(DataStoreModel))
+    public readonly aiModelService = new AiModelsService(this.aiModelRepository)
     public readonly forecastService = new ForecastService(
         new PredictionRepository(PredictionModel),
-        new AiModelRepository(AiModelModel),
+        this.aiModelRepository,
         new LocationRepository(LocationModel)
     )
 
