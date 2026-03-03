@@ -1,7 +1,7 @@
 enum PredictionTypeEnum {
     forecasted = "forecasted",
     predicted = "predicted",
-    actual = "actual",
+    historical = "historical",
 }
 
 export { PredictionTypeEnum }

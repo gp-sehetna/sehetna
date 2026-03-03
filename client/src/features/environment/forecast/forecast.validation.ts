@@ -1,5 +1,5 @@
 import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
-import { AiModelEnum } from "@/shared/db/enums/ai-model.enum"
+import { AiModel } from "@/shared/db/enums/ai-model.enum"
 import { PredictionTypeEnum } from "@/shared/db/enums/prediction.enum"
 import { z } from "zod"
 
@@ -16,7 +16,7 @@ const ForecastResponseSchema = z.object({
 })
 
 const ForecastParamsSchema = z.object({
-    modelId: z.enum(AiModelEnum),
+    modelId: z.enum(AiModel),
 })
 
 const ForecastsSchema = z.object({

@@ -1,5 +1,6 @@
 /**
  * "United States" → "united-states"
+ * "United_States" → "united-states"
  */
 function slugify(value: string): string {
     return (

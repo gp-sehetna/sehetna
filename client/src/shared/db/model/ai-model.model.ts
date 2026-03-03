@@ -1,4 +1,4 @@
-import { AiModelEnum, ModelStatusEnum, TaskEnum } from "@/shared/db/enums/ai-model.enum"
+import { AiModel, ModelStatus, Task } from "@/shared/db/enums/ai-model.enum"
 import { InferSchemaType, Model, Require_id, Schema, model, models } from "mongoose"
 
 const AiModelSchema = new Schema(
@@ -11,14 +11,14 @@ const AiModelSchema = new Schema(
             },
         },
         version: { type: String, default: "1.0.0" },
-        model_type: { type: String, enum: AiModelEnum, required: true },
-        task_type: { type: String, enum: TaskEnum, required: true },
+        model_type: { type: String, enum: AiModel, required: true },
+        task_type: { type: String, enum: Task, required: true },
         features: { type: [String], default: [] },
         targets: { type: [String], required: true },
         training_data: {
             data_store_ids: { type: [Schema.Types.ObjectId], ref: "DataStore", default: [] },
         },
-        status: { type: String, enum: ModelStatusEnum, default: ModelStatusEnum.active },
+        status: { type: String, enum: ModelStatus, default: ModelStatus.active },
     },
     { timestamps: { createdAt: true } }
 )

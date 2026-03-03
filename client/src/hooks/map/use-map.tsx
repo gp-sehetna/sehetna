@@ -20,13 +20,13 @@ import { MapLayerMouseEvent } from "react-map-gl/maplibre"
 
 import { IEnvironmentData } from "@/features/environment/week/week.dto"
 import { SimulateResponse } from "@/features/environment/week/week.types"
+import { useDateUrlSync } from "@/hooks/map/use-date"
 import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 import { useMapStore } from "@/stores/map/use-map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
 import { useSettingsStore } from "@/stores/use-settings"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
-import { useDateUrlSync } from "./use-date"
 
 const useMapHook = () => {
     const router = useRouter()
@@ -42,38 +42,26 @@ const useMapHook = () => {
         setHoveredCoords,
     } = useMapStore()
     const explanationMethod = useSettingsStore((s) => s.explanationMethod)
-    const {
-        setLoading,
-        setForecasts,
-        onOutcomeSelect,
-        setSimulation,
-        setEnvironment,
-        setModifying,
-    } = usePredictionsStore()
+    const { setLoading, onOutcomeSelect, setSimulation, setEnvironment, setModifying } =
+        usePredictionsStore()
 
     const activeSlug = parseSlug(params.slug)
 
-    const { theme, isInvalid, setHealthOutcome } = useThemeStore()
+    const { theme, isInvalid, setTheme } = useThemeStore()
+
+    const { date } = useDateUrlSync(activeSlug)
 
     const weekService = useMemo(
         () => new WeekClientService(setEnvironment, setModifying),
         [setEnvironment, setModifying]
     )
 
-    const { date } = useDateUrlSync(activeSlug)
-
-    useEffect(() => {
-        const fetchForecasts = async () => setForecasts(await weekService.getForecasts())
-        fetchForecasts()
-    }, [setForecasts, weekService])
-
     useEffect(() => {
         if (!isInvalid) return
-        router.back()
         toast.error(
-            `Unable to identify theme, health outcome (${activeSlug}) is of an unknown type. Redirecting back...`
+            `Unable to identify theme, health outcome (${activeSlug.healthOutcome}) is of an unknown type. Redirecting back...`
         )
-    }, [isInvalid, activeSlug, router])
+    }, [isInvalid, activeSlug])
 
     const onMouseMove = (e: MapLayerMouseEvent) => {
         const map = e.target
@@ -195,17 +183,16 @@ const useMapHook = () => {
 
     const onLayerSelect = (healthOutcome: string) => {
         const params = new URLSearchParams(searchParams.toString())
+        const healthOutcomeKey = unslugify(healthOutcome, "_") as keyof IHealthOutcomes
+
+        setTheme(healthOutcomeKey)
+        onOutcomeSelect(healthOutcomeKey)
 
         router.push(
             activeSlug.country
                 ? `/map/${activeSlug.country}/${healthOutcome}?${params}`
                 : `/map/${healthOutcome}?${params}`
         )
-
-        setHealthOutcome(healthOutcome)
-
-        const healthOutcomeKey = unslugify(healthOutcome, "_") as keyof IHealthOutcomes
-        onOutcomeSelect(healthOutcomeKey)
     }
 
     const closeSidebar = () => {
