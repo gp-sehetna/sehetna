@@ -1,22 +1,32 @@
-enum AiModelEnum {
-    lgbm = "lgbm",
-    patchtst = "patchtst",
-    timesfm = "timesfm",
-    xgboost = "xgboost",
-    random_forest = "random_forest",
-    lstm = "lstm",
-    other = "other",
+const AiModel = {
+    lgbm: "lgbm",
+    patchtst: "patchtst",
+    timesfm: "timesfm",
+    xgboost: "xgboost",
+    random_forest: "random_forest",
+    lstm: "lstm",
+    other: "other",
+} as const
+
+const aiModelsMeta: Partial<Record<AiModelEnum, { title: string; disabled?: boolean }>> = {
+    [AiModel.patchtst]: { title: "PatchTST" },
+    [AiModel.timesfm]: { title: "TimesFM", disabled: true },
 }
 
-enum TaskEnum {
-    regresssion = "regression",
-    forecasting = "forecasting",
-}
+const Task = {
+    regresssion: "regression",
+    forecasting: "forecasting",
+} as const
 
-enum ModelStatusEnum {
-    active = "active",
-    deprecated = "deprecated",
-    experimental = "experimental",
-}
+const ModelStatus = {
+    active: "active",
+    deprecated: "deprecated",
+    experimental: "experimental",
+} as const
 
-export { AiModelEnum, TaskEnum, ModelStatusEnum }
+type AiModelEnum = (typeof AiModel)[keyof typeof AiModel]
+type TaskEnum = (typeof Task)[keyof typeof Task]
+type ModelStatusEnum = (typeof ModelStatus)[keyof typeof ModelStatus]
+
+export { AiModel, aiModelsMeta, ModelStatus, Task }
+export type { AiModelEnum, ModelStatusEnum, TaskEnum }

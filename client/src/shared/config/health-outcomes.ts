@@ -12,7 +12,7 @@ type HealthOutcomesKeys = (typeof HEALTH_OUTCOMES_KEYS)[number]
 type IHealthOutcomes<T = number> = Record<HealthOutcomesKeys, T>
 
 const HEALTH_OUTCOMES_WITH_HYPHEN = HEALTH_OUTCOMES_KEYS.map((key) => slugify(key))
-const DEFAULT_HEALTH_OUTCOME = HEALTH_OUTCOMES_WITH_HYPHEN[0]
+const DEFAULT_HEALTH_OUTCOME = HEALTH_OUTCOMES_KEYS[0]
 
 const mapHealthOutcomes = <T>(factory: (key: HealthOutcomesKeys) => T) =>
     Object.fromEntries(HEALTH_OUTCOMES_KEYS.map((key) => [key, factory(key)])) as Record<

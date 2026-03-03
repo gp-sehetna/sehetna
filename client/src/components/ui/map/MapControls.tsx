@@ -113,6 +113,7 @@ const MapControls = (props: BottomLeftProps & BottomRightProps) => {
             <TopRightContent />
             <BottomLeftContent
                 slug={props.slug}
+                onLayerSelect={props.onLayerSelect}
                 onSubmitForm={props.onSubmitForm}
                 closeSidebar={props.closeSidebar}
             />

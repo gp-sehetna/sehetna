@@ -3,6 +3,7 @@ import { create } from "zustand"
 
 type UserState = {
     user: UserWithoutPassword | null
+    isAuth: boolean // Check if user is authenticated
 
     setUser: (newUser: UserWithoutPassword | null) => void
 }
@@ -10,6 +11,7 @@ type UserState = {
 export const useUserStore = create<UserState>((set) => {
     return {
         user: null,
-        setUser: (user) => set({ user }),
+        isAuth: false,
+        setUser: (user) => set({ user, isAuth: !!user }),
     }
 })

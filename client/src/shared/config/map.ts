@@ -1,4 +1,4 @@
-import { toProperCase, unslugify } from "@/lib/utils"
+import { slugify, toProperCase, unslugify } from "@/lib/utils"
 import {
     DEFAULT_HEALTH_OUTCOME,
     HEALTH_OUTCOMES_WITH_HYPHEN,
@@ -60,7 +60,7 @@ export type ActiveSlug = {
 
 const parseSlug = (slug: string[] = []): Slug => {
     let country: string | null = null
-    let healthOutcome = DEFAULT_HEALTH_OUTCOME as string
+    let healthOutcome = slugify(DEFAULT_HEALTH_OUTCOME) as string
 
     if (slug.length === 1) {
         if (HEALTH_OUTCOMES_WITH_HYPHEN.includes(slug[0])) healthOutcome = slug[0]
