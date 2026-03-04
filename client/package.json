@@ -30,6 +30,8 @@
     "@tanstack/react-query-devtools": "^5.91.3",
     "@turf/bbox": "^7.3.2",
     "@turf/centroid": "^7.3.2",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.36.3",
     "bcrypt": "^6.0.0",
     "chart": "^0.1.2",
     "class-variance-authority": "^0.7.1",

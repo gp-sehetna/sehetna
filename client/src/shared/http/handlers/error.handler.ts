@@ -1,3 +1,4 @@
+import { globalLimiter } from "@/lib/utils/rateLimiter"
 import { ApplicationException } from "@/shared/http/errors"
 import { errorResponse, successResponse } from "@/shared/http/response"
 import logger from "@/shared/logger"
@@ -26,6 +27,11 @@ type Handler<T = any, Args extends any[] = any[]> = HandlerNoArgs<T> | HandlerWi
 export function globalErrorHandler<T = any, Args extends any[] = any[]>(handler: Handler<T, Args>) {
     return async (req: NextRequest, ...args: Args): Promise<NextResponse> => {
         try {
+            const ip = req.headers.get("x-forwarded-for") || "0.0.0.0"
+            const { success } = await globalLimiter(3, "1 m", ip)
+            if (!success) {
+                return errorResponse("Too many requests", 429)
+            }
             const result = await handler(req, ...args)
 
             if (result instanceof NextResponse) return result
