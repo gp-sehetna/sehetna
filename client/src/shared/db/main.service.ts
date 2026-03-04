@@ -19,7 +19,7 @@ import { OtpRepository } from "@/shared/db/repository/otp.repository"
 import { PredictionRepository } from "@/shared/db/repository/prediction.repository"
 import { UserRepository } from "@/shared/db/repository/user.repository"
 import { EmailService } from "@/shared/email/email.service"
-import { AiModelsService } from "@/features/aimodels/aimodels.service"
+import { AiModelService } from "@/features/aimodels/aimodels.service"
 
 type MainServiceOptions = {
     db?: boolean
@@ -42,7 +42,7 @@ export class MainService {
         this.emailService
     )
     public readonly dataStoreService = new DataStoreService(new DataStoreRepository(DataStoreModel))
-    public readonly aiModelService = new AiModelsService(this.aiModelRepository)
+    public readonly aiModelService = new AiModelService(this.aiModelRepository)
     public readonly forecastService = new ForecastService(
         new PredictionRepository(PredictionModel),
         this.aiModelRepository,

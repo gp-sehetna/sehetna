@@ -3,7 +3,7 @@
 import { Button, ButtonProps } from "@/components/ui/shadcn/button"
 import { cn } from "@/lib/utils"
 
-type ButtonSize = "default" | "sm" | "lg" | "icon"
+type ButtonSize = "default" | "xs" | "sm" | "lg" | "icon"
 type WideButtonProps = {
     variant?: any
     size?: ButtonSize

@@ -21,7 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
         enabled: !isAuthRoute,
         retry: false,
-        staleTime: EXPIRE.access,
+        staleTime: EXPIRE.access * 1000,
     })
 
     useEffect(() => {
