@@ -8,6 +8,7 @@ import {
 export interface DUser extends Document {
     firstName: string
     lastName: string
+    fullName: string
     email: string
     password: string
     provider: ProviderEnum
@@ -29,5 +30,10 @@ const userSchema = new Schema<DUser>(
     },
     { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )
+
+// TODO: Ensure virtual field is fetched
+userSchema.virtual("fullName").get(function () {
+    return `${this.firstName} ${this.lastName}`
+})
 
 export const UserModel = models.User || model<DUser>("User", userSchema)

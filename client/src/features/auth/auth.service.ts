@@ -18,7 +18,6 @@ export class AuthService extends OTPService {
     }
 
     updateUserPassword = async (email: string, newPassword: string, req: NextRequest) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [_, isPasswordSame] = await this.getUserAndComparePassword(email, newPassword)
         if (isPasswordSame) throw new ValidationException("Password is same as before")
 
@@ -66,8 +65,8 @@ export class AuthService extends OTPService {
     login = async ({ email, password }: ILoginInputsDTO) => {
         const [user, isPasswordValid] = await this.getUserAndComparePassword(email, password)
         if (!isPasswordValid) throw new ValidationException("Invalid credentials")
-
-        return await createTokens(user)
+        const { password: _p, ...safeUser } = user.toObject()
+        return { user: safeUser, tokens: await createTokens(user) }
     }
 
     checkOldPassword = async (userId: string, password: string) => {

@@ -1,0 +1,557 @@
+{
+  "info": {
+    "_postman_id": "dd066c04-fc85-4419-8ffd-1ec9a5310167",
+    "name": "Sehetna's Next API Server",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "OTP",
+          "item": [
+            {
+              "name": "Generate",
+              "id": "228d4b31-4f7a-4a40-a364-0999bb198953",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"{{email}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{NEXT_SERVER_BASE_URL}}/auth/otp/generate",
+                  "host": [
+                    "{{NEXT_SERVER_BASE_URL}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "otp",
+                    "generate"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Verify",
+              "id": "0ab8e3f7-8014-43c8-88c6-1946e28eb015",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"otp\": \"{{otp}}\",\r\n    \"purpose\": \"{{purpose}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{NEXT_SERVER_BASE_URL}}/auth/otp/verify",
+                  "host": [
+                    "{{NEXT_SERVER_BASE_URL}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "otp",
+                    "verify"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "0703c106-6771-4ab9-94f2-f0a677bb090d"
+        },
+        {
+          "name": "Password",
+          "item": [
+            {
+              "name": "Forgot",
+              "id": "417702f9-2e05-4084-a5a8-8fd379feb28c",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"{{email}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{NEXT_SERVER_BASE_URL}}/auth/password/forgot",
+                  "host": [
+                    "{{NEXT_SERVER_BASE_URL}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "password",
+                    "forgot"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "New",
+              "id": "8dad9417-360f-41e4-907f-1ab83cf5738c",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"password\": \"{{newPassword}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{NEXT_SERVER_BASE_URL}}/auth/password/new",
+                  "host": [
+                    "{{NEXT_SERVER_BASE_URL}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "password",
+                    "new"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Old",
+              "id": "3b4d652e-eec2-4b55-9d09-7995a0095325",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"password\": \"{{password}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{NEXT_SERVER_BASE_URL}}/auth/password/old",
+                  "host": [
+                    "{{NEXT_SERVER_BASE_URL}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "password",
+                    "old"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "2693beaa-e39c-4383-ba8e-b954bc573c34"
+        },
+        {
+          "name": "Log In",
+          "id": "5afc70b3-078a-4a66-8cbd-13904ff5151d",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{NEXT_SERVER_BASE_URL}}/auth/login",
+              "host": [
+                "{{NEXT_SERVER_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Log Out",
+          "id": "c0205678-62c3-46aa-a34d-139a17d4059f",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{NEXT_SERVER_BASE_URL}}/auth/logout",
+              "host": [
+                "{{NEXT_SERVER_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sign Up",
+          "id": "fd0e6444-5837-408c-b82d-0f402fc0324e",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"firstName\": \"{{firstName}}\",\r\n    \"lastName\": \"{{lastName}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{NEXT_SERVER_BASE_URL}}/auth/signup",
+              "host": [
+                "{{NEXT_SERVER_BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "ef5f5b78-aa52-4503-b978-04399e735ffc",
+      "auth": {
+        "type": "noauth"
+      }
+    },
+    {
+      "name": "Environment",
+      "item": [
+        {
+          "name": "Week",
+          "item": [
+            {
+              "name": "Environment Week",
+              "id": "3040a5ae-88a7-4cef-bbd6-9e0b69dede4d",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{NEXT_SERVER_BASE_URL}}/environment/week?coords=52.52,13.41&date=2026-01-09&weeks=1&iso=EGY",
+                  "host": [
+                    "{{NEXT_SERVER_BASE_URL}}"
+                  ],
+                  "path": [
+                    "environment",
+                    "week"
+                  ],
+                  "query": [
+                    {
+                      "key": "coords",
+                      "value": "52.52,13.41"
+                    },
+                    {
+                      "key": "date",
+                      "value": "2026-01-09"
+                    },
+                    {
+                      "key": "weeks",
+                      "value": "1"
+                    },
+                    {
+                      "key": "iso",
+                      "value": "EGY"
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "id": "c6037994-1b91-4ee9-8c90-47b0ff62999e",
+                  "name": "Success",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{NEXT_SERVER_BASE_URL}}/environment/week?coords=52.52,13.41&date=2026-01-09&weeks=1&iso=EGY",
+                      "host": [
+                        "{{NEXT_SERVER_BASE_URL}}"
+                      ],
+                      "path": [
+                        "environment",
+                        "week"
+                      ],
+                      "query": [
+                        {
+                          "key": "coords",
+                          "value": "52.52,13.41"
+                        },
+                        {
+                          "key": "date",
+                          "value": "2026-01-09"
+                        },
+                        {
+                          "key": "weeks",
+                          "value": "1"
+                        },
+                        {
+                          "key": "iso",
+                          "value": "EGY"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Mon, 02 Feb 2026 00:47:35 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Weekly environment data fetched successfully\",\n    \"coords\": \"52.52,13.41\",\n    \"country_code\": \"EGY\",\n    \"indicators\": {\n        \"gdp_per_capita_usd\": null,\n        \"food_production_index\": null,\n        \"undernourishment\": null\n    },\n    \"data\": [\n        {\n            \"date\": \"2026-01-04\",\n            \"pm25_ugm3\": 13.479761928319931,\n            \"aqi_pm\": 49.75192272095453,\n            \"temperature_celsius\": -5.420833587646484,\n            \"precipitation_mm\": 0,\n            \"flood_indicator\": 0,\n            \"heat_wave_days\": 0\n        }\n    ]\n}"
+                }
+              ]
+            }
+          ],
+          "id": "7c1b7806-4096-4d45-9045-e218842db460"
+        }
+      ],
+      "id": "c94ec8b0-90f6-48cb-b9c0-04e151b0d90d"
+    },
+    {
+      "name": "Engagement",
+      "item": [
+        {
+          "name": "Contact",
+          "id": "d2d62fd8-605e-4054-9d39-d9c164f24d12",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Abdelrahman Hussien\",\r\n    \"email\": \"abdelrahman.hsharaf@gmail.com\",\r\n    \"phone\": \"01005802842\",\r\n    \"message\": \"Hello from postman\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{NEXT_SERVER_BASE_URL}}/engagement/contact",
+              "host": [
+                "{{NEXT_SERVER_BASE_URL}}"
+              ],
+              "path": [
+                "engagement",
+                "contact"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "546a1b82-71c5-4f88-9b88-4518697df321"
+    },
+    {
+      "name": "Data Store",
+      "item": [
+        {
+          "name": "add",
+          "id": "e4a31d2a-09c3-48b0-865f-286c146bd70c",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n        // \"alias_name\" is optional,\r\n        \"source\": \"openmeteo\",\r\n        \"description\": \"Open-Meteo partners with national weather services to bring you open data with high resolution, ranging from 1 to 11 kilometres. Our powerful APIs intelligently select the most suitable weather models for your specific location, ensuring accurate and reliable forecasts.\\n\\nWith our user-friendly JSON API, accessing weather data has never been easier. Whether you're developing an application or seeking weather information for personal use, our APIs provide seamless integration and deliver the data you need in a simple and accessible format.\\n\\nExperience the precision and convenience of Open-Meteo's Forecast API, providing comprehensive weather information worldwide. Stay informed and make informed decisions with our reliable weather forecasts.\",\r\n        \"version\": \"1.0.1\",\r\n        \"variables\": [\"var1\", \"var2\"],\r\n        \"date_range\": {\r\n            \"start\": \"2015-01-01T00:00:00.000Z\",\r\n            \"end\": \"2025-10-01T00:00:00.000Z\"\r\n        },\r\n        \"status\": \"active\"\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{NEXT_SERVER_BASE_URL}}/datastores",
+              "host": [
+                "{{NEXT_SERVER_BASE_URL}}"
+              ],
+              "path": [
+                "datastores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "find",
+          "id": "1128c0e7-7ed2-46ae-a073-50cee89fd778",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{NEXT_SERVER_BASE_URL}}/datastores",
+              "host": [
+                "{{NEXT_SERVER_BASE_URL}}"
+              ],
+              "path": [
+                "datastores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "id": "a7ef7298-2960-4e45-989c-0f5aa0ac38ec",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{NEXT_SERVER_BASE_URL}}/datastores/:id",
+              "host": [
+                "{{NEXT_SERVER_BASE_URL}}"
+              ],
+              "path": [
+                "datastores",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "e6fbd815-b32a-467f-b43b-9c604ecd7400"
+    },
+    {
+      "name": "AI Models",
+      "item": [
+        {
+          "name": "add",
+          "id": "14f598de-dc76-47d6-8ed0-bbdbc66da584",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"version\": \"1.0.0\",\r\n    \"model_type\": \"timesfm\",\r\n    \"task_type\": \"forecasting\",\r\n    \"targets\": [\r\n        \"respiratory_disease_rate\",\r\n        \"cardio_mortality_rate\",\r\n        \"vector_disease_risk_score\",\r\n        \"waterborne_disease_incidents\",\r\n        \"heat_related_admissions\"\r\n    ],\r\n    \"status\": \"active\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{NEXT_SERVER_BASE_URL}}/aimodels",
+              "host": [
+                "{{NEXT_SERVER_BASE_URL}}"
+              ],
+              "path": [
+                "aimodels"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "find",
+          "id": "5a97344d-4cdf-42d8-a0e2-e974e84b8311",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{NEXT_SERVER_BASE_URL}}/aimodels",
+              "host": [
+                "{{NEXT_SERVER_BASE_URL}}"
+              ],
+              "path": [
+                "aimodels"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "id": "489b0f1d-ead1-4e06-a48a-33b5019237aa",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{NEXT_SERVER_BASE_URL}}/aimodels/:id",
+              "host": [
+                "{{NEXT_SERVER_BASE_URL}}"
+              ],
+              "path": [
+                "aimodels",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69a45ba3433eca6703b8e9d1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "9ce26509-0933-433f-a4e0-b7b595e29f3f"
+    }
+  ]
+}

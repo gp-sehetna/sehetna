@@ -3,5 +3,5 @@ import { ReadonlyURLSearchParams } from "next/navigation"
 
 export const toLast = (router: AppRouterInstance, params: ReadonlyURLSearchParams) => {
     const callbackUrl = params.get("callbackUrl")
-    router.push(callbackUrl ?? "/")
+    router.push(callbackUrl ?? "/data-explorer")
 }

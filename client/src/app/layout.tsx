@@ -1,7 +1,6 @@
 import "@/app/globals.css"
 import { Toaster } from "@/components/ui/shadcn/sonner"
 import { plusJakarta } from "@/fonts/fonts"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import type { Metadata } from "next"
 import Providers from "./providers"
 export const metadata: Metadata = {
