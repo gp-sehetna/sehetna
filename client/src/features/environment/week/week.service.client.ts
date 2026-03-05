@@ -11,6 +11,7 @@ import { api } from "@/shared/api"
 import { format } from "date-fns"
 import { SearchParamsOption } from "ky"
 import { toast } from "sonner"
+import { Forecasts } from "../forecast/forecast.dto"
 
 export class WeekClientService {
     constructor(
@@ -118,5 +119,13 @@ export class WeekClientService {
                 }
             )
             .unwrap()
+    }
+
+    getForecasts = async () => {
+        const searchParams: SearchParamsOption = { "model-id": "timesfm" }
+        const { forecasts } = await api
+            .get<Forecasts>("api/environment/forecast", { searchParams })
+            .json()
+        return forecasts
     }
 }

@@ -34,7 +34,7 @@ const fancyBoxVariants = cva(
 
 export default function ComplexFooter() {
     return (
-        <footer className={cn("bg-primary-100/20 border-primary-200 relative border-t")}>
+        <footer className={cn("bg-primary-50 border-primary-200 relative border-t")}>
             <div className={cn("mx-auto p-12")}>
                 <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
                     <div

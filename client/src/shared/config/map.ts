@@ -1,4 +1,4 @@
-import { toProperCase, unslugify } from "@/lib/utils"
+import { slugify, toProperCase, unslugify } from "@/lib/utils"
 import {
     DEFAULT_HEALTH_OUTCOME,
     HEALTH_OUTCOMES_WITH_HYPHEN,
@@ -60,7 +60,7 @@ export type ActiveSlug = {
 
 const parseSlug = (slug: string[] = []): Slug => {
     let country: string | null = null
-    let healthOutcome = DEFAULT_HEALTH_OUTCOME as string
+    let healthOutcome = slugify(DEFAULT_HEALTH_OUTCOME) as string
 
     if (slug.length === 1) {
         if (HEALTH_OUTCOMES_WITH_HYPHEN.includes(slug[0])) healthOutcome = slug[0]
@@ -92,7 +92,7 @@ const zoomToCountry = (country: GeoJSONFeature, map: Map, centroid: [number, num
 }
 
 const getClickedCountry = (map: Map, point: PointLike) => {
-    const features = map.queryRenderedFeatures(point, { layers: ["countries-fill"] })
+    const features = map.queryRenderedFeatures(point, { layers: ["land"] })
 
     if (!features.length) return null
 

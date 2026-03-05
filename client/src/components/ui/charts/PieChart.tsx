@@ -3,7 +3,13 @@
 import { Pie, PieChart } from "recharts"
 
 import MetaTooltip from "@/components/ui/GlobalComponents/tooltips/MetaTooltip"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/shadcn/card"
 import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/shadcn/chart"
 import { GroupExplanationItem } from "@/features/environment/week/week.types"
 import { getInitials, toProperCase } from "@/lib/utils"
@@ -68,7 +74,10 @@ export default function GroupPieChart({ items, healthOutcome }: Props) {
     return (
         <Card className="border-none bg-transparent shadow-none">
             <CardHeader className="flex flex-row justify-between pt-4 pb-0">
-                <CardTitle className="text-lg font-semibold">{label}</CardTitle>
+                <div>
+                    <CardTitle className="text-lg font-semibold">{label}</CardTitle>
+                    <CardDescription>Categories Impact Explanation</CardDescription>
+                </div>
                 {/* help icon */}
                 <MetaTooltip
                     title="Impact by Category"

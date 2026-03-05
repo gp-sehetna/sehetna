@@ -1,5 +1,6 @@
 /**
  * "United States" → "united-states"
+ * "United_States" → "united-states"
  */
 function slugify(value: string): string {
     return (
@@ -45,13 +46,11 @@ function getInitials(name: string) {
         .toUpperCase()
 }
 
-function stringToColor(str: string | undefined) {
-    if (!str) throw new Error("string to color is required")
+function stringToColor(text: string | undefined) {
+    if (!text) throw new Error("Text is required to generate color")
     let hash = 0
 
-    for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash)
-    }
+    for (let i = 0; i < text.length; i++) hash = text.charCodeAt(i) + ((hash << 5) - hash)
 
     let color = "#"
 
@@ -65,4 +64,4 @@ function stringToColor(str: string | undefined) {
     return color
 }
 
-export { slugify, unslugify, getInitials, stringToColor, toProperCase }
+export { getInitials, slugify, stringToColor, toProperCase, unslugify }

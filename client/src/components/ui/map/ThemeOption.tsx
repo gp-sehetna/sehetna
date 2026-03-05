@@ -1,7 +1,7 @@
-import { ThEME_SVG_PATHS } from "@/shared/config/map-theme-config"
+import { THEME_SVG_PATHS } from "@/shared/config/map-theme-config"
 
 type ThemeOptionProps = {
-    themeName:string
+    themeName: string
     colors: Record<string, string>
     active?: boolean
 }
@@ -10,9 +10,9 @@ export const ThemeOption = ({ themeName, colors, active = false }: ThemeOptionPr
     const colorArray = Object.values(colors)
 
     return (
-        <div className=" text-center text-wrap h-fit w-16">
+        <div className="h-fit w-16 text-center text-wrap">
             <div
-                className={`relative flex  cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 transition-all ${active ? "border-primary-200 hover:border-primary-200/70" : "border-neutral-200/60 hover:border-neutral-200"} `}
+                className={`relative flex cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 transition-all ${active ? "border-primary-200 hover:border-primary-200/70" : "border-neutral-200/60 hover:border-neutral-200"} `}
             >
                 <svg
                     viewBox="5 1 72 72"
@@ -21,7 +21,7 @@ export const ThemeOption = ({ themeName, colors, active = false }: ThemeOptionPr
                     className="w-full"
                 >
                     <g clipPath="url(#background_clip)">
-                        {ThEME_SVG_PATHS.map((path, index) => (
+                        {THEME_SVG_PATHS.map((path, index) => (
                             <path
                                 key={path}
                                 d={path}
@@ -37,7 +37,7 @@ export const ThemeOption = ({ themeName, colors, active = false }: ThemeOptionPr
                 </svg>
                 <div className="absolute inset-0 bg-neutral-100/20 dark:bg-neutral-800/15"></div>
             </div>
-            <p className=" cursor-pointer text-xs text-neutral-900 mt-1">{themeName}</p>
+            <p className="mt-1 cursor-pointer text-xs text-neutral-900">{themeName}</p>
         </div>
     )
 }

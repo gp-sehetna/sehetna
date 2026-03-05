@@ -1,6 +1,7 @@
 import { IEnvironmentData } from "@/features/environment/week/week.dto"
 import { Explanations, SimulateResponse } from "@/features/environment/week/week.types"
-import { HEALTH_OUTCOMES_KEYS, IHealthOutcomes } from "@/shared/config/health-outcomes"
+import { DEFAULT_HEALTH_OUTCOME, IHealthOutcomes } from "@/shared/config/health-outcomes"
+import { AiModel, AiModelEnum } from "@/shared/db/enums/ai-model.enum"
 import { create } from "zustand"
 
 type PredictionsState = {
@@ -10,8 +11,10 @@ type PredictionsState = {
     modifying: boolean
     explanations: Explanations | null
     loading: boolean
+    forecaster: AiModelEnum
 
     setLoading: (loading: boolean) => void
+    setForecaster: (forecaster: AiModelEnum) => void
     setSimulation: (simulation: SimulateResponse, healthOutcome: keyof IHealthOutcomes) => void
     setModifying: (modifying: boolean) => void
     setEnvironment: (environment: IEnvironmentData) => void
@@ -26,32 +29,41 @@ export const usePredictionsStore = create<PredictionsState>((set, get) => {
         set({ explanations: simulation.explanations })
     }
 
+    const setHealthOutcome = (healthOutcome: keyof IHealthOutcomes) => set({ healthOutcome })
+    const setLoading = (loading: boolean) => set({ loading })
+
     return {
-        healthOutcome: HEALTH_OUTCOMES_KEYS[0],
+        healthOutcome: DEFAULT_HEALTH_OUTCOME,
         simulation: null,
         contributors: null,
         modifying: false,
         explanations: null,
         environment: null,
+        forecaster: AiModel.patchtst,
         loading: false,
 
-        setLoading: (loading) => set({ loading }),
-
+        setLoading,
+        setForecaster: (forecaster) => set({ forecaster }),
         setModifying: (modifying) => set({ modifying }),
         setEnvironment: (environment) => set({ environment }),
         setSimulation: (simulation: SimulateResponse, healthOutcome: keyof IHealthOutcomes) => {
             setExplanations(simulation)
-            set({ healthOutcome, simulation })
+            setHealthOutcome(healthOutcome)
+            set({ simulation })
         },
 
         onOutcomeSelect: (healthOutcome: keyof IHealthOutcomes) => {
+            setHealthOutcome(healthOutcome)
+
             const { simulation } = get()
             if (!simulation) return
 
             setExplanations(simulation)
-            set({ healthOutcome })
         },
 
-        reset: () => set({ healthOutcome: HEALTH_OUTCOMES_KEYS[0], loading: false }),
+        reset: () => {
+            setHealthOutcome(DEFAULT_HEALTH_OUTCOME)
+            setLoading(false)
+        },
     }
 })

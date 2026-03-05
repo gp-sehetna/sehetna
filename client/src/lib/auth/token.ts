@@ -1,80 +1,48 @@
-import { RoleEnum } from "@/shared/db/enums/auth.enum"
-import { DUser } from "@/shared/db/model/user.model"
 import { BadRequestException, UnauthorizedException } from "@/shared/http/errors"
-import { sign, JwtPayload, verify } from "jsonwebtoken"
+import { JwtPayload, sign, verify } from "jsonwebtoken"
 
 export const EXPIRE = {
     access: 30 * 60,
     refresh: 30 * 24 * 60 * 60,
 }
 
-export enum SignatureLevelEnum {
-    Bearer = "Bearer",
-    System = "System",
-}
-export enum TokenTypeEnum {
-    access = "access",
-    refresh = "refresh",
-}
+export const createTokens = async (user_id: string, role: string) => {
+    const payload = { role }
 
-export const detectSignatureLevel = (role = RoleEnum.user): SignatureLevelEnum => {
-    return role === RoleEnum.admin ? SignatureLevelEnum.System : SignatureLevelEnum.Bearer
-}
+    const accessToken = sign(payload, process.env.JWT_ACCESS_SECRET!, {
+        subject: user_id,
+        expiresIn: EXPIRE.access,
+        issuer: "sehetna",
+    })
 
-export const getSignatures = (level: SignatureLevelEnum) => {
-    const signatures = { access: "", refresh: "" }
-
-    switch (level) {
-        case SignatureLevelEnum.Bearer:
-            signatures.access = process.env.ACCESS_USER_TOKEN_SIGNATURE!
-            signatures.refresh = process.env.REFRESH_USER_TOKEN_SIGNATURE!
-            break
-
-        default:
-            signatures.access = process.env.ACCESS_SYSTEM_TOKEN_SIGNATURE!
-            signatures.refresh = process.env.REFRESH_SYSTEM_TOKEN_SIGNATURE!
-            break
-    }
-
-    return signatures
-}
-
-export const createTokens = async (user: DUser) => {
-    const signatureLevel = detectSignatureLevel(user.role)
-    const signatures = getSignatures(signatureLevel)
-    const payload = { _id: user._id }
-
-    const accessToken = sign(payload, signatures.access, { expiresIn: EXPIRE.access }) // ACCESS_TOKEN
-    const refreshToken = sign(payload, signatures.refresh, { expiresIn: EXPIRE.refresh }) // REFRESH_TOKEN
+    const refreshToken = sign({}, process.env.JWT_REFRESH_SECRET!, {
+        subject: user_id,
+        expiresIn: EXPIRE.refresh,
+        issuer: "sehetna",
+    })
 
     return { accessToken, refreshToken }
 }
 
-export const decodeToken = (authoriation: string, type = TokenTypeEnum.access) => {
-    const [bearerKey, token] = authoriation.split(" ")
+export const decodeToken = (authorization: string, secret?: string) => {
+    // Handle both "Bearer <token>" and raw token strings
+    // Returns the full payload { _id, iat, exp, role... }
+    const parts = authorization.split(" ")
+    const token = parts.length === 2 ? parts[1] : parts[0]
 
-    if (!bearerKey || !token) throw new UnauthorizedException("Invalid authorization format")
+    if (!token) throw new UnauthorizedException("Invalid or missing token")
 
-    // switch (bearerKey) {
-    //     case SignatureLevelEnum.System:
-    //         type = TokenTypeEnum.refresh
-    //         break
+    try {
+        const decoded = verify(token, secret!) as JwtPayload
 
-    //     default:
-    //         type = TokenTypeEnum.access
-    //         break
-    // }
+        if (!decoded.sub) throw new BadRequestException("Invalid token payload: Missing Subject")
+        return decoded as Required<Pick<JwtPayload, "sub">>
+    } catch (error) {
+        if (error instanceof Error)
+            throw new UnauthorizedException("Invalid or expired token: " + error.message, {
+                cause: "expired",
+            })
 
-    const signatures = getSignatures(bearerKey as SignatureLevelEnum)
-
-    const decoded = verify(
-        token,
-        type === TokenTypeEnum.access ? signatures.access : signatures.refresh
-    ) as JwtPayload
-
-    if (!decoded?._id || !decoded?.iat) throw new BadRequestException("Invalid token payload")
-
-    // finding user
-
-    // returning user and decoded in object.
+        throw new UnauthorizedException("Invalid or expired token", { cause: "expired" })
+    }
 }

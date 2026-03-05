@@ -6,16 +6,20 @@ type ComingSoonProps = {
     description?: string
     isCompact?: boolean
     isSection?: boolean
+    className?: string
 }
 
 export default function ComingSoon({
+    className,
     title,
     description,
     isCompact = false,
     isSection = false,
 }: ComingSoonProps) {
     return (
-        <div className={cn("mx-auto max-w-4xl", !isCompact ? "px-6 py-24" : "px-2 py-6")}>
+        <div
+            className={cn("mx-auto max-w-4xl", !isCompact ? "px-6 py-24" : "px-2 py-6", className)}
+        >
             <div className="text-center">
                 {/* App Branding */}
                 <div

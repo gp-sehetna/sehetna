@@ -20,6 +20,11 @@ const buttonVariants = cva(
                     "hover:bg-neutral-200",
                     "active:bg-neutral-300"
                 ),
+                white: cn(
+                    "text-neutral-1000 border border-neutral-200 bg-white",
+                    "hover:bg-neutral-100",
+                    "active:bg-neutral-200"
+                ),
                 black: cn(
                     "border-neutral-1000 border bg-black text-neutral-100",
                     "hover:bg-neutral-1000/90 shadow-md",
@@ -28,13 +33,14 @@ const buttonVariants = cva(
                 gradient: "special-gradient border-none text-neutral-100",
                 glassy: "glassy hover:text-neutral-1000 text-neutral-800 hover:bg-neutral-100/60 active:bg-neutral-100/40",
 
-                tonal: "bg-neutral-900/30 text-neutral-100 hover:bg-neutral-800/30",
+                tonal: "bg-neutral-900/50 text-neutral-100 hover:bg-neutral-800/50",
                 ghost: "hover:text-neutral-1000 text-neutral-600",
                 text: "text-neutral-1000",
                 link: "text-primary-foregroud underline-offset-2 hover:underline",
             },
             size: {
                 default: "h-9 px-4 py-2 [&_svg]:size-4",
+                xs: "h-6 rounded-md px-2 text-xs [&_svg]:size-2",
                 sm: "h-8 rounded-md px-3 text-xs [&_svg]:size-4",
                 lg: "h-10 rounded-md px-8 [&_svg]:size-4",
                 icon: "h-9 w-9",

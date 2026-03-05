@@ -3,8 +3,7 @@
 import { FormInputField } from "@/components/ui/forms/inputs/FormInputField"
 import { Badge } from "@/components/ui/shadcn/badge"
 import { Button } from "@/components/ui/shadcn/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
-import { Field } from "@/components/ui/shadcn/field"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
 import { Label } from "@/components/ui/shadcn/label"
 import { Separator } from "@/components/ui/shadcn/separator"
 import { Slider } from "@/components/ui/shadcn/slider"
@@ -432,18 +431,24 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
                     />
                 </CardContent>
             </Card>
-            <div className="glassy sticky bottom-0 flex gap-2 rounded-2xl p-4">
+            <div className="glassy sticky bottom-0 flex items-center gap-2 rounded-2xl p-3">
                 <Button
                     className="rounded-full"
                     form="simulation-modify-form"
                     variant="glassy"
+                    size="xs"
                     onClick={() => form.reset()}
                 >
                     Reset
                 </Button>
-                <WideButton type="submit" form="simulation-modify-form">
+                <Button
+                    className="w-full rounded-full"
+                    size="xs"
+                    type="submit"
+                    form="simulation-modify-form"
+                >
                     Predict
-                </WideButton>
+                </Button>
             </div>
         </form>
     )

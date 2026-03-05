@@ -26,9 +26,7 @@ const NewPasswordPage = () => {
     const onSubmit = async ({ password }: ConfirmPasswordInputsDTO) => {
         await authService.updatePassword({ password })
 
-        // TODO: Route user back dynamically to where he was.
         toLast(router, params)
-        // router.push("/authenticate/login/raw")
     }
 
     return (

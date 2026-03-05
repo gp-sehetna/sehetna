@@ -1,27 +1,34 @@
 import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
 import { ArrowLeft } from "lucide-react"
 
+import AppLoader from "@/components/ui/GlobalComponents/Loaders/AppLoader"
 import HealthOutcomeCharts from "@/components/ui/map/MapSidebarContent"
 import { DateRangeSlider } from "@/components/ui/map/view/DateFilterSlider"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/shadcn/tabs"
 import { IEnvironmentData } from "@/features/environment/week/week.dto"
 import { useDateUrlSync } from "@/hooks/map/use-date"
+import { useForecasts } from "@/hooks/map/use-forecasts"
 import { ActiveSlug } from "@/shared/config/map"
 import { useMapStore } from "@/stores/map/use-map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
-import ComingSoon from "../ComingSoon"
+import { Dispatch } from "react"
 import MapModifyInputs from "./simulation/MapModifyInputs"
+import { ForecastDashboard } from "./view/ForecastDashboard"
 
 export type MapSidebarProps = ActiveSlug & {
+    onLayerSelect: Dispatch<string>
     onSubmitForm: (data: IEnvironmentData) => void
     closeSidebar: () => void
 }
 
-const MapSidebar = ({ slug, closeSidebar, onSubmitForm }: MapSidebarProps) => {
+const MapSidebar = ({ slug, closeSidebar, onSubmitForm, onLayerSelect }: MapSidebarProps) => {
     const isModifying = usePredictionsStore((s) => s.modifying)
+    const modelId = usePredictionsStore((s) => s.forecaster)
+    const { data: forecasts, isLoading: isForecastsLoading } = useForecasts({ modelId })
     const clickedZone = useMapStore((s) => s.clickedZone)
     const { date, setDate } = useDateUrlSync(slug)
+
     return (
         <>
             {clickedZone && (
@@ -35,13 +42,9 @@ const MapSidebar = ({ slug, closeSidebar, onSubmitForm }: MapSidebarProps) => {
 
                     <CardContent className="flex h-screen flex-col gap-4 overflow-y-auto p-4">
                         <Tabs defaultValue="live">
-                            <TabsList className="w-full">
-                                <TabsTrigger className="w-full" value="live">
-                                    Live Data
-                                </TabsTrigger>
-                                <TabsTrigger className="w-full" value="simulation">
-                                    Simulation
-                                </TabsTrigger>
+                            <TabsList className="glassy grid w-full grid-cols-2 bg-transparent">
+                                <TabsTrigger value="live">Live Data</TabsTrigger>
+                                <TabsTrigger value="simulation">Simulation</TabsTrigger>
                             </TabsList>
                             <TabsContent className="h-full" value="simulation">
                                 {!isModifying ? (
@@ -51,7 +54,16 @@ const MapSidebar = ({ slug, closeSidebar, onSubmitForm }: MapSidebarProps) => {
                                 )}
                             </TabsContent>
                             <TabsContent value="live">
-                                <ComingSoon title="Live Data" isCompact isSection />
+                                {forecasts ? (
+                                    <ForecastDashboard
+                                        onCardClick={onLayerSelect}
+                                        forecasts={forecasts}
+                                    />
+                                ) : (
+                                    <div className="flex h-full items-center justify-center">
+                                        {isForecastsLoading ? <AppLoader /> : <p>No data</p>}
+                                    </div>
+                                )}
                             </TabsContent>
                         </Tabs>
                     </CardContent>

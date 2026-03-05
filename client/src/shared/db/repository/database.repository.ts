@@ -1,47 +1,11 @@
-import {
-    Document,
-    Model,
-    QueryOptions,
-    QueryFilter,
-    UpdateQuery,
-    AnyBulkWriteOperation,
-    ProjectionType,
-} from "mongoose"
-import { PaginationOptions, PaginationResult } from "../types/pagination.type"
+import { PaginationOptions, PaginationResult } from "@/shared/db/types/pagination.type"
+import { Model, ProjectionType, QueryFilter, QueryOptions, UpdateQuery } from "mongoose"
 
-export abstract class DatabaseRepository<T extends Document> {
+export abstract class DatabaseRepository<T extends Record<string, any>> {
     constructor(protected readonly model: Model<T>) {}
 
     async create(data: Partial<T>) {
         return await this.model.create(data)
-    }
-    // async bulkWrite(operations: AnyBulkWriteOperation<Document>[])  {
-    //     return await this.model.bulkWrite(operations)
-    // }
-    //TODO: Version that returns inserted vs updated counts
-
-    async bulkUpsert(docs: Partial<T>[], uniqueKey: keyof T = "_id" as keyof T) {
-        if (!docs.length) return
-
-        const operations= docs.map((doc) => {
-            const filter: QueryFilter<T> = {
-                [uniqueKey]: doc[uniqueKey],
-            } as QueryFilter<T>
-
-            const update: UpdateQuery<T> = {
-                $set: doc,
-            }
-
-            return {
-                updateOne: {
-                    filter,
-                    update,
-                    upsert: true,
-                },
-            }
-        }) as AnyBulkWriteOperation<Document>[] 
-
-        return this.model.bulkWrite(operations)
     }
 
     async findById(id: string) {
@@ -52,12 +16,9 @@ export abstract class DatabaseRepository<T extends Document> {
         return await this.model.findOne(filter).exec()
     }
 
-
-    async find(filter: QueryFilter<T> = {} , projection?: ProjectionType<T>) {
-        return await this.model.find(filter , projection).exec()
+    async find(filter: QueryFilter<T> = {}, projection?: ProjectionType<T>) {
+        return await this.model.find(filter, projection).exec()
     }
-
-
 
     async updateById(id: string, update: UpdateQuery<T>, options: QueryOptions = { new: true }) {
         return await this.model.findByIdAndUpdate(id, update, options).exec()
