@@ -85,7 +85,7 @@ const useLayers = (theme: GradientPalette) => {
         }),
         []
     )
-
+    
     const countriesLayer = useMemo<FillLayerSpecification>(
         () => ({
             id: "countries-fill",
