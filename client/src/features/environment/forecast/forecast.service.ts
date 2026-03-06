@@ -2,7 +2,7 @@ import { UserWithoutPassword } from "@/features/auth/auth.types"
 import { ForecastResult } from "@/features/environment/forecast/forecast.dto"
 import { HealthOutcomesKeys } from "@/shared/config/health-outcomes"
 import { AiModelEnum } from "@/shared/db/enums/ai-model.enum"
-import { PredictionTypeEnum } from "@/shared/db/enums/prediction.enum"
+import { PredictionType, type PredictionTypeEnum } from "@/shared/db/enums/prediction.enum"
 import { IPrediction, PredictionMeta } from "@/shared/db/model/prediction.model"
 import { AiModelRepository } from "@/shared/db/repository/ai-model.repository"
 import { LocationRepository } from "@/shared/db/repository/location.repository"
@@ -32,7 +32,7 @@ export class ForecastService {
             (_, index): IPrediction => ({
                 user_id: meta.user_id,
                 model_id: meta.model_id,
-                prediction_type: PredictionTypeEnum.forecasted,
+                prediction_type: PredictionType.forecasted,
                 createdAt: today,
                 features_snapshot: null,
                 base_date: today,
@@ -84,7 +84,7 @@ export class ForecastService {
         }
 
         return {
-            prediction_type: PredictionTypeEnum.forecasted,
+            prediction_type: PredictionType.forecasted,
             base_date,
             health_outcomes,
         }
@@ -100,14 +100,14 @@ export class ForecastService {
             location_id: location._id,
         })
 
-        await this.predictionRepository.insertPredictions(predictions)
+        await this.predictionRepository.insertMany(predictions)
     }
 
     getForecasts = async (model_type: AiModelEnum) => {
         const model = await this.aiModelRepository.findByType(model_type)
         const forecasts = await this.predictionRepository.findPredictions({
             model_id: model._id,
-            prediction_type: PredictionTypeEnum.forecasted,
+            prediction_type: PredictionType.forecasted,
         })
 
         return ForecastsSchema.parse({ forecasts: ForecastService.aggregate(forecasts) })

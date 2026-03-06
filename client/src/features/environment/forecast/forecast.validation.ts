@@ -1,6 +1,6 @@
 import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
 import { AiModel } from "@/shared/db/enums/ai-model.enum"
-import { PredictionTypeEnum } from "@/shared/db/enums/prediction.enum"
+import { PredictionType } from "@/shared/db/enums/prediction.enum"
 import { z } from "zod"
 
 const TargetForecastSchema = z.object({
@@ -21,7 +21,7 @@ const ForecastParamsSchema = z.object({
 
 const ForecastsSchema = z.object({
     forecasts: z.object({
-        prediction_type: z.enum(PredictionTypeEnum),
+        prediction_type: z.enum(PredictionType),
         health_outcomes: ForecastResultSchema,
         base_date: z.date(),
     }),

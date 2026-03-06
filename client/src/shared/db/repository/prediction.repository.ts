@@ -2,6 +2,7 @@ import { IPrediction, PredictionModel } from "@/shared/db/model/prediction.model
 import { DatabaseRepository } from "@/shared/db/repository/database.repository"
 import { Pagination, PaginationResult } from "@/shared/db/types/pagination.type"
 import { QueryFilter } from "mongoose"
+import { PredictionType } from "../enums/prediction.enum"
 
 export class PredictionRepository extends DatabaseRepository<IPrediction> {
     constructor(protected override readonly model: typeof PredictionModel) {
@@ -20,8 +21,21 @@ export class PredictionRepository extends DatabaseRepository<IPrediction> {
             .exec()
     }
 
-    async insertPredictions(predictions: IPrediction[]): Promise<IPrediction[]> {
-        return await this.model.insertMany(predictions, { lean: true })
+    async insertMany(predictions: IPrediction[]): Promise<IPrediction[]> {
+        return await this.model.insertMany(predictions, {
+            lean: true,
+            throwOnValidationError: true,
+        })
+    }
+
+    async deleteAllHistorical() {
+        const predictions = await this.model
+            .find({ prediction_type: PredictionType.historical }, { _id: 1 })
+            .lean()
+        const isDeleted = await this.model.deleteMany({
+            _id: { $in: predictions.map((p) => p._id) },
+        })
+        return isDeleted.deletedCount
     }
 
     async findUserRelatedPredictions(

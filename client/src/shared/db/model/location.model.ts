@@ -2,7 +2,7 @@ import { InferSchemaType, Model, model, models, Require_id, Schema } from "mongo
 
 const LocationSchema = new Schema(
     {
-        code: { type: String, uppercase: true, trim: true, required: true },
+        code: { type: String, uppercase: true, trim: true },
         name: { type: String, trim: true, required: true },
         parent_id: { type: Schema.Types.ObjectId, ref: "Location", default: null },
         region: { type: String, trim: true, default: "" },
