@@ -10,6 +10,10 @@ export class LocationRepository extends DatabaseRepository<ILocation> {
         return await this.find({ parent_id: location._id as any })
     }
 
+    async insertMany(locations: ILocation[]) {
+        return await this.model.insertMany(locations, { lean: true, throwOnValidationError: true })
+    }
+
     /**
      * Uses name to get locations with name using LIKE operator: `%name%`
      * @todo For Scalability, add support for fuzzy search

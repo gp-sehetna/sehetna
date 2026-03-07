@@ -1,6 +1,6 @@
 import { nullableNumber } from "@/lib/utils/object"
 import { IHealthOutcomes, mapHealthOutcomes } from "@/shared/config/health-outcomes"
-import { PredictionTypeEnum } from "@/shared/db/enums/prediction.enum"
+import { PredictionType } from "@/shared/db/enums/prediction.enum"
 import { InferSchemaType, Model, Schema, model, models } from "mongoose"
 
 const IntervalPredictionSchema = new Schema(
@@ -22,14 +22,10 @@ const HealthOutcomesWithIntervalsSchema = new Schema<IHealthOutcomes<IIntervalPr
 const PredictionSchema = new Schema(
     {
         user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
-        model_id: { type: Schema.Types.ObjectId, ref: "AiModel", required: true },
+        model_id: { type: Schema.Types.ObjectId, ref: "AiModel", default: null },
         location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
         base_date: { type: Date, default: new Date() },
-        prediction_type: {
-            type: String,
-            enum: PredictionTypeEnum,
-            default: PredictionTypeEnum.forecasted,
-        },
+        prediction_type: { type: String, enum: PredictionType, default: PredictionType.forecasted },
         features_snapshot: { type: Schema.Types.Mixed, required: false },
         health_outcomes: { type: HealthOutcomesWithIntervalsSchema, required: true },
     },

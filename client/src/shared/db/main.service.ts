@@ -20,6 +20,8 @@ import { PredictionRepository } from "@/shared/db/repository/prediction.reposito
 import { UserRepository } from "@/shared/db/repository/user.repository"
 import { EmailService } from "@/shared/email/email.service"
 import { AiModelService } from "@/features/aimodels/aimodels.service"
+import { LocationService } from "@/features/locations/location.service"
+import { PredictionService } from "@/features/predictions/prediction.service"
 
 type MainServiceOptions = {
     db?: boolean
@@ -29,7 +31,10 @@ export class MainService {
     private static instance: MainService | null = null
     private static initialized = false
     private emailService = new EmailService()
+
     private aiModelRepository = new AiModelRepository(AiModelModel)
+    private locationRepository = new LocationRepository(LocationModel)
+    private predictionRepository = new PredictionRepository(PredictionModel)
 
     public readonly authService = new AuthService(
         new UserRepository(UserModel),
@@ -43,11 +48,16 @@ export class MainService {
     )
     public readonly dataStoreService = new DataStoreService(new DataStoreRepository(DataStoreModel))
     public readonly aiModelService = new AiModelService(this.aiModelRepository)
+
     public readonly forecastService = new ForecastService(
-        new PredictionRepository(PredictionModel),
+        this.predictionRepository,
         this.aiModelRepository,
-        new LocationRepository(LocationModel)
+        this.locationRepository
     )
+
+    public readonly predictionService = new PredictionService(this.predictionRepository)
+
+    public readonly locationService = new LocationService(this.locationRepository)
 
     private constructor() {}
     public static async getInstance(
