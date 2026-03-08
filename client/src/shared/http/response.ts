@@ -1,20 +1,23 @@
 import { NextResponse } from "next/server"
 
-export type SuccessResponseType = {
+interface MessageField {
+    message: string
+}
+interface BaseSuccessResponse extends MessageField {
     success: true
-    message: string
-} & Record<string, any>
+}
 
-export type ErrorResponseType = {
+type SuccessResponseWithData<T = any> = BaseSuccessResponse & { data: T }
+
+interface BaseErrorResponse extends MessageField {
     success: false
-    message: string
     status_code: number
     err_details?: unknown
 }
 
-export type AppResponseType = SuccessResponseType | ErrorResponseType
+type AppResponseType = BaseSuccessResponse | BaseErrorResponse
 
-export const successResponse = <T = unknown>(
+const successResponse = <T = unknown>(
     data: T,
     message = "Request was successful",
     status = 200
@@ -25,9 +28,12 @@ export const successResponse = <T = unknown>(
     )
 }
 
-export const errorResponse = (message: string, status = 400, err_details?: unknown) => {
-    return NextResponse.json<ErrorResponseType>(
+const errorResponse = (message: string, status = 400, err_details?: unknown) => {
+    return NextResponse.json<BaseErrorResponse>(
         { success: false, status_code: status, message, err_details },
         { status }
     )
 }
+
+export type { BaseSuccessResponse, SuccessResponseWithData, BaseErrorResponse, AppResponseType }
+export { successResponse, errorResponse }

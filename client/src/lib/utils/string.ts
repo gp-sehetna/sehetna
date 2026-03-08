@@ -45,7 +45,8 @@ function getInitials(name: string) {
         .toUpperCase()
 }
 
-function stringToColor(str: string) {
+function stringToColor(str: string | undefined) {
+    if (!str) throw new Error("string to color is required")
     let hash = 0
 
     for (let i = 0; i < str.length; i++) {

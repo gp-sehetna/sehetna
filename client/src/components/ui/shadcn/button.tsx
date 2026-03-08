@@ -5,7 +5,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils/index"
 
 const buttonVariants = cva(
-    "focus-visible:ring-ring inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-3 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+    "focus-visible:ring-ring base-transition inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-3 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
     {
         variants: {
             variant: {
@@ -25,9 +25,10 @@ const buttonVariants = cva(
                     "hover:bg-neutral-1000/90 shadow-md",
                     "active:bg-neutral-1000/80"
                 ),
-                gradient: "special-gradient base-transition border-none text-neutral-100",
-                glassy: "glassy base-transition hover:text-neutral-1000 text-neutral-800 hover:bg-neutral-100/60 active:bg-neutral-100/40",
+                gradient: "special-gradient border-none text-neutral-100",
+                glassy: "glassy hover:text-neutral-1000 text-neutral-800 hover:bg-neutral-100/60 active:bg-neutral-100/40",
 
+                tonal: "bg-neutral-900/30 text-neutral-100 hover:bg-neutral-800/30",
                 ghost: "hover:text-neutral-1000 text-neutral-600",
                 text: "text-neutral-1000",
                 link: "text-primary-foregroud underline-offset-2 hover:underline",

@@ -5,13 +5,18 @@ import { cn } from "@/lib/utils"
 
 type ButtonSize = "default" | "sm" | "lg" | "icon"
 type WideButtonProps = {
-    variant: any
+    variant?: any
     size?: ButtonSize
     children?: React.ReactNode
     asChild?: boolean
 } & ButtonProps
 
-export default function WideButton({ variant, size, asChild, children }: WideButtonProps) {
+export default function WideButton({
+    variant = "default",
+    size,
+    asChild,
+    children,
+}: WideButtonProps) {
     return (
         <Button
             asChild={asChild}
