@@ -1,24 +1,11 @@
-import { Document, model, models, Schema } from "mongoose"
-import { ProviderEnum, GenderEnum, RoleEnum } from "../enums/auth.enum"
 import {
     NAME_MAX_LENGTH as maxLength,
     FIELD_REQUIRED as minLength,
 } from "@/features/auth/auth.validation"
+import { GenderEnum, ProviderEnum, RoleEnum } from "@/shared/db/enums/auth.enum"
+import { InferSchemaType, Require_id, Model, model, models, Schema } from "mongoose"
 
-export interface DUser extends Document {
-    firstName: string
-    lastName: string
-    fullName: string
-    email: string
-    password: string
-    provider: ProviderEnum
-    gender: GenderEnum
-    role: RoleEnum
-    createdAt: Date
-    updatedAt: Date
-}
-
-const userSchema = new Schema<DUser>(
+const userSchema = new Schema(
     {
         firstName: { type: String, required: true, minLength, maxLength },
         lastName: { type: String, required: true, minLength, maxLength },
@@ -28,12 +15,15 @@ const userSchema = new Schema<DUser>(
         gender: { type: String, enum: GenderEnum, default: GenderEnum.Male },
         role: { type: String, enum: RoleEnum, default: RoleEnum.user },
     },
-    { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+    { timestamps: true, toObject: { virtuals: true }, toJSON: { virtuals: true } }
 )
 
-// TODO: Ensure virtual field is fetched
 userSchema.virtual("fullName").get(function () {
     return `${this.firstName} ${this.lastName}`
 })
 
-export const UserModel = models.User || model<DUser>("User", userSchema)
+export type IUser = Require_id<InferSchemaType<typeof userSchema>> & {
+    fullName: string
+}
+
+export const UserModel: Model<IUser> = models.User || model<IUser>("User", userSchema)

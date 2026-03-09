@@ -14,7 +14,7 @@ export const POST = globalErrorHandler(async (req: NextRequest) => {
     const res = successResponse({ data: user }, "User logged in successfully")
 
     res.cookies.set("access_token", tokens.accessToken, Cookies.createSecure(EXPIRE.access))
-    res.cookies.set("refresh_token", tokens.refreshToken, Cookies.createSecure(EXPIRE.access))
+    res.cookies.set("refresh_token", tokens.refreshToken, Cookies.createSecure(EXPIRE.refresh))
 
     return res
 })

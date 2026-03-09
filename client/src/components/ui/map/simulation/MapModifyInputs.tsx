@@ -431,18 +431,24 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
                     />
                 </CardContent>
             </Card>
-            <div className="glassy sticky bottom-0 flex gap-2 rounded-2xl p-4">
+            <div className="glassy sticky bottom-0 flex items-center gap-2 rounded-2xl p-3">
                 <Button
                     className="rounded-full"
                     form="simulation-modify-form"
                     variant="glassy"
+                    size="xs"
                     onClick={() => form.reset()}
                 >
                     Reset
                 </Button>
-                <WideButton type="submit" form="simulation-modify-form">
+                <Button
+                    className="w-full rounded-full"
+                    size="xs"
+                    type="submit"
+                    form="simulation-modify-form"
+                >
                     Predict
-                </WideButton>
+                </Button>
             </div>
         </form>
     )

@@ -1,7 +1,10 @@
-enum PredictionTypeEnum {
-    forecasted = "forecasted",
-    predicted = "predicted",
-    actual = "actual",
-}
+const PredictionType = {
+    forecasted: "forecasted",
+    predicted: "predicted",
+    historical: "historical",
+} as const
 
-export { PredictionTypeEnum }
+type PredictionTypeEnum = (typeof PredictionType)[keyof typeof PredictionType]
+
+export { PredictionType }
+export type { PredictionTypeEnum }

@@ -1,5 +1,19 @@
 import { LogIn } from "lucide-react"
 
+import { compactSidebarItems } from "@/components/ui/GlobalComponents/nav/navigation-items"
+import SidebarFooterActions from "@/components/ui/GlobalComponents/SideBars/SidebarFooterActions"
+import Logo from "@/components/ui/GlobalControls/Logo"
+import NavLink from "@/components/ui/NavLink"
+import { Avatar, AvatarFallback } from "@/components/ui/shadcn/avatar"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/shadcn/dropdown-menu"
 import {
     Sidebar,
     SidebarContent,
@@ -12,13 +26,10 @@ import {
     SidebarRail,
     SidebarTrigger,
 } from "@/components/ui/shadcn/sidebar"
-import Logo from "@/components/ui/GlobalControls/Logo"
-import NavLink from "@/components/ui/NavLink"
-import { compactSidebarItems } from "../nav/navigation-items"
-import { Avatar, AvatarFallback } from "@/components/ui/shadcn/avatar"
-import { getInitials, stringToColor } from "@/lib/utils/string"
-import SidebarFooterActions from "./SidebarFooterActions"
 import { UserWithoutPassword } from "@/features/auth/auth.types"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { getInitials, stringToColor } from "@/lib/utils/string"
+import { Shield, User } from "lucide-react"
 
 const CompactSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
     return (
@@ -85,14 +96,55 @@ export const AuthenticatedUserButton = ({ user }: { user: UserWithoutPassword })
     )
 }
 export const ProfilePictureAvatar = ({ name }: { name: string }) => {
+    const isMobile = useIsMobile()
     return (
-        <Avatar className="base-transition cursor-pointer hover:scale-106">
-            <AvatarFallback
-                style={{ backgroundColor: stringToColor(name) }}
-                className="text-background font-semibold"
+        <DropdownMenu>
+            {/* asChild is important here so the DropdownMenuTrigger doesn't wrap your Avatar in an extra <button> tag */}
+            <DropdownMenuTrigger asChild>
+                <Avatar className="base-transition cursor-pointer hover:scale-106">
+                    <AvatarFallback
+                        style={{ backgroundColor: stringToColor(name) }}
+                        className="text-background font-semibold"
+                    >
+                        {getInitials(name)}
+                    </AvatarFallback>
+                </Avatar>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+                className="w-64"
+                side={isMobile ? "left" : "top"}
+                align="start"
+                forceMount
             >
-                {getInitials(name)}
-            </AvatarFallback>
-        </Avatar>
+                <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                        <p className="text-sm leading-none font-medium">{name}</p>
+                    </div>
+                </DropdownMenuLabel>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuGroup>
+                    <DropdownMenuLabel className="text-muted-foreground text-xs">
+                        My Account
+                    </DropdownMenuLabel>
+
+                    <DropdownMenuItem asChild>
+                        <a href="/settings/account" className="cursor-pointer">
+                            <User className="mr-2 h-4 w-4" />
+                            <span>Account Settings</span>
+                        </a>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild>
+                        <a href="/settings/security" className="cursor-pointer">
+                            <Shield className="mr-2 h-4 w-4" />
+                            <span>Security</span>
+                        </a>
+                    </DropdownMenuItem>
+                </DropdownMenuGroup>
+            </DropdownMenuContent>
+        </DropdownMenu>
     )
 }

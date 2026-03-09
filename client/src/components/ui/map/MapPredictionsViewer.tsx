@@ -2,7 +2,13 @@
 
 import { RadialChart } from "@/components/ui/charts/RadialChart"
 import MetaTooltip from "@/components/ui/GlobalComponents/tooltips/MetaTooltip"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/shadcn/card"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
 import {
     Activity,
@@ -74,7 +80,10 @@ export default function PredictionsViewer() {
     return (
         <Card className="border-none bg-transparent shadow-none">
             <CardHeader className="flex flex-row justify-between pt-4 pb-0">
-                <CardTitle className="text-lg font-semibold">Simulation Result</CardTitle>
+                <div>
+                    <CardTitle className="text-lg font-semibold">Simulation Result</CardTitle>
+                    <CardDescription>Projections & Risk</CardDescription>
+                </div>
                 {/* help icon */}
                 <MetaTooltip
                     title="Simulation Projections"

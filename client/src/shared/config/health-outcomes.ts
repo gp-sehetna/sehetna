@@ -8,16 +8,15 @@ const HEALTH_OUTCOMES_KEYS = [
     "heat_related_admissions",
 ] as const
 
-type HealthOutcomeDbKey = (typeof HEALTH_OUTCOMES_KEYS)[number]
-
-type IHealthOutcomes<T = number> = Record<HealthOutcomeDbKey, T>
+type HealthOutcomesKeys = (typeof HEALTH_OUTCOMES_KEYS)[number]
+type IHealthOutcomes<T = number> = Record<HealthOutcomesKeys, T>
 
 const HEALTH_OUTCOMES_WITH_HYPHEN = HEALTH_OUTCOMES_KEYS.map((key) => slugify(key))
-const DEFAULT_HEALTH_OUTCOME = HEALTH_OUTCOMES_WITH_HYPHEN[0]
+const DEFAULT_HEALTH_OUTCOME = HEALTH_OUTCOMES_KEYS[0]
 
-const mapHealthOutcomes = <T>(factory: (key: HealthOutcomeDbKey) => T) =>
+const mapHealthOutcomes = <T>(factory: (key: HealthOutcomesKeys) => T) =>
     Object.fromEntries(HEALTH_OUTCOMES_KEYS.map((key) => [key, factory(key)])) as Record<
-        HealthOutcomeDbKey,
+        HealthOutcomesKeys,
         T
     >
 
@@ -27,4 +26,4 @@ export {
     HEALTH_OUTCOMES_WITH_HYPHEN,
     mapHealthOutcomes,
 }
-export type { HealthOutcomeDbKey, IHealthOutcomes }
+export type { HealthOutcomesKeys, IHealthOutcomes }

@@ -45,6 +45,8 @@ class GradientPalette extends Colors {
     }
 }
 
+const getPrimaryColor = (theme: { colors: string[] }) => theme.colors[theme.colors.length / 2 - 3]
+
 const blue = {
     oceanColor: "#FAFAFA",
     colors: [
@@ -175,4 +177,4 @@ const mix = {
     ],
 }
 
-export { blue, Colors, darkBlue, GradientPalette, green, mix, red }
+export { blue, Colors, darkBlue, getPrimaryColor, GradientPalette, green, mix, red }

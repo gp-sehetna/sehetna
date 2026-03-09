@@ -3,9 +3,15 @@
 import MetaTooltip from "@/components/ui/GlobalComponents/tooltips/MetaTooltip"
 import WaterfallTooltip from "@/components/ui/GlobalComponents/tooltips/WaterfallTooltip"
 import { Badge } from "@/components/ui/shadcn/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/shadcn/card"
 import { CumulativeExplanationItem } from "@/features/environment/week/week.types"
-import { buildWaterfallData, toProperCase } from "@/lib/utils"
+import { buildWaterfallData, cn, toProperCase } from "@/lib/utils"
 import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 import { HelpCircle } from "lucide-react"
 import { useMemo } from "react"
@@ -42,7 +48,10 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
         <Card className="w-full border-0 bg-transparent">
             <CardHeader className="pb-2">
                 <div className="flex flex-wrap items-start justify-between gap-4">
-                    <CardTitle className="text-lg font-semibold">{label}</CardTitle>
+                    <div>
+                        <CardTitle className="text-lg font-semibold">{label}</CardTitle>
+                        <CardDescription>Waterfall Explanations</CardDescription>
+                    </div>
                     <MetaTooltip
                         title="Cumulative Explanation"
                         description="How each feature contributed to shifting the model prediction from its
@@ -55,17 +64,20 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
 
                 {/* Summary badges */}
                 <div className="flex flex-wrap gap-2 pt-2">
-                    <Badge variant="glassy" className="font-mono text-xs">
+                    <Badge variant="glassy" className="text-xs font-light">
                         Baseline {baseline.toFixed(3)}
                     </Badge>
-                    <Badge className="font-mono text-xs">Final {finalValue.toFixed(3)}</Badge>
+                    <Badge variant="primary-tonal" className="text-xs font-light">
+                        Final {finalValue.toFixed(3)}
+                    </Badge>
                     <Badge
                         variant="outline"
-                        className={`font-mono text-xs ${
+                        className={cn(
+                            "text-xs font-light",
                             isNetPositive
                                 ? "border-emerald-400 text-emerald-500"
                                 : "border-rose-400 text-rose-500"
-                        }`}
+                        )}
                     >
                         Net {isNetPositive ? "▲" : "▼"} {Math.abs(totalShift).toFixed(3)}
                     </Badge>
@@ -82,11 +94,8 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
                         <span className="text-muted-foreground">Decreases prediction</span>
                     </div>
                 </div>
-                <ResponsiveContainer className="-ml-8" width="100%" height={320}>
-                    <ComposedChart
-                        data={waterfallData}
-                        margin={{ top: 8, right: 32, left: 32, bottom: 40 }}
-                    >
+                <ResponsiveContainer width="100%" height={320}>
+                    <ComposedChart data={waterfallData} margin={{ top: 8, right: 32, bottom: 40 }}>
                         <CartesianGrid strokeDasharray="3 3 1 3" opacity={0.4} />
 
                         <XAxis
@@ -94,6 +103,7 @@ export function WaterfallChart({ items, healthOutcome }: ShapWaterfallChartProps
                             tickLine={false}
                             axisLine={false}
                             angle={-65}
+                            width={42}
                             textAnchor="middle"
                             interval={0}
                         />

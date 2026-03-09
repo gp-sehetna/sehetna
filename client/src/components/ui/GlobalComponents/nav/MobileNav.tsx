@@ -17,12 +17,20 @@ import { cn } from "@/lib/utils"
 import { navigationMenuTriggerStyle } from "../../shadcn/navigation-menu"
 import Divider from "../../GlobalControls/Divider"
 
-export default function MobileNav({ navigationItems }: NavItemsProps) {
+type MobileNavProps = {
+    navigationItems: NavItemsProps["navigationItems"]
+    isScrolled: boolean
+}
+export default function MobileNav({ isScrolled, navigationItems }: MobileNavProps) {
     return (
         <div className="flex md:hidden">
             <Sheet>
                 <SheetTrigger asChild>
-                    <Button size="icon" variant="text">
+                    <Button
+                        className={cn(isScrolled ? "" : "text-background")}
+                        size="icon"
+                        variant="text"
+                    >
                         <Equal />
                     </Button>
                 </SheetTrigger>

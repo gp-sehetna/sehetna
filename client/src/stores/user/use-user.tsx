@@ -2,14 +2,16 @@ import { UserWithoutPassword } from "@/features/auth/auth.types"
 import { create } from "zustand"
 
 type UserState = {
-    user?: UserWithoutPassword
+    user: UserWithoutPassword | null
+    isAuth: boolean // Check if user is authenticated
 
-    setUser: (newUser: UserWithoutPassword) => void
+    setUser: (newUser: UserWithoutPassword | null) => void
 }
 
-export const useUserStore = create<UserState>((set, get) => {
+export const useUserStore = create<UserState>((set) => {
     return {
-        user: undefined,
-        setUser: (user) => set({ user }),
+        user: null,
+        isAuth: false,
+        setUser: (user) => set({ user, isAuth: !!user }),
     }
 })

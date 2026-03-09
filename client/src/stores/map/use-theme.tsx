@@ -1,11 +1,17 @@
+import { DEFAULT_HEALTH_OUTCOME, HealthOutcomesKeys } from "@/shared/config/health-outcomes"
+import { GradientPalette, blue, darkBlue, green, mix, red } from "@/shared/config/map-colors"
+import { DEFAULT_MAP_THEME_IDS, MapThemeId } from "@/shared/config/map-theme-config"
+import logger from "@/shared/logger"
 import { create } from "zustand"
-import { GradientPalette, blue, green, mix, red, darkBlue } from "@/shared/config/map-colors"
 
 export interface ThemeState {
-    healthOutcome?: string
     theme: GradientPalette
     isInvalid: boolean
-    setHealthOutcome: (healthOutcome?: string) => void
+    activeThemeIds: MapThemeId[]
+    setTheme: (healthOutcome: HealthOutcomesKeys) => void
+    toggleTheme: (themeId: MapThemeId) => void
+    resetMapThemes: () => void
+    isThemeActive: (themeId: MapThemeId) => boolean
     getSampledColors: (numberOfItems: number) => string[]
 }
 
@@ -19,29 +25,41 @@ const getTheme = (healthOutcome?: string) => {
     switch (healthOutcome) {
         case undefined:
         case "":
-        case "respiratory-disease-rate":
+        case "respiratory_disease_rate":
             return darkBlueTheme
-        case "heat-related-admissions":
-            return redTheme
-        case "waterborne-disease-incidents":
-            return blueTheme
-        case "cardio-mortality-rate":
+        case "cardio_mortality_rate":
             return mixTheme
-        case "vector-disease-risk-score":
+        case "vector_disease_risk_score":
             return greenTheme
+        case "waterborne_disease_incidents":
+            return blueTheme
+        case "heat_related_admissions":
+            return redTheme
         default:
             return null
     }
 }
 
 export const useThemeStore = create<ThemeState>((set, get) => ({
-    healthOutcome: undefined,
+    healthOutcome: DEFAULT_HEALTH_OUTCOME,
     theme: darkBlueTheme,
     isInvalid: false,
-    setHealthOutcome: (healthOutcome) => {
-        const theme = getTheme(healthOutcome) || blueTheme
-        set({ healthOutcome, theme, isInvalid: theme === null })
+    activeThemeIds: [...DEFAULT_MAP_THEME_IDS],
+    setTheme: (healthOutcome) => {
+        const nextTheme = getTheme(healthOutcome)
+        logger.debug(nextTheme, `HealthOutcome (${healthOutcome}) Theme: `)
+        set({ theme: nextTheme ?? blueTheme, isInvalid: nextTheme === null })
     },
+    toggleTheme: (themeId) => {
+        const { activeThemeIds } = get()
+
+        if (activeThemeIds.includes(themeId))
+            return set({ activeThemeIds: activeThemeIds.filter((id) => id !== themeId) })
+
+        set({ activeThemeIds: [...activeThemeIds, themeId] })
+    },
+    resetMapThemes: () => set({ activeThemeIds: [...DEFAULT_MAP_THEME_IDS] }),
+    isThemeActive: (themeId) => get().activeThemeIds.includes(themeId),
     getSampledColors: (numberOfItems) => {
         const { theme } = get()
 

@@ -1,15 +1,13 @@
 "use client"
 
-import Link from "next/link"
-import { Button } from "../../shadcn/button"
+import { ProfilePictureAvatar } from "@/components/ui/GlobalComponents/SideBars/CompactSidebar"
+import { Button } from "@/components/ui/shadcn/button"
 import { useUserStore } from "@/stores/user/use-user"
-import { ProfilePictureAvatar } from "../SideBars/CompactSidebar"
+import Link from "next/link"
 
-export default function MobileNav() {
+export default function NavActions() {
     const { user } = useUserStore()
-    if (user) {
-        return <ProfilePictureAvatar name={user.fullName} />
-    }
+    if (user) return <ProfilePictureAvatar name={user.fullName} />
 
     return (
         <div className="flex items-center gap-2">
