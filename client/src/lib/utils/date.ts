@@ -1,8 +1,10 @@
 import {
+    addDays,
     eachMonthOfInterval,
     eachWeekOfInterval,
     eachYearOfInterval,
     format,
+    startOfWeek,
     subDays,
     subMonths,
     subYears,
@@ -28,15 +30,12 @@ const rangePreset = {
     allTime: "All Time",
 } as const
 
-function getWeekRange(dateStr: string, weeks: number = 1) {
-    const date = new Date(dateStr)
-    const dayIndex = date.getDay() // Sunday = 0
+function getWeekRange(date: Date, weeks: number = 1) {
+    // 1. Get the Sunday of the current week
+    const startDate = startOfWeek(date)
 
-    const startDate = new Date(date)
-    startDate.setDate(date.getDate() - dayIndex)
-
-    const endDate = new Date(startDate)
-    endDate.setDate(startDate.getDate() + (weeks * 7 - 1))
+    // 2. Add (weeks * 7) minus 1 day to get the end of the range
+    const endDate = addDays(startDate, weeks * 7 - 1)
 
     return {
         startDate: format(startDate, "yyyy-MM-dd"),
@@ -129,6 +128,7 @@ const formatDate = (date?: string | Date, opts?: Intl.DateTimeFormatOptions) => 
 export {
     ALLOWED_GRANULARITIES,
     buildTicks,
+    formatDate,
     formatSelectedDate,
     formatTick,
     getRangeStart,
@@ -136,7 +136,6 @@ export {
     GRANULARITY_LABELS,
     maxLabels,
     rangePreset,
-    formatDate,
 }
 
 export type { Granularity, RangePreset }

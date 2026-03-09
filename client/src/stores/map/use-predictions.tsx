@@ -14,7 +14,7 @@ type PredictionsState = {
     setLoading: (loading: boolean) => void
     setSimulation: (simulation: SimulateResponse, healthOutcome: keyof IHealthOutcomes) => void
     setModifying: (modifying: boolean) => void
-    setEnvironment: (environment: IEnvironmentData) => void
+    setEnvironment: (environment: IEnvironmentData | null) => void
     onOutcomeSelect: (healthOutcome: keyof IHealthOutcomes) => void
     reset: () => void
 }

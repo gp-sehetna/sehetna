@@ -1,6 +1,6 @@
 import { Slug } from "@/shared/config/map"
 import { useMapStore } from "@/stores/map/use-map"
-import { format, startOfWeek, subDays } from "date-fns"
+import { format } from "date-fns"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect } from "react"
 
@@ -12,7 +12,7 @@ export const useDateUrlSync = (activeSlug: Slug) => {
 
     useEffect(() => {
         const value = searchParams.get("date")
-        setDate(value ? new Date(value) : subDays(startOfWeek(new Date()), 1))
+        setDate(value ? new Date(value) : new Date())
     }, [searchParams, setDate])
 
     const updateDate = useCallback(

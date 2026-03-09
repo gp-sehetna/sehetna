@@ -1,5 +1,5 @@
 "use client"
-import { IEnvironmentData } from "@/features/environment/week/week.dto"
+import { Environment, IEnvironmentData } from "@/features/environment/week/week.dto"
 import {
     Location,
     SimulateQueryParams,
@@ -8,31 +8,36 @@ import {
 import { toProperCase } from "@/lib/utils"
 import { confirmIncompleteEnvironment } from "@/lib/utils/toast"
 import { api } from "@/shared/api"
+import { MissingDataError } from "@/shared/http/errors"
 import { format } from "date-fns"
 import { SearchParamsOption } from "ky"
 import { toast } from "sonner"
 
 export class WeekClientService {
     constructor(
-        private setEnvironment: (_: IEnvironmentData) => void,
+        private setEnvironment: (_: IEnvironmentData | null) => void,
         private setModifying: (_: boolean) => void
     ) {}
     private getNullEnvironmentDataKeys(environmentData: IEnvironmentData): string[] {
         const nullKeys = new Set<string>()
 
-        // Check all weekly data rows
         for (const row of environmentData.data)
             for (const [key, value] of Object.entries(row))
                 if (value === null) nullKeys.add(toProperCase(key))
 
-        // Check all indicators dynamically
-        for (const [key, value] of Object.entries(environmentData.indicators))
+        if (!environmentData.indicators) nullKeys.add(toProperCase("indicators"))
+
+        for (const [key, value] of Object.entries(environmentData.indicators ?? {}))
             if (value == null) nullKeys.add(toProperCase(key))
 
         return Array.from(nullKeys)
     }
 
-    private fetchEnvironment = async (location: Location, date: string | null, weeks: number) => {
+    private fetchEnvironment = async (
+        location: Location,
+        date: string,
+        weeks: number
+    ): Promise<IEnvironmentData> => {
         const { lat, lng, iso } = location,
             coords = `${lat},${lng}`,
             isNotSimulation = !date || weeks == 0,
@@ -40,19 +45,18 @@ export class WeekClientService {
                 ? { coords, iso }
                 : { coords, iso, date, weeks },
             environmentData = await api
-                .get<IEnvironmentData>("api/environment/week", { searchParams })
+                .get<IEnvironmentData | null>("api/environment/week", { searchParams })
                 .json()
 
-        this.setEnvironment(environmentData)
-
         // Validate Environment Data and ensure non-null values.
-        if (!environmentData || !environmentData.data.length) {
+        if (!environmentData || !environmentData.data?.length) {
             toast.error("No data found for this location", {
-                description: "Please try another location or date.",
+                description: "Modify your inputs or try another location/date.",
             })
-            return null
+            throw new MissingDataError(null)
         }
 
+        this.setEnvironment(environmentData)
         // Check if any of the data objects keys is null and retreive this key for logging.
         const nullKeys = this.getNullEnvironmentDataKeys(environmentData)
         // If any of the data objects keys is null and this is not a simulation,
@@ -60,7 +64,7 @@ export class WeekClientService {
         if (!nullKeys.length || isNotSimulation) return environmentData
 
         const result = await confirmIncompleteEnvironment(environmentData)
-        if (result) return environmentData
+        if (!result) throw new MissingDataError(environmentData)
 
         this.setModifying(true)
         return environmentData
@@ -91,17 +95,24 @@ export class WeekClientService {
     fetchEnvironmentAndSimulate = async (
         loc: Location,
         date: Date,
-        weeks = 1,
-        params: SimulateQueryParams = { top_k_contributions: 25, explainer_method: "group" }
+        weeks: number,
+        params: SimulateQueryParams
     ) => {
         return await toast
             .promise<SimulateResponse | null>(
                 async () => {
-                    const formattedDate = date ? format(date, "yyyy-MM-dd") : null
-                    const environment = await this.fetchEnvironment(loc, formattedDate, weeks)
-                    if (!environment) return null
-
-                    return await this.simulate(environment, params)
+                    const formattedDate = format(date, "yyyy-MM-dd")
+                    try {
+                        const environment = await this.fetchEnvironment(loc, formattedDate, weeks)
+                        return await this.simulate(environment, params)
+                    } catch (error) {
+                        if (!(error instanceof MissingDataError)) throw error
+                        this.setEnvironment(
+                            error.err_details ?? new Environment(loc, formattedDate)
+                        )
+                        this.setModifying(true)
+                        return null
+                    }
                 },
                 {
                     loading: "Simulating...",

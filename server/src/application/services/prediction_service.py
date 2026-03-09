@@ -137,6 +137,6 @@ class PredictionService(ShapExplanabilityService):
             return df, predictions, None
 
         logger.info("Explaining...")
-        explanations = self._explain(X_test, query.explainer_method, query.top_k_contributors)
+        explanations = self._explain(X_test, query.explainer_method, query.top_k_contributions)
 
         return df, predictions, explanations

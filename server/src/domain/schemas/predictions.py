@@ -49,11 +49,13 @@ class WeeklyEnvironmentData(BaseModel):
 
     @model_validator(mode="after")
     def validate_pm25_and_aqi(self):
-        if self.pm25_ugm3 is None and self.aqi_pm is None:
-            raise BadRequest("pm25_ugm3 and aqi_pm are mutually exclusive")
-        if self.pm25_ugm3 is None:
+        if (self.pm25_ugm3 is None and self.aqi_pm is None) or (self.pm25_ugm3 == 0 and self.aqi_pm == 0):
+            raise BadRequest(
+                "Particular matter concentration and Air Quality Index are mutually exclusive. Please provide one or the other."
+            )
+        if self.pm25_ugm3 is None or self.pm25_ugm3 == 0:
             self.pm25_ugm3 = aqi_to_pollutant(BREAKPOINTS["pm25"], self.aqi_pm)
-        elif self.aqi_pm is None:
+        elif self.aqi_pm is None or self.aqi_pm == 0:
             self.aqi_pm = pollutant_to_aqi(BREAKPOINTS["pm25"], self.pm25_ugm3)
         return self
 
@@ -92,11 +94,11 @@ class PredictionQueryParams(BaseModel):
     """
     Query parameters controlling prediction explanations.
 
-    Use `top_k_contributors` to limit feature attributions and
+    Use `top_k_contributions` to limit feature attributions and
     `explainer_method` to choose how explanations are computed.
     """
 
-    top_k_contributors: int = Field(5, description="Number of top contributing features to return.")
+    top_k_contributions: int = Field(5, description="Number of top contributing features to return.")
     explainer_method: Annotated[ExplainerMethod, BeforeValidator(lambda v: v.lower().strip())] = Field(
         "cumulative", description="Explanation method to use."
     )

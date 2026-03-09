@@ -3,8 +3,7 @@
 import { FormInputField } from "@/components/ui/forms/inputs/FormInputField"
 import { Badge } from "@/components/ui/shadcn/badge"
 import { Button } from "@/components/ui/shadcn/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
-import { Field } from "@/components/ui/shadcn/field"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
 import { Label } from "@/components/ui/shadcn/label"
 import { Separator } from "@/components/ui/shadcn/separator"
 import { Slider } from "@/components/ui/shadcn/slider"
@@ -83,7 +82,7 @@ const SliderField = ({
     min: number
     max: number
     step?: number
-    value: number | null
+    value: number | null | undefined
     color?: string
     onChange: (v: number) => void
     error?: string
@@ -305,7 +304,7 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
                                 <FieldRow
                                     label="Heat Wave Days"
                                     icon={Flame}
-                                    unit={`days / week ${f.value}`}
+                                    unit={`${f.value} days/week`}
                                     error={form.formState.errors.data?.[i]?.heat_wave_days?.message}
                                 >
                                     <div className="flex gap-1.5">
