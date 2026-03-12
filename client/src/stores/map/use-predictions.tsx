@@ -12,13 +12,15 @@ type PredictionsState = {
     explanations: Explanations | null
     loading: boolean
     forecaster: AiModelEnum
-
+    predictionMap: Record<string, number>
+    
     setLoading: (loading: boolean) => void
     setForecaster: (forecaster: AiModelEnum) => void
     setSimulation: (simulation: SimulateResponse, healthOutcome: keyof IHealthOutcomes) => void
     setModifying: (modifying: boolean) => void
-    setEnvironment: (environment: IEnvironmentData) => void
+    setEnvironment: (environment: IEnvironmentData | null) => void
     onOutcomeSelect: (healthOutcome: keyof IHealthOutcomes) => void
+    setPredictionMap: (map: Record<string, number>) => void
     reset: () => void
 }
 
@@ -41,7 +43,7 @@ export const usePredictionsStore = create<PredictionsState>((set, get) => {
         environment: null,
         forecaster: AiModel.patchtst,
         loading: false,
-
+        predictionMap: {},
         setLoading,
         setForecaster: (forecaster) => set({ forecaster }),
         setModifying: (modifying) => set({ modifying }),
@@ -51,16 +53,17 @@ export const usePredictionsStore = create<PredictionsState>((set, get) => {
             setHealthOutcome(healthOutcome)
             set({ simulation })
         },
-
+        
         onOutcomeSelect: (healthOutcome: keyof IHealthOutcomes) => {
             setHealthOutcome(healthOutcome)
-
+            
             const { simulation } = get()
             if (!simulation) return
-
+            
             setExplanations(simulation)
         },
-
+        
+        setPredictionMap: (map) => set({ predictionMap: map }),
         reset: () => {
             setHealthOutcome(DEFAULT_HEALTH_OUTCOME)
             setLoading(false)

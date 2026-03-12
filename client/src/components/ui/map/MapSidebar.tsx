@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react"
 
 import AppLoader from "@/components/ui/GlobalComponents/Loaders/AppLoader"
 import HealthOutcomeCharts from "@/components/ui/map/MapSidebarContent"
-import { DateRangeSlider } from "@/components/ui/map/view/DateFilterSlider"
+import DateRangeSlider  from "@/components/ui/map/view/DateFilterSlider"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/shadcn/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/shadcn/tabs"
 import { IEnvironmentData } from "@/features/environment/week/week.dto"

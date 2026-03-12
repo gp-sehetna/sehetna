@@ -19,6 +19,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         onMouseOut,
         closeSidebar,
         markerCoords,
+        hoveredCoords,
     } = useMapHook()
 
     return (
@@ -30,10 +31,11 @@ export default function MapView({ children }: { children: React.ReactNode }) {
             onMouseMove={onMouseMove}
             onMouseOut={onMouseOut}
             attributionControl={false}
+            dragPan={{ maxSpeed: 0 }} // Disables easing effect to improve performance on exchange layer
         >
             <MapMarker coords={markerCoords} />
             <MapSources theme={theme} />
-
+            
             {children}
 
             <MapControls

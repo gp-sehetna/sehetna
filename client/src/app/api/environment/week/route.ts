@@ -3,7 +3,7 @@ import { WeekEnvironmentParamsSchema } from "@/features/environment/week/week.va
 import { MainService } from "@/shared/db/main.service"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 
-export const GET = globalErrorHandler<IEnvironmentData>(async (request) => {
+export const GET = globalErrorHandler<IEnvironmentData | null>(async (request) => {
     const params = request.nextUrl.searchParams
 
     const query = WeekEnvironmentParamsSchema.parse({

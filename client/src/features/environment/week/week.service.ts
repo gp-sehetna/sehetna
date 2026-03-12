@@ -14,23 +14,18 @@ import {
     OPEN_METEO_HISTORICAL_WEATHER,
     WORLDBANK,
 } from "@/shared/config/urls"
-import { ValidationException } from "@/shared/http/errors"
 import { SearchParamsOption } from "ky"
 import { fetchWeatherApi } from "openmeteo"
 
 export class WeekService {
-    async getWeeklyEnvironmentData(query: WeekParams): Promise<IEnvironmentData> {
+    async getWeeklyEnvironmentData(query: WeekParams): Promise<IEnvironmentData | null> {
         try {
             const [air, weather] = await Promise.all([
                 this.fetchWeeklyAirData(query),
                 this.fetchWeeklyWeatherData(query),
             ])
 
-            const country_code = query.loc.iso
-            const indicators = await this.fetchIndicators(
-                country_code,
-                new Date(query.date).getFullYear()
-            )
+            const indicators = await this.fetchIndicators(query.loc.iso, query.date.getFullYear())
 
             const data: WeeklyEnvironmentData[] = air.map((airWeek, i) => ({
                 date: airWeek.date,
@@ -47,12 +42,12 @@ export class WeekService {
 
             return {
                 coords: `${query.loc.lat},${query.loc.lng}`,
-                country_code,
+                country_code: query.loc.iso,
                 indicators,
                 data,
             }
         } catch (err: unknown) {
-            if (err instanceof Error) throw new ValidationException(err.message)
+            if (err instanceof Error) return null
             throw err
         }
     }

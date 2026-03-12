@@ -5,7 +5,7 @@ type AggResult<T> = { date: string } & { [K in keyof T]: number | null }
 
 type WeekParams = {
     loc: Location
-    date: string
+    date: Date
     weeks: number
 }
 

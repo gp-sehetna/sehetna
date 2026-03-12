@@ -16,14 +16,9 @@ const MapCog = () => {
         useSettingsStore()
     const explanations: ExplanationMethod[] = ["cumulative", "group"]
 
-    const maxContributors = useMemo(() => {
-        if (explanationMethod === "cumulative") return 23
-        return 10
-    }, [explanationMethod])
-
-    const minContributors = useMemo(() => {
-        if (explanationMethod === "cumulative") return 5
-        return 2
+    const range = useMemo(() => {
+        if (explanationMethod === "cumulative") return { min: 5, max: 25 }
+        return { min: 2, max: 10 }
     }, [explanationMethod])
 
     return (
@@ -55,10 +50,7 @@ const MapCog = () => {
                         variant="glassy"
                         size="icon"
                         className="h-6 w-6"
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            setContributors(Math.max(minContributors, contributors - 1))
-                        }}
+                        onClick={() => setContributors(Math.max(range.min, contributors - 1))}
                     >
                         <Minus className="h-3 w-3" />
                     </Button>
@@ -67,10 +59,7 @@ const MapCog = () => {
                         variant="glassy"
                         size="icon"
                         className="h-6 w-6"
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            setContributors(Math.min(maxContributors, contributors + 1))
-                        }}
+                        onClick={() => setContributors(Math.min(range.max, contributors + 1))}
                     >
                         <Plus className="h-3 w-3" />
                     </Button>

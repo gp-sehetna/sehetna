@@ -82,7 +82,7 @@ const SliderField = ({
     min: number
     max: number
     step?: number
-    value: number | null
+    value: number | null | undefined
     color?: string
     onChange: (v: number) => void
     error?: string
@@ -304,7 +304,7 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
                                 <FieldRow
                                     label="Heat Wave Days"
                                     icon={Flame}
-                                    unit={`days / week ${f.value}`}
+                                    unit={`${f.value} days/week`}
                                     error={form.formState.errors.data?.[i]?.heat_wave_days?.message}
                                 >
                                     <div className="flex gap-1.5">

@@ -82,6 +82,12 @@ class InternalServerException extends ApplicationException {
     }
 }
 
+class MissingDataError extends NotFoundException {
+    constructor(err_details?: any) {
+        super("Missing data", err_details, "MISSING_DATA_ERROR")
+    }
+}
+
 export {
     ApplicationException,
     BadRequestException,
@@ -89,6 +95,7 @@ export {
     ExpiredException,
     ForbiddenException,
     InternalServerException,
+    MissingDataError,
     NotFoundException,
     RateLimitException,
     UnauthorizedException,

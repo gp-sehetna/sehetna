@@ -1,5 +1,13 @@
+import { WeekParams } from "@/features/environment/week/week.types"
 import { refineCoords } from "@/lib/utils"
-import { differenceInCalendarDays, parseISO, startOfDay, startOfWeek, subWeeks } from "date-fns"
+import {
+    differenceInCalendarDays,
+    parseISO,
+    startOfDay,
+    startOfWeek,
+    subDays,
+    subWeeks,
+} from "date-fns"
 import { z } from "zod"
 
 const DATE_FORMAT_REGEX = /^\d{4}-\d{2}-\d{2}$/
@@ -15,11 +23,13 @@ const WeekEnvironmentQuerySchema = CoordinatesSchema.extend({
 })
 
 const EnvironmentDataSchema = CoordinatesSchema.extend({
-    indicators: z.object({
-        gdp_per_capita_usd: z.number().min(0).max(10000000).nullable(),
-        food_production_index: z.number().min(0).max(100).nullable(),
-        undernourishment: z.number().min(0).max(100).nullable(),
-    }),
+    indicators: z
+        .object({
+            gdp_per_capita_usd: z.number().min(0).max(10000000).nullable(),
+            food_production_index: z.number().min(0).max(100).nullable(),
+            undernourishment: z.number().min(0).max(100).nullable(),
+        })
+        .optional(),
     data: z.array(
         z.object({
             date: z.string().regex(DATE_FORMAT_REGEX, "date must be YYYY-MM-DD"),
@@ -33,7 +43,7 @@ const EnvironmentDataSchema = CoordinatesSchema.extend({
     ),
 })
 
-const WeekEnvironmentParamsSchema = WeekEnvironmentQuerySchema.transform((data) => {
+const WeekEnvironmentParamsSchema = WeekEnvironmentQuerySchema.transform<WeekParams>((data) => {
     const [latStr, lngStr] = data.coords.split(",")
 
     const loc = {
@@ -60,10 +70,10 @@ const WeekEnvironmentParamsSchema = WeekEnvironmentQuerySchema.transform((data) 
         const diffDays = differenceInCalendarDays(firstDayOfLastWeek, start)
         const weeks = Math.max(1, Math.ceil((diffDays + 1) / 7))
 
-        return { loc, date: startDate, weeks }
+        return { loc, date: subDays(startOfWeek(startDate), 1), weeks }
     }
 
-    return { loc, date: data.date, weeks: data.weeks }
+    return { loc, date: subDays(startOfWeek(data.date), 1), weeks: data.weeks }
 })
 
 export { EnvironmentDataSchema, WeekEnvironmentParamsSchema, WeekEnvironmentQuerySchema }
