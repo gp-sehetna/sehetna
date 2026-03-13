@@ -12,7 +12,7 @@ type AppHeaderProps = {
 
 function AppHeader({ isScrolled }: AppHeaderProps) {
     return (
-        <header className={cn("fixed top-0 right-0 left-0 z-50 border")}>
+        <header className={cn("fixed top-0 right-0 left-0 z-50")}>
             <BaseExtension>
                 <small className="selection:text-primary-100 font-extralight">
                     We are working hard to bring you a new experience. Stay tuned :{")"}
