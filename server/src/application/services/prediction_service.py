@@ -75,13 +75,14 @@ def expand_weekly_rows(
 
 
 class PredictionService(ShapExplanabilityService):
-    def __init__(self, indicator_repository: IndicatorRepository, model_loader: ModelLoader, settings: Settings):
+    def __init__(self, indicator_repository: IndicatorRepository, settings: Settings, model_loader: ModelLoader):
         super().__init__(settings, model_loader)
         self.indicator_repository = indicator_repository
-        self.model_loader = model_loader
-        self.settings = settings
 
-    def get_df(self, req: PredictionRequest) -> pd.DataFrame:
+        self.settings = settings
+        self.model_loader = model_loader
+
+    def __build_environment_df(self, req: PredictionRequest) -> pd.DataFrame:
         country_map, uhc_df, food_access_df, food_stability_df = self.indicator_repository.get_indicators()
 
         m49_code = resolve_m49_code(country_map, req.country_code)
@@ -126,17 +127,17 @@ class PredictionService(ShapExplanabilityService):
             tuple[np.ndarray[np.ndarray[float]], dict[str, list] | None]
         """
 
-        df = self.get_df(req)
-        df_processed = self.model_loader.pipeline.transform(df)
+        environment_df = self.__build_environment_df(req)
+        df_processed = self.model_loader.pipeline.transform(environment_df)
         X_test = df_processed[self.settings.features]
 
         logger.info("Predicting...")
         predictions: np.ndarray[np.ndarray[float]] = self.model_loader.model.predict(X_test)
 
         if query is None:
-            return df, predictions, None
+            return environment_df, predictions, None
 
         logger.info("Explaining...")
         explanations = self._explain(X_test, query.explainer_method, query.top_k_contributions)
 
-        return df, predictions, explanations
+        return environment_df, predictions, explanations

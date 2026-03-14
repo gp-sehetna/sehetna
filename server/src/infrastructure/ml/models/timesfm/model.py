@@ -5,6 +5,7 @@ import pandas as pd
 import timesfm
 
 from config import Settings
+from src.infrastructure.ml.model_loader import ModelLoader
 from src.infrastructure.ml.models.sequential_model import SequentialModel
 
 logger = logging.getLogger(__name__)
@@ -12,8 +13,8 @@ logger = logging.getLogger(__name__)
 
 class TimesFM(SequentialModel):
 
-    def __init__(self, settings: Settings):
-        SequentialModel.__init__(self, settings)
+    def __init__(self, settings: Settings, model_loader: ModelLoader):
+        SequentialModel.__init__(self, settings, model_loader)
 
         # Model components
         self._model: timesfm.TimesFM_2p5_200M_torch | None = None
@@ -41,13 +42,9 @@ class TimesFM(SequentialModel):
         self._is_loaded = True
         return self
 
-    def _transform(self, predictions: np.ndarray[np.ndarray[float]], historical_indicators: pd.DataFrame):
-        if historical_indicators.empty:
-            raise ValueError("Historical indicators is empty")
-
-        historical_values = historical_indicators[self.settings.targets].values  # (N, 5)
-        combined = np.vstack((historical_values, predictions))  # (N + B, 5)
-        self.transformed = dict(zip(self.settings.targets, combined.T))
+    def _transform(self, environment_df: pd.DataFrame, historical_df: pd.DataFrame):
+        combined = pd.concat([historical_df[self.settings.targets], environment_df[self.settings.targets]], ignore_index=True)
+        self.transformed = combined.to_dict(orient="list")
 
         return self
 

@@ -17,14 +17,10 @@ class ServiceContainer:
         self.historical_repository = HistoricalRepository(settings)
         self.indicator_repository = IndicatorRepository(settings)
         self.model_loader = ModelLoader(settings)
-        self.forecast_service = ForecastService(self.historical_repository, settings)
+        self.forecast_service = ForecastService(self.historical_repository, settings, self.model_loader)
 
         # Initialize single-model prediction service (existing LGBM model)
-        self.prediction_service = PredictionService(
-            indicator_repository=self.indicator_repository,
-            model_loader=self.model_loader,
-            settings=settings,
-        )
+        self.prediction_service = PredictionService(self.indicator_repository, settings, self.model_loader)
 
     def load(self) -> None:
         # Load existing LGBM model and data

@@ -7,6 +7,8 @@ import torch
 from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+logger = logging.getLogger(__name__)
+
 
 class CoreSettings(BaseSettings):
     # App info
@@ -34,6 +36,7 @@ class PathSettings(CoreSettings):
     # Paths
     __lgbm_archive: str = "[modelling_phase_v5]-multioutput_lgbm"
     __patchtst_archive: str = "[model-67ual6ug-v0]-patch-tst"
+    __gpt2_archive: str = "[epoch=181-step=7098-val_loss=0.201]-gpt2-forecaster"
 
     @computed_field
     @property
@@ -69,6 +72,16 @@ class PathSettings(CoreSettings):
     @property
     def patchtst_scaler_path(self) -> str:
         return os.path.join(self.archive_dir, self.__patchtst_archive, "y_scaler.joblib")
+
+    @computed_field
+    @property
+    def gpt2_model_path(self) -> str:
+        return os.path.join(self.archive_dir, self.__gpt2_archive, "model.ckpt")
+
+    @computed_field
+    @property
+    def gpt2_patchtsmixer_scaler_path(self) -> str:
+        return os.path.join(self.archive_dir, "shared", "gpt2-patchtsmixer-scaler.joblib")
 
     @computed_field
     @property
@@ -108,6 +121,18 @@ class Settings(PathSettings):
     def features(self) -> list[str]:
         with open(os.path.join(self.configuration_dir, "features.json")) as f:
             return json.load(f)
+
+    @computed_field
+    @property
+    def csv_features(self) -> list[str]:
+        with open(os.path.join(self.configuration_dir, "features.json")) as f:
+            try:
+                features: list[str] = json.load(f)
+                item_to_remove = "aqi_pm"
+                features.remove(item_to_remove)
+            except ValueError:
+                logger.debug(f"{item_to_remove} not found in the list.")
+            return features
 
     @computed_field
     @property

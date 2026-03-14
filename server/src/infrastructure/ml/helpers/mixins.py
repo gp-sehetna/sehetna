@@ -6,87 +6,100 @@ from sklearn.preprocessing import StandardScaler
 
 
 class FeatureEngineerMixin(BaseEstimator, TransformerMixin):
+
     def fit(self, X, y=None):
         self.expected_columns_ = X.columns.tolist()
-        self.train_spatial_features_ = X[["temperature_celsius", "temp_anomaly_celsius", "pm25_ugm3"]]
+        self.train_spatial_features_ = X[["temperature_celsius", "temp_anomaly_celsius", "pm25_ugm3"]].copy()
         coords = X[["latitude", "longitude"]].values
         self.nbrs_ = NearestNeighbors(n_neighbors=5, algorithm="ball_tree").fit(coords)
         return self
 
     def transform(self, X):
+        X_copy = FeatureEngineerMixin._transform(
+            X,
+            expected_columns=self.expected_columns_,
+            nbrs=self.nbrs_,
+            train_spatial_features=self.train_spatial_features_,
+        )
+        self.feature_names_ = X_copy.columns.tolist()
+        return X_copy
+
+    @classmethod
+    def _transform(
+        cls,
+        X: pd.DataFrame,
+        expected_columns: list[str] | None = None,
+        nbrs: NearestNeighbors | None = None,
+        train_spatial_features: pd.DataFrame | None = None,
+    ) -> pd.DataFrame:
         if not isinstance(X, pd.DataFrame):
             raise ValueError("X must be a pandas DataFrame")
 
-        X_copy = X.copy()
-
-        if "country_code" not in X_copy.columns:
+        if "country_code" not in X.columns:
             raise ValueError("country_code column is required for lag features")
 
-        X_copy["date"] = pd.to_datetime(X_copy["date"])
+        X_copy = X.copy()
 
+        # Date features
+        X_copy["date"] = pd.to_datetime(X_copy["date"])
         X_copy["day_of_week"] = X_copy["date"].dt.dayofweek
         X_copy["quarter"] = X_copy["date"].dt.quarter
-
         X_copy["month"] = X_copy["date"].dt.month
         X_copy["week"] = X_copy["date"].dt.isocalendar().week
 
         X_copy["month_sin"] = np.sin(2 * np.pi * X_copy["month"] / 12)
         X_copy["month_cos"] = np.cos(2 * np.pi * X_copy["month"] / 12)
-
         X_copy["week_sin"] = np.sin(2 * np.pi * X_copy["week"] / 52)
         X_copy["week_cos"] = np.cos(2 * np.pi * X_copy["week"] / 52)
 
+        # Spatial neighbors
         neighbor_idx = None
-
-        if "latitude" in X_copy.columns and "longitude" in X_copy.columns:
+        if (
+            nbrs is not None
+            and train_spatial_features is not None
+            and "latitude" in X_copy.columns
+            and "longitude" in X_copy.columns
+        ):
             coords = X_copy[["latitude", "longitude"]].values
-            _, indices = self.nbrs_.kneighbors(coords)
+            _, indices = nbrs.kneighbors(coords)
+            neighbor_idx = indices[:, 1:]  # exclude self
 
-            neighbor_idx = indices[:, 1:]
-
+        # PM2.5 features
         if "pm25_ugm3" in X_copy.columns:
             X_copy["pm25_ugm3_lag_1w"] = X_copy.groupby("country_code")["pm25_ugm3"].shift(1)
             X_copy["pm25_ugm3_lag_2w"] = X_copy.groupby("country_code")["pm25_ugm3"].shift(2)
             X_copy["pm25_ugm3_lag_4w"] = X_copy.groupby("country_code")["pm25_ugm3"].shift(4)
-
             X_copy["pm25_change_rate"] = X_copy.groupby("country_code")["pm25_ugm3"].diff()
 
             if neighbor_idx is not None:
-                X_copy["spatial_lag_pm25"] = self.train_spatial_features_["pm25_ugm3"].values[neighbor_idx].mean(axis=1)
+                X_copy["spatial_lag_pm25"] = train_spatial_features["pm25_ugm3"].values[neighbor_idx].mean(axis=1)
 
+        # Temperature features
         if "temperature_celsius" in X_copy.columns:
-            X_copy["temp_lag_1w"] = X_copy.groupby("country_code")["temperature_celsius"].shift(1)
-            X_copy["temp_lag_2w"] = X_copy.groupby("country_code")["temperature_celsius"].shift(2)
+            grp = X_copy.groupby("country_code")["temperature_celsius"]
 
-            X_copy["temp_2w_avg"] = X_copy.groupby("country_code")["temperature_celsius"].transform(
-                lambda x: x.rolling(window=2, min_periods=1).mean()
-            )
-
-            X_copy["temp_2w_volatility"] = X_copy.groupby("country_code")["temperature_celsius"].transform(
-                lambda x: x.rolling(window=2, min_periods=1).std()
-            )
-
-            X_copy["temp_4w_volatility"] = X_copy.groupby("country_code")["temperature_celsius"].transform(
-                lambda x: x.rolling(window=4, min_periods=1).std()
-            )
-
+            X_copy["temp_lag_1w"] = grp.shift(1)
+            X_copy["temp_lag_2w"] = grp.shift(2)
+            X_copy["temp_2w_avg"] = grp.transform(lambda x: x.rolling(2, min_periods=1).mean())
+            X_copy["temp_2w_volatility"] = grp.transform(lambda x: x.rolling(2, min_periods=1).std())
+            X_copy["temp_4w_volatility"] = grp.transform(lambda x: x.rolling(4, min_periods=1).std())
             X_copy["temp_squared"] = X_copy["temperature_celsius"] ** 2
-
-            X_copy["temp_change_rate"] = X_copy.groupby("country_code")["temperature_celsius"].diff()
+            X_copy["temp_change_rate"] = grp.diff()
 
             if neighbor_idx is not None:
-                X_copy["spatial_lag_temp"] = (
-                    self.train_spatial_features_["temperature_celsius"].values[neighbor_idx].mean(axis=1)
-                )
+                X_copy["spatial_lag_temp"] = train_spatial_features["temperature_celsius"].values[neighbor_idx].mean(axis=1)
 
+        # Precipitation features
         if "precipitation_mm" in X_copy.columns:
             X_copy["precip_change_rate"] = X_copy.groupby("country_code")["precipitation_mm"].diff()
 
+        # Temp anomaly spatial lag
         if "temp_anomaly_celsius" in X_copy.columns and neighbor_idx is not None:
             X_copy["spatial_lag_temp_anomaly"] = (
-                self.train_spatial_features_["temp_anomaly_celsius"].values[neighbor_idx].mean(axis=1)
+                train_spatial_features["temp_anomaly_celsius"].values[neighbor_idx].mean(axis=1)
             )
 
+        # Interaction features
         if "pm25_ugm3" in X_copy.columns and "temperature_celsius" in X_copy.columns:
             X_copy["pm25_temp_interaction"] = X_copy["pm25_ugm3"] * X_copy["temperature_celsius"]
 
@@ -96,6 +109,7 @@ class FeatureEngineerMixin(BaseEstimator, TransformerMixin):
         if "pm25_ugm3" in X_copy.columns and "precipitation_mm" in X_copy.columns:
             X_copy["pm25_precip_interaction"] = X_copy["pm25_ugm3"] * X_copy["precipitation_mm"]
 
+        # Geographic features
         X_copy["is_northern"] = (X_copy["latitude"] > 0).astype(int)
         X_copy["is_tropical"] = (X_copy["latitude"].abs() < 23.5).astype(int)
         X_copy["distance_to_equator"] = X_copy["latitude"].abs()
@@ -103,25 +117,21 @@ class FeatureEngineerMixin(BaseEstimator, TransformerMixin):
         if "pm25_ugm3" in X_copy.columns and "healthcare_access_index" in X_copy.columns:
             X_copy["pollution_vulnerability"] = X_copy["pm25_ugm3"] / (X_copy["healthcare_access_index"] + 1e-6)
 
-        # Add missing columns with safe defaults
-        for col in self.expected_columns_:
-            if col not in X_copy.columns:
-                if col in {"income_level", "region", "country_name"}:
-                    X_copy[col] = ""
-                    continue
-                X_copy[col] = -1
+        # Fill missing expected columns
+        if expected_columns is not None:
+            for col in expected_columns:
+                if col not in X_copy.columns:
+                    X_copy[col] = "" if col in {"income_level", "region", "country_name"} else -1
 
+        # Cleanup
         X_copy = X_copy.drop(columns=["month", "week"], errors="ignore")
         X_copy.fillna(X_copy.mean(numeric_only=True), inplace=True)
 
         if "spatial_lag_temp_anomaly" not in X_copy.columns:
             X_copy["spatial_lag_temp_anomaly"] = -1
 
-        # Convert categorical columns to strings
         X_copy["income_level"] = X_copy["income_level"].astype("string")
         X_copy["region"] = X_copy["region"].astype("string")
-
-        self.feature_names_ = X_copy.columns.tolist()
 
         return X_copy
 

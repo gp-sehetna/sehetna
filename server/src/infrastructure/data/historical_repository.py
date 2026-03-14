@@ -19,12 +19,23 @@ class HistoricalRepository:
         self.df = pd.read_csv(os.path.join(self.settings.data_path, "main.csv"), parse_dates=["date"])
 
     def get_indicators(self, country_code: str) -> pd.DataFrame:
+        """
+        Return historical indicators for the given country code.
+
+        Args:
+            country_code: str - ISO3 country code.
+        """
         if self.df is None or self.df.empty:
             self.load_all()
 
-        return self.__filter_by_country_code(self.df, country_code)[self.settings.targets]
+        country_historical_df = self.__filter_by_country_code(country_code)
 
-    def __filter_by_country_code(self, df: pd.DataFrame, country_code: str):
-        if country_code not in df["country_code"].unique():
+        if country_historical_df.empty or country_historical_df is None:
+            raise ValueError(f"Historical indicators for country ({country_code}) is empty or None")
+
+        return country_historical_df
+
+    def __filter_by_country_code(self, country_code: str):
+        if country_code not in self.df["country_code"].unique():
             raise BadRequest(f"Country code {country_code} not found in data. Please try a different country or model.")
-        return df[df["country_code"] == country_code].reset_index(drop=True)
+        return self.df[self.df["country_code"] == country_code].reset_index(drop=True)

@@ -1,6 +1,5 @@
 import logging
 import pickle
-from pathlib import Path
 
 import joblib
 import numpy as np
@@ -11,6 +10,7 @@ from torch.utils.data import DataLoader
 from transformers import PatchTSTConfig, PatchTSTForPrediction
 
 from config import Settings
+from src.infrastructure.ml.model_loader import ModelLoader
 from src.infrastructure.ml.models.patchtst.dataset import ClimateHealthDataset
 from src.infrastructure.ml.models.sequential_model import SequentialModel
 
@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 
 
 class PatchTST(SequentialModel):
-    def __init__(self, settings: Settings):
-        SequentialModel.__init__(self, settings)
+    def __init__(self, settings: Settings, model_loader: ModelLoader):
+        SequentialModel.__init__(self, settings, model_loader)
 
         # Model components
         self._model: PatchTSTForPrediction | None = None
@@ -49,26 +49,17 @@ class PatchTST(SequentialModel):
 
         return self
 
-    def _transform(self, predictions: np.ndarray[np.ndarray[float]], _) -> dict:
-        # Convert predictions to DataFrame
-        predictions_df = pd.DataFrame(predictions, columns=self.settings.targets)
-
-        # Scale target values
+    def _transform(self, environment_df: pd.DataFrame, _) -> dict:
+        predictions_df = environment_df[self.settings.targets]
         historical_y_scaled_df = self.__target_scaler.transform(predictions_df)
-
-        # Create sequences
         self.dataset = ClimateHealthDataset(historical_y_scaled_df, self.settings.targets, self.seq_len)
 
         return self
 
     def _forecast(self):
-        predictions_unscaled = self.__run_inference()
-        collapsed_preds, (lower, upper) = self.__post_transform_forecasts(predictions_unscaled)
-
-        return self.horizon_len, {
-            name: {"point": collapsed_preds[:, i].tolist(), "lower": lower[:, i].tolist(), "upper": upper[:, i].tolist()}
-            for i, name in enumerate(self.settings.targets)
-        }
+        predictions_3d_unscaled = self.__run_inference()
+        point_predictions, uncertainity = self.__collapse_overlapping_forecasts(predictions_3d_unscaled)
+        return self.horizon_len, self._post_transform(point_predictions, uncertainity)
 
     def __run_inference(self) -> np.ndarray[np.ndarray[float]]:
         if self.dataset is None or len(self.dataset) == 0:
@@ -108,7 +99,7 @@ class PatchTST(SequentialModel):
             dropout=0.11,
         )
 
-    def __load_checkpoint(self, model_path: Path):
+    def __load_checkpoint(self, model_path: str):
         with open(model_path, "rb") as f:
             checkpoint = pickle.load(f)
 
@@ -144,13 +135,3 @@ class PatchTST(SequentialModel):
         prediction_std = torch.stack(final_std)
 
         return collapsed_preds, prediction_std
-
-    def __compute_confidence_intervals(self, forecasts: torch.Tensor, std: torch.Tensor, z_score: float = 1.96):
-        lower_bound = forecasts - z_score * std
-        upper_bound = forecasts + z_score * std
-        return lower_bound, upper_bound
-
-    def __post_transform_forecasts(self, all_preds: torch.Tensor, z_score=1.96):
-        collapsed_forecasts, uncertainity = self.__collapse_overlapping_forecasts(all_preds)
-        lower_bound, upper_bound = self.__compute_confidence_intervals(collapsed_forecasts, uncertainity, z_score)
-        return collapsed_forecasts, (lower_bound, upper_bound)

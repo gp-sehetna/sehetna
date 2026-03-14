@@ -2,6 +2,7 @@
 import logging
 from typing import Annotated
 
+import pandas as pd
 from fastapi import APIRouter, Depends, Query
 
 from src.api.dependencies import get_forecast_service, get_prediction_service
@@ -36,7 +37,11 @@ async def forecast(
     prediction_service: PredictionService = Depends(get_prediction_service),
     forecast_service: ForecastService = Depends(get_forecast_service),
 ):
-    __, predictions, _ = prediction_service.simulate(req)
-    horizon_len, forecasts = forecast_service.forecast(req, predictions)
+    environment_df, predictions, _ = prediction_service.simulate(req)
+    environment_predictions_df = pd.concat(
+        [environment_df, pd.DataFrame(predictions, columns=forecast_service.settings.targets, index=environment_df.index)],
+        axis=1,
+    )
+    horizon_len, forecasts = forecast_service.forecast(req, environment_predictions_df)
 
     return ForecastResponse(horizon=horizon_len, forecasts=forecasts)
