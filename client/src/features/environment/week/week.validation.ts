@@ -43,7 +43,7 @@ const EnvironmentDataSchema = CoordinatesSchema.extend({
     ),
 })
 
-const WeekEnvironmentParamsSchema = WeekEnvironmentQuerySchema.transform<WeekParams>((data) => {
+const mapWeekEnvironmentParams = (data: z.infer<typeof WeekEnvironmentQuerySchema>) => {
     const [latStr, lngStr] = data.coords.split(",")
 
     const loc = {
@@ -74,6 +74,14 @@ const WeekEnvironmentParamsSchema = WeekEnvironmentQuerySchema.transform<WeekPar
     }
 
     return { loc, date: subDays(startOfWeek(data.date), 1), weeks: data.weeks }
-})
+}
 
-export { EnvironmentDataSchema, WeekEnvironmentParamsSchema, WeekEnvironmentQuerySchema }
+const WeekEnvironmentParamsSchema =
+    WeekEnvironmentQuerySchema.transform<WeekParams>(mapWeekEnvironmentParams)
+
+export {
+    EnvironmentDataSchema,
+    mapWeekEnvironmentParams,
+    WeekEnvironmentParamsSchema,
+    WeekEnvironmentQuerySchema,
+}

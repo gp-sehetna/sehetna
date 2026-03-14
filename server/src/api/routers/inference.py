@@ -42,6 +42,7 @@ async def forecast(
         [environment_df, pd.DataFrame(predictions, columns=forecast_service.settings.targets, index=environment_df.index)],
         axis=1,
     )
+    logger.info("Forecasting...")
     horizon_len, forecasts = forecast_service.forecast(req, environment_predictions_df)
-
+    logger.info(f"Horizon length: {horizon_len}, Forecasts: {len(forecasts.keys())}")
     return ForecastResponse(horizon=horizon_len, forecasts=forecasts)

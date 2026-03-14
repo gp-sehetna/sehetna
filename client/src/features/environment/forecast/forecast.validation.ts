@@ -1,3 +1,8 @@
+import { ForecastParams } from "@/features/environment/forecast/forecast.types"
+import {
+    mapWeekEnvironmentParams,
+    WeekEnvironmentQuerySchema,
+} from "@/features/environment/week/week.validation"
 import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
 import { AiModel } from "@/shared/db/enums/ai-model.enum"
 import { PredictionType } from "@/shared/db/enums/prediction.enum"
@@ -15,10 +20,6 @@ const ForecastResponseSchema = z.object({
     forecasts: ForecastResultSchema,
 })
 
-const ForecastParamsSchema = z.object({
-    modelId: z.enum(AiModel),
-})
-
 const ForecastsSchema = z.object({
     forecasts: z.object({
         prediction_type: z.enum(PredictionType),
@@ -27,7 +28,19 @@ const ForecastsSchema = z.object({
     }),
 })
 
+const ForecastParamsSchema = z.object({
+    modelId: z.enum(AiModel),
+})
+
+const ForecastEnvironmentParamsSchema = ForecastParamsSchema.extend(
+    WeekEnvironmentQuerySchema.shape
+).transform<ForecastParams>(({ modelId, ...data }) => ({
+    modelId,
+    ...mapWeekEnvironmentParams(data),
+}))
+
 export {
+    ForecastEnvironmentParamsSchema,
     ForecastParamsSchema,
     ForecastResponseSchema,
     ForecastResultSchema,

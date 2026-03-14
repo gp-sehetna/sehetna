@@ -34,7 +34,7 @@ export class WeekClientService {
         return Array.from(nullKeys)
     }
 
-    private fetchEnvironment = async (
+    public fetchEnvironment = async (
         location: Location,
         date: string,
         weeks: number

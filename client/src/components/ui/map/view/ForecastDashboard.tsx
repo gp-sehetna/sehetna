@@ -351,9 +351,9 @@ export function ForecastDashboard({ forecasts, onCardClick }: ForecastDashboardP
                         <SelectValue placeholder="Select model" />
                     </SelectTrigger>
                     <SelectContent>
-                        {Object.entries(aiModelsMeta).map(([key, { title, disabled }]) => (
+                        {Object.entries(aiModelsMeta).map(([key, { title, require_auth }]) => (
                             <SelectItem
-                                disabled={disabled && !isAuthenticated}
+                                disabled={require_auth && !isAuthenticated}
                                 key={key}
                                 value={key}
                             >
