@@ -55,11 +55,17 @@ class PatchTSMixerForecaster(SequentialModel):
         return self
 
     def _transform(self, environment_df: pd.DataFrame, historical_df: pd.DataFrame) -> dict:
-        combined_df = pd.concat([historical_df[environment_df.columns], environment_df], ignore_index=True)
+        hist_subset = historical_df[environment_df.columns].copy().reset_index(drop=True)
+        env_subset = environment_df.copy().reset_index(drop=True)
+        combined_df = pd.concat([hist_subset, env_subset], axis=0, ignore_index=True)
+
         engineered_combined_df = self.model_loader.pipeline.transform(combined_df)
-        self.dataset = PatchTSMixerDataset(
-            engineered_combined_df, self.seq_len, self.settings.csv_features, self.settings.targets
-        )
+        all_cols = self.settings.csv_features + self.settings.targets
+        scaled_values = self.__scaler.transform(engineered_combined_df[all_cols]).values
+
+        scaled_combined_df = pd.DataFrame(scaled_values, columns=all_cols)
+
+        self.dataset = PatchTSMixerDataset(scaled_combined_df, self.seq_len, self.settings.csv_features, self.settings.targets)
 
         return self
 
@@ -103,7 +109,7 @@ class PatchTSMixerForecaster(SequentialModel):
         dummy[:, target_indices] = arr
         return self.__scaler.inverse_transform(dummy)[:, target_indices]
 
-    def __run_inference(self, n_mc=50):
+    def __run_inference(self, n_mc=20):
         """Inference using PatchTSMixer Model."""
 
         if self.dataset is None or len(self.dataset) == 0:
