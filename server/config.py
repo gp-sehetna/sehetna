@@ -37,6 +37,7 @@ class PathSettings(CoreSettings):
     __lgbm_archive: str = "[modelling_phase_v5]-multioutput_lgbm"
     __patchtst_archive: str = "[model-67ual6ug-v0]-patch-tst"
     __gpt2_archive: str = "[epoch=181-step=7098-val_loss=0.201]-gpt2-forecaster"
+    __patchtsmixer_archive: str = "[epoch=033-val_loss=0.2392]-patchtsmixer"
 
     @computed_field
     @property
@@ -77,6 +78,11 @@ class PathSettings(CoreSettings):
     @property
     def gpt2_model_path(self) -> str:
         return os.path.join(self.archive_dir, self.__gpt2_archive, "model.ckpt")
+
+    @computed_field
+    @property
+    def patchtsmixer_model_path(self) -> str:
+        return os.path.join(self.archive_dir, self.__patchtsmixer_archive, "model.ckpt")
 
     @computed_field
     @property

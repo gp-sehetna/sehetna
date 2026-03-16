@@ -2,6 +2,7 @@ from config import Settings
 from src.core.exceptions import NotFound
 from src.infrastructure.ml.model_loader import ModelLoader
 from src.infrastructure.ml.models.gpt2.model import GPT2Forecaster
+from src.infrastructure.ml.models.patchtsmixer.model import PatchTSMixerForecaster
 from src.infrastructure.ml.models.patchtst.model import PatchTST
 from src.infrastructure.ml.models.sequential_model import SequentialModel
 from src.infrastructure.ml.models.timesfm.model import TimesFM
@@ -14,6 +15,7 @@ class SequentialModelFactory:
             "patchtst": PatchTST,
             "timesfm": TimesFM,
             "gpt2-forecaster": GPT2Forecaster,
+            "patchtsmixer": PatchTSMixerForecaster,
         }
 
         self.settings = settings

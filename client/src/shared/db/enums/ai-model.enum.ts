@@ -6,6 +6,7 @@ const AiModel = {
     random_forest: "random_forest",
     lstm: "lstm",
     "gpt2-forecaster": "gpt2-forecaster",
+    patchtsmixer: "patchtsmixer",
     other: "other",
 } as const
 
@@ -13,6 +14,7 @@ const aiModelsMeta: Partial<Record<AiModelEnum, { title: string; require_auth?: 
     [AiModel.patchtst]: { title: "PatchTST" },
     [AiModel.timesfm]: { title: "TimesFM", require_auth: true },
     [AiModel["gpt2-forecaster"]]: { title: "GPT2 Forecaster", require_auth: true },
+    [AiModel["patchtsmixer"]]: { title: "PatchTS Mixer", require_auth: true },
 }
 
 const Task = {
