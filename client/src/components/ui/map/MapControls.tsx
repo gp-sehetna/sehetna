@@ -1,7 +1,7 @@
 import { MapDrawer } from "@/components/ui/drawers/MapLegendDrawer"
 import Legend from "@/components/ui/legend/Legend"
 import MapCog from "@/components/ui/map/MapCog"
-import MapLayerSelector from "@/components/ui/map/MapLayerSelector"
+import MapLayerSelector, { LayerSelectorProps } from "@/components/ui/map/MapLayerSelector"
 import MapSidebar, { MapSidebarProps } from "@/components/ui/map/MapSidebar"
 import { MapThemeSelector, MapThemes } from "@/components/ui/map/MapThemeSelector"
 import { cn, toDMS } from "@/lib/utils"
@@ -29,7 +29,7 @@ const BottomRightContent = ({ slug, onLayerSelect }: BottomRightProps) => {
                 <MapThemeSelector />
             </div>
             <div className="hidden flex-col gap-2 md:flex">
-                <MapLayerSelector
+                <LayerSelectorTrigger
                     className="transition-shadow hover:shadow-md"
                     healthOutcome={slug.healthOutcome}
                     onLayerSelect={onLayerSelect}
@@ -56,7 +56,31 @@ const BottomRightContent = ({ slug, onLayerSelect }: BottomRightProps) => {
         </div>
     )
 }
-
+const LayerSelectorTrigger = ({ healthOutcome, onLayerSelect, className }: LayerSelectorProps) => {
+    const [isOpen, setIsOpen] = useState(false)
+    return (
+        <>
+            <div
+                onClick={() => setIsOpen(!isOpen)}
+                className={cn(
+                    "bg-muted text-muted-foreground hover:text-foreground mx-auto w-10/12 cursor-pointer rounded-t-xl border border-b-0 text-center",
+                    isOpen ? "-mb-2" : "-mb-4"
+                )}
+            >
+                <small>Layer Selector</small>
+            </div>
+            <MapLayerSelector
+                className={cn(
+                    className,
+                    "base-transition! overflow-hidden",
+                    isOpen ? "max-h-full p-2" : "max-h-0 border-0 p-0"
+                )}
+                healthOutcome={healthOutcome}
+                onLayerSelect={onLayerSelect}
+            />
+        </>
+    )
+}
 const BottomLeftContent = (props: BottomLeftProps) => {
     return (
         <div className="absolute flex max-h-screen w-full flex-col gap-2 overflow-hidden p-4 backdrop-blur-xs md:w-1/3 md:min-w-md md:backdrop-blur-none">

@@ -1,6 +1,5 @@
 import { Coordinates } from "@/features/environment/week/week.types"
 import { GeoJSONFeature } from "maplibre-gl"
-import { useRef } from "react"
 import { create } from "zustand"
 
 type MapState = {
@@ -36,11 +35,42 @@ export const useMapStore = create<MapState>((set) => ({
     setDate: (date) => set({ date }),
     updateTooltipPosition: (x, y) => {
         set((state) => {
-            console.log("Updating tooltip position to: ", { x, y })
-            if (state.tooltipRef && state.tooltipRef.current) {
-                state.tooltipRef.current.style.left = `${x}px`
-                state.tooltipRef.current.style.top = `${y}px`
+            const el = state.tooltipRef?.current
+            if (!el) return state
+
+            // Get tooltip size
+            const rect = el.getBoundingClientRect()
+            const tooltipWidth = rect.width
+            const tooltipHeight = rect.height
+
+            const viewportWidth = window.innerWidth
+
+            const translateX = x
+            const translateY = y
+
+            let offsetX = "-50%"
+            let offsetY = "-120%"
+
+            // 🟡 Horizontal collision
+            if (x - tooltipWidth / 2 < 0) {
+                // Too close to left → stick to left
+                offsetX = "0%"
+            } else if (x + tooltipWidth / 2 > viewportWidth) {
+                // Too close to right → stick to right
+                offsetX = "-100%"
             }
+
+            // 🔴 Vertical collision
+            if (y - tooltipHeight < 0) {
+                // Not enough space above → show below cursor
+                offsetY = "20px"
+            }
+
+            // Apply transform
+            el.style.transform = `
+        translate(${translateX}px, ${translateY}px)
+        translate(${offsetX}, ${offsetY})
+    `
             return state
         })
     },

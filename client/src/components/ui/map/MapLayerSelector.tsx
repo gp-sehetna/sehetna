@@ -15,7 +15,7 @@ export type LayerSelectorProps = {
 const MapLayerSelector = ({ healthOutcome, onLayerSelect, className }: LayerSelectorProps) => {
     const { theme } = useThemeStore()
     return (
-        <Card className={cn(className, "p-2")}>
+        <Card className={cn(className, "glassy bg-transparent")}>
             <div className="flex flex-col gap-0.5">
                 {HEALTH_OUTCOMES_WITH_HYPHEN.map((outcome) => (
                     <Button

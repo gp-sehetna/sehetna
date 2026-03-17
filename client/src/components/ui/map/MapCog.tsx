@@ -36,7 +36,7 @@ const MapCog = () => {
                 {explanations.map((method) => (
                     <DropdownMenuItem
                         key={method}
-                        className={method === explanationMethod ? "bg-primary-200" : ""}
+                        className={method === explanationMethod ? "bg-accent" : undefined}
                         onClick={() => setExplanationMethod(method)}
                     >
                         <span className="capitalize">{method}</span>

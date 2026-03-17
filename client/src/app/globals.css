@@ -155,6 +155,10 @@
     @apply shadow-neutral-1000/10 border border-neutral-100 bg-neutral-100/40 backdrop-blur-lg;
 }
 
+@utility base-transition {
+    @apply transition-all duration-300;
+}
+
 @layer base {
     .lucide {
         stroke-width: 1;
@@ -169,10 +173,6 @@
         font-family: var(--font-heading);
         font-weight: bold;
         color: var(--color-neutral-1000);
-    }
-
-    .base-transition {
-        @apply transition-all duration-300;
     }
 
     *,

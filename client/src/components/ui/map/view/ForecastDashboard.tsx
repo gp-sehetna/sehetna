@@ -45,6 +45,7 @@ import {
 } from "lucide-react"
 import { Dispatch, useMemo } from "react"
 import { Area, CartesianGrid, ComposedChart, Line, XAxis, YAxis } from "recharts"
+import Divider from "../../GlobalControls/Divider"
 
 interface FormattedPoint {
     dates: {
@@ -414,7 +415,7 @@ export function ForecastDashboard({ forecasts, onCardClick }: ForecastDashboardP
                                 />
                             </div>
                         </CardHeader>
-                        <Separator />
+                        <Divider />
                         <CardContent className="p-4">
                             <DetailedForecastChart
                                 OUTCOME_META={OUTCOME_META}
