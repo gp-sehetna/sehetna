@@ -1,9 +1,9 @@
 import json
 from typing import TypedDict
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import ConfigDict, Field
 
-from src.domain.schemas.predictions import PredictionRequest
+from src.domain.schemas.predictions import PredictionRequest, PredictionsResult
 
 with open("src/domain/schemas/examples/forecast_request.json") as f:
     forecast_request_examples: dict = json.load(f)
@@ -24,7 +24,7 @@ class TargetForecast(TypedDict):
 type ForecastResult = dict[str, TargetForecast]
 
 
-class ForecastResponse(BaseModel):
+class ForecastResponse(PredictionsResult):
     """
     Response wrapper for forecast endpoints.
 

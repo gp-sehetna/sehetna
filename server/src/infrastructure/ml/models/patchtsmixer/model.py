@@ -11,7 +11,7 @@ from transformers import PatchTSMixerConfig, PatchTSMixerForPrediction
 
 from config import Settings
 from src.infrastructure.ml.model_loader import ModelLoader
-from src.infrastructure.ml.models.patchtsmixer.dataset import PatchTSMixerDataset
+from src.infrastructure.ml.models.dataset import SlidingWindowDataset
 from src.infrastructure.ml.models.sequential_model import SequentialModel
 
 logger = logging.getLogger(__name__)
@@ -65,7 +65,7 @@ class PatchTSMixerForecaster(SequentialModel):
 
         scaled_combined_df = pd.DataFrame(scaled_values, columns=all_cols)
 
-        self.dataset = PatchTSMixerDataset(scaled_combined_df, self.seq_len, self.settings.csv_features, self.settings.targets)
+        self.dataset = SlidingWindowDataset(scaled_combined_df, self.seq_len, cols=all_cols)
 
         return self
 
@@ -78,13 +78,13 @@ class PatchTSMixerForecaster(SequentialModel):
         MC Dropout: run forecast one time with dropout enabled.
 
         Args:
-            model: PatchTSMixerModule
-            context: [B, SEQ_LEN, n_features + n_targets] scaled tensor
-            n_samples: number of times to run forecast for uncertainty
+                model: PatchTSMixerModule
+                context: [B, SEQ_LEN, n_features + n_targets] scaled tensor
+                n_samples: number of times to run forecast for uncertainty
 
         Returns:
-            mean: [B, horizon, n_targets]  mean of all predictions
-            std: [B, horizon, n_targets]  standard deviation of all predictions
+                mean: [B, horizon, n_targets]  mean of all predictions
+                std: [B, horizon, n_targets]  standard deviation of all predictions
         """
         model.train()
         all_preds = []
@@ -100,10 +100,10 @@ class PatchTSMixerForecaster(SequentialModel):
         """
         Inverse scale the target values of the given array.
         Steps:
-            - Create a dummy array with the same shape as the input array
-            - Replace the target values in the dummy array with the input array
-            - Inverse scale the dummy array
-            - Return the inverse scaled array
+                - Create a dummy array with the same shape as the input array
+                - Replace the target values in the dummy array with the input array
+                - Inverse scale the dummy array
+                - Return the inverse scaled array
         """
         dummy = np.zeros((arr.shape[0], len(self.__scaler.center_)))
         dummy[:, target_indices] = arr

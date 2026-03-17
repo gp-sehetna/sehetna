@@ -1,4 +1,4 @@
-import { Forecasts } from "@/features/environment/forecast/forecast.dto"
+import { Forecasts } from "@/features/environment/prediction/prediction.dto"
 import { api } from "@/shared/api"
 import { AiModel, AiModelEnum } from "@/shared/db/enums/ai-model.enum"
 import { useQuery } from "@tanstack/react-query"

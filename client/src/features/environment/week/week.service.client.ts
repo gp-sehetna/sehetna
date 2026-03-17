@@ -12,7 +12,7 @@ import { MissingDataError } from "@/shared/http/errors"
 import { format } from "date-fns"
 import { SearchParamsOption } from "ky"
 import { toast } from "sonner"
-import { Forecasts } from "../forecast/forecast.dto"
+import { Forecasts } from "../prediction/prediction.dto"
 
 export class WeekClientService {
     constructor(

@@ -58,10 +58,13 @@ type Explanations = {
     method: ExplanationMethod
 } & ExplanationsByMethod
 
-type SimulateResponse = {
+type PredictionsResponse = {
     predictions: IHealthOutcomes[]
-    explanations: Explanations
 }
+
+type SimulateResponse = {
+    explanations: Explanations
+} & PredictionsResponse
 
 type ExplanationMethod = "cumulative" | "group"
 interface SimulateQueryParams {

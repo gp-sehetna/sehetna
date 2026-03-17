@@ -1,8 +1,8 @@
-import { ForecastResponse } from "@/features/environment/forecast/forecast.dto"
+import { ForecastResponse } from "@/features/environment/prediction/prediction.dto"
 import {
     ForecastEnvironmentParamsSchema,
     ForecastParamsSchema,
-} from "@/features/environment/forecast/forecast.validation"
+} from "@/features/environment/prediction/prediction.validation"
 import { IEnvironmentData } from "@/features/environment/week/week.dto"
 import { externalApi } from "@/shared/api"
 import { MainService } from "@/shared/db/main.service"
@@ -37,14 +37,14 @@ export const POST = globalErrorHandler(
 
         const forecastOrigin =
             process.env.NODE_ENV !== "production" ? "http://127.0.0.1:8000" : origin
-        const { forecasts } = await externalApi
+        const forecastResponse = await externalApi
             .post<ForecastResponse>(`${forecastOrigin}/ai/forecast`, {
                 json: { model_id: modelId, ...environmentData },
             })
             .json()
 
         const mainService = await MainService.getInstance()
-        await mainService.forecastService.insertForecasts(forecasts, {
+        await mainService.predictionService.insertForecasts(forecastResponse, {
             userId: user._id,
             code: environmentData.country_code,
             modelId,
@@ -61,6 +61,6 @@ export const GET = globalErrorHandler(async (request) => {
     const query = ForecastParamsSchema.parse({ modelId: params.get("model-id") })
 
     const mainService = await MainService.getInstance()
-    const data = await mainService.forecastService.getForecasts(query.modelId)
+    const data = await mainService.predictionService.getForecasts(query.modelId)
     return [data, `Forecasts retrieved for model ${query.modelId} successfully`]
 })

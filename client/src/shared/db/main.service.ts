@@ -1,8 +1,10 @@
+import { AiModelService } from "@/features/aimodels/aimodels.service"
 import { AuthService } from "@/features/auth/auth.service"
 import { DataStoreService } from "@/features/datastores/datastore.service"
 import { EngagementsService } from "@/features/engagements/engagements.service"
-import { ForecastService } from "@/features/environment/forecast/forecast.service"
+import { PredictionService } from "@/features/environment/prediction/prediction.service"
 import { WeekService } from "@/features/environment/week/week.service"
+import { LocationService } from "@/features/locations/location.service"
 import { AiModelModel } from "@/shared/db/model/ai-model.model"
 import { EngagementModel } from "@/shared/db/model/contact.model"
 import { DataStoreModel } from "@/shared/db/model/data-store.model"
@@ -19,9 +21,6 @@ import { OtpRepository } from "@/shared/db/repository/otp.repository"
 import { PredictionRepository } from "@/shared/db/repository/prediction.repository"
 import { UserRepository } from "@/shared/db/repository/user.repository"
 import { EmailService } from "@/shared/email/email.service"
-import { AiModelService } from "@/features/aimodels/aimodels.service"
-import { LocationService } from "@/features/locations/location.service"
-import { PredictionService } from "@/features/predictions/prediction.service"
 
 type MainServiceOptions = {
     db?: boolean
@@ -49,13 +48,11 @@ export class MainService {
     public readonly dataStoreService = new DataStoreService(new DataStoreRepository(DataStoreModel))
     public readonly aiModelService = new AiModelService(this.aiModelRepository)
 
-    public readonly forecastService = new ForecastService(
+    public readonly predictionService = new PredictionService(
         this.predictionRepository,
         this.aiModelRepository,
         this.locationRepository
     )
-
-    public readonly predictionService = new PredictionService(this.predictionRepository)
 
     public readonly locationService = new LocationService(this.locationRepository)
 

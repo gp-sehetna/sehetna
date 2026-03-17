@@ -1,13 +1,13 @@
 import { UserWithoutPassword } from "@/features/auth/auth.types"
-import { ForecastResult } from "@/features/environment/forecast/forecast.dto"
+import { ForecastResponse, ForecastResult } from "@/features/environment/prediction/prediction.dto"
 import { HealthOutcomesKeys } from "@/shared/config/health-outcomes"
 import { AiModelEnum } from "@/shared/db/enums/ai-model.enum"
-import { PredictionType, type PredictionTypeEnum } from "@/shared/db/enums/prediction.enum"
+import { PredictionType } from "@/shared/db/enums/prediction.enum"
 import { IPrediction, PredictionMeta } from "@/shared/db/model/prediction.model"
 import { AiModelRepository } from "@/shared/db/repository/ai-model.repository"
 import { LocationRepository } from "@/shared/db/repository/location.repository"
 import { PredictionRepository } from "@/shared/db/repository/prediction.repository"
-import { ForecastsSchema } from "./forecast.validation"
+import { ForecastsSchema } from "./prediction.validation"
 
 type ForecastInsertQuery = {
     modelId: string
@@ -15,16 +15,17 @@ type ForecastInsertQuery = {
     userId: UserWithoutPassword["_id"]
 }
 
-export class ForecastService {
+export class PredictionService {
     constructor(
         private readonly predictionRepository: PredictionRepository,
         private readonly aiModelRepository: AiModelRepository,
         private readonly locationRepository: LocationRepository
     ) {}
 
-    private static fromForecastResult(forecasts: ForecastResult, meta: PredictionMeta) {
-        const firstOutcome = Object.values(forecasts)[0]
-        const horizon = firstOutcome.point.length
+    private static fromForecastResult = (
+        { forecasts, horizon }: ForecastResponse,
+        meta: PredictionMeta
+    ) => {
         const today = new Date()
 
         return Array.from(
@@ -51,13 +52,11 @@ export class ForecastService {
         )
     }
 
-    private static aggregate(forecasts: IPrediction[]): {
-        prediction_type: PredictionTypeEnum
-        health_outcomes: ForecastResult
-        base_date: Date
-    } {
-        const base_date = forecasts[0].base_date
-        const outcomeKeys = Object.keys(forecasts[0].health_outcomes ?? {}) as HealthOutcomesKeys[]
+    private static aggregate = (predictions: IPrediction[]) => {
+        const base_date = predictions[0].base_date
+        const outcomeKeys = Object.keys(
+            predictions[0].health_outcomes ?? {}
+        ) as HealthOutcomesKeys[]
 
         const health_outcomes = Object.fromEntries(
             outcomeKeys.map((key) => [
@@ -70,7 +69,7 @@ export class ForecastService {
             ])
         ) as ForecastResult
 
-        for (const prediction of forecasts) {
+        for (const prediction of predictions) {
             for (const key of outcomeKeys) {
                 const value = prediction.health_outcomes[key],
                     point = Number(value.point.toFixed(2)),
@@ -90,11 +89,11 @@ export class ForecastService {
         }
     }
 
-    insertForecasts = async (forecasts: ForecastResult, query: ForecastInsertQuery) => {
+    insertForecasts = async (forecasts: ForecastResponse, query: ForecastInsertQuery) => {
         const model = await this.aiModelRepository.findByType(query.modelId as AiModelEnum)
         const location = await this.locationRepository.findByCode(query.code)
 
-        const predictions = ForecastService.fromForecastResult(forecasts, {
+        const predictions = PredictionService.fromForecastResult(forecasts, {
             user_id: query.userId,
             model_id: model._id,
             location_id: location._id,
@@ -110,6 +109,18 @@ export class ForecastService {
             prediction_type: PredictionType.forecasted,
         })
 
-        return ForecastsSchema.parse({ forecasts: ForecastService.aggregate(forecasts) })
+        return ForecastsSchema.parse({ forecasts: PredictionService.aggregate(forecasts) })
+    }
+
+    insertMany = async (predictions: IPrediction[]) => {
+        return await this.predictionRepository.insertMany(predictions)
+    }
+
+    createPrediction = async (prediction: IPrediction) => {
+        return await this.predictionRepository.create(prediction)
+    }
+
+    findAllPredictions = async () => {
+        return await this.predictionRepository.find()
     }
 }

@@ -11,7 +11,7 @@ from transformers import GPT2Config, GPT2Model
 
 from config import Settings
 from src.infrastructure.ml.model_loader import ModelLoader
-from src.infrastructure.ml.models.gpt2.dataset import DecoderDataset
+from src.infrastructure.ml.models.dataset import SlidingWindowDataset
 from src.infrastructure.ml.models.sequential_model import SequentialModel
 
 logger = logging.getLogger(__name__)
@@ -53,9 +53,17 @@ class GPT2Forecaster(SequentialModel):
         return self
 
     def _transform(self, environment_df: pd.DataFrame, historical_df: pd.DataFrame) -> dict:
-        combined_df = pd.concat([historical_df[environment_df.columns], environment_df], ignore_index=True)
+        hist_subset = historical_df[environment_df.columns].copy().reset_index(drop=True)
+        env_subset = environment_df.copy().reset_index(drop=True)
+        combined_df = pd.concat([hist_subset, env_subset], axis=0, ignore_index=True)
+
         engineered_combined_df = self.model_loader.pipeline.transform(combined_df)
-        self.dataset = DecoderDataset(engineered_combined_df, self.seq_len, self.settings.csv_features, self.settings.targets)
+        all_cols = self.settings.csv_features + self.settings.targets
+        scaled_values = self.__scaler.transform(engineered_combined_df[all_cols]).values
+
+        scaled_combined_df = pd.DataFrame(scaled_values, columns=all_cols)
+
+        self.dataset = SlidingWindowDataset(scaled_combined_df, self.seq_len, cols=all_cols)
 
         return self
 

@@ -156,12 +156,20 @@ class PredictionResult(BaseModel):
             heat_related_admissions=round(prediction[4]),
         )
 
+
+class PredictionsResult(BaseModel):
+    """
+    Prediction outputs and explanation payload.
+    """
+
+    predictions: list[PredictionResult] = Field(..., description="Predicted health outcomes.")
+
     @classmethod
     def from_predictions(cls, predictions: np.ndarray[np.ndarray[float]]):
-        return [cls.from_prediction(prediction) for prediction in predictions]
+        return [PredictionResult.from_prediction(prediction) for prediction in predictions]
 
 
-class SimulationResponse(BaseModel):
+class SimulationResponse(PredictionsResult):
     """
     Response wrapper for prediction endpoints.
     """
@@ -169,11 +177,10 @@ class SimulationResponse(BaseModel):
     explanations: dict[ExplainerMethod | Literal["method"], ExplainerMethod | dict[str, list] | None] = Field(
         ..., description="Model explanation payload and metadata."
     )
-    predictions: list[PredictionResult] = Field(..., description="Predicted health outcomes.")
 
     @classmethod
     def build(cls, predictions: np.ndarray[np.ndarray[float]], method: ExplainerMethod, explanations: dict[str, list] | None):
         return cls(
-            predictions=PredictionResult.from_predictions(predictions),
+            predictions=PredictionsResult.from_predictions(predictions),
             explanations={"method": method, method: explanations},
         )

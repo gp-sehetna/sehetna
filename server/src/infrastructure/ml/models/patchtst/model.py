@@ -11,7 +11,7 @@ from transformers import PatchTSTConfig, PatchTSTForPrediction
 
 from config import Settings
 from src.infrastructure.ml.model_loader import ModelLoader
-from src.infrastructure.ml.models.patchtst.dataset import ClimateHealthDataset
+from src.infrastructure.ml.models.dataset import SlidingWindowDataset
 from src.infrastructure.ml.models.sequential_model import SequentialModel
 
 logger = logging.getLogger(__name__)
@@ -52,7 +52,7 @@ class PatchTST(SequentialModel):
     def _transform(self, environment_df: pd.DataFrame, _) -> dict:
         predictions_df = environment_df[self.settings.targets]
         historical_y_scaled_df = self.__target_scaler.transform(predictions_df)
-        self.dataset = ClimateHealthDataset(historical_y_scaled_df, self.settings.targets, self.seq_len)
+        self.dataset = SlidingWindowDataset(historical_y_scaled_df, self.seq_len, cols=self.settings.targets)
 
         return self
 

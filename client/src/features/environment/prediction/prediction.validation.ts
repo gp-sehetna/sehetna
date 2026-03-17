@@ -1,4 +1,4 @@
-import { ForecastParams } from "@/features/environment/forecast/forecast.types"
+import { ForecastParams } from "@/features/environment/prediction/prediction.types"
 import {
     mapWeekEnvironmentParams,
     WeekEnvironmentQuerySchema,
@@ -18,6 +18,7 @@ const ForecastResultSchema = z.record(z.enum(HEALTH_OUTCOMES_KEYS), TargetForeca
 const ForecastResponseSchema = z.object({
     horizon: z.number().int(),
     forecasts: ForecastResultSchema,
+    predictions: z.array(z.record(z.enum(HEALTH_OUTCOMES_KEYS), z.number())),
 })
 
 const ForecastsSchema = z.object({

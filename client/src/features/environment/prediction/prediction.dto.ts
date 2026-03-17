@@ -2,7 +2,7 @@ import {
     ForecastResponseSchema,
     ForecastResultSchema,
     ForecastsSchema,
-} from "@/features/environment/forecast/forecast.validation"
+} from "@/features/environment/prediction/prediction.validation"
 import { z } from "zod"
 
 type ForecastResult = z.infer<typeof ForecastResultSchema>

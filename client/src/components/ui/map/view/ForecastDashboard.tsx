@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/shadcn/select"
 import { Separator } from "@/components/ui/shadcn/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/shadcn/tabs"
-import { Forecasts } from "@/features/environment/forecast/forecast.dto"
+import { Forecasts } from "@/features/environment/prediction/prediction.dto"
 import { cn, slugify } from "@/lib/utils"
 import { HEALTH_OUTCOMES_KEYS, HealthOutcomesKeys } from "@/shared/config/health-outcomes"
 import { blue, darkBlue, getPrimaryColor, green, mix, red } from "@/shared/config/map-colors"
