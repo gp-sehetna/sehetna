@@ -1,7 +1,7 @@
 import { IPrediction, PredictionModel } from "@/shared/db/model/prediction.model"
 import { DatabaseRepository } from "@/shared/db/repository/database.repository"
 import { Pagination, PaginationResult } from "@/shared/db/types/pagination.type"
-import { QueryFilter } from "mongoose"
+import { ClientSession, QueryFilter } from "mongoose"
 import { PredictionType } from "../enums/prediction.enum"
 
 export class PredictionRepository extends DatabaseRepository<IPrediction> {
@@ -21,11 +21,22 @@ export class PredictionRepository extends DatabaseRepository<IPrediction> {
             .exec()
     }
 
-    async insertMany(predictions: IPrediction[]): Promise<IPrediction[]> {
+    async insertMany(predictions: IPrediction[], session?: ClientSession) {
         return await this.model.insertMany(predictions, {
+            session,
             lean: true,
             throwOnValidationError: true,
         })
+    }
+
+    async deleteAllForecasted(query: QueryFilter<IPrediction> = {}, session?: ClientSession) {
+        return await this.model.deleteMany(
+            {
+                prediction_type: { $ne: PredictionType.forecasted },
+                ...query,
+            },
+            { session }
+        )
     }
 
     async deleteAllHistorical() {

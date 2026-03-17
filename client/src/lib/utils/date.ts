@@ -1,9 +1,12 @@
 import {
     addDays,
+    differenceInCalendarDays,
     eachMonthOfInterval,
     eachWeekOfInterval,
     eachYearOfInterval,
     format,
+    parseISO,
+    startOfDay,
     startOfWeek,
     subDays,
     subMonths,
@@ -41,6 +44,16 @@ function getWeekRange(date: Date, weeks: number = 1) {
         startDate: format(startDate, "yyyy-MM-dd"),
         endDate: format(endDate, "yyyy-MM-dd"),
     }
+}
+
+const getWeeksTillToday = (date: string) => {
+    const start = startOfDay(parseISO(date))
+    const today = new Date()
+    const startOfTodaysWeek = subDays(startOfWeek(today), 1)
+
+    const diffDays = differenceInCalendarDays(startOfTodaysWeek, start)
+
+    return Math.max(1, Math.ceil((diffDays + 1) / 7))
 }
 
 const GRANULARITY_LABELS: Record<Granularity, string> = {
@@ -133,6 +146,7 @@ export {
     formatTick,
     getRangeStart,
     getWeekRange,
+    getWeeksTillToday,
     GRANULARITY_LABELS,
     maxLabels,
     rangePreset,

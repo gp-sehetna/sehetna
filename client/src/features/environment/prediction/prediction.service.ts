@@ -7,6 +7,7 @@ import { IPrediction, PredictionMeta } from "@/shared/db/model/prediction.model"
 import { AiModelRepository } from "@/shared/db/repository/ai-model.repository"
 import { LocationRepository } from "@/shared/db/repository/location.repository"
 import { PredictionRepository } from "@/shared/db/repository/prediction.repository"
+import { ClientSession } from "mongoose"
 import { ForecastsSchema } from "./prediction.validation"
 
 type ForecastInsertQuery = {
@@ -89,17 +90,40 @@ export class PredictionService {
         }
     }
 
-    insertForecasts = async (forecasts: ForecastResponse, query: ForecastInsertQuery) => {
+    insertForecasts = async (
+        { forecasts, horizon, predictions }: ForecastResponse,
+        query: ForecastInsertQuery,
+        session: ClientSession
+    ) => {
         const model = await this.aiModelRepository.findByType(query.modelId as AiModelEnum)
         const location = await this.locationRepository.findByCode(query.code)
 
-        const predictions = PredictionService.fromForecastResult(forecasts, {
-            user_id: query.userId,
-            model_id: model._id,
+        await this.predictionRepository.deleteAllForecasted(
+            { model_id: model._id, location_id: location._id },
+            session
+        )
+
+        const predictionsToBeInserted = PredictionService.fromForecastResult(
+            { forecasts, horizon, predictions },
+            {
+                user_id: query.userId,
+                model_id: model._id,
+                location_id: location._id,
+            }
+        )
+
+        await this.predictionRepository.insertMany(predictionsToBeInserted, session)
+    }
+
+    getLastestPredictionDateForCountry = async (iso: string | null) => {
+        if (!iso) return null
+        const location = await this.locationRepository.findByCode(iso)
+        const predictions = await this.predictionRepository.findPredictions({
             location_id: location._id,
+            prediction_type: { $ne: PredictionType.forecasted },
         })
 
-        await this.predictionRepository.insertMany(predictions)
+        return predictions.length ? predictions[0].base_date : null
     }
 
     getForecasts = async (model_type: AiModelEnum) => {

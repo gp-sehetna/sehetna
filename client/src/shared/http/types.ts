@@ -1,4 +1,5 @@
 import { UserWithoutPassword } from "@/features/auth/auth.types"
+import { ClientSession } from "mongoose"
 import { NextRequest, NextResponse } from "next/server"
 
 type AppResponse<T = any> =
@@ -24,6 +25,12 @@ type ProtectedHandler<T = any, Args extends any[] = any[]> = (
     ...args: Args
 ) => AppResponse<T>
 
+type SessionHandler<T = any, Args extends any[] = any[]> = (
+    req: NextRequest,
+    session: ClientSession,
+    ...args: Args
+) => AppResponse<T>
+
 type Handler<T = any, Args extends any[] = any[]> = HandlerNoArgs<T> | HandlerWithRequest<T, Args>
 
 interface ErrDetails {
@@ -39,4 +46,5 @@ export type {
     HandlerNoArgs,
     HandlerWithRequest,
     ProtectedHandler,
+    SessionHandler,
 }

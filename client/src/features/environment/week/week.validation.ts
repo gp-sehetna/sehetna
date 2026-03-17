@@ -1,13 +1,7 @@
 import { WeekParams } from "@/features/environment/week/week.types"
 import { refineCoords } from "@/lib/utils"
-import {
-    differenceInCalendarDays,
-    parseISO,
-    startOfDay,
-    startOfWeek,
-    subDays,
-    subWeeks,
-} from "date-fns"
+import { getWeeksTillToday } from "@/lib/utils/date"
+import { startOfWeek, subDays } from "date-fns"
 import { z } from "zod"
 
 const DATE_FORMAT_REGEX = /^\d{4}-\d{2}-\d{2}$/
@@ -18,7 +12,7 @@ const CoordinatesSchema = z.object({
 })
 
 const WeekEnvironmentQuerySchema = CoordinatesSchema.extend({
-    date: z.string().regex(DATE_FORMAT_REGEX, "date must be YYYY-MM-DD").nullable(),
+    date: z.string().regex(DATE_FORMAT_REGEX, "date must be YYYY-MM-DD"),
     weeks: z.coerce.number().min(0).default(0),
 })
 
@@ -52,26 +46,12 @@ const mapWeekEnvironmentParams = (data: z.infer<typeof WeekEnvironmentQuerySchem
         iso: data.country_code,
     }
 
-    if (!data.date || !data.weeks) {
-        /**
-         * ? THIS IS A MOCK
-         *
-         * Should call the database and get the last start_date from record with flag = `prediction`
-         * TODO: if date is null, get date (start_date) from latest record from the database (predictions)
-         * * FINISHED: if weeks is 0, set end_date to today
-         * * FINISHED: Calculate number of weeks from start_date to end_date
-         */
-        const startDate = "2025-10-01"
-
-        const start = startOfDay(parseISO(startDate))
-        const lastWeek = subWeeks(new Date(), 1)
-        const firstDayOfLastWeek = startOfWeek(lastWeek)
-
-        const diffDays = differenceInCalendarDays(firstDayOfLastWeek, start)
-        const weeks = Math.max(1, Math.ceil((diffDays + 1) / 7))
-
-        return { loc, date: subDays(startOfWeek(startDate), 1), weeks }
-    }
+    if (!data.weeks)
+        return {
+            loc,
+            date: subDays(startOfWeek(data.date), 1),
+            weeks: getWeeksTillToday(data.date),
+        }
 
     return { loc, date: subDays(startOfWeek(data.date), 1), weeks: data.weeks }
 }
