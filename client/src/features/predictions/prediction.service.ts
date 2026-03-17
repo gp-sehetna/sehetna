@@ -16,6 +16,6 @@ export class PredictionService {
     }
 
     async findAllPredictions() {
-        return await this.predictionRepository.find()
+        return await this.predictionRepository.findPredictionsGroupedByLoc()
     }
 }

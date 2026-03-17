@@ -57,4 +57,36 @@ export class PredictionRepository extends DatabaseRepository<IPrediction> {
             ],
         })
     }
+
+    async findPredictionsGroupedByLoc() {
+        return this.model.aggregate([
+            {
+                $lookup: {
+                    from: "locations",
+                    localField: "location_id",
+                    foreignField: "_id",
+                    as: "location",
+                },
+            },
+            {
+                $unwind: "$location",
+            },
+            {
+                $project: {
+                    _id: 0,
+                    location_id: 1,
+                    code: "$location.code",
+                    prediction_type: 1,
+                    base_date: 1,
+
+                    respiratory_disease_rate: "$health_outcomes.respiratory_disease_rate.point",
+                    waterborne_disease_incidents: "$health_outcomes.waterborne_disease_incidents.point",
+                    cardio_mortality_rate: "$health_outcomes.cardio_mortality_rate.point",
+                    vector_disease_risk_score: "$health_outcomes.vector_disease_risk_score.point",
+                    heat_related_admissions: "$health_outcomes.heat_related_admissions.point",
+
+                },
+            },
+        ])
+    }
 }
