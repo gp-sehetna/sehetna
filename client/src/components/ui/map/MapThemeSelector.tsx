@@ -25,7 +25,7 @@ const MapThemeSelector = () => {
         <Popover>
             <PopoverTrigger asChild>
                 <Button
-                    variant="white"
+                    variant="glassy"
                     className="hidden w-full transition-shadow hover:shadow-md md:flex"
                 >
                     <Layers />

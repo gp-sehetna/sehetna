@@ -15,23 +15,23 @@ export type LayerSelectorProps = {
 const MapLayerSelector = ({ healthOutcome, onLayerSelect, className }: LayerSelectorProps) => {
     const { theme } = useThemeStore()
     return (
-        <Card className={cn(className, "glassy bg-transparent")}>
+        <Card className={cn(className, "glassy bg-neutral-100/40")}>
             <div className="flex flex-col gap-0.5">
                 {HEALTH_OUTCOMES_WITH_HYPHEN.map((outcome) => (
                     <Button
                         key={outcome}
                         onClick={() => onLayerSelect(outcome)}
-                        variant={outcome === healthOutcome ? "default" : "ghost"}
+                        variant={outcome === healthOutcome ? "glassy" : "text"}
                         size="sm"
                         style={{
                             backgroundColor:
-                                outcome === healthOutcome ? `${theme.oceanColor}` : undefined,
+                                outcome === healthOutcome ? `${theme.oceanColor}66` : undefined,
                         }}
                         className={cn(
                             "h-8 w-full justify-between px-2.5 text-sm font-normal",
                             outcome === healthOutcome
-                                ? "text-foreground shadow-sm"
-                                : "hover:bg-accent hover:text-accent-foreground"
+                                ? "text-foreground border-0 shadow-sm"
+                                : "hover:bg-accent/40 hover:text-accent-foreground"
                         )}
                     >
                         <span className="truncate">{toProperCase(unslugify(outcome))}</span>

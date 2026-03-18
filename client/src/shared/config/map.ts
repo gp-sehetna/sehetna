@@ -99,16 +99,21 @@ const getClickedCountry = (map: Map, point: PointLike) => {
     return features[0]
 }
 
-const colorEachCountry = (map: Map, features: GeoJSONFeature[], theme: GradientPalette) => {
-    // This effect colors the zones based on the co2 intensity
+const colorEachCountry = (
+    map: Map,
+    features: GeoJSONFeature[],
+    theme: GradientPalette,
+    predictionMap: Record<string, number>
+) => {
     map.touchZoomRotate.disableRotation()
     map.touchPitch.disable()
+    console.log(predictionMap)
     for (const feature of features) {
-        const { id, populationRank } = feature.properties as GeoJsonProperties
-        // const zone = data.data?.zones[id]
-        const healthOutcomeValue = populationRank, //! FOR MOCK DATA
-            fillColor = theme.colorScale(healthOutcomeValue),
-            existingColor = map.getFeatureState({ source: COUNTRIES_SOURCE, id })?.color
+        const { id, isoA3 } = feature.properties as GeoJsonProperties
+        const healthOutcomeValue = predictionMap[isoA3]
+
+        const fillColor = theme.colorScale(healthOutcomeValue)
+        const existingColor = map.getFeatureState({ source: COUNTRIES_SOURCE, id })?.color
 
         if (existingColor !== fillColor)
             map.setFeatureState({ source: COUNTRIES_SOURCE, id }, { color: fillColor })

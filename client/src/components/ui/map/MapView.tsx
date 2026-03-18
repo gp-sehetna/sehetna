@@ -19,7 +19,6 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         onMouseOut,
         closeSidebar,
         markerCoords,
-        hoveredCoords,
     } = useMapHook()
 
     return (
@@ -35,7 +34,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         >
             <MapMarker coords={markerCoords} />
             <MapSources theme={theme} />
-            
+
             {children}
 
             <MapControls

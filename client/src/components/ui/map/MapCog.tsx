@@ -24,8 +24,8 @@ const MapCog = () => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="glassy" size="icon" className="h-10 w-10 rounded-full">
-                    <Cog className="h-6 w-6" />
+                <Button variant="glassy" size="icon" className="h-8 w-8 rounded-full">
+                    <Cog className="h-5 w-5" />
                 </Button>
             </DropdownMenuTrigger>
 

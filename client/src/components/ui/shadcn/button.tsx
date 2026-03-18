@@ -31,7 +31,7 @@ const buttonVariants = cva(
                     "active:bg-neutral-1000/80"
                 ),
                 gradient: "special-gradient border-none text-neutral-100",
-                glassy: "glassy hover:text-neutral-1000 text-neutral-800 hover:bg-neutral-100/60 active:bg-neutral-100/40",
+                glassy: "glassy hover:bg-neutral-100/60 hover:text-neutral-800 active:bg-neutral-100/40",
 
                 tonal: "bg-neutral-900/50 text-neutral-100 hover:bg-neutral-800/50",
                 ghost: "hover:text-neutral-1000 text-neutral-600",
