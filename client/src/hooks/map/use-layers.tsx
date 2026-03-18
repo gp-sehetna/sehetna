@@ -13,7 +13,7 @@ import {
     LineLayerSpecification,
 } from "maplibre-gl"
 import { useMemo } from "react"
-import usePredictions from "./use-predictions"
+// import usePredictions from "./use-predictions"
 
 const THEME_PROPERTY_BY_ID: Record<MapThemeId, string> = {
     continents: "continent",
@@ -81,7 +81,7 @@ const createMatchExpression = (
     ] as unknown as ExpressionSpecification
 }
 
-const createPredictionFillLayer = (theme: GradientPalette): FillLayerSpecification => ({
+const createPredictionFillLayer: FillLayerSpecification = {
     id: "land",
     type: "fill",
     source: COUNTRIES_SOURCE,
@@ -89,7 +89,7 @@ const createPredictionFillLayer = (theme: GradientPalette): FillLayerSpecificati
         "fill-color": ["feature-state", "color"],
         "fill-antialias": false,
     },
-})
+}
 
 const createThemeFillLayer = (
     mapTheme: MapThemeDefinition,
@@ -127,10 +127,7 @@ const useLayers = (theme: GradientPalette, activeThemeIds: readonly MapThemeId[]
         [theme]
     )
 
-    const countriesFillLayer = useMemo<FillLayerSpecification>(
-        () => createPredictionFillLayer(theme),
-        [theme]
-    )
+    const countriesFillLayer = useMemo<FillLayerSpecification>(() => createPredictionFillLayer, [])
 
     const themeLayers = useMemo<FillLayerSpecification[]>(
         () =>

@@ -2,7 +2,7 @@
 import { toProperCase } from "@/lib/utils"
 import { useMapStore } from "@/stores/map/use-map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useRef } from "react"
 
 const MapTooltip = () => {
     const hoveredZone = useMapStore((s) => s.hoveredZone)
@@ -14,10 +14,11 @@ const MapTooltip = () => {
 
     const layer = useMemo(() => toProperCase(healthOutcome), [healthOutcome])
 
+    const refInstance = useRef(null)
+
     useEffect(() => {
-        if (!tooltipRef) return
-        setTooltipRef(tooltipRef)
-    }, [setTooltipRef, tooltipRef])
+        setTooltipRef(refInstance)
+    })
 
     if (!hoveredZone) return null
     const hoveredPrediction = predictionMap[hoveredZone.properties.isoA3]

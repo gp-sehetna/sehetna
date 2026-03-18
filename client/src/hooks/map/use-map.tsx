@@ -28,7 +28,7 @@ import { useSettingsStore } from "@/stores/use-settings"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useMap } from "react-map-gl/maplibre"
 import { toast } from "sonner"
-import usePredictions from "./use-predictions"
+// import usePredictions from "./use-predictions"
 
 const useMapHook = () => {
     const router = useRouter()
@@ -37,7 +37,7 @@ const useMapHook = () => {
     const centroidCache = useRef(new Map())
     const { current: mapRef } = useMap()
 
-    usePredictions()
+    // usePredictions()
 
     // more focused states to prevent unnecessary re-renders...
     const {
