@@ -122,10 +122,10 @@ TopCenterContent.displayName = "TopCenterContent"
 const TopRightContent = () => {
     return (
         <>
-            <div className="absolute right-0 z-10 mt-2.5 mr-2.5 flex">
+            <div className="absolute right-0 z-10 mt-2.5 mr-2.5 flex items-center justify-center">
                 <MapCog />
             </div>
-            <NavigationControl position="top-right" showCompass={false} visualizePitch />
+            <NavigationControl showCompass={false} visualizePitch />
         </>
     )
 }

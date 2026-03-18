@@ -6,6 +6,7 @@
 //     const predictions = await mainService.predictionService.findAllPredictions()
 //     return [{ data: predictions }, `${predictions.length} Predictions retrieved successfully`]
 // })
+
 // export const POST = globalErrorHandler(async (request) => {
 //     const prediction = await request.json()
 //     const mainService = await MainService.getInstance()

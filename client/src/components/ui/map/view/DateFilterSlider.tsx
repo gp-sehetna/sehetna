@@ -53,7 +53,7 @@ const DateRangeSlider = ({ start, end, onChange, className }: DateRangeSliderPro
     return (
         <div className={cn("mt-4 flex w-full flex-col gap-3 rounded-xl select-none", className)}>
             {/* ── Row 1: Selected date label + controls ── */}
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-start justify-between gap-3">
                 {/* Date display */}
                 <span className="font-semibold tracking-tight">
                     {formatSelectedDate(date, granularity)}
@@ -65,7 +65,7 @@ const DateRangeSlider = ({ start, end, onChange, className }: DateRangeSliderPro
                         value={preset}
                         onValueChange={(v) => handlePresetChange(v as RangePreset)}
                     >
-                        <SelectTrigger className="w-35" variant="glassy">
+                        <SelectTrigger size="sm" className="w-35" variant="glassy">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="border-white/10">
@@ -82,7 +82,7 @@ const DateRangeSlider = ({ start, end, onChange, className }: DateRangeSliderPro
                         value={granularity}
                         onValueChange={(v) => handleGranularityChange(v as Granularity)}
                     >
-                        <SelectTrigger className="w-27.5" variant="glassy">
+                        <SelectTrigger size="sm" className="w-27.5" variant="glassy">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="border-white/10">

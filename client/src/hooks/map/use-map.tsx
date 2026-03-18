@@ -26,13 +26,18 @@ import { useMapStore } from "@/stores/map/use-map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
 import { useSettingsStore } from "@/stores/use-settings"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
+import { useMap } from "react-map-gl/maplibre"
 import { toast } from "sonner"
+import usePredictions from "./use-predictions"
 
 const useMapHook = () => {
     const router = useRouter()
     const searchParams = useSearchParams()
     const params = useParams<MapPageProps["params"]>()
     const centroidCache = useRef(new Map())
+    const { current: mapRef } = useMap()
+
+    usePredictions()
 
     // more focused states to prevent unnecessary re-renders...
     const {
@@ -47,16 +52,15 @@ const useMapHook = () => {
         unmountToolTip,
     } = useMapStore()
 
+    const predictionMap = usePredictionsStore((s) => s.predictionMap)
+
     const explanationMethod = useSettingsStore((s) => s.explanationMethod)
 
-    const {
-        setLoading,
-        setModifying,
-        onOutcomeSelect,
-        setSimulation,
-        setEnvironment,
-        predictionMap,
-    } = usePredictionsStore()
+    const setLoading = usePredictionsStore((s) => s.setLoading)
+    const setModifying = usePredictionsStore((s) => s.setModifying)
+    const onOutcomeSelect = usePredictionsStore((s) => s.onOutcomeSelect)
+    const setSimulation = usePredictionsStore((s) => s.setSimulation)
+    const setEnvironment = usePredictionsStore((s) => s.setEnvironment)
 
     const activeSlug = parseSlug(params.slug)
 
@@ -75,6 +79,18 @@ const useMapHook = () => {
             `Unable to identify theme, health outcome (${activeSlug.healthOutcome}) is of an unknown type. Redirecting back...`
         )
     }, [isInvalid, activeSlug])
+
+    useEffect(() => {
+        const map = mapRef?.getMap()
+
+        if (!map || !map.getSource(COUNTRIES_SOURCE)) return
+
+        const features = map.querySourceFeatures(COUNTRIES_SOURCE)
+
+        if (!features.length) return
+
+        colorEachCountry(map, features, theme, predictionMap)
+    }, [mapRef, predictionMap, theme])
 
     const onMouseMove = useCallback(
         (e: MapLayerMouseEvent) => {
@@ -131,7 +147,7 @@ const useMapHook = () => {
                 lat,
             })
         },
-        [hoveredZone, updateTooltipPosition, setHoveredZone, predictionMap, setHoveredCoords]
+        [hoveredZone, predictionMap, setHoveredZone, setHoveredCoords, updateTooltipPosition]
     )
 
     const onMouseOut = useCallback(
@@ -215,25 +231,23 @@ const useMapHook = () => {
             }
         },
         [
-            router,
-            activeSlug.healthOutcome,
-            searchParams,
-            setMarkerCoords,
-            setClickedZone,
             date,
-            setLoading,
-            weekService,
+            activeSlug,
             explanationMethod,
+            router,
+            searchParams,
+            setClickedZone,
+            setLoading,
+            setMarkerCoords,
             setSimulation,
+            weekService,
         ]
     )
-
     const onMapLoad = useCallback(
         (e: MapLibreEvent) => {
             const map = e.target,
                 features = map.querySourceFeatures("countries")
 
-            colorEachCountry(map, features, theme)
             if (!activeSlug.country) return
 
             const country = getCountryBySlug(activeSlug.country, features)
@@ -251,7 +265,7 @@ const useMapHook = () => {
             zoomToCountry(country, map, center)
             setClickedZone(country)
         },
-        [theme, activeSlug.country, setMarkerCoords, setClickedZone]
+        [activeSlug.country, setMarkerCoords, setClickedZone]
     )
 
     const onLayerSelect = useCallback(
