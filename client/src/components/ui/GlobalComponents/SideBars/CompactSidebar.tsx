@@ -110,33 +110,23 @@ export const ProfilePictureAvatar = ({ name }: { name: string }) => {
                     </AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
-
-            <DropdownMenuContent
-                className="w-64"
-                side={isMobile ? "left" : "top"}
-                align="start"
-                forceMount
-            >
+            <DropdownMenuContent className="w-64" side={isMobile ? "left" : "top"} align="start">
                 <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                         <p className="text-sm leading-none font-medium">{name}</p>
                     </div>
                 </DropdownMenuLabel>
-
                 <DropdownMenuSeparator />
-
                 <DropdownMenuGroup>
                     <DropdownMenuLabel className="text-muted-foreground text-xs">
-                        My Account
+                        My Profile
                     </DropdownMenuLabel>
-
                     <DropdownMenuItem asChild>
                         <a href="/settings/account" className="cursor-pointer">
                             <User className="mr-2 h-4 w-4" />
                             <span>Account Settings</span>
                         </a>
                     </DropdownMenuItem>
-
                     <DropdownMenuItem asChild>
                         <a href="/settings/security" className="cursor-pointer">
                             <Shield className="mr-2 h-4 w-4" />

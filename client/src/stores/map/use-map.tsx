@@ -21,7 +21,7 @@ type MapState = {
     unmountToolTip: () => void
 }
 
-export const useMapStore = create<MapState>((set, get) => ({
+export const useMapStore = create<MapState>((set) => ({
     clickedZone: null,
     hoveredZone: null,
     markerCoords: null,
@@ -35,11 +35,54 @@ export const useMapStore = create<MapState>((set, get) => ({
     setMarkerCoords: (markerCoords) => set({ markerCoords }),
     setDate: (date) => set({ date }),
     updateTooltipPosition: (x, y) => {
-        const { tooltipRef } = get()
-        logger.debug({ x, y }, "Modifying tooltip position (x, y)")
-        if (!tooltipRef || !tooltipRef.current) return
-        tooltipRef.current.style.left = `${x}px`
-        tooltipRef.current.style.top = `${y}px`
+        set((state) => {
+            const el = state.tooltipRef?.current
+            if (!el) return state
+
+            // Get tooltip size
+            const rect = el.getBoundingClientRect()
+            const tooltipWidth = rect.width
+            const tooltipHeight = rect.height
+
+            const viewportWidth = window.innerWidth
+
+            const translateX = x
+            const translateY = y
+
+            let offsetX = "-50%"
+            let offsetY = "-120%"
+
+            // Horizontal collision
+            if (x - tooltipWidth / 2 < 0) {
+                // Too close to left → stick to left
+                offsetX = "0%"
+            } else if (x + tooltipWidth / 2 > viewportWidth) {
+                // Too close to right → stick to right
+                offsetX = "-100%"
+            }
+
+            // Vertical collision
+            if (y - tooltipHeight < 0) {
+                // Not enough space above → show below cursor
+                offsetY = "20px"
+            }
+
+            logger.info(
+                {
+                    translateX,
+                    translateY,
+                    offsetX,
+                    offsetY,
+                },
+                "Tooltip position updated (x, y, offsetX, offsetY)"
+            )
+            // Apply transform
+            el.style.transform = `
+        translate(${translateX}px, ${translateY}px)
+        translate(${offsetX}, ${offsetY})
+    `
+            return state
+        })
     },
     setTooltipRef: (tooltipRef) => set({ tooltipRef }),
     unmountToolTip: () =>

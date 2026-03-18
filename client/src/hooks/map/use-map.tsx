@@ -1,6 +1,7 @@
 "use client"
 import centroid from "@turf/centroid"
 import { useCallback, useEffect, useMemo, useRef } from "react"
+import { useCallback, useEffect, useMemo, useRef } from "react"
 
 import { WeekClientService } from "@/features/environment/week/week.service.client"
 import { slugify, unslugify } from "@/lib/utils"
@@ -35,24 +36,22 @@ const useMapHook = () => {
     const centroidCache = useRef(new Map())
 
     // more focused states to prevent unnecessary re-renders...
-    const hoveredZone = useMapStore((s) => s.hoveredZone)
-    const markerCoords = useMapStore((s) => s.markerCoords)
-    const hoveredCoords = useMapStore((s) => s.hoveredCoords)
-    const setClickedZone = useMapStore((s) => s.setClickedZone)
-    const setHoveredZone = useMapStore((s) => s.setHoveredZone)
-    const setMarkerCoords = useMapStore((s) => s.setMarkerCoords)
-    const setHoveredCoords = useMapStore((s) => s.setHoveredCoords)
-    const updateTooltipPosition = useMapStore((s) => s.updateTooltipPosition)
-    const unmountToolTip = useMapStore((s) => s.unmountToolTip)
+    const {
+        hoveredZone,
+        markerCoords,
+        hoveredCoords,
+        setClickedZone,
+        setHoveredZone,
+        setHoveredCoords,
+        setMarkerCoords,
+        updateTooltipPosition,
+        unmountToolTip,
+    } = useMapStore()
 
     const explanationMethod = useSettingsStore((s) => s.explanationMethod)
 
-    const setLoading = usePredictionsStore((s) => s.setLoading)
-    const onOutcomeSelect = usePredictionsStore((s) => s.onOutcomeSelect)
-    const setSimulation = usePredictionsStore((s) => s.setSimulation)
-    const setEnvironment = usePredictionsStore((s) => s.setEnvironment)
-    const setModifying = usePredictionsStore((s) => s.setModifying)
-    const predictionMap = usePredictionsStore((s) => s.predictionMap)
+    const { setLoading, setModifying, onOutcomeSelect, setSimulation, setEnvironment } =
+        usePredictionsStore()
 
     const activeSlug = parseSlug(params.slug)
 
@@ -92,7 +91,9 @@ const useMapHook = () => {
 
             const isNewZone = hoveredZone?.id !== feature.id
 
-            updateTooltipPosition(e.point.x, e.point.y)
+            requestAnimationFrame(() => {
+                updateTooltipPosition(e.point.x, e.point.y)
+            })
 
             if (!isNewZone) return
 
@@ -108,6 +109,7 @@ const useMapHook = () => {
             const isHoverable = !!predictionMap[feature.properties.isoA3]
             map.setFeatureState(
                 { source: COUNTRIES_SOURCE, id: feature.id },
+                { hover: isHoverable }
                 { hover: isHoverable }
             )
 
