@@ -4,8 +4,13 @@ import {
     eachMonthOfInterval,
     eachWeekOfInterval,
     eachYearOfInterval,
+    endOfMonth,
+    endOfWeek,
+    endOfYear,
     format,
+    startOfMonth,
     startOfWeek,
+    startOfYear,
     subDays,
     subMonths,
     subYears,
@@ -88,6 +93,21 @@ function getRangeStart(preset: RangePreset, dataStart: Date, dataEnd: Date): Dat
     }
 }
 
+// ─── Granularity helpers ───────────────────────────────────────────────────────
+
+function getDateRangeByGranularity(date: Date, granularity: Granularity) {
+    switch (granularity) {
+        case "weekly":
+            return { start: startOfWeek(date), end: endOfWeek(date) }
+        case "monthly":
+            return { start: startOfMonth(date), end: endOfMonth(date) }
+        case "yearly":
+            return { start: startOfYear(date), end: endOfYear(date) }
+        default:
+            throw new Error("Invalid granularity")
+    }
+}
+
 function buildTicks(rangeStart: Date, rangeEnd: Date, granularity: Granularity): Date[] {
     if (granularity === "weekly")
         return eachWeekOfInterval({ start: rangeStart, end: rangeEnd }, { weekStartsOn: 1 })
@@ -138,6 +158,7 @@ export {
     formatDate,
     formatSelectedDate,
     formatTick,
+    getDateRangeByGranularity,
     getRangeStart,
     getWeekRange,
     GRANULARITY_LABELS,

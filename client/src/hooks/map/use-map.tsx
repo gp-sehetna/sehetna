@@ -21,6 +21,7 @@ import { MapLayerMouseEvent } from "react-map-gl/maplibre"
 import { IEnvironmentData } from "@/features/environment/week/week.dto"
 import { SimulateResponse } from "@/features/environment/week/week.types"
 import { useDateUrlSync } from "@/hooks/map/use-date"
+import usePredictions from "@/hooks/map/use-predictions"
 import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 import { useMapStore } from "@/stores/map/use-map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
@@ -28,7 +29,6 @@ import { useSettingsStore } from "@/stores/use-settings"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useMap } from "react-map-gl/maplibre"
 import { toast } from "sonner"
-// import usePredictions from "./use-predictions"
 
 const useMapHook = () => {
     const router = useRouter()
@@ -37,7 +37,7 @@ const useMapHook = () => {
     const centroidCache = useRef(new Map())
     const { current: mapRef } = useMap()
 
-    // usePredictions()
+    const { predictionsMap } = usePredictions()
 
     // more focused states to prevent unnecessary re-renders...
     const {
@@ -49,10 +49,8 @@ const useMapHook = () => {
         setHoveredCoords,
         setMarkerCoords,
         updateTooltipPosition,
-        unmountToolTip,
+        setTooltip,
     } = useMapStore()
-
-    const predictionMap = usePredictionsStore((s) => s.predictionMap)
 
     const explanationMethod = useSettingsStore((s) => s.explanationMethod)
 
@@ -89,8 +87,8 @@ const useMapHook = () => {
 
         if (!features.length) return
 
-        colorEachCountry(map, features, theme, predictionMap)
-    }, [mapRef, predictionMap, theme])
+        colorEachCountry(map, features, theme, predictionsMap)
+    }, [mapRef, predictionsMap, theme])
 
     const onMouseMove = useCallback(
         (e: MapLayerMouseEvent) => {
@@ -127,7 +125,7 @@ const useMapHook = () => {
 
             // set new hover
             setHoveredZone(feature)
-            const isHoverable = !!predictionMap[feature.properties.isoA3]
+            const isHoverable = !!predictionsMap[feature.properties.isoA3]
             map.setFeatureState(
                 { source: COUNTRIES_SOURCE, id: feature.id },
                 { hover: isHoverable }
@@ -147,7 +145,7 @@ const useMapHook = () => {
                 lat,
             })
         },
-        [hoveredZone, predictionMap, setHoveredZone, setHoveredCoords, updateTooltipPosition]
+        [hoveredZone, predictionsMap, setHoveredZone, setHoveredCoords, updateTooltipPosition]
     )
 
     const onMouseOut = useCallback(
@@ -160,9 +158,9 @@ const useMapHook = () => {
 
             setHoveredZone(null)
             setHoveredCoords(null)
-            unmountToolTip()
+            setTooltip(null)
         },
-        [hoveredZone, setHoveredZone, setHoveredCoords, unmountToolTip]
+        [hoveredZone, setHoveredZone, setHoveredCoords, setTooltip]
     )
 
     const onMapClick = useCallback(
@@ -313,6 +311,7 @@ const useMapHook = () => {
         onLayerSelect,
         weekService,
         closeSidebar,
+        predictionsMap,
         markerCoords,
         hoveredZone,
         theme,

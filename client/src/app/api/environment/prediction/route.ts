@@ -3,7 +3,7 @@ import { PredictionService } from "@/features/environment/prediction/prediction.
 import { AiForecastResponse } from "@/features/environment/prediction/prediction.types"
 import {
     ForecastEnvironmentParamsSchema,
-    ForecastParamsSchema,
+    GetPredictionsParamsSchema,
 } from "@/features/environment/prediction/prediction.validation"
 import { IEnvironmentData } from "@/features/environment/week/week.dto"
 import { externalApi } from "@/shared/api"
@@ -14,7 +14,18 @@ import { userProvider } from "@/shared/http/handlers/user.handler"
 import { format } from "date-fns"
 import { SearchParamsOption } from "ky"
 
-// DON'T CHANGE THIS DATE
+export const GET = globalErrorHandler<ForecastResponse>(async (request) => {
+    const params = request.nextUrl.searchParams
+    const query = GetPredictionsParamsSchema.parse({
+        modelId: params.get("model-id"),
+        country_code: params.get("iso"),
+    })
+
+    const mainService = await MainService.getInstance()
+    const predictions = await mainService.predictionService.getPredictions(query)
+    return [{ predictions }, `Forecasts retrieved for model ${query.modelId} successfully`]
+})
+
 export const POST = globalErrorHandler(
     userProvider(async (request, user) => {
         const mainService = await MainService.getInstance()
@@ -86,14 +97,55 @@ export const POST = globalErrorHandler(
     })
 )
 
-export const GET = globalErrorHandler<ForecastResponse>(async (request) => {
-    const params = request.nextUrl.searchParams
-    const query = ForecastParamsSchema.parse({
-        modelId: params.get("model-id"),
-        country_code: params.get("iso"),
-    })
+// export const POST = globalErrorHandler(async (request) => {
+//     const prediction = await request.json()
+//     const mainService = await MainService.getInstance()
+//     const _id = await mainService.predictionService.createPrediction(prediction)
+//     return [undefined, "New Prediction created successfully"]
+// })
 
-    const mainService = await MainService.getInstance()
-    const predictions = await mainService.predictionService.getPredictionsByLocation(query)
-    return [{ predictions }, `Forecasts retrieved for model ${query.modelId} successfully`]
-})
+/**
+ * Read CSV file and insert historical data into db
+ */
+// export const POST = globalErrorHandler(
+//     userProvider(async (request, user) => {
+//         type Pred = Omit<IPrediction, "_id" | "createdAt" | "updatedAt">
+//         const origin = new URL(request.url).origin
+//         const response = await fetch(`${origin}/historical.json`)
+//         const predictions = await response.json()
+
+//         // Get all locations
+//         const mainService = await MainService.getInstance()
+//         const locations = await mainService.locationService.findAllLocations()
+//         // get location id from p.country_code
+//         const locationIdMap = new Map<string, Types.ObjectId>()
+//         for (const location of locations) {
+//             locationIdMap.set(location.code!, location._id)
+//         }
+
+//         const predictionsToInsert = predictions.map(
+//             (p: any) =>
+//                 ({
+//                     user_id: user._id,
+//                     location_id: locationIdMap.get(p.country_code),
+//                     model_id: null,
+//                     prediction_type: PredictionType.historical,
+//                     base_date: new Date(p.date),
+//                     health_outcomes: {
+//                         respiratory_disease_rate: { point: Number(p.respiratory_disease_rate) },
+//                         cardio_mortality_rate: { point: Number(p.cardio_mortality_rate) },
+//                         vector_disease_risk_score: { point: Number(p.vector_disease_risk_score) },
+//                         waterborne_disease_incidents: {
+//                             point: Number(p.waterborne_disease_incidents),
+//                         },
+//                         heat_related_admissions: { point: Number(p.heat_related_admissions) },
+//                     },
+//                 }) as unknown as Pred
+//         )
+
+//         // Insert predictions
+//         const inserted = await mainService.predictionService.insertMany(predictionsToInsert)
+//         return [undefined, `Created ${inserted.length} prediction(s) successfully`]
+//         // return [undefined, `Created prediction(s) successfully`]
+//     })
+// )

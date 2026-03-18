@@ -43,6 +43,10 @@ PredictionSchema.index(
     { model_id: 1, location_id: 1, prediction_type: 1, base_date: 1 },
     { name: "model_location_type_date_index" }
 )
+PredictionSchema.index(
+    { location_id: 1, prediction_type: 1, base_date: 1 },
+    { name: "location_type_date_index" }
+)
 PredictionSchema.index({ user_id: 1, base_date: 1 }, { name: "user_base_date_index" })
 
 export const PredictionModel: Model<IPrediction> =

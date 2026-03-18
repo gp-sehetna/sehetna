@@ -1,6 +1,10 @@
-import { ForecastParams, Forecasts } from "@/features/environment/prediction/prediction.dto"
+import {
+    ForecastParams,
+    GetPredictionsParams,
+} from "@/features/environment/prediction/prediction.dto"
 import { AiForecastResponse } from "@/features/environment/prediction/prediction.types"
 import { PredictionType } from "@/shared/db/enums/prediction.enum"
+import { LocationModel, SimpleLocation } from "@/shared/db/model/location.model"
 import {
     IHealthOutcomesWithIntervals,
     IPrediction,
@@ -9,8 +13,9 @@ import {
 import { AiModelRepository } from "@/shared/db/repository/ai-model.repository"
 import { LocationRepository } from "@/shared/db/repository/location.repository"
 import { PredictionRepository } from "@/shared/db/repository/prediction.repository"
+import { NotFoundException } from "@/shared/http/errors"
 import { addWeeks, differenceInWeeks, startOfWeek } from "date-fns"
-import { startSession, Types } from "mongoose"
+import { QueryFilter, startSession, Types } from "mongoose"
 
 interface TimelineRange {
     predictions: Date
@@ -27,14 +32,18 @@ export class PredictionService {
 
     getLatestPredictionDateForCountry = async (iso: string) => {
         const location = await this.locationRepository.findByCode(iso)
+        if (!location) throw new NotFoundException(`Location not found for this code ${iso}`)
         return await this.getLatestPredictionDateForLocation(location._id)
     }
 
     private getLatestPredictionDateForLocation = async (locationId: Types.ObjectId) => {
-        const predictions = await this.predictionRepository.findPredictions({
-            location_id: locationId,
-            prediction_type: PredictionType.predicted,
-        })
+        const predictions = await this.predictionRepository
+            .findPredictions({
+                location_id: locationId,
+                prediction_type: PredictionType.predicted,
+            })
+            .lean()
+            .exec()
 
         return predictions.length ? predictions[predictions.length - 1].base_date : null
     }
@@ -82,8 +91,14 @@ export class PredictionService {
         const session = await startSession()
         try {
             const model = await this.aiModelRepository.findByType(query.modelId)
-            const location = await this.locationRepository.findByCode(query.country_code)
+            if (!model)
+                throw new NotFoundException(`Model not found for this type ${query.modelId}`)
 
+            const location = await this.locationRepository.findByCode(query.country_code)
+            if (!location)
+                throw new NotFoundException(
+                    `Location not found for this code ${query.country_code}`
+                )
             const records = await this.buildTimeline(response, timeline, location._id, {
                 user_id: userId,
                 model_id: model._id,
@@ -102,17 +117,27 @@ export class PredictionService {
         }
     }
 
-    getPredictionsByLocation = async (query: ForecastParams): Promise<Forecasts> => {
+    getPredictions = async (query: GetPredictionsParams) => {
         const model = await this.aiModelRepository.findByType(query.modelId)
         const location = await this.locationRepository.findByCode(query.country_code)
+        const filter: QueryFilter<IPrediction> = model
+            ? { model_id: model._id, prediction_type: PredictionType.forecasted }
+            : { prediction_type: { $in: [PredictionType.historical, PredictionType.predicted] } }
 
-        return await this.predictionRepository.findPredictions({
-            $or: [
-                { model_id: model._id, prediction_type: PredictionType.forecasted },
-                { prediction_type: { $ne: PredictionType.forecasted } },
-            ],
-            location_id: location._id,
-        })
+        if (location) filter.location_id = location._id
+
+        const result = await this.predictionRepository
+            .findPredictions(filter, {
+                base_date: 1,
+                prediction_type: 1,
+                health_outcomes: 1,
+            })
+            .populate<{ location_id: SimpleLocation }>([
+                { path: "location_id", select: { _id: 0, name: 1, code: 1 }, model: LocationModel },
+            ])
+            .lean()
+            .exec()
+        return result
     }
 
     private static mapPredictions = (

@@ -1,3 +1,4 @@
+import { PredictionsAggregates } from "@/features/environment/prediction/prediction.types"
 import { slugify, toProperCase, unslugify } from "@/lib/utils"
 import {
     DEFAULT_HEALTH_OUTCOME,
@@ -103,16 +104,17 @@ const colorEachCountry = (
     map: Map,
     features: GeoJSONFeature[],
     theme: GradientPalette,
-    predictionMap: Record<string, number>
+    predictionsMap: PredictionsAggregates
 ) => {
     map.touchZoomRotate.disableRotation()
     map.touchPitch.disable()
-    console.log(predictionMap)
+
     for (const feature of features) {
         const { id, isoA3 } = feature.properties as GeoJsonProperties
-        const healthOutcomeValue = predictionMap[isoA3]
+        const prediction = predictionsMap[isoA3]
+        if (!prediction) continue
 
-        const fillColor = theme.colorScale(healthOutcomeValue)
+        const fillColor = theme.colorScale(prediction.sum / prediction.count)
         const existingColor = map.getFeatureState({ source: COUNTRIES_SOURCE, id })?.color
 
         if (existingColor !== fillColor)

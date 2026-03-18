@@ -1,16 +1,15 @@
+import { SimplePrediction } from "@/features/environment/prediction/prediction.types"
 import {
     ForecastParamsSchema,
-    ForecastsOutcomesViewSchema,
-    ForecastsSchema,
+    GetPredictionsParamsSchema,
 } from "@/features/environment/prediction/prediction.validation"
 import { z } from "zod"
 
+type GetPredictionsParams = z.infer<typeof GetPredictionsParamsSchema>
 type ForecastParams = z.infer<typeof ForecastParamsSchema>
-type Forecasts = z.infer<typeof ForecastsSchema>
-type ForecastsOutcomesView = z.infer<typeof ForecastsOutcomesViewSchema>
 
 type ForecastResponse = {
-    predictions: Forecasts
+    predictions: SimplePrediction[]
 }
 
-export type { ForecastParams, ForecastResponse, Forecasts, ForecastsOutcomesView }
+export type { ForecastParams, ForecastResponse, GetPredictionsParams }

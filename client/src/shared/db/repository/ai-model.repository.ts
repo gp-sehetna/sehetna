@@ -8,9 +8,9 @@ export class AiModelRepository extends DatabaseRepository<IAiModel> {
         super(model)
     }
 
-    async findByType(model_type: AiModelEnum) {
+    async findByType(model_type: AiModelEnum | null) {
+        if (!model_type) return null
         const model = await this.model.findOne({ model_type }).lean().exec()
-        if (!model) throw new Error("Model not found")
         return model
     }
 

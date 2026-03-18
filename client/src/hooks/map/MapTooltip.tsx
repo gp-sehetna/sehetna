@@ -1,31 +1,25 @@
 "use client"
+import { PredictionsAggregates } from "@/features/environment/prediction/prediction.types"
 import { toProperCase } from "@/lib/utils"
 import { useMapStore } from "@/stores/map/use-map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
-import { useEffect, useMemo, useRef } from "react"
 
-const MapTooltip = () => {
-    const hoveredZone = useMapStore((s) => s.hoveredZone)
-    const tooltipRef = useMapStore((s) => s.tooltipRef)
-    const setTooltipRef = useMapStore((s) => s.setTooltipRef)
+type MapTooltipProps = {
+    predictionsMap: PredictionsAggregates
+}
 
-    const predictionMap = usePredictionsStore((s) => s.predictionMap)
+const MapTooltip = ({ predictionsMap }: MapTooltipProps) => {
     const healthOutcome = usePredictionsStore((s) => s.healthOutcome)
 
-    const layer = useMemo(() => toProperCase(healthOutcome), [healthOutcome])
-
-    const refInstance = useRef(null)
-
-    useEffect(() => {
-        setTooltipRef(refInstance)
-    })
+    const hoveredZone = useMapStore((s) => s.hoveredZone)
+    const setTooltip = useMapStore((s) => s.setTooltip)
 
     if (!hoveredZone) return null
-    const hoveredPrediction = predictionMap[hoveredZone.properties.isoA3]
+    const hoveredPrediction = predictionsMap[hoveredZone.properties.isoA3]
 
     return (
         <div
-            ref={tooltipRef}
+            ref={setTooltip}
             style={{
                 position: "fixed",
                 top: 0,
@@ -42,9 +36,9 @@ const MapTooltip = () => {
                 <p className="text-sm">No data</p>
             ) : (
                 <div className="flex items-center gap-1">
-                    <span className="text-xs">{layer}</span>:
+                    <span className="text-xs">{toProperCase(healthOutcome)}</span>:
                     <span className="text-foreground font-bold">
-                        {hoveredPrediction.toFixed(2)}%
+                        {(hoveredPrediction.sum / hoveredPrediction.count).toFixed(2)}%
                     </span>
                 </div>
             )}

@@ -1,7 +1,7 @@
 import { IPrediction, PredictionModel } from "@/shared/db/model/prediction.model"
 import { DatabaseRepository } from "@/shared/db/repository/database.repository"
 import { Pagination, PaginationResult } from "@/shared/db/types/pagination.type"
-import { ClientSession, QueryFilter } from "mongoose"
+import { ClientSession, ProjectionType, QueryFilter } from "mongoose"
 import { PredictionType } from "../enums/prediction.enum"
 
 export class PredictionRepository extends DatabaseRepository<IPrediction> {
@@ -9,16 +9,20 @@ export class PredictionRepository extends DatabaseRepository<IPrediction> {
         super(model)
     }
 
-    async findPredictions(filter: QueryFilter<IPrediction> = {}) {
-        return await this.model
-            .find(filter, {
-                base_date: 1,
-                prediction_type: 1,
-                health_outcomes: 1,
-            })
+    findPredictions(
+        filter: QueryFilter<IPrediction> = {},
+        projection?: ProjectionType<IPrediction>
+    ) {
+        return this.model
+            .find(
+                filter,
+                projection ?? {
+                    base_date: 1,
+                    prediction_type: 1,
+                    health_outcomes: 1,
+                }
+            )
             .sort({ base_date: 1, createdAt: 1 })
-            .lean()
-            .exec()
     }
 
     async insertMany(predictions: Partial<IPrediction>[], session?: ClientSession) {
@@ -67,37 +71,5 @@ export class PredictionRepository extends DatabaseRepository<IPrediction> {
                 },
             ],
         })
-    }
-
-    async findPredictionsGroupedByLoc() {
-        return this.model.aggregate([
-            {
-                $lookup: {
-                    from: "locations",
-                    localField: "location_id",
-                    foreignField: "_id",
-                    as: "location",
-                },
-            },
-            {
-                $unwind: "$location",
-            },
-            {
-                $project: {
-                    _id: 0,
-                    location_id: 1,
-                    code: "$location.code",
-                    prediction_type: 1,
-                    base_date: 1,
-
-                    respiratory_disease_rate: "$health_outcomes.respiratory_disease_rate.point",
-                    waterborne_disease_incidents: "$health_outcomes.waterborne_disease_incidents.point",
-                    cardio_mortality_rate: "$health_outcomes.cardio_mortality_rate.point",
-                    vector_disease_risk_score: "$health_outcomes.vector_disease_risk_score.point",
-                    heat_related_admissions: "$health_outcomes.heat_related_admissions.point",
-
-                },
-            },
-        ])
     }
 }

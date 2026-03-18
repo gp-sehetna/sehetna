@@ -3,6 +3,7 @@
 import MapControls from "@/components/ui/map/MapControls"
 import MapMarker from "@/components/ui/map/MapMarker"
 import MapSources from "@/components/ui/map/MapSources"
+import MapTooltip from "@/hooks/map/MapTooltip"
 import useMapHook from "@/hooks/map/use-map"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { Map } from "react-map-gl/maplibre"
@@ -19,6 +20,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         onMouseOut,
         closeSidebar,
         markerCoords,
+        predictionsMap,
     } = useMapHook()
 
     return (
@@ -32,6 +34,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
             attributionControl={false}
             dragPan={{ maxSpeed: 0 }} // Disables easing effect to improve performance on exchange layer
         >
+            <MapTooltip predictionsMap={predictionsMap} />
             <MapMarker coords={markerCoords} />
             <MapSources theme={theme} />
 
