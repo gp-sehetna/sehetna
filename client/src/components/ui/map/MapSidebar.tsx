@@ -1,5 +1,5 @@
 import { DatePickerSimple } from "@/components/ui/GlobalControls/DatePickerSimple"
-import { DateRangeSlider } from "@/components/ui/map/view/DateFilterSlider"
+import DateRangeSlider from "@/components/ui/map/view/DateFilterSlider"
 import { useDateUrlSync } from "@/hooks/map/use-date"
 import { ActiveSlug } from "@/shared/config/map"
 import { useMapStore } from "@/stores/map/use-map"
@@ -24,7 +24,7 @@ const MapSidebar = ({ slug, closeSidebar, onSubmitForm, onLayerSelect }: MapSide
 
             <div className="glassy flex min-w-full shrink-0 flex-col rounded-2xl border p-4">
                 <DatePickerSimple date={date} setDate={setDate} />
-                <DateRangeSlider />
+                <DateRangeSlider start={new Date("2015-01-05")} end={new Date()} />
             </div>
         </>
     )

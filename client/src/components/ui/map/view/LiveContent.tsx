@@ -13,11 +13,6 @@ export const LiveContent = ({
     zoneProperties: GeoJsonProperties
 }) => {
     const modelId = usePredictionsStore((s) => s.forecaster)
-    console.log("LiveContent render", {
-        modelId,
-        iso: zoneProperties?.isoA3,
-        zoneProperties,
-    })
     const { data: forecasts, isLoading: isForecastsLoading } = useForecasts({
         modelId,
         iso: zoneProperties.isoA3,

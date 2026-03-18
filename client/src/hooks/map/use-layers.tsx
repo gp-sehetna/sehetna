@@ -8,18 +8,19 @@ import {
     LineLayerSpecification,
 } from "maplibre-gl"
 import { useMemo } from "react"
+// import usePredictions from "./use-predictions"
 
-const countriesFillLayer: FillLayerSpecification = {
-    id: "land",
-    type: "fill",
-    source: COUNTRIES_SOURCE,
-    filter: ["all"],
-    paint: {
-        "fill-color": "rgba(255, 168, 70, 1)",
-        "fill-opacity": 0.5,
-        "fill-antialias": false,
-    },
-}
+// const countriesFillLayer: FillLayerSpecification = {
+//     id: "land",
+//     type: "fill",
+//     source: COUNTRIES_SOURCE,
+//     filter: ["all"],
+//     paint: {
+//         "fill-color": "rgba(255, 168, 70, 1)",
+//         "fill-opacity": 0.5,
+//         "fill-antialias": false,
+//     },
+// }
 
 const countriesHoverFillLayer: FillLayerSpecification = {
     id: "land-hover",
@@ -102,6 +103,31 @@ const incomeFillColorExpression: ExpressionSpecification = [
 ]
 
 const useLayers = (theme: GradientPalette, activeThemeIds: readonly MapThemeId[]) => {
+    // const { predictions } = usePredictions()
+
+    const countriesFillLayer: FillLayerSpecification = useMemo(
+        () => ({
+            id: "land",
+            type: "fill",
+            source: COUNTRIES_SOURCE,
+            paint: {
+                "fill-color": [
+                    "interpolate",
+                    ["linear"],
+                    ["feature-state", "prediction"],
+
+                    theme.domain[0],
+                    theme.colorScale(theme.domain[0]),
+                    theme.domain[1],
+                    theme.colorScale(theme.domain[1]),
+                ],
+
+                "fill-antialias": false,
+            },
+        }),
+        [theme]
+    )
+
     const backgroundLayer = useMemo<BackgroundLayerSpecification>(
         () => ({
             id: "ocean",
@@ -151,7 +177,7 @@ const useLayers = (theme: GradientPalette, activeThemeIds: readonly MapThemeId[]
             countriesHoverBoundariesLayer,
             countriesBoundariesLayer,
         ]
-    }, [activeThemes])
+    }, [activeThemes, countriesFillLayer])
 
     return {
         backgroundLayer,

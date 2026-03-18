@@ -173,6 +173,6 @@ export class PredictionService {
     // }
 
     // findAllPredictions = async () => {
-    //     return await this.predictionRepository.find()
+    //     return await this.predictionRepository.findPredictionsGroupedByLoc()
     // }
 }
