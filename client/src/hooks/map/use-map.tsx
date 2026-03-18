@@ -1,7 +1,6 @@
 "use client"
 import centroid from "@turf/centroid"
 import { useCallback, useEffect, useMemo, useRef } from "react"
-import { useCallback, useEffect, useMemo, useRef } from "react"
 
 import { WeekClientService } from "@/features/environment/week/week.service.client"
 import { slugify, unslugify } from "@/lib/utils"
@@ -50,8 +49,14 @@ const useMapHook = () => {
 
     const explanationMethod = useSettingsStore((s) => s.explanationMethod)
 
-    const { setLoading, setModifying, onOutcomeSelect, setSimulation, setEnvironment } =
-        usePredictionsStore()
+    const {
+        setLoading,
+        setModifying,
+        onOutcomeSelect,
+        setSimulation,
+        setEnvironment,
+        predictionMap,
+    } = usePredictionsStore()
 
     const activeSlug = parseSlug(params.slug)
 
@@ -109,7 +114,6 @@ const useMapHook = () => {
             const isHoverable = !!predictionMap[feature.properties.isoA3]
             map.setFeatureState(
                 { source: COUNTRIES_SOURCE, id: feature.id },
-                { hover: isHoverable }
                 { hover: isHoverable }
             )
 
