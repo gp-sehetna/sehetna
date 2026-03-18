@@ -14,14 +14,14 @@ export class PredictionRepository extends DatabaseRepository<IPrediction> {
             .find(filter, {
                 base_date: 1,
                 prediction_type: 1,
-                features_snapshot: 1,
                 health_outcomes: 1,
             })
+            .sort({ base_date: 1, createdAt: 1 })
             .lean()
             .exec()
     }
 
-    async insertMany(predictions: IPrediction[], session?: ClientSession) {
+    async insertMany(predictions: Partial<IPrediction>[], session?: ClientSession) {
         return await this.model.insertMany(predictions, {
             session,
             lean: true,
@@ -32,7 +32,7 @@ export class PredictionRepository extends DatabaseRepository<IPrediction> {
     async deleteAllForecasted(query: QueryFilter<IPrediction> = {}, session?: ClientSession) {
         return await this.model.deleteMany(
             {
-                prediction_type: { $ne: PredictionType.forecasted },
+                prediction_type: PredictionType.forecasted,
                 ...query,
             },
             { session }

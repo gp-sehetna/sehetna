@@ -1,5 +1,4 @@
 import { buildSteps } from "@/lib/utils/array"
-import { nullableNumber, numberWithDefault } from "@/lib/utils/object"
 import { IHealthOutcomes, mapHealthOutcomes } from "@/shared/config/health-outcomes"
 import { InferSchemaType, Model, Require_id, Schema, model, models } from "mongoose"
 
@@ -7,7 +6,7 @@ const Binary = [0, 1]
 const WeekDaysCount = buildSteps(0, 7, 1)
 
 const HealthOutcomesSchema = new Schema<IHealthOutcomes>(
-    mapHealthOutcomes(() => nullableNumber),
+    mapHealthOutcomes(() => ({ type: Number, default: null })),
     { _id: false }
 )
 
@@ -16,19 +15,19 @@ const ObservationSchema = new Schema(
         location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
         base_date: { type: Date, required: true },
         climate: {
-            temperature_celsius: numberWithDefault,
-            precipitation_mm: numberWithDefault,
+            temperature_celsius: { type: Number, default: 0 },
+            precipitation_mm: { type: Number, default: 0 },
             heat_wave_days: { type: WeekDaysCount, default: 0 },
             flood_indicator: { type: Binary, default: 0 },
         },
         air_quality: {
-            pm25_ugm3: numberWithDefault,
-            aqi_pm: numberWithDefault,
+            pm25_ugm3: { type: Number, default: 0 },
+            aqi_pm: { type: Number, default: 0 },
         },
         health_indicators: {
-            healthcare_access_index: numberWithDefault,
-            food_security_index: numberWithDefault,
-            uhs_service_coverage_index: numberWithDefault,
+            healthcare_access_index: { type: Number, default: 0 },
+            food_security_index: { type: Number, default: 0 },
+            gdp_per_capita_usd: { type: Number, default: 0 },
         },
         targets: { type: HealthOutcomesSchema, required: true },
 

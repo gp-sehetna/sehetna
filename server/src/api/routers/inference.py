@@ -43,9 +43,7 @@ async def forecast(
         axis=1,
     )
     logger.info("Forecasting...")
-    horizon_len, forecasts = forecast_service.forecast(req, environment_predictions_df)
-    logger.info(f"Horizon length: {horizon_len}, Forecasts: {len(forecasts.keys())}")
+    horizons, forecasts = forecast_service.forecast(req, environment_predictions_df)
+    logger.info(f"Horizon length: {horizons}, Forecasts: {len(forecasts.keys())}")
 
-    return ForecastResponse(
-        horizon=horizon_len, predictions=ForecastResponse.from_predictions(predictions), forecasts=forecasts
-    )
+    return ForecastResponse.build(environment_predictions_df, horizons, forecasts)

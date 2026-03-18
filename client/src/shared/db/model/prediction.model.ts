@@ -1,20 +1,20 @@
-import { nullableNumber } from "@/lib/utils/object"
 import { IHealthOutcomes, mapHealthOutcomes } from "@/shared/config/health-outcomes"
 import { PredictionType } from "@/shared/db/enums/prediction.enum"
-import { InferSchemaType, Model, Schema, model, models } from "mongoose"
+import { InferSchemaType, Model, Schema, Types, model, models } from "mongoose"
 
 const IntervalPredictionSchema = new Schema(
     {
         point: { type: Number, required: true },
-        lower: nullableNumber,
-        upper: nullableNumber,
+        lower: { type: Number, default: null },
+        upper: { type: Number, default: null },
     },
     { _id: false }
 )
 
 type IIntervalPredictionSchema = InferSchemaType<typeof IntervalPredictionSchema>
+export type IHealthOutcomesWithIntervals = IHealthOutcomes<IIntervalPredictionSchema>
 
-const HealthOutcomesWithIntervalsSchema = new Schema<IHealthOutcomes<IIntervalPredictionSchema>>(
+const HealthOutcomesWithIntervalsSchema = new Schema<IHealthOutcomesWithIntervals>(
     mapHealthOutcomes(() => ({ type: IntervalPredictionSchema, required: true })),
     { _id: false }
 )
@@ -33,16 +33,17 @@ const PredictionSchema = new Schema(
 )
 
 export type IPrediction = InferSchemaType<typeof PredictionSchema>
-export type PredictionMeta = Omit<
-    IPrediction,
-    "health_outcomes" | "createdAt" | "base_date" | "prediction_type" | "_id" | "features_snapshot"
->
+export type PredictionForeignKeys = {
+    user_id: Types.ObjectId
+    model_id: Types.ObjectId
+    location_id: Types.ObjectId
+}
 
 PredictionSchema.index(
-    { model_id: 1, location_id: 1 },
-    { unique: true, name: "model_location_index" }
+    { model_id: 1, location_id: 1, prediction_type: 1, base_date: 1 },
+    { name: "model_location_type_date_index" }
 )
-PredictionSchema.index({ user_id: 1 }, { unique: true, name: "user_model_index" })
+PredictionSchema.index({ user_id: 1, base_date: 1 }, { name: "user_base_date_index" })
 
 export const PredictionModel: Model<IPrediction> =
     models.Prediction || model<IPrediction>("Prediction", PredictionSchema)

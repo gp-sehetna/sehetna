@@ -1,17 +1,17 @@
-import { MainService } from "@/shared/db/main.service"
-import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
+// import { MainService } from "@/shared/db/main.service"
+// import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 
-export const GET = globalErrorHandler(async (_request) => {
-    const mainService = await MainService.getInstance()
-    const predictions = await mainService.predictionService.findAllPredictions()
-    return [{ data: predictions }, `${predictions.length} Predictions retrieved successfully`]
-})
-export const POST = globalErrorHandler(async (request) => {
-    const prediction = await request.json()
-    const mainService = await MainService.getInstance()
-    const _id = await mainService.predictionService.createPrediction(prediction)
-    return [undefined, "New Prediction created successfully"]
-})
+// export const GET = globalErrorHandler(async (_request) => {
+//     const mainService = await MainService.getInstance()
+//     const predictions = await mainService.predictionService.findAllPredictions()
+//     return [{ data: predictions }, `${predictions.length} Predictions retrieved successfully`]
+// })
+// export const POST = globalErrorHandler(async (request) => {
+//     const prediction = await request.json()
+//     const mainService = await MainService.getInstance()
+//     const _id = await mainService.predictionService.createPrediction(prediction)
+//     return [undefined, "New Prediction created successfully"]
+// })
 /**
  * Read CSV file and insert historical data into db
  */

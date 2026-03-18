@@ -1,26 +1,31 @@
-import { Forecasts } from "@/features/environment/prediction/prediction.dto"
+import { ForecastResponse, Forecasts } from "@/features/environment/prediction/prediction.dto"
 import { api } from "@/shared/api"
-import { AiModel, AiModelEnum } from "@/shared/db/enums/ai-model.enum"
+import { AiModelEnum } from "@/shared/db/enums/ai-model.enum"
 import { useQuery } from "@tanstack/react-query"
 import { SearchParamsOption } from "ky"
 
 type UseForecastsOptions = {
     modelId?: AiModelEnum
+    iso: string
 }
-
 export const useForecasts = (options?: UseForecastsOptions) => {
-    const { modelId = AiModel.patchtst } = options || {}
-    return useQuery({
-        queryKey: ["forecasts", modelId],
-        queryFn: async () => {
-            const searchParams: SearchParamsOption = { "model-id": modelId }
+    const { modelId, iso } = options || {}
 
-            const { forecasts } = await api
-                .get<Forecasts>("api/environment/forecast", { searchParams })
+    return useQuery<Forecasts>({
+        queryKey: ["forecasts", modelId, iso],
+        queryFn: async () => {
+            const searchParams: SearchParamsOption = {
+                "model-id": modelId,
+                iso,
+            }
+
+            const { predictions } = await api
+                .get<ForecastResponse>("api/environment/prediction", { searchParams })
                 .json()
 
-            return forecasts
+            return predictions
         },
-        staleTime: 1000 * 60 * 60 * 6,
+        enabled: !!iso && !!modelId,
+        staleTime: process.env.NODE_ENV == "development" ? 0 : 1000 * 60 * 60 * 6,
     })
 }

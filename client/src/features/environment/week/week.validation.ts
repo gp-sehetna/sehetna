@@ -1,7 +1,6 @@
 import { WeekParams } from "@/features/environment/week/week.types"
 import { refineCoords } from "@/lib/utils"
-import { getWeeksTillToday } from "@/lib/utils/date"
-import { startOfWeek, subDays } from "date-fns"
+import { getWeekRange } from "@/lib/utils/date"
 import { z } from "zod"
 
 const DATE_FORMAT_REGEX = /^\d{4}-\d{2}-\d{2}$/
@@ -46,14 +45,9 @@ const mapWeekEnvironmentParams = (data: z.infer<typeof WeekEnvironmentQuerySchem
         iso: data.country_code,
     }
 
-    if (!data.weeks)
-        return {
-            loc,
-            date: subDays(startOfWeek(data.date), 1),
-            weeks: getWeeksTillToday(data.date),
-        }
+    const { startDate, endDate, weeks } = getWeekRange(data.date, data.weeks)
 
-    return { loc, date: subDays(startOfWeek(data.date), 1), weeks: data.weeks }
+    return { loc, date: startDate, weeks, endDate }
 }
 
 const WeekEnvironmentParamsSchema =

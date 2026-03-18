@@ -36,7 +36,6 @@ const ConfirmPasswordSchema = PasswordSchema.extend({
     path: ["confirmPassword"],
 })
 
-// TODO: double check on constraints of both fields, both should have the same min/max
 const baseName = z
     .string()
     .min(FIELD_REQUIRED, `Min length is ${FIELD_REQUIRED} chars`)
@@ -53,14 +52,14 @@ const PasswordAndNameSchema = NameSchema.extend(PasswordSchema.shape)
 
 export {
     ConfirmPasswordSchema,
+    DESC_MAX_LENGTH,
     EmailSchema,
+    FIELD_REQUIRED,
     LoginSchema,
+    NAME_MAX_LENGTH,
     OtpSchema,
     PasswordAndNameSchema,
     PasswordSchema,
     PurposeAndOtpSchema,
     SignupSchema,
-    FIELD_REQUIRED,
-    NAME_MAX_LENGTH,
-    DESC_MAX_LENGTH,
 }

@@ -1,150 +1,178 @@
-import { UserWithoutPassword } from "@/features/auth/auth.types"
-import { ForecastResponse, ForecastResult } from "@/features/environment/prediction/prediction.dto"
-import { HealthOutcomesKeys } from "@/shared/config/health-outcomes"
-import { AiModelEnum } from "@/shared/db/enums/ai-model.enum"
+import { ForecastParams, Forecasts } from "@/features/environment/prediction/prediction.dto"
+import { AiForecastResponse } from "@/features/environment/prediction/prediction.types"
 import { PredictionType } from "@/shared/db/enums/prediction.enum"
-import { IPrediction, PredictionMeta } from "@/shared/db/model/prediction.model"
+import {
+    IHealthOutcomesWithIntervals,
+    IPrediction,
+    PredictionForeignKeys,
+} from "@/shared/db/model/prediction.model"
 import { AiModelRepository } from "@/shared/db/repository/ai-model.repository"
 import { LocationRepository } from "@/shared/db/repository/location.repository"
 import { PredictionRepository } from "@/shared/db/repository/prediction.repository"
-import { ClientSession } from "mongoose"
-import { ForecastsSchema } from "./prediction.validation"
+import { addWeeks, differenceInWeeks, startOfWeek } from "date-fns"
+import { startSession, Types } from "mongoose"
 
-type ForecastInsertQuery = {
-    modelId: string
-    code: string
-    userId: UserWithoutPassword["_id"]
+interface TimelineRange {
+    predictions: Date
+    forecasts: Date
 }
 
 export class PredictionService {
+    public static LATEST_HISTORICAL_DATE = addWeeks(startOfWeek(new Date("2025-10-19")), 1)
     constructor(
         private readonly predictionRepository: PredictionRepository,
         private readonly aiModelRepository: AiModelRepository,
         private readonly locationRepository: LocationRepository
     ) {}
 
-    private static fromForecastResult = (
-        { forecasts, horizon }: ForecastResponse,
-        meta: PredictionMeta
-    ) => {
-        const today = new Date()
+    getLatestPredictionDateForCountry = async (iso: string) => {
+        const location = await this.locationRepository.findByCode(iso)
+        return await this.getLatestPredictionDateForLocation(location._id)
+    }
 
-        return Array.from(
-            { length: horizon },
-            (_, index): IPrediction => ({
-                user_id: meta.user_id,
-                model_id: meta.model_id,
-                prediction_type: PredictionType.forecasted,
-                createdAt: today,
+    private getLatestPredictionDateForLocation = async (locationId: Types.ObjectId) => {
+        const predictions = await this.predictionRepository.findPredictions({
+            location_id: locationId,
+            prediction_type: PredictionType.predicted,
+        })
+
+        return predictions.length ? predictions[predictions.length - 1].base_date : null
+    }
+
+    private validatePredictionDateDifference = async (
+        locationId: Types.ObjectId,
+        horizon: number
+    ) => {
+        const date = await this.getLatestPredictionDateForLocation(locationId)
+        return (
+            differenceInWeeks(new Date(), date ?? PredictionService.LATEST_HISTORICAL_DATE) >=
+            horizon
+        )
+    }
+
+    private buildTimeline = async (
+        response: AiForecastResponse,
+        timeline: TimelineRange,
+        locationId: Types.ObjectId,
+        meta: PredictionForeignKeys
+    ) => {
+        const forecasts = PredictionService.mapForecasts(response, timeline.forecasts, meta)
+
+        const withPredictions = await this.validatePredictionDateDifference(
+            locationId,
+            response.horizon
+        )
+        if (!withPredictions) return forecasts
+
+        const predictions = PredictionService.mapPredictions(
+            response.environment,
+            timeline.predictions,
+            meta
+        )
+
+        return [...predictions, ...forecasts]
+    }
+
+    insertPredictions = async (
+        response: AiForecastResponse,
+        userId: Types.ObjectId,
+        timeline: TimelineRange,
+        query: ForecastParams
+    ) => {
+        const session = await startSession()
+        try {
+            const model = await this.aiModelRepository.findByType(query.modelId)
+            const location = await this.locationRepository.findByCode(query.country_code)
+
+            const records = await this.buildTimeline(response, timeline, location._id, {
+                user_id: userId,
+                model_id: model._id,
+                location_id: location._id,
+            })
+
+            await session.withTransaction(async () => {
+                await this.predictionRepository.deleteAllForecasted(
+                    { model_id: model._id, location_id: location._id },
+                    session
+                )
+                await this.predictionRepository.insertMany(records, session)
+            })
+        } finally {
+            await session.endSession()
+        }
+    }
+
+    getPredictionsByLocation = async (query: ForecastParams): Promise<Forecasts> => {
+        const model = await this.aiModelRepository.findByType(query.modelId)
+        const location = await this.locationRepository.findByCode(query.country_code)
+
+        return await this.predictionRepository.findPredictions({
+            $or: [
+                { model_id: model._id, prediction_type: PredictionType.forecasted },
+                { prediction_type: { $ne: PredictionType.forecasted } },
+            ],
+            location_id: location._id,
+        })
+    }
+
+    private static mapPredictions = (
+        environment: AiForecastResponse["environment"],
+        start: Date,
+        { model_id, ...meta }: PredictionForeignKeys
+    ) => {
+        // Filter the environment to get only the health outcomes starting from the provided date.
+        return environment
+            .filter(({ date }) => new Date(date) >= start) // TODO: This should be deleted after the environment API calling is fixed for redundancy.
+            .map((record) => ({
+                ...meta,
                 features_snapshot: null,
-                base_date: today,
-                location_id: meta.location_id,
+                prediction_type: PredictionType.predicted,
+                base_date: new Date(record.date),
+                health_outcomes: {
+                    respiratory_disease_rate: { point: record.respiratory_disease_rate },
+                    cardio_mortality_rate: { point: record.cardio_mortality_rate },
+                    vector_disease_risk_score: { point: record.vector_disease_risk_score },
+                    waterborne_disease_incidents: { point: record.vector_disease_risk_score },
+                    heat_related_admissions: { point: record.vector_disease_risk_score },
+                },
+            }))
+    }
+
+    private static mapForecasts = (
+        response: AiForecastResponse,
+        start: Date,
+        meta: PredictionForeignKeys
+    ) => {
+        return Array.from(
+            { length: response.horizon },
+            (_, index): Partial<IPrediction> => ({
+                ...meta,
+                features_snapshot: null,
+                prediction_type: PredictionType.forecasted,
+                base_date: addWeeks(start, index),
                 health_outcomes: Object.fromEntries(
-                    Object.entries(forecasts).map(([key, value]) => [
-                        key,
+                    Object.entries(response.forecasts).map(([healthOutcome, outcome]) => [
+                        healthOutcome,
                         {
-                            point: value.point[index],
-                            lower: value.lower?.[index] ?? null,
-                            upper: value.upper?.[index] ?? null,
+                            point: outcome.point[index],
+                            lower: outcome.lower?.[index] ?? null,
+                            upper: outcome.upper?.[index] ?? null,
                         },
                     ])
-                ) as IPrediction["health_outcomes"],
+                ) as IHealthOutcomesWithIntervals,
             })
         )
     }
 
-    private static aggregate = (predictions: IPrediction[]) => {
-        const base_date = predictions[0].base_date
-        const outcomeKeys = Object.keys(
-            predictions[0].health_outcomes ?? {}
-        ) as HealthOutcomesKeys[]
+    // insertMany = async (predictions: Partial<IPrediction>[]) => {
+    //     return await this.predictionRepository.insertMany(predictions)
+    // }
 
-        const health_outcomes = Object.fromEntries(
-            outcomeKeys.map((key) => [
-                key,
-                {
-                    point: [] as number[],
-                    lower: [] as number[],
-                    upper: [] as number[],
-                },
-            ])
-        ) as ForecastResult
+    // createPrediction = async (prediction: Partial<IPrediction>) => {
+    //     return await this.predictionRepository.create(prediction)
+    // }
 
-        for (const prediction of predictions) {
-            for (const key of outcomeKeys) {
-                const value = prediction.health_outcomes[key],
-                    point = Number(value.point.toFixed(2)),
-                    lower = value.lower != null ? Number(value.lower.toFixed(2)) : null,
-                    upper = value.upper != null ? Number(value.upper.toFixed(2)) : null
-
-                health_outcomes[key].point.push(point)
-                health_outcomes[key].lower.push(lower)
-                health_outcomes[key].upper.push(upper)
-            }
-        }
-
-        return {
-            prediction_type: PredictionType.forecasted,
-            base_date,
-            health_outcomes,
-        }
-    }
-
-    insertForecasts = async (
-        { forecasts, horizon, predictions }: ForecastResponse,
-        query: ForecastInsertQuery,
-        session: ClientSession
-    ) => {
-        const model = await this.aiModelRepository.findByType(query.modelId as AiModelEnum)
-        const location = await this.locationRepository.findByCode(query.code)
-
-        await this.predictionRepository.deleteAllForecasted(
-            { model_id: model._id, location_id: location._id },
-            session
-        )
-
-        const predictionsToBeInserted = PredictionService.fromForecastResult(
-            { forecasts, horizon, predictions },
-            {
-                user_id: query.userId,
-                model_id: model._id,
-                location_id: location._id,
-            }
-        )
-
-        await this.predictionRepository.insertMany(predictionsToBeInserted, session)
-    }
-
-    getLastestPredictionDateForCountry = async (iso: string | null) => {
-        if (!iso) return null
-        const location = await this.locationRepository.findByCode(iso)
-        const predictions = await this.predictionRepository.findPredictions({
-            location_id: location._id,
-            prediction_type: { $ne: PredictionType.forecasted },
-        })
-
-        return predictions.length ? predictions[0].base_date : null
-    }
-
-    getForecasts = async (model_type: AiModelEnum) => {
-        const model = await this.aiModelRepository.findByType(model_type)
-        const forecasts = await this.predictionRepository.findPredictions({
-            model_id: model._id,
-            prediction_type: PredictionType.forecasted,
-        })
-
-        return ForecastsSchema.parse({ forecasts: PredictionService.aggregate(forecasts) })
-    }
-
-    insertMany = async (predictions: IPrediction[]) => {
-        return await this.predictionRepository.insertMany(predictions)
-    }
-
-    createPrediction = async (prediction: IPrediction) => {
-        return await this.predictionRepository.create(prediction)
-    }
-
-    findAllPredictions = async () => {
-        return await this.predictionRepository.find()
-    }
+    // findAllPredictions = async () => {
+    //     return await this.predictionRepository.find()
+    // }
 }

@@ -8,29 +8,24 @@ import { AiModel } from "@/shared/db/enums/ai-model.enum"
 import { PredictionType } from "@/shared/db/enums/prediction.enum"
 import { z } from "zod"
 
-const TargetForecastSchema = z.object({
-    point: z.array(z.number()),
-    lower: z.array(z.number().nullable()),
-    upper: z.array(z.number().nullable()),
+const PredictionViewSchema = z.object({
+    point: z.number(),
+    lower: z.number().nullable().optional(),
+    upper: z.number().nullable().optional(),
 })
 
-const ForecastResultSchema = z.record(z.enum(HEALTH_OUTCOMES_KEYS), TargetForecastSchema)
-const ForecastResponseSchema = z.object({
-    horizon: z.number().int(),
-    forecasts: ForecastResultSchema,
-    predictions: z.array(z.record(z.enum(HEALTH_OUTCOMES_KEYS), z.number())),
-})
-
-const ForecastsSchema = z.object({
-    forecasts: z.object({
+const ForecastsOutcomesViewSchema = z.record(z.enum(HEALTH_OUTCOMES_KEYS), PredictionViewSchema)
+const ForecastsSchema = z.array(
+    z.object({
         prediction_type: z.enum(PredictionType),
-        health_outcomes: ForecastResultSchema,
+        health_outcomes: ForecastsOutcomesViewSchema,
         base_date: z.date(),
-    }),
-})
+    })
+)
 
 const ForecastParamsSchema = z.object({
     modelId: z.enum(AiModel),
+    country_code: z.string().length(3),
 })
 
 const ForecastEnvironmentParamsSchema = ForecastParamsSchema.extend(
@@ -43,8 +38,6 @@ const ForecastEnvironmentParamsSchema = ForecastParamsSchema.extend(
 export {
     ForecastEnvironmentParamsSchema,
     ForecastParamsSchema,
-    ForecastResponseSchema,
-    ForecastResultSchema,
+    ForecastsOutcomesViewSchema,
     ForecastsSchema,
-    TargetForecastSchema,
 }

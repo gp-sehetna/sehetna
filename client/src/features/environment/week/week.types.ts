@@ -7,6 +7,7 @@ type WeekParams = {
     loc: Location
     date: Date
     weeks: number
+    endDate: Date
 }
 
 interface Location extends Coordinates {

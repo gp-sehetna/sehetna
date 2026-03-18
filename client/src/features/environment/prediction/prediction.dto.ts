@@ -1,12 +1,16 @@
 import {
-    ForecastResponseSchema,
-    ForecastResultSchema,
+    ForecastParamsSchema,
+    ForecastsOutcomesViewSchema,
     ForecastsSchema,
 } from "@/features/environment/prediction/prediction.validation"
 import { z } from "zod"
 
-type ForecastResult = z.infer<typeof ForecastResultSchema>
-type ForecastResponse = z.infer<typeof ForecastResponseSchema>
+type ForecastParams = z.infer<typeof ForecastParamsSchema>
 type Forecasts = z.infer<typeof ForecastsSchema>
+type ForecastsOutcomesView = z.infer<typeof ForecastsOutcomesViewSchema>
 
-export type { ForecastResponse, ForecastResult, Forecasts }
+type ForecastResponse = {
+    predictions: Forecasts
+}
+
+export type { ForecastParams, ForecastResponse, Forecasts, ForecastsOutcomesView }

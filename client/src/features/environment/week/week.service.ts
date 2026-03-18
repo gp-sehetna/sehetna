@@ -14,6 +14,7 @@ import {
     OPEN_METEO_HISTORICAL_WEATHER,
     WORLDBANK,
 } from "@/shared/config/urls"
+import { format } from "date-fns"
 import { SearchParamsOption } from "ky"
 import { fetchWeatherApi } from "openmeteo"
 
@@ -134,8 +135,8 @@ export class WeekService {
         return {
             latitude: query.loc.lat,
             longitude: query.loc.lng,
-            start_date: startDate,
-            end_date: endDate,
+            start_date: format(startDate, "yyyy-MM-dd"),
+            end_date: format(endDate, "yyyy-MM-dd"),
             timezone: "auto",
             ...options,
         }
