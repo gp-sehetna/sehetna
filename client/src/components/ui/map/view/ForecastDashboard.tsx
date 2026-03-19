@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/shadcn/chart"
 import { Separator } from "@/components/ui/shadcn/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/shadcn/tabs"
-import { Forecasts } from "@/features/environment/prediction/prediction.dto"
+import { Forecasts } from "@/features/environment/prediction/prediction.types"
 import { cn, slugify, toProperCase } from "@/lib/utils"
 import { HEALTH_OUTCOMES_KEYS, HealthOutcomesKeys } from "@/shared/config/health-outcomes"
 import { blue, darkBlue, getPrimaryColor, green, mix, red } from "@/shared/config/map-colors"
@@ -332,14 +332,6 @@ export function ForecastDashboard({ forecasts, onCardClick }: ForecastDashboardP
     const meta = OUTCOME_META[healthOutcome]
     const trend = getTrend(data)
     const Icon = meta.icon
-
-    if (!forecasts.length) {
-        return (
-            <div className="text-muted-foreground py-8 text-center text-sm">
-                No prediction timeline is available for this model yet.
-            </div>
-        )
-    }
 
     return (
         <Tabs defaultValue="overview">

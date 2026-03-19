@@ -1,6 +1,6 @@
 "use client"
 import centroid from "@turf/centroid"
-import { useCallback, useEffect, useMemo, useRef } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { WeekClientService } from "@/features/environment/week/week.service.client"
 import { slugify, unslugify } from "@/lib/utils"
@@ -27,7 +27,6 @@ import { useMapStore } from "@/stores/map/use-map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
 import { useSettingsStore } from "@/stores/use-settings"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
-import { useMap } from "react-map-gl/maplibre"
 import { toast } from "sonner"
 
 const useMapHook = () => {
@@ -35,7 +34,7 @@ const useMapHook = () => {
     const searchParams = useSearchParams()
     const params = useParams<MapPageProps["params"]>()
     const centroidCache = useRef(new Map())
-    const { current: mapRef } = useMap()
+    const [map, setMap] = useState<maplibregl.Map>()
 
     const { predictionsMap } = usePredictions()
 
@@ -79,16 +78,10 @@ const useMapHook = () => {
     }, [isInvalid, activeSlug])
 
     useEffect(() => {
-        const map = mapRef?.getMap()
+        if (!map) return
 
-        if (!map || !map.getSource(COUNTRIES_SOURCE)) return
-
-        const features = map.querySourceFeatures(COUNTRIES_SOURCE)
-
-        if (!features.length) return
-
-        colorEachCountry(map, features, theme, predictionsMap)
-    }, [mapRef, predictionsMap, theme])
+        colorEachCountry(map, theme, predictionsMap)
+    }, [map, predictionsMap, theme])
 
     const onMouseMove = useCallback(
         (e: MapLayerMouseEvent) => {
@@ -244,8 +237,9 @@ const useMapHook = () => {
     const onMapLoad = useCallback(
         (e: MapLibreEvent) => {
             const map = e.target,
-                features = map.querySourceFeatures("countries")
+                features = map.querySourceFeatures(COUNTRIES_SOURCE)
 
+            setMap(map)
             if (!activeSlug.country) return
 
             const country = getCountryBySlug(activeSlug.country, features)

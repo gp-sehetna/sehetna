@@ -10,7 +10,7 @@ const steps = buildSteps(start, end, step)
 class Colors {
     static strokeColor = "#fff"
     static strokeHoverWidth = 2
-    static strokeWidth = 0.15
+    static strokeWidth = 0.3
     static clickableContentFill = "#fff"
     static nonClickableContentFill = "#333333aa"
 }

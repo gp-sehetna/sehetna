@@ -39,4 +39,12 @@ interface AiForecastResponse {
     environment: Record<string, any>[]
 }
 
-export type { AiForecastResponse, ForecastParams, PredictionsAggregates, SimplePrediction }
+type Forecasts = SimplePrediction[]
+
+export type {
+    AiForecastResponse,
+    Forecasts,
+    ForecastParams,
+    PredictionsAggregates,
+    SimplePrediction,
+}

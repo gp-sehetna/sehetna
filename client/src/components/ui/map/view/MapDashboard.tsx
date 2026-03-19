@@ -34,19 +34,19 @@ export const MapDashboard = ({
             </CardHeader>
 
             <CardContent className="flex h-screen flex-col gap-4 overflow-y-auto p-4">
-                <Tabs defaultValue="live">
+                <Tabs className="flex flex-1 flex-col" defaultValue="live">
                     <TabsList className="glassy grid w-full grid-cols-2 bg-transparent">
                         <TabsTrigger value="live">Live Data</TabsTrigger>
                         <TabsTrigger value="simulation">Simulation</TabsTrigger>
                     </TabsList>
-                    <TabsContent className="h-full" value="simulation">
+                    <TabsContent className="flex-1" value="simulation">
                         {!isModifying ? (
                             <HealthOutcomeCharts />
                         ) : (
                             <MapModifyInputs onSubmitForm={onSubmitForm} />
                         )}
                     </TabsContent>
-                    <TabsContent value="live">
+                    <TabsContent className="flex-1" value="live">
                         <LiveContent
                             onLayerSelect={onLayerSelect}
                             zoneProperties={zoneProperties}

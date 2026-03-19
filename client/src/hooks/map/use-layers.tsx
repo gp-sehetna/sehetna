@@ -31,6 +31,21 @@ const STATIC_LAYERS: readonly (FillLayerSpecification | LineLayerSpecification)[
         },
     },
     {
+        id: "land-boundaries",
+        type: "line",
+        source: COUNTRIES_SOURCE,
+        layout: {
+            "line-cap": "round",
+            "line-join": "round",
+        },
+        paint: {
+            "line-color": Colors.strokeColor,
+            "line-translate-anchor": "map",
+            "line-opacity": 1,
+            "line-width": Colors.strokeWidth,
+        },
+    },
+    {
         id: "land-hover-boundaries",
         type: "line",
         source: COUNTRIES_SOURCE,
@@ -44,22 +59,6 @@ const STATIC_LAYERS: readonly (FillLayerSpecification | LineLayerSpecification)[
             "line-width": Colors.strokeHoverWidth,
             "line-blur": 0.4,
             "line-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 1, 0],
-        },
-    },
-    {
-        id: "land-boundaries",
-        type: "line",
-        source: COUNTRIES_SOURCE,
-        layout: {
-            "line-cap": "round",
-            "line-join": "round",
-        },
-        paint: {
-            "line-color": Colors.strokeColor,
-            "line-translate-anchor": "map",
-            "line-opacity": 1,
-            "line-width": Colors.strokeWidth,
-            "line-blur": 0.2,
         },
     },
 ] as const
@@ -86,7 +85,7 @@ const createPredictionFillLayer: FillLayerSpecification = {
     type: "fill",
     source: COUNTRIES_SOURCE,
     paint: {
-        "fill-color": ["feature-state", "color"],
+        "fill-color": ["coalesce", ["feature-state", "color"], "#ececec"],
         "fill-antialias": false,
     },
 }
@@ -107,6 +106,7 @@ const createThemeFillLayer = (
             mapTheme.colors,
             "#fff"
         ),
+        "fill-opacity": 0.4,
     },
 })
 
@@ -137,7 +137,10 @@ const useLayers = (theme: GradientPalette, activeThemeIds: readonly MapThemeId[]
         [activeThemes]
     )
 
-    const layers = useMemo(() => [countriesFillLayer, ...STATIC_LAYERS], [countriesFillLayer])
+    const layers = useMemo(
+        () => [countriesFillLayer, ...themeLayers, ...STATIC_LAYERS],
+        [themeLayers, countriesFillLayer]
+    )
 
     return {
         backgroundLayer,

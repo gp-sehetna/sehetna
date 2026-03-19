@@ -102,14 +102,10 @@ const getClickedCountry = (map: Map, point: PointLike) => {
 
 const colorEachCountry = (
     map: Map,
-    features: GeoJSONFeature[],
     theme: GradientPalette,
     predictionsMap: PredictionsAggregates
 ) => {
-    map.touchZoomRotate.disableRotation()
-    map.touchPitch.disable()
-
-    for (const feature of features) {
+    for (const feature of map.querySourceFeatures("countries")) {
         const { id, isoA3 } = feature.properties as GeoJsonProperties
         const prediction = predictionsMap[isoA3]
         if (!prediction) continue

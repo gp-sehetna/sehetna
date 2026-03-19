@@ -17,6 +17,7 @@ export default function AppLink({
     children,
     className,
     hoverEffect = true,
+    ...props
 }: Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & AppLinkProps) {
     return (
         <Link
@@ -30,6 +31,7 @@ export default function AppLink({
                 hoverEffect && "hover:after:scale-x-100",
                 className
             )}
+            {...props}
         >
             {children}
         </Link>

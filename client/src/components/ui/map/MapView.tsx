@@ -32,6 +32,8 @@ export default function MapView({ children }: { children: React.ReactNode }) {
             onMouseMove={onMouseMove}
             onMouseOut={onMouseOut}
             attributionControl={false}
+            touchPitch={false}
+            touchZoomRotate={false}
             dragPan={{ maxSpeed: 0 }} // Disables easing effect to improve performance on exchange layer
         >
             <MapTooltip predictionsMap={predictionsMap} />

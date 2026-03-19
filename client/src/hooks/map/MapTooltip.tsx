@@ -3,6 +3,10 @@ import { PredictionsAggregates } from "@/features/environment/prediction/predict
 import { toProperCase } from "@/lib/utils"
 import { useMapStore } from "@/stores/map/use-map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
+import ReactCountryFlag from "react-country-flag"
+import { RadialChart } from "@/components/ui/charts/RadialChart"
+import { useThemeStore } from "@/stores/map/use-theme"
+import { Activity } from "lucide-react"
 
 type MapTooltipProps = {
     predictionsMap: PredictionsAggregates
@@ -10,13 +14,16 @@ type MapTooltipProps = {
 
 const MapTooltip = ({ predictionsMap }: MapTooltipProps) => {
     const healthOutcome = usePredictionsStore((s) => s.healthOutcome)
-
+    const { theme } = useThemeStore()
     const hoveredZone = useMapStore((s) => s.hoveredZone)
     const setTooltip = useMapStore((s) => s.setTooltip)
 
     if (!hoveredZone) return null
     const hoveredPrediction = predictionsMap[hoveredZone.properties.isoA3]
 
+    const predictionValue = hoveredPrediction
+        ? +(hoveredPrediction.sum / hoveredPrediction.count).toFixed(2)
+        : 0
     return (
         <div
             ref={setTooltip}
@@ -29,18 +36,34 @@ const MapTooltip = ({ predictionsMap }: MapTooltipProps) => {
                 fontSize: "12px",
                 willChange: "transform",
             }}
-            className={`glassy pointer-events-none flex min-w-72 flex-col gap-1 rounded-xl shadow-lg`}
+            className="glassy pointer-events-none flex min-w-72 flex-col gap-1 rounded-xl shadow-lg"
         >
-            <h6 className="text-foreground">{hoveredZone.properties.name}</h6>
+            <div className="flex items-center gap-2">
+                <ReactCountryFlag
+                    style={{
+                        filter: "drop-shadow(0px 2px 2px #00000022)",
+                        borderRadius: "4px",
+                        transform: "scale(1.2)",
+                    }}
+                    svg
+                    countryCode={hoveredZone.properties.isoA2}
+                />
+
+                <p className="text-foreground text-md font-bold">{hoveredZone.properties.name}</p>
+            </div>
             {!hoveredPrediction ? (
-                <p className="text-sm">No data</p>
+                <p className="text-muted-foreground text-sm">No prediction values available yet.</p>
             ) : (
-                <div className="flex items-center gap-1">
-                    <span className="text-xs">{toProperCase(healthOutcome)}</span>:
-                    <span className="text-foreground font-bold">
-                        {(hoveredPrediction.sum / hoveredPrediction.count).toFixed(2)}%
-                    </span>
-                </div>
+                <>
+                    <RadialChart
+                        value={predictionValue}
+                        color={theme.colorScale(predictionValue)}
+                        chartLabel={toProperCase(healthOutcome)}
+                        Icon={Activity}
+                        tooltip={"Hello"}
+                        max={100}
+                    />
+                </>
             )}
         </div>
     )

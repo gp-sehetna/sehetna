@@ -1,5 +1,4 @@
 import { Coordinates } from "@/features/environment/week/week.types"
-import logger from "@/shared/logger"
 import { GeoJSONFeature } from "maplibre-gl"
 import { create } from "zustand"
 
@@ -72,15 +71,6 @@ export const useMapStore = create<MapState>((set, get) => ({
         // – Not enough space above → show below cursor
         if (y - tooltipHeight < 0) offsetY = "20px"
 
-        logger.info(
-            {
-                translateX,
-                translateY,
-                offsetX,
-                offsetY,
-            },
-            "Tooltip position updated (x, y, offsetX, offsetY)"
-        )
         tooltip.style.transform = `translate(${translateX}px, ${translateY}px) translate(${offsetX}, ${offsetY})`
     },
 }))
