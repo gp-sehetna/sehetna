@@ -97,19 +97,21 @@ export function RadialChart({
                                         width={helpSize}
                                         height={helpSize}
                                     >
-                                        tooltip ? (
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                {<IconElement />}
-                                            </PopoverTrigger>
-                                            <PopoverContent
-                                                className="glassy text-neutral-1000 bg-background/75 max-w-3xs text-xs whitespace-pre-line"
-                                                side="top"
-                                            >
-                                                {tooltip}
-                                            </PopoverContent>
-                                        </Popover>
-                                        ) : ( <IconElement /> )
+                                        {tooltip ? (
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    {<IconElement />}
+                                                </PopoverTrigger>
+                                                <PopoverContent
+                                                    className="glassy text-neutral-1000 bg-background/75 max-w-3xs text-xs whitespace-pre-line"
+                                                    side="top"
+                                                >
+                                                    {tooltip}
+                                                </PopoverContent>
+                                            </Popover>
+                                        ) : (
+                                            <IconElement />
+                                        )}
                                     </foreignObject>
                                     <text
                                         x={centerX}

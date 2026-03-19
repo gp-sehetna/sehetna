@@ -2,6 +2,7 @@ import { IEnvironmentData } from "@/features/environment/week/week.dto"
 import {
     AggResult,
     HEAT_WAVE_DAY_THRESHOLD,
+    Location,
     PRECIPITATION_THRESHOLD,
     Reducer,
     WeeklyEnvironmentData,
@@ -14,19 +15,22 @@ import {
     OPEN_METEO_HISTORICAL_WEATHER,
     WORLDBANK,
 } from "@/shared/config/urls"
-import { format } from "date-fns"
+import { endOfWeek, format, subDays, subWeeks } from "date-fns"
 import { SearchParamsOption } from "ky"
 import { fetchWeatherApi } from "openmeteo"
 
 export class WeekService {
     async getWeeklyEnvironmentData(query: WeekParams): Promise<IEnvironmentData | null> {
         try {
+            const { startDate, endDate } = getWeekRange(subWeeks(query.date, 1), query.weeks)
+            const endOfWeekOfEndDate = endOfWeek(subDays(endDate, 1))
+
             const [air, weather] = await Promise.all([
-                this.fetchWeeklyAirData(query),
-                this.fetchWeeklyWeatherData(query),
+                this.fetchWeeklyAirData(startDate, endOfWeekOfEndDate, query.loc),
+                this.fetchWeeklyWeatherData(startDate, endOfWeekOfEndDate, query.loc),
             ])
 
-            const indicators = await this.fetchIndicators(query.loc.iso, query.date.getFullYear())
+            const indicators = await this.fetchIndicators(query.loc.iso, startDate.getFullYear())
 
             const data: WeeklyEnvironmentData[] = air.map((airWeek, i) => ({
                 date: airWeek.date,
@@ -70,10 +74,12 @@ export class WeekService {
         }
     }
 
-    private async fetchWeeklyAirData(query: WeekParams) {
+    private async fetchWeeklyAirData(startDate: Date, endDate: Date, location: Location) {
         const [response] = await fetchWeatherApi(
             OPEN_METEO_AIR_QUALITY,
-            this.buildMeteoParams(query, { hourly: ["pm2_5", "us_aqi_pm2_5"] })
+            this.buildMeteoParams(startDate, endDate, location, {
+                hourly: ["pm2_5", "us_aqi_pm2_5"],
+            })
         )
 
         const hourly = response.hourly()!
@@ -95,10 +101,10 @@ export class WeekService {
         )
     }
 
-    private async fetchWeeklyWeatherData(query: WeekParams) {
+    private async fetchWeeklyWeatherData(startDate: Date, endDate: Date, location: Location) {
         const [response] = await fetchWeatherApi(
             OPEN_METEO_HISTORICAL_WEATHER,
-            this.buildMeteoParams(query, {
+            this.buildMeteoParams(startDate, endDate, location, {
                 daily: ["temperature_2m_mean", "rain_sum"],
             })
         )
@@ -129,12 +135,11 @@ export class WeekService {
         )
     }
 
-    private buildMeteoParams(query: WeekParams, options: any) {
+    private buildMeteoParams(startDate: Date, endDate: Date, location: Location, options: any) {
         // TODO: timezone/localtime handling and verification
-        const { startDate, endDate } = getWeekRange(query.date, query.weeks)
         return {
-            latitude: query.loc.lat,
-            longitude: query.loc.lng,
+            latitude: location.lat,
+            longitude: location.lng,
             start_date: format(startDate, "yyyy-MM-dd"),
             end_date: format(endDate, "yyyy-MM-dd"),
             timezone: "auto",
