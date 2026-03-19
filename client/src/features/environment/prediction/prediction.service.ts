@@ -131,8 +131,7 @@ export class PredictionService {
 
         const filter: QueryFilter<IPrediction> = { $or: orConditions }
 
-        if (query.dataStart && query.dataEnd)
-            filter.base_date = { $gte: new Date(query.dataStart), $lte: new Date(query.dataEnd) }
+        if (query.dataStart) filter.base_date = { $gte: new Date(query.dataStart) }
 
         const location = await this.locationRepository.findByCode(query.country_code)
         if (location) filter.location_id = location._id

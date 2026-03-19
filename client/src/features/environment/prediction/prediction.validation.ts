@@ -9,17 +9,15 @@ import { z } from "zod"
 
 const AiModelEnumSchema = z.enum(AiModel)
 const CountryCodeSchema = z.string().length(3)
-const dateParam = z
-    .string()
-    .regex(DATE_FORMAT_REGEX)
-    .nullish()
-    .transform((value) => value ?? null)
-    .pipe(z.coerce.date<string | null>().nullable())
 
 const GetPredictionsParamsSchema = z.object({
     modelId: AiModelEnumSchema.nullable(),
-    dataStart: dateParam,
-    dataEnd: dateParam,
+    dataStart: z
+        .string()
+        .regex(DATE_FORMAT_REGEX)
+        .nullish()
+        .transform((value) => value ?? null)
+        .pipe(z.coerce.date<string | null>().nullable()),
     country_code: CountryCodeSchema.nullable(),
 })
 

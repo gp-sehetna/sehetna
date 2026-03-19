@@ -146,7 +146,6 @@ function OutcomeCard({ OUTCOME_META, outcomeKey, onClick, data, isSelected }: Ou
     const trend = getTrend(data)
     const Icon = meta.icon
     const lastPoint = data[data.length - 1]?.point ?? 0
-    const hasCI = data[0]?.range !== undefined
 
     const chartConfig = {
         point: { label: meta.label, color: meta.color },
@@ -187,14 +186,7 @@ function OutcomeCard({ OUTCOME_META, outcomeKey, onClick, data, isSelected }: Ou
 
                 <ChartContainer config={chartConfig} className="h-15 w-full">
                     <ComposedChart data={data} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
-                        {hasCI && (
-                            <Area
-                                dataKey="range"
-                                fill={meta.color}
-                                fillOpacity={0.15}
-                                stroke="none"
-                            />
-                        )}
+                        <Area dataKey="range" fill={meta.color} fillOpacity={0.15} stroke="none" />
                         <Line
                             type="monotone"
                             dataKey="point"
@@ -217,13 +209,10 @@ type DetailedForecastChartProps = {
 
 function DetailedForecastChart({ OUTCOME_META, data, outcomeKey }: DetailedForecastChartProps) {
     const meta = OUTCOME_META[outcomeKey]
-    const hasCI = data[0]?.range !== undefined
 
     const chartConfig: ChartConfig = {
         point: { label: "Forecast Point", color: meta.color },
-        ...(hasCI && {
-            range: { label: "Confidence Interval", color: meta.color },
-        }),
+        range: { label: "Confidence Interval", color: meta.color },
     }
 
     return (
@@ -256,15 +245,13 @@ function DetailedForecastChart({ OUTCOME_META, data, outcomeKey }: DetailedForec
                         />
                     }
                 />
-                {hasCI && (
-                    <Area
-                        dataKey="range"
-                        fill={meta.color}
-                        fillOpacity={0.15}
-                        stroke="none"
-                        name="CI"
-                    />
-                )}
+                <Area
+                    dataKey="range"
+                    fill={meta.color}
+                    fillOpacity={0.15}
+                    stroke="none"
+                    name="CI"
+                />
                 <Line
                     type="monotone"
                     dataKey="point"
@@ -273,7 +260,7 @@ function DetailedForecastChart({ OUTCOME_META, data, outcomeKey }: DetailedForec
                     activeDot={{ r: 4, strokeWidth: 1, stroke: "hsl(var(--background))" }}
                     name="Forecast"
                 />
-                {hasCI && <ChartLegend content={<ChartLegendContent />} />}
+                <ChartLegend content={<ChartLegendContent />} />
             </ComposedChart>
         </ChartContainer>
     )
@@ -370,11 +357,7 @@ export function ForecastDashboard({ forecasts, onCardClick }: ForecastDashboardP
                             )}
                             <div className="flex-basis-1/2 grow flex-col">
                                 <CardTitle className="text-base">{meta.label}</CardTitle>
-                                <CardDescription>
-                                    {data[0]?.range
-                                        ? "Timeline with confidence interval"
-                                        : "Timeline point with no confidence bounds available"}
-                                </CardDescription>
+                                <CardDescription>Timeline with confidence interval</CardDescription>
                             </div>
                             <TrendBadge
                                 className="h-6 place-self-start"

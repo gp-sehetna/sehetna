@@ -12,10 +12,8 @@ interface UseForecastsOptions {
     iso: string
 }
 export const useForecasts = ({ modelId, iso }: UseForecastsOptions) => {
-    const { rangeStart, dataEnd } = useFilterDateStore()
-
+    const rangeStart = useFilterDateStore((s) => s.rangeStart)
     const formattedDataStart = format(rangeStart, "yyyy-MM-dd")
-    const formattedDataEnd = format(dataEnd, "yyyy-MM-dd")
 
     const { data: predictions, isLoading } = useQuery<Forecasts>({
         queryKey: ["forecasts", modelId, formattedDataStart, iso],
@@ -24,7 +22,6 @@ export const useForecasts = ({ modelId, iso }: UseForecastsOptions) => {
                 "model-id": modelId,
                 iso,
                 "data-start": formattedDataStart,
-                "data-end": formattedDataEnd,
             }
             const { predictions } = await api
                 .get<ForecastResponse>("api/environment/prediction", { searchParams })
