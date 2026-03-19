@@ -2,9 +2,9 @@ import { MainService } from "@/shared/db/main.service"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 
 export const DELETE = globalErrorHandler(
-    async (_: Request, { params }: { params: { id: string } }) => {
+    async (_req, { params }: { params: Promise<{ id: string }> }) => {
         const { id } = await params
-        
+
         const mainService = await MainService.getInstance()
         const isDeleted = await mainService.aiModelService.deleteModel(id)
 
