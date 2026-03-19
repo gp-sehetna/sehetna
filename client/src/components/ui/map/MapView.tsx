@@ -5,8 +5,10 @@ import MapMarker from "@/components/ui/map/MapMarker"
 import MapSources from "@/components/ui/map/MapSources"
 import MapTooltip from "@/hooks/map/MapTooltip"
 import useMapHook from "@/hooks/map/use-map"
+import usePredictions from "@/hooks/map/use-predictions"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { Map } from "react-map-gl/maplibre"
+import { ButtonSpinner } from "../GlobalComponents/Loaders/ButtonSpinner"
 
 export default function MapView({ children }: { children: React.ReactNode }) {
     const {
@@ -23,6 +25,8 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         predictionsMap,
     } = useMapHook()
 
+    const { isPredictionsLoading } = usePredictions()
+
     return (
         <Map
             interactiveLayerIds={["land-hover", "land-hover-boundaries"]}
@@ -36,6 +40,7 @@ export default function MapView({ children }: { children: React.ReactNode }) {
             touchZoomRotate={false}
             dragPan={{ maxSpeed: 0 }} // Disables easing effect to improve performance on exchange layer
         >
+            {isPredictionsLoading && <ButtonSpinner />}
             <MapTooltip predictionsMap={predictionsMap} />
             <MapMarker coords={markerCoords} />
             <MapSources theme={theme} />

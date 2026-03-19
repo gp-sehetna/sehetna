@@ -4,6 +4,7 @@ import { create } from "zustand"
 
 type MapState = {
     date?: Date
+    map?: maplibregl.Map
 
     clickedZone: GeoJSONFeature | null
     hoveredZone: GeoJSONFeature | null
@@ -21,12 +22,14 @@ type MapState = {
     setHoveredCoords: (coords: Coordinates | null) => void
     setMarkerCoords: (coords: Coordinates | null) => void
 
+    setMap: (map?: maplibregl.Map) => void
     setTooltip: (el: HTMLDivElement | null) => void
     updateTooltipPosition: (x: number, y: number) => void
 }
 
 export const useMapStore = create<MapState>((set, get) => ({
     date: undefined,
+    map: undefined,
 
     clickedZone: null,
     hoveredZone: null,
@@ -44,6 +47,7 @@ export const useMapStore = create<MapState>((set, get) => ({
     setHoveredCoords: (hoveredCoords) => set({ hoveredCoords }),
     setMarkerCoords: (markerCoords) => set({ markerCoords }),
 
+    setMap: (map) => set({ map }),
     setTooltip: (tooltip) => set({ tooltip }),
     updateTooltipPosition: (x, y) => {
         const { tooltip } = get()

@@ -6,7 +6,8 @@ import { usePredictionsStore } from "@/stores/map/use-predictions"
 import ReactCountryFlag from "react-country-flag"
 import { RadialChart } from "@/components/ui/charts/RadialChart"
 import { useThemeStore } from "@/stores/map/use-theme"
-import { Activity } from "lucide-react"
+import { HEALTH_METRIC_ICONS } from "@/components/ui/map/RadialChartMetrics"
+import CountryFlag from "./CountryFlag"
 
 type MapTooltipProps = {
     predictionsMap: PredictionsAggregates
@@ -39,31 +40,19 @@ const MapTooltip = ({ predictionsMap }: MapTooltipProps) => {
             className="glassy pointer-events-none flex min-w-72 flex-col gap-1 rounded-xl shadow-lg"
         >
             <div className="flex items-center gap-2">
-                <ReactCountryFlag
-                    style={{
-                        filter: "drop-shadow(0px 2px 2px #00000022)",
-                        borderRadius: "4px",
-                        transform: "scale(1.2)",
-                    }}
-                    svg
-                    countryCode={hoveredZone.properties.isoA2}
-                />
-
+                <CountryFlag iso={hoveredZone.properties.isoA2} />
                 <p className="text-foreground text-md font-bold">{hoveredZone.properties.name}</p>
             </div>
             {!hoveredPrediction ? (
                 <p className="text-muted-foreground text-sm">No prediction values available yet.</p>
             ) : (
-                <>
-                    <RadialChart
-                        value={predictionValue}
-                        color={theme.colorScale(predictionValue)}
-                        chartLabel={toProperCase(healthOutcome)}
-                        Icon={Activity}
-                        tooltip={"Hello"}
-                        max={100}
-                    />
-                </>
+                <RadialChart
+                    value={predictionValue}
+                    color={theme.colorScale(predictionValue)}
+                    chartLabel={toProperCase(healthOutcome)}
+                    Icon={HEALTH_METRIC_ICONS[healthOutcome]} // Using the object
+                    max={100}
+                />
             )}
         </div>
     )

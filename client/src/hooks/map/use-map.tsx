@@ -1,6 +1,6 @@
 "use client"
 import centroid from "@turf/centroid"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef } from "react"
 
 import { WeekClientService } from "@/features/environment/week/week.service.client"
 import { slugify, unslugify } from "@/lib/utils"
@@ -34,7 +34,8 @@ const useMapHook = () => {
     const searchParams = useSearchParams()
     const params = useParams<MapPageProps["params"]>()
     const centroidCache = useRef(new Map())
-    const [map, setMap] = useState<maplibregl.Map>()
+    const map = useMapStore((s) => s.map)
+    const setMap = useMapStore((s) => s.setMap)
 
     const { predictionsMap } = usePredictions()
 
@@ -257,7 +258,7 @@ const useMapHook = () => {
             zoomToCountry(country, map, center)
             setClickedZone(country)
         },
-        [activeSlug.country, setMarkerCoords, setClickedZone]
+        [setMap, activeSlug.country, setMarkerCoords, setClickedZone]
     )
 
     const onLayerSelect = useCallback(
