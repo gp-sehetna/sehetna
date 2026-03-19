@@ -16,19 +16,17 @@ export default function HorizontalColorbar({ ticks = 5, className }: HorizontalC
 
     return (
         <Card className={cn("w-full border-none bg-transparent shadow-none", className)}>
-            <CardContent className="flex flex-col gap-2 p-2">
+            <CardContent className="flex flex-col gap-1 p-2">
                 <div
                     className="h-2 w-full rounded-full"
                     style={{
                         background: theme.gradientCSS,
                     }}
                 />
-                <div className="relative w-full">
-                    <div className="text-foreground flex justify-between text-xs font-medium select-none">
-                        {tickValues.map((value) => (
-                            <span key={value}>{Math.round(value)}</span>
-                        ))}
-                    </div>
+                <div className="text-muted-foreground flex justify-between text-xs font-medium select-none">
+                    {tickValues.map((value) => (
+                        <small key={value}>{Math.round(value)}</small>
+                    ))}
                 </div>
             </CardContent>
         </Card>

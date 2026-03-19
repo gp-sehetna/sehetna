@@ -9,6 +9,7 @@ import { ActiveSlug } from "@/shared/config/map"
 import { useMapStore } from "@/stores/map/use-map"
 import { Dispatch, memo, useMemo, useState } from "react"
 import { NavigationControl } from "react-map-gl/maplibre"
+import ZoneSearch from "./ZoneSearch"
 
 type BottomRightProps = ActiveSlug & {
     onLayerSelect: Dispatch<string>
@@ -67,7 +68,7 @@ const LayerSelectorTrigger = ({ healthOutcome, onLayerSelect, className }: Layer
                     isOpen ? "-mb-2" : "-mb-4"
                 )}
             >
-                <small>Layer Selector</small>
+                <small>Visualization Layers</small>
             </div>
             <MapLayerSelector
                 className={cn(
@@ -82,10 +83,16 @@ const LayerSelectorTrigger = ({ healthOutcome, onLayerSelect, className }: Layer
     )
 }
 const BottomLeftContent = (props: BottomLeftProps) => {
+    const clickedZone = useMapStore((s) => s.clickedZone)
     return (
-        <div className="absolute flex max-h-screen w-full flex-col gap-2 overflow-hidden p-4 backdrop-blur-xs md:w-1/3 md:min-w-md md:backdrop-blur-none">
-            <MapSidebar {...props} />
-        </div>
+        <>
+            <div className="fixed bottom-0 flex max-h-screen w-full flex-col gap-2 overflow-hidden p-4 backdrop-blur-xs md:w-1/3 md:min-w-md md:backdrop-blur-none">
+                <MapSidebar {...props} />
+            </div>
+            <div className="fixed top-0 flex max-h-screen w-full flex-col gap-2 overflow-hidden p-4 backdrop-blur-xs md:w-1/3 md:min-w-md md:backdrop-blur-none">
+                {!clickedZone && <ZoneSearch />}
+            </div>
+        </>
     )
 }
 

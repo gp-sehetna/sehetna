@@ -13,7 +13,7 @@ const usePredictions = () => {
     const healthOutcome = usePredictionsStore((s) => s.healthOutcome)
 
     // const predictions = useMemo<ForecastResponse["predictions"]>(() => [], [])
-    const { data: predictions } = useQuery({
+    const { data: predictions, isLoading: isPredictionsLoading } = useQuery({
         queryKey: ["predictions"],
         queryFn: async () => {
             const { predictions } = await api
@@ -47,7 +47,7 @@ const usePredictions = () => {
         return aggregates
     }, [granularity, healthOutcome, predictions, selectedDate])
 
-    return { predictions, predictionsMap }
+    return { predictions, predictionsMap, isPredictionsLoading }
 }
 
 export default usePredictions
