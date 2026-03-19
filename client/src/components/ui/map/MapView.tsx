@@ -1,14 +1,13 @@
 "use client"
 
+import { ButtonSpinner } from "@/components/ui/GlobalComponents/Loaders/ButtonSpinner"
 import MapControls from "@/components/ui/map/MapControls"
 import MapMarker from "@/components/ui/map/MapMarker"
 import MapSources from "@/components/ui/map/MapSources"
 import MapTooltip from "@/hooks/map/MapTooltip"
 import useMapHook from "@/hooks/map/use-map"
-import usePredictions from "@/hooks/map/use-predictions"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { Map } from "react-map-gl/maplibre"
-import { ButtonSpinner } from "../GlobalComponents/Loaders/ButtonSpinner"
 
 export default function MapView({ children }: { children: React.ReactNode }) {
     const {
@@ -23,9 +22,8 @@ export default function MapView({ children }: { children: React.ReactNode }) {
         closeSidebar,
         markerCoords,
         predictionsMap,
+        isPredictionsLoading,
     } = useMapHook()
-
-    const { isPredictionsLoading } = usePredictions()
 
     return (
         <Map

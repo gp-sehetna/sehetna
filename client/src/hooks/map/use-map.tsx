@@ -37,7 +37,7 @@ const useMapHook = () => {
     const map = useMapStore((s) => s.map)
     const setMap = useMapStore((s) => s.setMap)
 
-    const { predictionsMap } = usePredictions()
+    const { predictionsMap, isLoading: isPredictionsLoading } = usePredictions()
 
     // more focused states to prevent unnecessary re-renders...
     const {
@@ -307,6 +307,7 @@ const useMapHook = () => {
         weekService,
         closeSidebar,
         predictionsMap,
+        isPredictionsLoading,
         markerCoords,
         hoveredZone,
         theme,
