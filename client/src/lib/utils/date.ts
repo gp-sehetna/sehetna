@@ -55,6 +55,7 @@ const getWeeksTillToday = (start: Date) => {
     return differenceInWeeks(startOfTodaysWeek, start, { roundingMethod: "ceil" })
 }
 
+const DATE_FORMAT_REGEX = /^\d{4}-\d{2}-\d{2}$/
 const GRANULARITY_LABELS: Record<Granularity, string> = {
     weekly: "Weekly",
     monthly: "Monthly",
@@ -74,7 +75,7 @@ const ALLOWED_GRANULARITIES: Record<RangePreset, Granularity[]> = {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function getRangeStart(preset: RangePreset, dataStart: Date, dataEnd: Date): Date {
+function getRangeStart(preset: RangePreset, dataStart?: Date, dataEnd: Date = new Date()): Date {
     switch (preset) {
         case "Last 30 days":
             return subDays(dataEnd, 30)
@@ -89,7 +90,9 @@ function getRangeStart(preset: RangePreset, dataStart: Date, dataEnd: Date): Dat
         case "Last 5 years":
             return subYears(dataEnd, 5)
         case "All Time":
-            return dataStart
+            if (dataStart) return dataStart
+        default:
+            throw new Error("Invalid preset")
     }
 }
 
@@ -155,6 +158,7 @@ const formatDate = (date?: string | Date, opts?: Intl.DateTimeFormatOptions) => 
 export {
     ALLOWED_GRANULARITIES,
     buildTicks,
+    DATE_FORMAT_REGEX,
     formatDate,
     formatSelectedDate,
     formatTick,

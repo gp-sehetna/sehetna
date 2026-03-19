@@ -18,6 +18,8 @@ export const GET = globalErrorHandler<ForecastResponse>(async (request) => {
     const params = request.nextUrl.searchParams
     const query = GetPredictionsParamsSchema.parse({
         modelId: params.get("model-id"),
+        dataStart: params.get("data-start"),
+        dataEnd: params.get("data-end"),
         country_code: params.get("iso"),
     })
 

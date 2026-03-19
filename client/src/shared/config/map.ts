@@ -108,9 +108,13 @@ const colorEachCountry = (
     for (const feature of map.querySourceFeatures("countries")) {
         const { id, isoA3 } = feature.properties as GeoJsonProperties
         const prediction = predictionsMap[isoA3]
-        if (!prediction) continue
+        if (!prediction) {
+            map.setFeatureState({ source: COUNTRIES_SOURCE, id }, { color: "#ececec" })
+            continue
+        }
 
-        const fillColor = theme.colorScale(prediction.sum / prediction.count)
+        const avg = prediction.sum / prediction.count
+        const fillColor = theme.colorScale(avg)
         const existingColor = map.getFeatureState({ source: COUNTRIES_SOURCE, id })?.color
 
         if (existingColor !== fillColor)

@@ -13,7 +13,7 @@ const usePredictions = () => {
     const healthOutcome = usePredictionsStore((s) => s.healthOutcome)
 
     // const predictions = useMemo<ForecastResponse["predictions"]>(() => [], [])
-    const { data: predictions } = useQuery({
+    const { data: predictions, isLoading } = useQuery({
         queryKey: ["predictions"],
         queryFn: async () => {
             const { predictions } = await api
@@ -27,7 +27,7 @@ const usePredictions = () => {
     })
 
     const predictionsMap = useMemo<PredictionsAggregates>(() => {
-        if (!predictions?.length || !selectedDate) return {}
+        if (!predictions?.length) return {}
 
         const { start, end } = getDateRangeByGranularity(selectedDate, granularity)
         const aggregates: PredictionsAggregates = {}
@@ -47,7 +47,7 @@ const usePredictions = () => {
         return aggregates
     }, [granularity, healthOutcome, predictions, selectedDate])
 
-    return { predictions, predictionsMap }
+    return { predictions, isLoading, predictionsMap }
 }
 
 export default usePredictions

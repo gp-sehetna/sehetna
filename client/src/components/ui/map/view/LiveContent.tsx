@@ -4,8 +4,8 @@ import { ForecastDashboard } from "@/components/ui/map/view/ForecastDashboard"
 import { useForecasts } from "@/hooks/map/use-forecasts"
 import { GeoJsonProperties } from "@/shared/config/map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
-import { MapDashboardProps } from "./MapDashboard"
 import AppLink from "../../GlobalControls/AppLink"
+import { MapDashboardProps } from "./MapDashboard"
 
 export const LiveContent = ({
     onLayerSelect,
@@ -14,23 +14,23 @@ export const LiveContent = ({
     zoneProperties: GeoJsonProperties
 }) => {
     const modelId = usePredictionsStore((s) => s.forecaster)
-    const { data: forecasts, isLoading: isForecastsLoading } = useForecasts({
+    const { predictions, isLoading } = useForecasts({
         modelId,
         iso: zoneProperties.isoA3,
     })
-    const hasForecasts = !!forecasts && forecasts.length > 0
+    const hasForecasts = !!predictions && predictions.length > 0
 
     return (
         <div className="flex h-full flex-col gap-2">
             <ModelSelector />
 
             <div className="flex-1 overflow-hidden">
-                {isForecastsLoading ? (
+                {isLoading ? (
                     <div className="flex h-full items-center justify-center">
                         <AppLoader />
                     </div>
                 ) : hasForecasts ? (
-                    <ForecastDashboard onCardClick={onLayerSelect} forecasts={forecasts} />
+                    <ForecastDashboard onCardClick={onLayerSelect} forecasts={predictions} />
                 ) : (
                     <div className="text-muted-foreground flex h-full flex-col items-center justify-center">
                         <p className="text-center text-sm">

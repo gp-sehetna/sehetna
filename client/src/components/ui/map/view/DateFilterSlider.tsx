@@ -9,7 +9,7 @@ import {
     SelectValue,
 } from "@/components/ui/shadcn/select"
 import { Slider } from "@/components/ui/shadcn/slider"
-import { DateFilterHookProps, useDateFilter } from "@/hooks/useDateFilter"
+import { useDateFilter } from "@/hooks/useDateFilter"
 import { cn } from "@/lib/utils"
 import {
     ALLOWED_GRANULARITIES,
@@ -32,12 +32,13 @@ type OnDateFilerChangeValue = {
 
 type OnDateFilterChange = Dispatch<OnDateFilerChangeValue>
 
-interface DateRangeSliderProps extends DateFilterHookProps {
+interface DateRangeSliderProps {
     onChange?: OnDateFilterChange
     className?: string
 }
 
-const DateRangeSlider = ({ start, end, onChange, className }: DateRangeSliderProps) => {
+const DateRangeSlider = ({ onChange, className }: DateRangeSliderProps) => {
+    const { date, setDate, granularity } = useFilterDateStore()
     const {
         handleGranularityChange,
         handlePresetChange,
@@ -47,8 +48,7 @@ const DateRangeSlider = ({ start, end, onChange, className }: DateRangeSliderPro
         labelIndices,
         preset,
         setSliderIndex,
-    } = useDateFilter({ start, end })
-    const { date, setDate, granularity } = useFilterDateStore()
+    } = useDateFilter()
 
     return (
         <div className={cn("mt-4 flex w-full flex-col gap-3 rounded-xl select-none", className)}>
@@ -117,8 +117,8 @@ const DateRangeSlider = ({ start, end, onChange, className }: DateRangeSliderPro
                         step={1}
                         value={[sliderIndex]}
                         onValueChange={([v]) => {
-                            setDate(ticks[v] ?? end)
                             setSliderIndex(v)
+                            setDate(ticks[v])
                             onChange?.({ date, granularity, preset })
                         }}
                     />

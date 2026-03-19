@@ -1,17 +1,44 @@
-import { Granularity } from "@/lib/utils/date"
+import { getRangeStart, Granularity, RangePreset } from "@/lib/utils/date"
+import { Dispatch } from "react"
 import { create } from "zustand"
 
-type FilterDateState = {
-    date: Date
-    granularity: Granularity
-    setDate: (date: Date) => void
-    setGranularity: (granularity: Granularity) => void
+export interface DataRange {
+    dataStart: Date
+    dataEnd: Date
 }
 
-export const useFilterDateStore = create<FilterDateState>((set) => ({
-    date: new Date(),
-    granularity: "monthly",
+interface FilterDateState extends DataRange {
+    date: Date
+    granularity: Granularity
+    preset: RangePreset
+    rangeStart: Date
 
-    setGranularity: (granularity) => set({ granularity }),
-    setDate: (date) => set({ date }),
-}))
+    setDate: Dispatch<Date>
+    setGranularity: Dispatch<Granularity>
+    setPreset: Dispatch<RangePreset>
+    setRangeStart: Dispatch<Date>
+}
+
+export const useFilterDateStore = create<FilterDateState>((set) => {
+    const dataStart = new Date("2015-01-05")
+    const dataEnd = new Date()
+
+    const preset: RangePreset = "Last 5 years"
+    const granularity: Granularity = "monthly"
+    const rangeStart = getRangeStart(preset, dataStart, dataEnd)
+
+    return {
+        dataStart,
+        dataEnd,
+
+        date: rangeStart,
+        granularity,
+        preset,
+        rangeStart,
+
+        setGranularity: (granularity) => set({ granularity }),
+        setDate: (date) => set({ date }),
+        setPreset: (preset) => set({ preset }),
+        setRangeStart: (rangeStart) => set({ rangeStart }),
+    }
+})

@@ -1,9 +1,7 @@
 import { WeekParams } from "@/features/environment/week/week.types"
 import { refineCoords } from "@/lib/utils"
-import { getWeekRange } from "@/lib/utils/date"
+import { DATE_FORMAT_REGEX, getWeekRange } from "@/lib/utils/date"
 import { z } from "zod"
-
-const DATE_FORMAT_REGEX = /^\d{4}-\d{2}-\d{2}$/
 
 const CoordinatesSchema = z.object({
     coords: z.string().refine(refineCoords, { message: "coords must be in format lat,lng" }),

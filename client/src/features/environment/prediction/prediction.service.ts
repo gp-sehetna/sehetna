@@ -118,12 +118,23 @@ export class PredictionService {
     }
 
     getPredictions = async (query: GetPredictionsParams) => {
-        const model = await this.aiModelRepository.findByType(query.modelId)
-        const location = await this.locationRepository.findByCode(query.country_code)
-        const filter: QueryFilter<IPrediction> = model
-            ? { model_id: model._id, prediction_type: PredictionType.forecasted }
-            : { prediction_type: { $in: [PredictionType.historical, PredictionType.predicted] } }
+        const orConditions: QueryFilter<IPrediction>[] = [
+            { prediction_type: { $in: [PredictionType.historical, PredictionType.predicted] } },
+        ]
 
+        const model = await this.aiModelRepository.findByType(query.modelId)
+        if (model)
+            orConditions.unshift({
+                model_id: model._id,
+                prediction_type: PredictionType.forecasted,
+            })
+
+        const filter: QueryFilter<IPrediction> = { $or: orConditions }
+
+        if (query.dataStart && query.dataEnd)
+            filter.base_date = { $gte: new Date(query.dataStart), $lte: new Date(query.dataEnd) }
+
+        const location = await this.locationRepository.findByCode(query.country_code)
         if (location) filter.location_id = location._id
 
         const result = await this.predictionRepository
