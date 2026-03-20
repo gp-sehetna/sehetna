@@ -47,9 +47,9 @@ export function RadialChart({
         },
     } satisfies ChartConfig
 
-    const helpSize = 28
+    const helpSize = 24
 
-    const IconElement = () => (
+    const IconElement = (
         <div className="glassy flex h-full w-full cursor-pointer items-center justify-center rounded-full p-0.5 shadow-2xl">
             <Icon size={helpSize - 10} className="hover:text-neutral-1000 text-neutral-800" />
         </div>
@@ -87,7 +87,7 @@ export function RadialChart({
                             const centerX = viewBox.cx
                             const centerY = viewBox.cy
                             const posX = centerX - helpSize / 2
-                            const posY = centerY - 50
+                            const posY = centerY - 43
 
                             return (
                                 <>
@@ -100,7 +100,7 @@ export function RadialChart({
                                         {tooltip ? (
                                             <Popover>
                                                 <PopoverTrigger asChild>
-                                                    {<IconElement />}
+                                                    {IconElement}
                                                 </PopoverTrigger>
                                                 <PopoverContent
                                                     className="glassy text-neutral-1000 bg-background/75 max-w-3xs text-xs whitespace-pre-line"
@@ -110,7 +110,7 @@ export function RadialChart({
                                                 </PopoverContent>
                                             </Popover>
                                         ) : (
-                                            <IconElement />
+                                            IconElement
                                         )}
                                     </foreignObject>
                                     <text

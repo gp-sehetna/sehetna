@@ -16,7 +16,6 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/shadcn/chart"
-import { Separator } from "@/components/ui/shadcn/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/shadcn/tabs"
 import { Forecasts } from "@/features/environment/prediction/prediction.types"
 import { cn, slugify, toProperCase } from "@/lib/utils"
@@ -36,7 +35,7 @@ import {
     Wind,
 } from "lucide-react"
 import { Dispatch, useMemo } from "react"
-import { Area, CartesianGrid, ComposedChart, Line, XAxis, YAxis } from "recharts"
+import { Area, CartesianGrid, ComposedChart, Line, ReferenceLine, XAxis, YAxis } from "recharts"
 
 interface FormattedPoint {
     dates: {
@@ -154,8 +153,10 @@ function OutcomeCard({ OUTCOME_META, outcomeKey, onClick, data, isSelected }: Ou
     return (
         <Card
             className={cn(
-                "glassy cursor-pointer bg-transparent transition-all duration-200 hover:shadow-md",
-                isSelected ? "ring-primary-200 shadow-md ring-2" : "hover:ring-border hover:ring-1"
+                "glassy m-2 cursor-pointer bg-transparent transition-all duration-200 hover:shadow-md",
+                isSelected
+                    ? "ring-border/50 scale-[100.5%] border-2 shadow-md ring-4"
+                    : "hover:ring-border/50 hover:scale-[99.5%] hover:ring-1"
             )}
             onClick={() => onClick(slugify(outcomeKey))}
         >
@@ -209,6 +210,16 @@ type DetailedForecastChartProps = {
 
 function DetailedForecastChart({ OUTCOME_META, data, outcomeKey }: DetailedForecastChartProps) {
     const meta = OUTCOME_META[outcomeKey]
+    const segmentBoundaries = useMemo(
+        () =>
+            data.reduce<Array<{ x: number }>>((acc, current, index) => {
+                if (index === 0) return acc
+                const previous = data[index - 1]
+                if (previous.predictionType !== current.predictionType) acc.push({ x: index })
+                return acc
+            }, []),
+        [data]
+    )
 
     const chartConfig: ChartConfig = {
         point: { label: "Forecast Point", color: meta.color },
@@ -224,7 +235,7 @@ function DetailedForecastChart({ OUTCOME_META, data, outcomeKey }: DetailedForec
                     dataKey="dates.simple"
                     tickLine={false}
                     axisLine={false}
-                    className="text-muted-foreground text-[10px]"
+                    className="text-muted-foreground text-[9px]"
                 />
                 <YAxis
                     domain={["auto", "auto"]}
@@ -245,6 +256,32 @@ function DetailedForecastChart({ OUTCOME_META, data, outcomeKey }: DetailedForec
                         />
                     }
                 />
+                {segmentBoundaries.map((boundary) => (
+                    <ReferenceLine
+                        key={boundary.x}
+                        x={boundary.x}
+                        stroke="var(--muted-foreground)"
+                        strokeDasharray="4 2"
+                        ifOverflow="discard"
+                        label={({ viewBox }) => {
+                            const { x, y } = viewBox
+
+                            return (
+                                <text
+                                    x={x - 2}
+                                    y={y - 4} // -4 to make space between the ref line and the text
+                                    transform={`rotate(-90, ${x}, ${y})`}
+                                    fill="var(--muted-foreground)"
+                                    fontSize={8}
+                                    textAnchor="end"
+                                >
+                                    {data[boundary.x].predictionType}
+                                </text>
+                            )
+                        }}
+                    />
+                ))}
+
                 <Area
                     dataKey="range"
                     fill={meta.color}
@@ -366,7 +403,6 @@ export function ForecastDashboard({ forecasts, onCardClick }: ForecastDashboardP
                             />
                         </div>
                     </CardHeader>
-                    <Separator />
                     <CardContent className="p-4">
                         <DetailedForecastChart
                             OUTCOME_META={OUTCOME_META}

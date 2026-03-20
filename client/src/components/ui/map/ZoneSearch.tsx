@@ -12,7 +12,7 @@ import {
 import { useMapStore } from "@/stores/map/use-map"
 import centroid from "@turf/centroid"
 import { GeoJSONFeature } from "maplibre-gl"
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
+import { ChevronLeftIcon, ChevronRightIcon, Search } from "lucide-react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useMemo, useState } from "react"
 import CountryFlag from "@/hooks/map/CountryFlag"
@@ -113,8 +113,9 @@ function ZoneSearch() {
             itemToStringLabel={(zone) => zone.properties.name}
             itemToStringValue={(zone) => zone.properties.isoA3}
         >
-            <div className="glassy rounded-3xl p-2">
+            <div className="glassy rounded-3xl border-0">
                 <ComboboxInput
+                    prependInnerIcon={<Search />}
                     placeholder="Search for a country/zone"
                     showClear
                     className="w-full"
