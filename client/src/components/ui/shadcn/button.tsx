@@ -20,6 +20,11 @@ const buttonVariants = cva(
                     "hover:bg-neutral-200",
                     "active:bg-neutral-300"
                 ),
+                bright: cn(
+                    "hover:border-primary-500/30 bg-background/80 border border-neutral-200 text-neutral-900 shadow-sm backdrop-blur-xl"
+                ),
+                "bright-primary":
+                    "text-background from-primary-300 to-primary-500 hover:shadow-primary/70 shadow-primary-600/20 bg-linear-150 shadow-2xl transition-shadow duration-500",
                 white: cn(
                     "text-neutral-1000 border border-neutral-200 bg-white",
                     "hover:bg-neutral-100",
@@ -43,7 +48,9 @@ const buttonVariants = cva(
                 xs: "h-6 rounded-md px-2 text-xs [&_svg]:size-2",
                 sm: "h-8 rounded-md px-3 text-xs [&_svg]:size-4",
                 lg: "h-10 rounded-md px-8 [&_svg]:size-4",
+                xl: "rounded-2xl px-4 py-2 text-sm font-semibold md:px-8 md:py-4",
                 icon: "h-9 w-9",
+                "icon-xl": "h-9 w-9 md:h-16 md:w-16",
             },
         },
         defaultVariants: {

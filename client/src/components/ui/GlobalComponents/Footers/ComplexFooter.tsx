@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import FooterLink from "./FooterLink"
 
 const fancyBoxVariants = cva(
-    "border border-neutral-200/50 transition-all duration-500 ease-in-out", // Base styles
+    "transition-all duration-500 ease-in-out", // Base styles
     {
         variants: {
             shape: {
@@ -34,14 +34,14 @@ const fancyBoxVariants = cva(
 
 export default function ComplexFooter() {
     return (
-        <footer className={cn("bg-primary-50 border-primary-200 relative border-t")}>
+        <footer className={cn("bg-primary-50 relative border-t")}>
             <div className={cn("mx-auto p-12")}>
                 <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
                     <div
                         className={cn(
                             fancyBoxVariants({ shape: "soft" }),
                             "items-center border lg:items-start",
-                            "bg-primary-300 text-background flex flex-col gap-6 px-10 py-4 lg:col-span-4"
+                            "bg-primary text-background flex flex-col gap-6 px-10 py-4 lg:col-span-4"
                         )}
                     >
                         <Logo withText size={22} />

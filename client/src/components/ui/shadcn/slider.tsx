@@ -40,13 +40,23 @@ const Slider = React.forwardRef<
     ) => (
         <SliderPrimitive.Root
             ref={ref}
-            className={cn("relative flex w-full touch-none items-center select-none", className)}
+            className={cn(
+                "relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
+                className
+            )}
             {...props}
         >
-            <SliderPrimitive.Track className="bg-background relative h-2.5 w-full grow overflow-hidden rounded-full transition-colors">
+            <SliderPrimitive.Track
+                data-slot="slider-track"
+                className="bg-muted relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5"
+            >
                 {showRange && (
                     <SliderPrimitive.Range
-                        className={cn(sliderVariants({ variant }), color, "absolute h-full")}
+                        className={cn(
+                            sliderVariants({ variant }),
+                            color,
+                            "absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
+                        )}
                     />
                 )}
             </SliderPrimitive.Track>
@@ -56,7 +66,7 @@ const Slider = React.forwardRef<
                     sliderVariants({ variant }),
                     color,
                     thumbClassName,
-                    "bg-background relative flex h-5 w-5 cursor-grab items-center justify-center rounded-full border-2 shadow-xl transition-colors duration-200 hover:scale-110 hover:shadow-2xl focus-visible:ring-4 focus-visible:outline-none active:scale-95 active:cursor-grabbing disabled:pointer-events-none disabled:opacity-50"
+                    "border-primary ring-ring/50 flex size-4 shrink-0 items-center justify-center rounded-full border bg-white shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
                 )}
             >
                 <div

@@ -7,7 +7,7 @@ import MobileNav from "../nav/MobileNav"
 import BaseExtension from "../HeaderExtensions/BaseExtension"
 
 type AppHeaderProps = {
-    isScrolled: boolean
+    isScrolled?: boolean
 }
 
 function AppHeader({ isScrolled }: AppHeaderProps) {
@@ -23,15 +23,15 @@ function AppHeader({ isScrolled }: AppHeaderProps) {
                     "flex items-center justify-between px-4 py-3",
                     "base-transition",
                     !isScrolled
-                        ? "text-primary-50 border-transparent bg-transparent"
-                        : "glassy border-0 border-b border-b-neutral-200/40"
+                        ? "text-background border-transparent bg-transparent"
+                        : "text-neutral-1000 glassy border-0 border-b border-b-neutral-200/40"
                 )}
             >
                 <Logo withText size={18}></Logo>
                 <div className="flex w-full justify-end gap-6">
                     <NavItems navigationItems={groupedNavItems} />
                     <div className="hidden sm:flex">
-                        <NavActions />
+                        <NavActions isScrolled={isScrolled} />
                     </div>
                     <MobileNav isScrolled={isScrolled} navigationItems={groupedNavItems} />
                 </div>

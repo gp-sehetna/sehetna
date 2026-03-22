@@ -1,7 +1,7 @@
-import AppLayout from "@/components/ui/layouts/AppLayout"
+import HomeLayout from "@/components/ui/layouts/AppLayout"
 
-const defaultLayout = ({ children }: { children: React.ReactNode }) => {
-    return <AppLayout>{children}</AppLayout>
+const defaultHomeLayout = ({ children }: { children: React.ReactNode }) => {
+    return <HomeLayout>{children}</HomeLayout>
 }
 
-export default defaultLayout
+export default defaultHomeLayout

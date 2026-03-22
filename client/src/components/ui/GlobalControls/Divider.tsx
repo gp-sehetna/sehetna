@@ -37,16 +37,16 @@ const Divider = ({
             <div
                 data-component="divider"
                 className={cn(
-                    "relative flex items-center gap-4 text-sm text-neutral-500",
+                    "relative flex items-center justify-center gap-4 text-sm text-neutral-500",
                     "w-full",
                     className
                 )}
             >
                 {!hideDecorations && <DividerDecoration side="left" />}
 
-                <span className={cn("bg-border h-px flex-1", stripsClassName)} />
+                <span className={cn("bg-border h-[0.5px] flex-1", stripsClassName)} />
                 <span className="text-sm whitespace-nowrap">{children}</span>
-                <span className={cn("bg-border h-px flex-1", stripsClassName)} />
+                <span className={cn("bg-border h-[0.5px] flex-1", stripsClassName)} />
 
                 {!hideDecorations && <DividerDecoration side="right" />}
             </div>
@@ -63,9 +63,9 @@ const Divider = ({
                 className
             )}
         >
-            <span className={cn("bg-border h-full w-px", stripsClassName)} />
+            <span className={cn("bg-border h-full w-[0.5px]", stripsClassName)} />
             <span className="text-xs font-bold whitespace-nowrap">{children}</span>
-            <span className={cn("bg-border h-full w-px", stripsClassName)} />
+            <span className={cn("bg-border h-full w-[0.5px]", stripsClassName)} />
         </div>
     )
 }

@@ -56,9 +56,9 @@
     --color-warning-200: #ea9e06;
 
     /* ================= Success ================= */
-    --color-success-100: #83eb90;
-    --color-success-200: #1fc24c;
-    --color-success-300: #1a903b;
+    --color-success-100: #96e6a0;
+    --color-success-200: #70bc85;
+    --color-success-300: #44945c;
 
     /* ================= Info (Blue) ================= */
     --color-info-100: #dbeafe;
@@ -153,6 +153,10 @@
 
 @utility glassy {
     @apply shadow-neutral-1000/10 text-foreground border border-neutral-100 bg-neutral-100/40 backdrop-blur-lg;
+}
+
+@utility glassy-chip {
+    @apply glassy border-input text-muted-foreground inline-block rounded-full px-4 py-2 text-sm font-medium;
 }
 
 @utility base-transition {
@@ -286,4 +290,33 @@
     body {
         @apply bg-background text-foreground;
     }
+}
+
+/* Risk glow effects */
+.risk-glow-low {
+    box-shadow:
+        0 0 20px rgba(122, 158, 126, 0.4),
+        0 0 40px rgba(122, 158, 126, 0.2);
+}
+
+.risk-glow-medium {
+    box-shadow:
+        0 0 20px rgba(201, 168, 142, 0.4),
+        0 0 40px rgba(201, 168, 142, 0.2);
+}
+
+.risk-glow-high {
+    box-shadow:
+        0 0 20px rgba(240, 85, 0, 0.3),
+        0 0 40px rgba(240, 85, 0, 0.1);
+}
+
+/* Gradient slider track */
+.gradient-slider [data-slot="slider-track"] {
+    background: linear-gradient(
+        90deg,
+        --alpha(var(--color-green-700) / 30%),
+        var(--color-primary-100),
+        var(--color-primary)
+    );
 }
