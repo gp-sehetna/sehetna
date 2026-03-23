@@ -1,0 +1,9 @@
+/* Gradient slider track */
+.gradient-slider [data-slot="slider-track"] {
+    background: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--color-success-100) 30%, transparent),
+        var(--color-primary-100),
+        var(--color-primary)
+    );
+}

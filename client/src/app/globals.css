@@ -163,49 +163,6 @@
     @apply transition-all duration-300;
 }
 
-@layer base {
-    .lucide {
-        stroke-width: 1;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family: var(--font-heading);
-        font-weight: bold;
-        color: var(--color-neutral-1000);
-    }
-
-    *,
-    ::after,
-    ::before,
-    ::backdrop,
-    ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
-    }
-
-    p {
-        font-size: var(--text-base);
-        line-height: var(--text-base--line-height);
-    }
-
-    ::selection {
-        background-color: --alpha(var(--color-primary-400) / 5%);
-        color: var(--color-secondary-300);
-    }
-
-    .maplibregl-popup-content {
-        @apply rounded-none bg-transparent p-0 shadow-none;
-    }
-
-    .maplibregl-popup-tip {
-        @apply hidden;
-    }
-}
-
 :root {
     /* Sidebar background */
     --sidebar: oklch(99.4% 0 0);
@@ -290,33 +247,4 @@
     body {
         @apply bg-background text-foreground;
     }
-}
-
-/* Risk glow effects */
-.risk-glow-low {
-    box-shadow:
-        0 0 20px rgba(122, 158, 126, 0.4),
-        0 0 40px rgba(122, 158, 126, 0.2);
-}
-
-.risk-glow-medium {
-    box-shadow:
-        0 0 20px rgba(201, 168, 142, 0.4),
-        0 0 40px rgba(201, 168, 142, 0.2);
-}
-
-.risk-glow-high {
-    box-shadow:
-        0 0 20px rgba(240, 85, 0, 0.3),
-        0 0 40px rgba(240, 85, 0, 0.1);
-}
-
-/* Gradient slider track */
-.gradient-slider [data-slot="slider-track"] {
-    background: linear-gradient(
-        90deg,
-        --alpha(var(--color-green-700) / 30%),
-        var(--color-primary-100),
-        var(--color-primary)
-    );
 }

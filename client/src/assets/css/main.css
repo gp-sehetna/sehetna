@@ -1,5 +1,19 @@
-@import "./controls/button.css";
+/* Base layer styles */
+@import "./controls/icons.css";
+@import "./controls/reset.css";
+@import "./components/maplibre.css";
+
+/* Typography */
 @import "./typography/typography.css";
+
+/* Controls & Utilities */
+@import "./controls/button.css";
+@import "./controls/slider.css";
+
+/* Components */
 @import "./components/maplibre-zoom-controls.css";
 @import "./components/dialogs.css";
+
+/* Animations & Effects */
 @import "./animations/animations.css";
+@import "./animations/effects.css";

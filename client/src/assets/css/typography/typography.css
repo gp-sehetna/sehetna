@@ -1,3 +1,16 @@
+@layer base {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-heading);
+        font-weight: bold;
+        color: var(--color-neutral-1000);
+    }
+}
+
 h1 {
     font-size: clamp(2.25rem, calc(1.5rem + 2vw), 3rem); /* min: 36px, max: 48px */
     line-height: clamp(2.667rem, calc(1.833rem + 1.667vw), 3.5rem); /* min: 32px, max: 42px */
@@ -26,4 +39,11 @@ h5 {
 h6 {
     font-size: clamp(1rem, calc(0.75rem + 0.667vw), 1.25rem); /* min: 16px, max: 20px */
     line-height: clamp(1.333rem, calc(1rem + 0.667vw), 1.667rem); /* min: 16px, max: 20px */
+}
+
+@layer base {
+    p {
+        font-size: var(--text-base);
+        line-height: var(--text-base--line-height);
+    }
 }
