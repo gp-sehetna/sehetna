@@ -1,10 +1,34 @@
+import SectionHeading from "@/components/ui/sections/SectionHeading"
+import { useCases } from "@/components/ui/sections/useCases.data"
+import Texture from "@/components/ui/textures"
+import { ArrowRight, BarChart3, Brain, LucideIcon, TrendingUp } from "lucide-react"
+import { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
-import { Metadata } from "next"
-import { ArrowRight } from "lucide-react"
-import Texture from "@/components/ui/textures"
-import SectionHeading from "@/components/ui/sections/SectionHeading"
-import { institutionTypes, useCaseList } from "@/components/ui/sections/useCases.data"
+
+type InstitutionType = {
+    icon: LucideIcon
+    title: string
+    description: string
+}
+
+const institutionTypes: InstitutionType[] = [
+    {
+        icon: TrendingUp,
+        title: "National ministries",
+        description: "Health, environment, and infrastructure agencies.",
+    },
+    {
+        icon: Brain,
+        title: "Research institutions",
+        description: "Universities and evidence-producing labs.",
+    },
+    {
+        icon: BarChart3,
+        title: "Municipal authorities",
+        description: "City health teams and local planners.",
+    },
+]
 
 export const metadata: Metadata = {
     title: "Use Cases",
@@ -20,7 +44,7 @@ export default function UseCasesPage() {
         <main className="bg-primary-50">
             <section className="relative overflow-hidden py-24">
                 <Texture texture="dots" />
-                <div className="from-primary-100/50 pointer-events-none absolute -top-32 right-0 h-96 w-[34rem] rounded-full bg-linear-to-bl to-transparent blur-3xl" />
+                <div className="from-primary-100/50 pointer-events-none absolute -top-32 right-0 h-96 w-136 rounded-full bg-linear-to-bl to-transparent blur-3xl" />
                 <div className="relative mx-auto flex max-w-7xl flex-col gap-10 px-6 lg:px-8">
                     <div className="max-w-3xl">
                         <p className="text-primary mb-4 text-xs font-semibold tracking-widest uppercase">
@@ -53,12 +77,11 @@ export default function UseCasesPage() {
             <section className="py-8 pb-24">
                 <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 lg:px-8">
                     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                        {useCaseList.map((useCase) => {
-                            const Icon = useCase.icon
+                        {Object.entries(useCases).map(([slug, useCase]) => {
                             return (
                                 <Link
-                                    key={useCase.slug}
-                                    href={`/use-cases/${useCase.slug}`}
+                                    key={slug}
+                                    href={`/use-cases/${slug}`}
                                     className="group bg-background/60 overflow-hidden rounded-3xl border border-white/80 shadow-md shadow-black/5 backdrop-blur-xl transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-black/8"
                                 >
                                     <div className="relative h-52 overflow-hidden">
@@ -73,9 +96,9 @@ export default function UseCasesPage() {
                                         <div className="text-2xs bg-background/10 absolute top-4 left-4 rounded-full border border-white/20 px-3 py-1.5 font-bold tracking-widest text-white uppercase backdrop-blur-sm">
                                             {useCase.label}
                                         </div>
-                                        <div className="bg-background/15 absolute right-4 bottom-4 flex h-10 w-10 items-center justify-center rounded-xl text-white backdrop-blur-sm">
+                                        {/* <div className="bg-background/15 absolute right-4 bottom-4 flex h-10 w-10 items-center justify-center rounded-xl text-white backdrop-blur-sm">
                                             <Icon size={18} strokeWidth={1.5} />
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className="flex flex-col gap-4 p-6">
                                         <div>

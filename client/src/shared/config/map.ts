@@ -45,9 +45,9 @@ type GeoJsonProperties =
       }
 
 type MapPageProps = {
-    params: {
+    params: Promise<{
         slug?: string[]
-    }
+    }>
 }
 
 export type Slug = {

@@ -1,8 +1,5 @@
 "use client"
 
-import Image from "next/image"
-import Link from "next/link"
-import { motion } from "motion/react"
 import {
     ArrowLeft,
     ArrowRight,
@@ -15,6 +12,9 @@ import {
     Layers,
     TrendingUp,
 } from "lucide-react"
+import { motion } from "motion/react"
+import Image from "next/image"
+import Link from "next/link"
 import {
     Area,
     AreaChart,
@@ -25,10 +25,10 @@ import {
     XAxis,
     YAxis,
 } from "recharts"
-import type { UseCaseCardData } from "./useCases.data"
+import type { UseCase, UseCasesKey } from "./useCases.data"
 
 type UseCaseDetailClientProps = {
-    useCase: UseCaseCardData
+    useCase: UseCase
     extended: {
         overview: string
         drivers: { label: string; weight: number }[]
@@ -37,7 +37,7 @@ type UseCaseDetailClientProps = {
         chartData: { month: string; risk: number; observed: number }[]
         pipeline: string[]
     }
-    nextUseCase: UseCaseCardData
+    nextUseCase: [UseCasesKey, UseCase]
 }
 
 function ChartTooltip({
@@ -80,12 +80,10 @@ export default function UseCaseDetailClient({
     extended,
     nextUseCase,
 }: UseCaseDetailClientProps) {
-    const Icon = useCase.icon
-
     return (
         <main className="bg-primary-50">
             <section className="relative overflow-hidden pt-24">
-                <div className="relative h-[28rem] overflow-hidden">
+                <div className="relative h-112 overflow-hidden">
                     <Image
                         src={useCase.heroImage}
                         alt={useCase.title}
@@ -113,9 +111,9 @@ export default function UseCaseDetailClient({
                                 <span>{useCase.title}</span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="bg-background/15 flex h-12 w-12 items-center justify-center rounded-2xl backdrop-blur-sm">
+                                {/* <div className="bg-background/15 flex h-12 w-12 items-center justify-center rounded-2xl backdrop-blur-sm">
                                     <Icon size={22} className="text-white" strokeWidth={1.5} />
-                                </div>
+                                </div> */}
                                 <span className="bg-background/10 rounded-full border border-white/20 px-3 py-1.5 text-xs font-bold tracking-widest text-white uppercase backdrop-blur-sm">
                                     {useCase.label}
                                 </span>
@@ -166,7 +164,7 @@ export default function UseCaseDetailClient({
                                 <AreaChart data={extended.chartData}>
                                     <defs>
                                         <linearGradient
-                                            id={`risk-${useCase.slug}`}
+                                            id={`risk-${useCase.label}`}
                                             x1="0"
                                             y1="0"
                                             x2="0"
@@ -208,7 +206,7 @@ export default function UseCaseDetailClient({
                                         dataKey="risk"
                                         stroke={useCase.accent}
                                         strokeWidth={2.5}
-                                        fill={`url(#risk-${useCase.slug})`}
+                                        fill={`url(#risk-${useCase.label})`}
                                     />
                                     <Line
                                         type="monotone"
@@ -424,13 +422,13 @@ export default function UseCaseDetailClient({
                             <p className="mb-1 text-xs font-medium tracking-wider text-neutral-500 uppercase">
                                 Next use case
                             </p>
-                            <h3 className="text-lg">{nextUseCase.title}</h3>
+                            <h3 className="text-lg">{nextUseCase[1].title}</h3>
                         </div>
                         <Link
-                            href={`/use-cases/${nextUseCase.slug}`}
+                            href={`/use-cases/${nextUseCase[0]}`}
                             className="inline-flex items-center gap-2.5 rounded-2xl px-7 py-3.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5"
                             style={{
-                                background: `linear-gradient(135deg, ${nextUseCase.accent}, ${nextUseCase.accent})`,
+                                background: `linear-gradient(135deg, ${nextUseCase[1].accent}, ${nextUseCase[1].accent})`,
                             }}
                         >
                             Explore case

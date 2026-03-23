@@ -1,10 +1,10 @@
 "use client"
-import { useRef } from "react"
-import { motion, useInView } from "motion/react"
 import { ArrowUpRight, ToolCase } from "lucide-react"
-import { Button } from "../shadcn/button"
+import { motion, useInView } from "motion/react"
 import Link from "next/link"
+import { useRef } from "react"
 import Divider from "../GlobalControls/Divider"
+import { Button } from "../shadcn/button"
 
 const MotionButton = motion.create(Button)
 
@@ -80,7 +80,7 @@ export function CTAGroundSection() {
                             whileHover={{ scale: 1.03, y: -2 }}
                             whileTap={{ scale: 0.98 }}
                         >
-                            <Link href="/use-cases/health-monitoring">
+                            <Link href="/use-cases">
                                 View Use Cases
                                 <ToolCase size={16} />
                             </Link>

@@ -1,22 +1,24 @@
 "use client"
 
-import { useState } from "react"
-import { motion } from "motion/react"
 import {
-    FileText,
-    Shield,
-    Cookie,
+    AlertTriangle,
     ChevronDown,
     ChevronRight,
-    Lock,
-    Eye,
-    Server,
-    UserCheck,
-    AlertTriangle,
-    Mail,
-    Globe,
     Clock,
+    Cookie,
+    Eye,
+    FileText,
+    Globe,
+    Lock,
+    Mail,
+    Server,
+    Shield,
+    UserCheck,
 } from "lucide-react"
+import { motion } from "motion/react"
+import Link from "next/link"
+import { useState } from "react"
+import { Button } from "../shadcn/button"
 import SectionHeading from "./SectionHeading"
 
 type TabKey = "tos" | "privacy" | "cookies"
@@ -130,12 +132,6 @@ function TermsOfService() {
             </AccordionItem>
             <AccordionItem title="5. Governing Law" accentColor="var(--color-primary)">
                 <p>These Terms are governed by the jurisdiction in which Sehetna is registered.</p>
-            </AccordionItem>
-            <AccordionItem title="6. Contact & Notices" accentColor="var(--color-primary)">
-                <p>
-                    Questions about these Terms can be sent to{" "}
-                    <span className="text-primary font-medium">legal@sehetna.org</span>.
-                </p>
             </AccordionItem>
         </div>
     )
@@ -300,20 +296,6 @@ function CookiePolicy() {
                     </div>
                 ))}
             </div>
-            <AccordionItem
-                title="Managing Your Cookie Preferences"
-                defaultOpen
-                accentColor="var(--color-warning-200)"
-            >
-                <p>
-                    You can manage non-essential cookies in account settings. Browser-level cookie
-                    controls may also be used, though they can affect Platform functionality.
-                </p>
-                <p className="mt-3">
-                    For help, contact{" "}
-                    <span className="text-warning-200 font-medium">privacy@sehetna.org</span>.
-                </p>
-            </AccordionItem>
         </div>
     )
 }
@@ -409,7 +391,7 @@ export default function ServicesAndPoliciesClient() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.7, delay: 0.2 }}
-                    className="from-primary-50 to-success-100/30 mx-6 mt-12 flex max-w-6xl flex-col items-center gap-4 rounded-3xl border bg-linear-to-r p-6 sm:flex-row xl:mx-auto"
+                    className="from-primary-100/10 to-primary-100/45 mx-6 mt-12 flex max-w-6xl flex-col items-center gap-4 rounded-3xl border bg-linear-to-r p-6 sm:flex-row xl:mx-auto"
                 >
                     <div className="flex-1">
                         <h4 className="text-neutral-1000 mb-1 text-sm font-semibold">
@@ -420,13 +402,17 @@ export default function ServicesAndPoliciesClient() {
                             concerns.
                         </p>
                     </div>
-                    <a
-                        href="mailto:legal@sehetna.org"
-                        className="from-success to-success-300 flex shrink-0 items-center gap-2 rounded-xl bg-linear-to-r px-5 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5"
+                    <Button
+                        variant="bright-primary"
+                        size="xl"
+                        className="transition-all hover:-translate-y-0.5"
+                        asChild
                     >
-                        <Mail size={14} strokeWidth={1.5} />
-                        Contact Legal Team
-                    </a>
+                        <Link href="mailto:support@sehetna.from-masr.com">
+                            <Mail size={14} strokeWidth={1.5} />
+                            Contact Legal Team
+                        </Link>
+                    </Button>
                 </motion.div>
             </section>
         </main>

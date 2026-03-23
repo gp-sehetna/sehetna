@@ -1,18 +1,11 @@
-import {
-    BarChart3,
-    Brain,
-    Bug,
-    Droplets,
-    Flame,
-    Heart,
-    type LucideIcon,
-    TrendingUp,
-    Wind,
-} from "lucide-react"
+export type UseCasesKey =
+    | "heatstroke"
+    | "respiratory"
+    | "cardiovascular"
+    | "vector-borne"
+    | "water-borne"
 
-export type UseCaseCardData = {
-    slug: string
-    icon: LucideIcon
+export type UseCase = {
     accent: string
     accentSoft: string
     label: string
@@ -23,10 +16,10 @@ export type UseCaseCardData = {
     users: string[]
 }
 
-export const useCaseList: UseCaseCardData[] = [
-    {
-        slug: "heatstroke",
-        icon: Flame,
+type UseCases = Record<string, UseCase>
+
+export const useCases: UseCases = {
+    heatstroke: {
         accent: "var(--color-primary)",
         accentSoft: "bg-primary-100/30 text-primary",
         label: "Thermal risk",
@@ -42,9 +35,7 @@ export const useCaseList: UseCaseCardData[] = [
         ],
         users: ["Municipal health departments", "Urban planning agencies", "Emergency services"],
     },
-    {
-        slug: "respiratory",
-        icon: Wind,
+    respiratory: {
         accent: "var(--color-secondary-300)",
         accentSoft: "bg-secondary-100/40 text-secondary-300",
         label: "Air quality risk",
@@ -60,9 +51,7 @@ export const useCaseList: UseCaseCardData[] = [
         ],
         users: ["Environment ministries", "Hospital systems", "Research institutions"],
     },
-    {
-        slug: "cardiovascular",
-        icon: Heart,
+    cardiovascular: {
         accent: "var(--color-danger-200)",
         accentSoft: "bg-danger-100/10 text-danger-200",
         label: "Cardiac risk",
@@ -78,9 +67,7 @@ export const useCaseList: UseCaseCardData[] = [
         ],
         users: ["Cardiology networks", "Public health ministries", "Insurance actuaries"],
     },
-    {
-        slug: "vector-borne",
-        icon: Bug,
+    "vector-borne": {
         accent: "var(--color-success-300)",
         accentSoft: "bg-success-100/20 text-success",
         label: "Vector risk",
@@ -96,9 +83,7 @@ export const useCaseList: UseCaseCardData[] = [
         ],
         users: ["WHO regional offices", "Vector control agencies", "NGO health programmes"],
     },
-    {
-        slug: "water-borne",
-        icon: Droplets,
+    "water-borne": {
         accent: "var(--color-info-200)",
         accentSoft: "bg-info-100 text-info",
         label: "Hydro risk",
@@ -114,19 +99,20 @@ export const useCaseList: UseCaseCardData[] = [
         ],
         users: ["WASH programmes", "Disaster response units", "Municipal water authorities"],
     },
-]
+}
 
-export const useCaseExtendedData: Record<
-    string,
-    {
-        overview: string
-        drivers: { label: string; weight: number }[]
-        outputs: string[]
-        institutionStory: { institution: string; region: string; outcome: string }
-        chartData: { month: string; risk: number; observed: number }[]
-        pipeline: string[]
-    }
-> = {
+type ExtendedUseCase = {
+    overview: string
+    drivers: { label: string; weight: number }[]
+    outputs: string[]
+    institutionStory: { institution: string; region: string; outcome: string }
+    chartData: { month: string; risk: number; observed: number }[]
+    pipeline: string[]
+}
+
+type ExtendedUseCases = Record<string, ExtendedUseCase>
+
+export const extendedUseCases: ExtendedUseCases = {
     heatstroke: {
         overview:
             "This module combines satellite land temperature, humidity, urban heat island signals, and population vulnerability to forecast thermal stress before health systems are overwhelmed.",
@@ -307,26 +293,4 @@ export const useCaseExtendedData: Record<
             "Flag high-risk catchments",
         ],
     },
-}
-
-export const institutionTypes = [
-    {
-        icon: TrendingUp,
-        title: "National ministries",
-        description: "Health, environment, and infrastructure agencies.",
-    },
-    {
-        icon: Brain,
-        title: "Research institutions",
-        description: "Universities and evidence-producing labs.",
-    },
-    {
-        icon: BarChart3,
-        title: "Municipal authorities",
-        description: "City health teams and local planners.",
-    },
-]
-
-export function getUseCase(slug: string) {
-    return useCaseList.find((item) => item.slug === slug)
 }
