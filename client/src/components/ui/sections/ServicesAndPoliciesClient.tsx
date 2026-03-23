@@ -1,8 +1,6 @@
 "use client"
 
 import {
-    AlertTriangle,
-    ChevronDown,
     ChevronRight,
     Clock,
     Cookie,
@@ -18,6 +16,7 @@ import {
 import { motion } from "motion/react"
 import Link from "next/link"
 import { useState } from "react"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../shadcn/accordion"
 import { Button } from "../shadcn/button"
 import SectionHeading from "./SectionHeading"
 
@@ -29,207 +28,132 @@ const tabs: { key: TabKey; label: string; icon: typeof FileText }[] = [
     { key: "cookies", label: "Cookie Policy", icon: Cookie },
 ]
 
-function AccordionItem({
-    title,
-    children,
-    defaultOpen = false,
-    accentColor = "var(--color-success-300)",
-}: {
-    title: string
-    children: React.ReactNode
-    defaultOpen?: boolean
-    accentColor?: string
-}) {
-    const [open, setOpen] = useState(defaultOpen)
-    return (
-        <div className="bg-background/60 overflow-hidden rounded-2xl border border-neutral-200/80 backdrop-blur-sm">
-            <button
-                onClick={() => setOpen((prev) => !prev)}
-                className="hover:bg-primary-50/60 flex w-full cursor-pointer items-center justify-between px-6 py-5 text-left transition-colors"
-            >
-                <span className="text-neutral-1000 text-sm font-semibold">{title}</span>
-                <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                    <ChevronDown size={16} style={{ color: accentColor }} strokeWidth={1.5} />
-                </motion.div>
-            </button>
-            <motion.div
-                initial={false}
-                animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="overflow-hidden"
-            >
-                <div className="border-t px-6 pb-5 text-sm leading-relaxed text-neutral-800">
-                    <div className="pt-4">{children}</div>
-                </div>
-            </motion.div>
-        </div>
-    )
-}
-
 function TermsOfService() {
     return (
-        <div className="flex flex-col gap-4">
-            <AccordionItem
-                title="1. Acceptance of Terms"
-                defaultOpen
-                accentColor="var(--color-primary)"
-            >
-                <p>
-                    By accessing or using the Sehetna analytics platform {'("Platform")'}, you agree
-                    to be bound by these Terms of Service.
-                </p>
-                <p className="mt-3">
-                    Sehetna may update these Terms periodically. We will provide notice through the
-                    Platform or by email where appropriate.
-                </p>
+        <Accordion type="single" collapsible>
+            <AccordionItem value="acceptance">
+                <AccordionTrigger>Acceptance of Terms</AccordionTrigger>
+                <AccordionContent>
+                    <p>
+                        By accessing or using the Sehetna analytics platform {'("Platform")'}, you
+                        agree to be bound by these Terms of Service.
+                    </p>
+                    <p className="mt-3">
+                        Sehetna may update these Terms periodically. We will provide notice through
+                        the Platform or by email where appropriate.
+                    </p>
+                </AccordionContent>
             </AccordionItem>
-            <AccordionItem
-                title="2. Permitted Use & Restrictions"
-                accentColor="var(--color-primary)"
-            >
-                <p>
-                    The Platform is intended for authorised institutional users and lawful
-                    decision-support use.
-                </p>
-                <ul className="mt-3 flex flex-col gap-2">
-                    {[
-                        "Do not use outputs as a substitute for professional medical diagnosis.",
-                        "Do not redistribute or resell Platform data or predictions without permission.",
-                        "Do not scrape, reverse engineer, or probe system vulnerabilities.",
-                        "Do not attempt to bypass access controls.",
-                    ].map((item) => (
-                        <li key={item} className="flex items-start gap-2">
-                            <span className="bg-primary mt-2 h-1 w-1 shrink-0 rounded-full" />
-                            <span>{item}</span>
-                        </li>
-                    ))}
-                </ul>
-            </AccordionItem>
-            <AccordionItem title="3. Intellectual Property" accentColor="var(--color-primary)">
-                <p>
-                    The Platform, including code, models, data visualisations, and design assets, is
-                    protected intellectual property.
-                </p>
-            </AccordionItem>
-            <AccordionItem
-                title="4. Disclaimers & Limitation of Liability"
-                accentColor="var(--color-primary)"
-            >
-                <p>
-                    Predictions are probabilistic and carry inherent uncertainty. Sehetna does not
-                    guarantee that outputs are complete, accurate, or fit for a specific purpose.
-                </p>
-                <div className="border-primary-200 bg-primary-50 mt-3 rounded-xl border p-4">
-                    <div className="flex items-start gap-2.5">
-                        <AlertTriangle size={15} className="text-primary mt-0.5 shrink-0" />
-                        <p className="text-xs">
-                            To the maximum extent permitted by law, Sehetna is not liable for
-                            indirect or consequential damages arising from reliance on Platform
-                            outputs.
-                        </p>
-                    </div>
-                </div>
-            </AccordionItem>
-            <AccordionItem title="5. Governing Law" accentColor="var(--color-primary)">
-                <p>These Terms are governed by the jurisdiction in which Sehetna is registered.</p>
-            </AccordionItem>
-        </div>
+        </Accordion>
     )
 }
 
 function PrivacyPolicy() {
     return (
-        <div className="flex flex-col gap-4">
-            <AccordionItem
-                title="1. Data We Collect"
-                defaultOpen
-                accentColor="var(--color-success-300)"
-            >
-                <div className="grid gap-3 sm:grid-cols-2">
-                    {[
-                        {
-                            icon: UserCheck,
-                            label: "Account Data",
-                            desc: "Name, email, role, and organisation affiliation.",
-                        },
-                        {
-                            icon: Server,
-                            label: "Usage Data",
-                            desc: "Feature interactions, session duration, and logs.",
-                        },
-                        {
-                            icon: Globe,
-                            label: "Environmental Queries",
-                            desc: "Coordinates, dates, and disease categories.",
-                        },
-                        {
-                            icon: Eye,
-                            label: "Device & Browser",
-                            desc: "IP address, browser, OS, and referral data.",
-                        },
-                    ].map((item) => {
-                        const Icon = item.icon
-                        return (
-                            <div
-                                key={item.label}
-                                className="bg-success-100/20 flex items-start gap-3 rounded-xl p-3"
-                            >
-                                <Icon size={14} className="text-success mt-0.5 shrink-0" />
-                                <div>
-                                    <div className="text-neutral-1000 text-xs font-semibold">
-                                        {item.label}
+        <Accordion type="single" collapsible>
+            <AccordionItem value="data-collection">
+                <AccordionTrigger>Data We Collect</AccordionTrigger>
+                <AccordionContent>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                        {[
+                            {
+                                icon: UserCheck,
+                                label: "Account Data",
+                                desc: "Name, email, role, and organisation affiliation.",
+                            },
+                            {
+                                icon: Server,
+                                label: "Usage Data",
+                                desc: "Feature interactions, session duration, and logs.",
+                            },
+                            {
+                                icon: Globe,
+                                label: "Environmental Queries",
+                                desc: "Coordinates, dates, and disease categories.",
+                            },
+                            {
+                                icon: Eye,
+                                label: "Device & Browser",
+                                desc: "IP address, browser, OS, and referral data.",
+                            },
+                        ].map((item) => {
+                            const Icon = item.icon
+                            return (
+                                <div
+                                    key={item.label}
+                                    className="bg-primary-100/20 flex items-start gap-3 rounded-xl p-3"
+                                >
+                                    <Icon size={14} className="text-primary mt-0.5 shrink-0" />
+                                    <div>
+                                        <div className="text-neutral-1000 text-xs font-semibold">
+                                            {item.label}
+                                        </div>
+                                        <p className="text-xs text-neutral-700">{item.desc}</p>
                                     </div>
-                                    <p className="text-xs text-neutral-700">{item.desc}</p>
                                 </div>
-                            </div>
-                        )
-                    })}
-                </div>
+                            )
+                        })}
+                    </div>
+                </AccordionContent>
             </AccordionItem>
-            <AccordionItem title="2. How We Use Your Data" accentColor="var(--color-success-300)">
-                <ul className="flex flex-col gap-2">
-                    {[
-                        "Provide and improve the Platform.",
-                        "Authenticate users and enforce access controls.",
-                        "Generate aggregated analytics.",
-                        "Send service-related notifications.",
-                        "Comply with legal obligations.",
-                    ].map((item) => (
-                        <li key={item} className="flex items-start gap-2">
-                            <span className="bg-success mt-2 h-1 w-1 shrink-0 rounded-full" />
-                            <span>{item}</span>
-                        </li>
-                    ))}
-                </ul>
+            <AccordionItem value="data-usage">
+                <AccordionTrigger>How We Use Your Data</AccordionTrigger>
+                <AccordionContent>
+                    <ul className="flex flex-col gap-2">
+                        {[
+                            "Provide and improve the Platform.",
+                            "Authenticate users and enforce access controls.",
+                            "Generate aggregated analytics.",
+                            "Send service-related notifications.",
+                            "Comply with legal obligations.",
+                        ].map((item) => (
+                            <li key={item} className="flex items-start gap-2">
+                                <span className="bg-success mt-2 h-1 w-1 shrink-0 rounded-full" />
+                                <span>{item}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </AccordionContent>
             </AccordionItem>
-            <AccordionItem title="3. Data Retention" accentColor="var(--color-success-300)">
-                <p>
+            <AccordionItem value="data-retention">
+                <AccordionTrigger>Data Retention</AccordionTrigger>
+                <AccordionContent>
                     We retain data only as long as needed for the stated purpose and legal
                     compliance.
-                </p>
+                </AccordionContent>
             </AccordionItem>
-            <AccordionItem title="4. Your Rights" accentColor="var(--color-success-300)">
-                <ul className="flex flex-col gap-2">
-                    {["Access", "Correct", "Erase", "Restrict processing", "Data portability"].map(
-                        (item) => (
+            <AccordionItem value="data-rights">
+                <AccordionTrigger>Your Rights</AccordionTrigger>
+                <AccordionContent>
+                    <ul className="flex flex-col gap-2">
+                        {[
+                            "Access",
+                            "Correct",
+                            "Erase",
+                            "Restrict processing",
+                            "Data portability",
+                        ].map((item) => (
                             <li key={item} className="flex items-start gap-2">
                                 <ChevronRight size={12} className="text-success mt-1 shrink-0" />
                                 <span>{item}</span>
                             </li>
-                        )
-                    )}
-                </ul>
+                        ))}
+                    </ul>
+                </AccordionContent>
             </AccordionItem>
-            <AccordionItem title="5. Data Security" accentColor="var(--color-success-300)">
-                <div className="flex items-start gap-3">
-                    <Lock size={15} className="text-success mt-0.5 shrink-0" />
-                    <p>
-                        Sehetna uses encryption in transit and at rest, role-based access control,
-                        and routine security testing.
-                    </p>
-                </div>
+            <AccordionItem value="data-security">
+                <AccordionTrigger>Data Security</AccordionTrigger>
+                <AccordionContent>
+                    <div className="flex items-start gap-3">
+                        <Lock size={15} className="text-success mt-0.5 shrink-0" />
+                        <p>
+                            Sehetna uses encryption in transit and at rest, role-based access
+                            control, and routine security testing.
+                        </p>
+                    </div>
+                </AccordionContent>
             </AccordionItem>
-        </div>
+        </Accordion>
     )
 }
 

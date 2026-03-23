@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
-import Link from "next/link"
-import { motion } from "motion/react"
+import Gradient from "@/components/ui/GlobalComponents/extras/gradient"
+import Divider from "@/components/ui/GlobalControls/Divider"
+import Texture from "@/components/ui/textures"
 import {
     Activity,
+    AlertTriangle,
     ArrowRight,
     BarChart3,
     BookOpen,
@@ -14,19 +15,18 @@ import {
     Database,
     FlaskConical,
     GitMerge,
-    Globe,
     HeartPulse,
     Layers,
-    Microscope,
     Satellite,
     Shield,
     TrendingUp,
     Users,
     Zap,
 } from "lucide-react"
-import Texture from "@/components/ui/textures"
-import Gradient from "@/components/ui/GlobalComponents/extras/gradient"
-import Divider from "@/components/ui/GlobalControls/Divider"
+import { motion } from "motion/react"
+import Link from "next/link"
+import { useState } from "react"
+import { MetricCard } from "../MetricCard"
 import SectionHeading from "./SectionHeading"
 
 const dataSources = [
@@ -168,58 +168,83 @@ const validationItems = [
     },
 ]
 
+const methodologyMetrics = [
+    {
+        value: "4",
+        label: "Data sources",
+        icon: Database,
+        accent: "var(--color-warning-200)",
+        description:
+            "Environmental, climate, demographic, and surveillance signals are fused in one pipeline.",
+    },
+    {
+        value: "8+",
+        label: "Model families",
+        icon: Brain,
+        accent: "var(--color-secondary-300)",
+        description:
+            "Forecasting and classification architectures are matched to each health signal.",
+    },
+    {
+        value: "5",
+        label: "Risk categories",
+        icon: AlertTriangle,
+        accent: "var(--color-primary-300)",
+        description:
+            "Outputs span heat, air quality, respiratory, water-borne, and vector-borne risk.",
+    },
+]
+
 export default function MethodologyClient() {
     const [activeStep, setActiveStep] = useState(0)
     const step = pipelineSteps[activeStep]
     const StepIcon = step.icon
 
     return (
-        <main className="bg-primary-50">
+        <>
             <section className="relative overflow-hidden py-24">
                 <Texture texture="dots" />
                 <div className="from-warning-100/40 pointer-events-none absolute -top-32 right-0 h-80 w-96 rounded-full bg-linear-to-bl to-transparent blur-3xl" />
-                <div className="from-success-100/30 pointer-events-none absolute bottom-0 left-0 h-64 w-80 rounded-full bg-linear-to-tr to-transparent blur-3xl" />
+                <div className="from-primary-100/30 pointer-events-none absolute bottom-0 left-0 h-64 w-80 rounded-full bg-linear-to-tr to-transparent blur-3xl" />
                 <div className="relative mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-[1.2fr_0.8fr] lg:px-8">
                     <div className="flex flex-col gap-6">
-                        <div className="bg-background/80 inline-flex w-fit items-center gap-2 rounded-full border px-4 py-2 shadow-sm backdrop-blur-xl">
-                            <BookOpen size={13} className="text-success" strokeWidth={2} />
-                            <span className="text-xs font-semibold text-neutral-800">
-                                Scientific Methodology
-                            </span>
+                        <div>
+                            <div className="glassy-chip inline-flex items-center gap-2">
+                                <BookOpen size={13} className="text-success" strokeWidth={2} />
+                                <span className="text-xs font-semibold text-neutral-800">
+                                    Scientific Methodology
+                                </span>
+                            </div>
                         </div>
                         <h1>
-                            How Sehetna turns{" "}
-                            <span className="from-warning-200 to-success bg-linear-to-r bg-clip-text text-transparent">
-                                environmental data
-                            </span>{" "}
-                            into health foresight
+                            How{" "}
+                            <span className="special-gradient bg-clip-text text-transparent">
+                                Sehetna{" "}
+                            </span>
+                            turns environmental data into health foresight
                         </h1>
                         <p className="max-w-3xl text-lg text-neutral-800">
                             A closer look at the sources, preprocessing workflow, model stack, and
                             validation standards behind Sehetna&apos;s health intelligence system.
                         </p>
-                        <div className="grid gap-4 sm:grid-cols-4">
-                            {[
-                                ["12+", "Data sources"],
-                                ["4", "Model families"],
-                                ["5", "Risk categories"],
-                                ["92%", "Avg. AUC-ROC"],
-                            ].map(([value, label]) => (
-                                <div
-                                    key={label}
-                                    className="bg-background/70 rounded-2xl border px-5 py-4 text-center backdrop-blur-xl"
-                                >
-                                    <div className="text-neutral-1000 text-3xl">{value}</div>
-                                    <div className="text-xs font-medium text-neutral-600">
-                                        {label}
-                                    </div>
-                                </div>
+                        <div className="grid gap-4 sm:grid-cols-3">
+                            {methodologyMetrics.map((metric) => (
+                                <MetricCard
+                                    key={metric.label}
+                                    size="sm"
+                                    variant="soft"
+                                    label={metric.label}
+                                    value={metric.value}
+                                    description={metric.description}
+                                    icon={metric.icon}
+                                    accent={metric.accent}
+                                />
                             ))}
                         </div>
                     </div>
                     <div className="bg-background/60 rounded-[2rem] border border-white/80 p-6 shadow-xl shadow-black/5 backdrop-blur-xl">
-                        <Divider hideDecorations className="justify-start">
-                            <span className="text-success text-xs font-semibold tracking-widest uppercase">
+                        <Divider hideDecorations>
+                            <span className="text-success text-xs font-semibold uppercase">
                                 System view
                             </span>
                         </Divider>
@@ -248,7 +273,7 @@ export default function MethodologyClient() {
                 </div>
             </section>
 
-            <section className="relative py-24">
+            <section className="relative py-12">
                 <div className="mx-auto flex max-w-7xl flex-col gap-12 px-6 lg:px-8">
                     <SectionHeading
                         label="Data Sources"
@@ -290,7 +315,7 @@ export default function MethodologyClient() {
                 </div>
             </section>
 
-            <section className="from-primary-50 to-background relative overflow-hidden bg-linear-to-b py-24">
+            <section className="from-primary-50 to-background relative overflow-hidden bg-linear-to-b py-12">
                 <Gradient
                     where="top"
                     className="opacity-20"
@@ -376,7 +401,7 @@ export default function MethodologyClient() {
                 </div>
             </section>
 
-            <section className="relative py-24">
+            <section className="relative py-12">
                 <div className="mx-auto flex max-w-7xl flex-col gap-12 px-6 lg:px-8">
                     <SectionHeading
                         label="AI Architecture"
@@ -470,6 +495,6 @@ export default function MethodologyClient() {
                     </div>
                 </div>
             </section>
-        </main>
+        </>
     )
 }
