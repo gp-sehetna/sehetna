@@ -407,7 +407,7 @@ export function DashboardSection() {
             <div className="from-secondary-300/5 pointer-events-none absolute top-0 right-1/4 h-75 w-125 rounded-full bg-linear-to-bl to-transparent blur-3xl" />
             <div className="from-primary/20 pointer-events-none absolute bottom-0 left-1/4 h-75 w-100 rounded-full bg-linear-to-tr to-transparent blur-3xl" />
 
-            <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+            <div className="relative mx-auto max-w-7xl px-6">
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 24 }}

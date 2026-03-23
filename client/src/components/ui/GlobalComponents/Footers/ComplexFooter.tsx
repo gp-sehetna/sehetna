@@ -89,7 +89,7 @@ export default function ComplexFooter() {
                 <div className="border-border mt-8 flex flex-col items-center justify-between gap-6 border-t pt-4 md:flex-row">
                     <p className="text-xs font-light text-neutral-600">
                         © &thinsp;{new Date().getFullYear().toString()}&thinsp; Sehetna Inc. All
-                        rights reserved.
+                        rights reserved. Built for public health intelligence.
                     </p>
                     <div className="flex gap-8">
                         {policiesItems.map((item) => (

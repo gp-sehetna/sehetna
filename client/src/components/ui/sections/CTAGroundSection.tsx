@@ -6,7 +6,7 @@ import { Button } from "../shadcn/button"
 import Link from "next/link"
 import Divider from "../GlobalControls/Divider"
 
-const MotionButton = motion(Button)
+const MotionButton = motion.create(Button)
 
 export function CTAGroundSection() {
     const ref = useRef(null)
@@ -14,7 +14,7 @@ export function CTAGroundSection() {
     return (
         <section
             ref={ref}
-            className="from-background to-muted/4 relative overflow-hidden bg-linear-to-l py-24 lg:py-32"
+            className="from-background to-muted/4 relative overflow-hidden bg-linear-to-l py-16 lg:py-32"
         >
             {/* Decorative blobs */}
             <div className="from-primary/8 pointer-events-none absolute -top-20 -left-20 h-100 w-125 rounded-full bg-linear-to-br to-transparent blur-3xl" />
@@ -29,7 +29,7 @@ export function CTAGroundSection() {
                 }}
             />
 
-            <div className="relative mx-auto flex max-w-5xl flex-col gap-8 px-6 text-center lg:px-8">
+            <div className="relative mx-auto flex max-w-5xl flex-col gap-8 px-6 text-center">
                 <motion.div
                     className="flex flex-col gap-4"
                     initial={{ opacity: 0, y: 32 }}
