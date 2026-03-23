@@ -242,7 +242,7 @@ function MainHeroSection() {
             {!isMobile ? (
                 <div className="absolute bottom-0 left-40 mb-4 flex flex-col items-center gap-2">
                     <div className="flex h-10.5 w-6.5 justify-center rounded-sm rounded-br-3xl border-2 border-white/50 p-1.5">
-                        <div className="h-2 w-1 animate-bounce rounded-full bg-white" />
+                        <div className="bg-background h-2 w-1 animate-bounce rounded-full" />
                     </div>
 
                     <span className="text-background animate-pulse text-[8px] font-bold tracking-widest uppercase">

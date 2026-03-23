@@ -186,7 +186,7 @@ export function ProblemContext() {
                             ].map((tag) => (
                                 <span
                                     key={tag.label}
-                                    className="bg-background/80 inline-flex items-center gap-1.5 rounded-full border border-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-900"
+                                    className="bg-background/80 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium text-neutral-900"
                                 >
                                     <span
                                         className="h-1.5 w-1.5 rounded-full"

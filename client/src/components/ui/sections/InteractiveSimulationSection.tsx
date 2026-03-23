@@ -188,7 +188,7 @@ function RiskTimeline({ risks }: { risks: Risks }) {
     }, [risks])
 
     return (
-        <Card className="rounded-2xl bg-white/50 p-4">
+        <Card className="bg-background/50 rounded-2xl p-4">
             <div className="text-muted-foreground mb-4 text-xs">2-Week Risk</div>
 
             <div className="h-32 w-full">
@@ -361,9 +361,9 @@ export function InteractiveScenarioSimulationSection() {
             <div className="relative z-10 mx-auto flex max-w-7xl flex-col gap-8 px-4 md:px-6">
                 {/* Header */}
                 <motion.div
-                    initial={{ opacity: 0, y: 24 }}
+                    initial={{ opacity: 0, y: 124 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 2, delay: 0.5 }}
                     className="mx-auto flex max-w-3xl flex-col gap-6 text-center"
                 >
                     <Divider hideDecorations>
@@ -381,9 +381,9 @@ export function InteractiveScenarioSimulationSection() {
 
                 {/* Main content grid */}
                 <motion.div
-                    initial={{ opacity: 0, y: 24 }}
+                    initial={{ opacity: 0, y: 124 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 2, delay: 0.5 }}
                     className="grid gap-8 lg:grid-cols-2"
                 >
                     {/* Controls Panel */}

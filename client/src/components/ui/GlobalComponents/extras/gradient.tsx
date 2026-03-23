@@ -11,12 +11,12 @@ type GradientProps = {
 }
 
 const gradientVariants: Record<GradientWhere, string> = {
-    top: "bg-gradient-to-b from-black/80 to-transparent",
-    bottom: "bg-gradient-to-t from-black/80 to-transparent",
-    left: "bg-gradient-to-r from-black/80 to-transparent",
-    right: "bg-gradient-to-l from-black/80 to-transparent",
-    vertical: "bg-gradient-to-b from-black/60 via-transparent to-black/80",
-    horizontal: "bg-gradient-to-r from-black/80 via-transparent to-black/80",
+    top: "bg-linear-to-b from-black/80 to-transparent",
+    bottom: "bg-linear-to-t from-black/80 to-transparent",
+    left: "bg-linear-to-r from-black/80 to-transparent",
+    right: "bg-linear-to-l from-black/80 to-transparent",
+    vertical: "bg-linear-to-b from-black/60 via-transparent to-black/80",
+    horizontal: "bg-linear-to-r from-black/80 via-transparent to-black/80",
 }
 
 function Gradient({ children, className, tint, where = "vertical" }: GradientProps) {

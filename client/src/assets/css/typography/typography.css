@@ -8,6 +8,25 @@
         font-family: var(--font-heading);
         font-weight: bold;
         color: var(--color-neutral-1000);
+        @apply tracking-tight text-balance;
+    }
+    h3 {
+        @apply text-xl leading-snug;
+    }
+
+    p,
+    li,
+    blockquote {
+        @apply text-base leading-relaxed;
+    }
+
+    blockquote {
+        @apply text-balance;
+    }
+
+    p {
+        font-size: var(--text-base);
+        line-height: var(--text-base--line-height);
     }
 }
 
@@ -39,11 +58,4 @@ h5 {
 h6 {
     font-size: clamp(1rem, calc(0.75rem + 0.667vw), 1.25rem); /* min: 16px, max: 20px */
     line-height: clamp(1.333rem, calc(1rem + 0.667vw), 1.667rem); /* min: 16px, max: 20px */
-}
-
-@layer base {
-    p {
-        font-size: var(--text-base);
-        line-height: var(--text-base--line-height);
-    }
 }

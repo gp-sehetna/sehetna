@@ -126,7 +126,7 @@ const tabs = [
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="rounded-2xl border border-white/60 bg-white/90 p-3 text-xs shadow-lg backdrop-blur-xl">
+            <div className="bg-background/90 rounded-2xl border border-white/60 p-3 text-xs shadow-lg backdrop-blur-xl">
                 <p className="mb-1.5 font-semibold text-[#222]">{label}</p>
                 {payload.map((p: any) => (
                     <div key={p.name} className="mb-0.5 flex items-center gap-2">
@@ -235,7 +235,7 @@ function MapView() {
             </World>
 
             {/* Scale bar and legend */}
-            <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-xl border border-white/60 bg-white/70 px-3 py-1.5 backdrop-blur-sm">
+            <div className="bg-background/70 absolute bottom-3 left-3 flex items-center gap-1.5 rounded-xl border border-white/60 px-3 py-1.5 backdrop-blur-sm">
                 {[
                     { label: "Low", color: "#6b8e7a" },
                     { label: "Moderate", color: "#c4a882" },
@@ -252,7 +252,7 @@ function MapView() {
             </div>
 
             {/* Timestamp */}
-            <div className="absolute top-3 right-3 rounded-xl border border-white/60 bg-white/70 px-3 py-1.5 backdrop-blur-sm">
+            <div className="bg-background/70 absolute top-3 right-3 rounded-xl border border-white/60 px-3 py-1.5 backdrop-blur-sm">
                 <div className="flex items-center gap-1.5">
                     <motion.div
                         className="bg-success-200 h-1.5 w-1.5 rounded-full"
@@ -333,11 +333,11 @@ function AlertsView() {
             {alerts.map((alert, i) => (
                 <motion.div
                     key={alert.region}
-                    initial={{ opacity: 0, x: -16 }}
+                    initial={{ opacity: 0, x: -24 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.1 }}
-                    className="flex items-center gap-3 rounded-2xl border p-3.5"
-                    style={{ backgroundColor: alert.bg, borderColor: `${alert.color}` }} //TODO: opacity 25%
+                    className="flex items-center gap-3 rounded-2xl border p-2"
+                    style={{ backgroundColor: alert.bg, borderColor: alert.color }} //TODO: opacity 25%
                 >
                     <div
                         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
@@ -429,7 +429,7 @@ export function DashboardSection() {
                     initial={{ opacity: 0, y: 40 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                    className="overflow-hidden rounded-3xl border border-white/80 bg-white/60 shadow-2xl shadow-black/8 backdrop-blur-2xl"
+                    className="bg-background/60 overflow-hidden rounded-3xl border border-white/80 shadow-2xl shadow-black/8 backdrop-blur-2xl"
                 >
                     {/* Dashboard header bar */}
                     <div className="flex items-center justify-between border-b border-neutral-200/60 px-6 py-4">
@@ -440,7 +440,7 @@ export function DashboardSection() {
                                 <div className="h-2.5 w-2.5 rounded-full bg-[#27c93f]" />
                             </div>
                             <span className="ml-2 text-xs font-medium text-neutral-500">
-                                Sehetna Intelligence Dashboard
+                                Demo Playground
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -466,7 +466,7 @@ export function DashboardSection() {
                                         onClick={() => setActiveTab(tab.id)}
                                         className={`rounded-xl text-xs font-medium transition-all duration-400 ${
                                             activeTab === tab.id
-                                                ? "text-neutral-1000 bg-white shadow-sm"
+                                                ? "text-neutral-1000 bg-background shadow-sm"
                                                 : "text-neutral-600 hover:text-neutral-900"
                                         }`}
                                     >
@@ -511,7 +511,7 @@ export function DashboardSection() {
                     ].map((stat) => (
                         <div
                             key={stat.label}
-                            className="rounded-2xl border border-white/80 bg-white/60 p-4 text-center backdrop-blur-xl"
+                            className="bg-background/60 rounded-2xl border border-white/80 p-4 text-center backdrop-blur-xl"
                         >
                             <div
                                 className="mb-1 text-2xl"
