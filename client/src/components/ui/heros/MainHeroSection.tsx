@@ -9,6 +9,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useIsMobile } from "@/hooks/use-mobile"
+import Texture from "../textures"
 
 type HeroElement = {
     id: number
@@ -73,7 +74,7 @@ const heroElements: HeroElement[] = [
         },
         tint: "via-blue-600/20",
         color: "bg-success-100",
-        ctaClassName: "from-success-100 to-success-100/75 shadow-success-100/20",
+        ctaClassName: "from-success-100 to-success-300/75 shadow-success-300/20",
     },
     {
         id: 3,
@@ -166,15 +167,7 @@ function MainHeroSection() {
                 <Gradient className={heroElements[currentIndex].tint} />
             </div>
 
-            {/* Grid overlay */}
-            <div
-                className="absolute inset-0 opacity-[0.06]"
-                style={{
-                    backgroundImage:
-                        "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
-                    backgroundSize: "62px 62px",
-                }}
-            />
+            <Texture texture="grid" />
 
             <div className="relative flex h-full items-center justify-center px-4 md:justify-start md:px-12">
                 <div className="relative min-h-50 w-full max-w-2xl">
@@ -201,7 +194,7 @@ function MainHeroSection() {
                             <div className="mt-4 inline-flex gap-4">
                                 <Button
                                     className={cn(
-                                        "bg-transparent bg-linear-to-br shadow-xl",
+                                        "rounded-sm rounded-tl-3xl rounded-br-3xl bg-transparent bg-linear-to-br shadow-xl",
                                         heroElement.ctaClassName
                                     )}
                                     size="xl"
