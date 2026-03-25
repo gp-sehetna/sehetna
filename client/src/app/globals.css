@@ -257,43 +257,6 @@
     }
 
     body {
-        font-family: var(--font-body);
         @apply bg-background text-foreground;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family: var(--font-heading);
-        @apply text-neutral-1000 font-bold tracking-tight text-balance;
-    }
-
-    h1 {
-        @apply text-5xl leading-[1.05] lg:text-7xl;
-    }
-
-    h2 {
-        @apply text-4xl leading-[1.08] lg:text-5xl;
-    }
-
-    h3 {
-        @apply text-xl leading-tight;
-    }
-
-    h4 {
-        @apply text-base leading-tight;
-    }
-
-    h5 {
-        @apply text-lg leading-tight;
-    }
-
-    p,
-    li,
-    blockquote {
-        @apply text-base leading-relaxed;
     }
 }

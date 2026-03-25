@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react"
 import {
-    ChevronRight,
     Clock,
     Cookie,
     Dot,
@@ -16,7 +15,6 @@ import {
 } from "lucide-react"
 import { motion } from "motion/react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../shadcn/accordion"
-import SectionEyebrow from "./SectionEyebrow"
 import SectionShell from "./SectionShell"
 import { easeBehavior, fadeUp } from "./motion"
 
