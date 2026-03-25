@@ -13,7 +13,7 @@ const accordionItemVariants = cva("group/accordion-item overflow-hidden", {
     variants: {
         variant: {
             default: "border-border/70 border-b",
-            card: "bg-background/85 mb-3 rounded-2xl border border-white/80 shadow-sm backdrop-blur-sm last:mb-0",
+            card: "bg-background/85 base-transition mb-3 rounded-2xl border backdrop-blur-sm last:mb-0 hover:scale-[100.5%] hover:shadow-lg",
             ghost: "hover:border-border/70 hover:bg-background/50 rounded-2xl border border-transparent",
         },
         size: {
@@ -36,9 +36,9 @@ const accordionTriggerVariants = cva(
                 default:
                     "hover:text-neutral-1000 data-[state=open]:text-neutral-1000 text-neutral-900 hover:no-underline",
                 card: cn(
-                    "rounded-xl",
-                    "hover:bg-primary-50/80 hover:text-neutral-1000",
-                    "data-[state=open]:bg-primary-50 data-[state=open]:text-neutral-1000"
+                    "rounded-t-xl data-[state=open]:border-b",
+                    "hover:bg-earth-100/20 hover:text-neutral-1000",
+                    "data-[state=open]:bg-earth-100/25 data-[state=open]:text-neutral-1000"
                 ),
                 ghost: cn(
                     "rounded-xl",
@@ -70,7 +70,7 @@ const accordionContentVariants = cva(
         variants: {
             variant: {
                 default: "",
-                card: "",
+                card: "mt-3",
                 ghost: "",
             },
             size: {
@@ -116,7 +116,7 @@ type AccordionItemProps = React.ComponentPropsWithoutRef<typeof AccordionPrimiti
     AccordionVisualVariants
 
 const AccordionItem = React.forwardRef<
-    React.ElementRef<typeof AccordionPrimitive.Item>,
+    React.ComponentRef<typeof AccordionPrimitive.Item>,
     AccordionItemProps
 >(({ className, variant = "default", size = "default", ...props }, ref) => (
     <AccordionItemVariantContext.Provider value={{ variant, size }}>
@@ -133,7 +133,7 @@ type AccordionTriggerProps = React.ComponentPropsWithoutRef<typeof AccordionPrim
     Partial<AccordionVisualVariants>
 
 const AccordionTrigger = React.forwardRef<
-    React.ElementRef<typeof AccordionPrimitive.Trigger>,
+    React.ComponentRef<typeof AccordionPrimitive.Trigger>,
     AccordionTriggerProps
 >(({ className, children, variant, size, ...props }, ref) => {
     const context = React.useContext(AccordionItemVariantContext)
@@ -171,7 +171,7 @@ type AccordionContentProps = React.ComponentPropsWithoutRef<typeof AccordionPrim
     Partial<AccordionVisualVariants>
 
 const AccordionContent = React.forwardRef<
-    React.ElementRef<typeof AccordionPrimitive.Content>,
+    React.ComponentRef<typeof AccordionPrimitive.Content>,
     AccordionContentProps
 >(({ className, children, variant, size, ...props }, ref) => {
     const context = React.useContext(AccordionItemVariantContext)

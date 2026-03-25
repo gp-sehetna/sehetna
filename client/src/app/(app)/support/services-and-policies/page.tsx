@@ -1,5 +1,7 @@
 import { Metadata } from "next"
-import ServicesAndPoliciesClient from "@/components/ui/sections/ServicesAndPoliciesClient"
+import ServicesPoliciesContact from "@/components/ui/sections/ServicesPoliciesContact"
+import ServicesPoliciesHero from "@/components/ui/sections/ServicesPoliciesHero"
+import ServicesPoliciesPolicyTabs from "@/components/ui/sections/ServicesPoliciesPolicyTabs"
 
 export const metadata: Metadata = {
     title: "Services & Policies",
@@ -10,5 +12,11 @@ export const metadata: Metadata = {
 }
 
 export default function ServicesAndPoliciesPage() {
-    return <ServicesAndPoliciesClient />
+    return (
+        <>
+            <ServicesPoliciesHero />
+            <ServicesPoliciesPolicyTabs />
+            <ServicesPoliciesContact />
+        </>
+    )
 }

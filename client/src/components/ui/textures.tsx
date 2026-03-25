@@ -37,3 +37,4 @@ const Texture = ({ texture }: { texture: TexturesType }) => {
 }
 
 export default Texture
+export type { TexturesType }

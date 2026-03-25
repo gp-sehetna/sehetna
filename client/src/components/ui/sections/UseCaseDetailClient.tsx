@@ -99,10 +99,10 @@ export default function UseCaseDetailClient({
                             animate={{ opacity: 1, y: 0 }}
                             className="flex max-w-3xl flex-col gap-4"
                         >
-                            <div className="flex items-center gap-2 text-xs text-white/70">
+                            <div className="text-background/70 flex items-center gap-2 text-xs">
                                 <Link
                                     href="/use-cases"
-                                    className="inline-flex items-center gap-1 text-white/80 transition-colors hover:text-white"
+                                    className="text-background/80 hover:text-background inline-flex items-center gap-1 transition-colors"
                                 >
                                     <ArrowLeft size={12} />
                                     Use cases
@@ -112,14 +112,14 @@ export default function UseCaseDetailClient({
                             </div>
                             <div className="flex items-center gap-3">
                                 {/* <div className="bg-background/15 flex h-12 w-12 items-center justify-center rounded-2xl backdrop-blur-sm">
-                                    <Icon size={22} className="text-white" strokeWidth={1.5} />
+                                    <Icon size={22} className="text-background" />
                                 </div> */}
-                                <span className="bg-background/10 rounded-full border border-white/20 px-3 py-1.5 text-xs font-bold tracking-widest text-white uppercase backdrop-blur-sm">
+                                <span className="bg-background/10 text-background rounded-full border border-white/20 px-3 py-1.5 text-xs font-bold tracking-widest uppercase backdrop-blur-sm">
                                     {useCase.label}
                                 </span>
                             </div>
-                            <h1 className="text-white">{useCase.title}</h1>
-                            <p className="max-w-2xl text-base text-white/85">
+                            <h1 className="text-background">{useCase.title}</h1>
+                            <p className="text-background/85 max-w-2xl text-base">
                                 {useCase.description}
                             </p>
                         </motion.div>
@@ -139,7 +139,7 @@ export default function UseCaseDetailClient({
                                 <div
                                     className={`flex h-9 w-9 items-center justify-center rounded-xl ${useCase.accentSoft}`}
                                 >
-                                    <BarChart3 size={16} strokeWidth={1.5} />
+                                    <BarChart3 size={16} />
                                 </div>
                                 <h2 className="text-base">Module overview</h2>
                             </div>
@@ -212,7 +212,6 @@ export default function UseCaseDetailClient({
                                         type="monotone"
                                         dataKey="observed"
                                         stroke="var(--color-neutral-500)"
-                                        strokeWidth={1.5}
                                         strokeDasharray="4 3"
                                         dot={false}
                                     />
@@ -230,7 +229,7 @@ export default function UseCaseDetailClient({
                                 <div
                                     className={`flex h-9 w-9 items-center justify-center rounded-xl ${useCase.accentSoft}`}
                                 >
-                                    <TrendingUp size={16} strokeWidth={1.5} />
+                                    <TrendingUp size={16} />
                                 </div>
                                 <h2 className="text-base">Key predictive drivers</h2>
                             </div>
@@ -277,7 +276,7 @@ export default function UseCaseDetailClient({
                                 <div
                                     className={`flex h-9 w-9 items-center justify-center rounded-xl ${useCase.accentSoft}`}
                                 >
-                                    <BellRing size={16} strokeWidth={1.5} />
+                                    <BellRing size={16} />
                                 </div>
                                 <h2 className="text-base">Institutional case study</h2>
                             </div>
@@ -327,11 +326,7 @@ export default function UseCaseDetailClient({
                             className="bg-background/60 rounded-3xl border border-white/80 p-6 shadow-md shadow-black/5 backdrop-blur-xl"
                         >
                             <div className="mb-4 flex items-center gap-3">
-                                <Database
-                                    size={14}
-                                    style={{ color: useCase.accent }}
-                                    strokeWidth={1.5}
-                                />
+                                <Database size={14} style={{ color: useCase.accent }} />
                                 <h3 className="text-sm">Model outputs</h3>
                             </div>
                             <div className="flex flex-col gap-3">
@@ -355,11 +350,7 @@ export default function UseCaseDetailClient({
                             className="bg-background/60 rounded-3xl border border-white/80 p-6 shadow-md shadow-black/5 backdrop-blur-xl"
                         >
                             <div className="mb-4 flex items-center gap-3">
-                                <Brain
-                                    size={14}
-                                    style={{ color: useCase.accent }}
-                                    strokeWidth={1.5}
-                                />
+                                <Brain size={14} style={{ color: useCase.accent }} />
                                 <h3 className="text-sm">Module pipeline</h3>
                             </div>
                             <div className="flex flex-col gap-3">
@@ -387,11 +378,7 @@ export default function UseCaseDetailClient({
                             className="bg-background/60 rounded-3xl border border-white/80 p-6 shadow-md shadow-black/5 backdrop-blur-xl"
                         >
                             <div className="mb-4 flex items-center gap-3">
-                                <Layers
-                                    size={14}
-                                    style={{ color: useCase.accent }}
-                                    strokeWidth={1.5}
-                                />
+                                <Layers size={14} style={{ color: useCase.accent }} />
                                 <h3 className="text-sm">Target institutions</h3>
                             </div>
                             <div className="flex flex-col gap-2">
@@ -426,13 +413,13 @@ export default function UseCaseDetailClient({
                         </div>
                         <Link
                             href={`/use-cases/${nextUseCase[0]}`}
-                            className="inline-flex items-center gap-2.5 rounded-2xl px-7 py-3.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5"
+                            className="text-background inline-flex items-center gap-2.5 rounded-2xl px-7 py-3.5 text-sm font-semibold transition-all hover:-translate-y-0.5"
                             style={{
                                 background: `linear-gradient(135deg, ${nextUseCase[1].accent}, ${nextUseCase[1].accent})`,
                             }}
                         >
                             Explore case
-                            <ArrowRight size={15} strokeWidth={1.5} />
+                            <ArrowRight size={15} />
                         </Link>
                     </motion.div>
                 </div>

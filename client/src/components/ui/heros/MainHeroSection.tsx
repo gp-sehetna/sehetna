@@ -1,15 +1,17 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import Gradient from "../GlobalComponents/extras/gradient"
+import { motion } from "motion/react"
 import Image from "next/image"
-import { useParallax } from "@/hooks/use-parallax"
-import { Button } from "../shadcn/button"
-import { ArrowLeft, ArrowRight, ArrowUpRight, LucideIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { ArrowLeft, ArrowRight, ArrowUpRight, LucideIcon } from "lucide-react"
+import { useParallax } from "@/hooks/use-parallax"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { cn } from "@/lib/utils"
+import Gradient from "../GlobalComponents/extras/gradient"
 import Texture from "../textures"
+import { Button } from "../shadcn/button"
+import { fadeIn, fadeUp } from "../sections/motion"
 
 type HeroElement = {
     id: number
@@ -33,14 +35,14 @@ const heroElements: HeroElement[] = [
         tag: "Climate & Health Intelligence",
         title: "Where Environment Meets\nPublic Health",
         subtitle:
-            "Sehetna translates complex environmental data into clear, actionable health risk forecasts — giving decision-makers the insight to protect communities before harm occurs.",
+            "Sehetna translates complex environmental data into clear, actionable health risk forecasts, giving decision-makers the insight to protect communities before harm occurs.",
         cta: "Explore Predictions",
         ctaHref: "/data-explorer",
         image: {
             src: "/images/gis-island.jpg",
             alt: "Aerial view of an island used to represent mapped climate insights",
         },
-        tint: " via-blue-600/20",
+        tint: "via-blue-600/20",
         color: "bg-primary",
         ctaClassName: "from-primary to-primary/75 shadow-primary/20",
     },
@@ -65,7 +67,7 @@ const heroElements: HeroElement[] = [
         tag: "Decision Support System",
         title: "Empowering Institutions\nWith Clarity",
         subtitle:
-            "Scenario-based simulations let health authorities and planners explore how environmental changes propagate into population health outcomes — supporting early intervention and resource allocation.",
+            "Scenario-based simulations let health authorities and planners explore how environmental changes propagate into population health outcomes, supporting early intervention and resource allocation.",
         cta: "See Use Cases",
         ctaHref: "/use-cases",
         image: {
@@ -91,16 +93,11 @@ const heroElements: HeroElement[] = [
         tint: "via-foreground/40",
         color: "bg-secondary-100",
         ctaClassName:
-            "from-secondary-100 text-neutral-900 to-secondary-100/75 shadow-secondary-100/20",
+            "from-secondary-100 to-secondary-100/75 text-neutral-900 shadow-secondary-100/20",
     },
 ]
 
-type PaginationButtonProps = {
-    Icon: LucideIcon
-    onClick: () => void
-}
-
-const PaginationButton = ({ Icon, onClick }: PaginationButtonProps) => {
+function PaginationButton({ Icon, onClick }: { Icon: LucideIcon; onClick: () => void }) {
     return (
         <Button
             variant="glassy"
@@ -112,6 +109,59 @@ const PaginationButton = ({ Icon, onClick }: PaginationButtonProps) => {
         </Button>
     )
 }
+
+function HeroSlideContent({
+    heroElement,
+    isActive,
+}: {
+    heroElement: HeroElement
+    isActive: boolean
+}) {
+    return (
+        <motion.div
+            initial={fadeIn.initial}
+            animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+            transition={fadeUp.transition}
+            className={cn(
+                "absolute inset-0 flex flex-col items-center justify-center gap-6 text-center md:items-start md:justify-around md:text-start",
+                isActive ? "pointer-events-auto" : "pointer-events-none"
+            )}
+        >
+            <div className="flex flex-col gap-4">
+                <div className="inline-flex items-center gap-2 self-center md:self-start">
+                    <span className={cn("h-1.5 w-1.5 rounded-full", heroElement.color)} />
+                    <span className="text-xs font-medium tracking-widest text-white/70 uppercase">
+                        {heroElement.tag}
+                    </span>
+                </div>
+                <h1 className="text-background max-w-3xl text-shadow-lg">{heroElement.title}</h1>
+                <p className="max-w-2xl text-base text-white/78 text-shadow-lg md:text-lg">
+                    {heroElement.subtitle}
+                </p>
+            </div>
+
+            <div className="inline-flex flex-wrap items-center justify-center gap-4 md:justify-start">
+                <Button
+                    className={cn(
+                        "rounded-sm rounded-tl-3xl rounded-br-3xl bg-transparent bg-linear-to-br shadow-xl",
+                        heroElement.ctaClassName
+                    )}
+                    size="xl"
+                    asChild
+                >
+                    <Link href={heroElement.ctaHref}>{heroElement.cta}</Link>
+                </Button>
+                <Button size="xl" variant="bright" asChild>
+                    <Link href="/more-about-us">
+                        More About Us
+                        <ArrowUpRight size={16} />
+                    </Link>
+                </Button>
+            </div>
+        </motion.div>
+    )
+}
+
 function MainHeroSection() {
     const containerRef = useRef<HTMLDivElement>(null)
     const imageRef = useRef<HTMLDivElement>(null)
@@ -128,6 +178,7 @@ function MainHeroSection() {
     const goToSlide = (index: number) => {
         setCurrentIndex(index)
     }
+
     const paginate = useCallback(
         (direction: number) => {
             setCurrentIndex(
@@ -141,6 +192,7 @@ function MainHeroSection() {
         const timer = setInterval(() => {
             paginate(1)
         }, 6500)
+
         return () => clearInterval(timer)
     }, [paginate])
 
@@ -149,7 +201,7 @@ function MainHeroSection() {
             <div ref={imageRef} className="absolute inset-0">
                 {heroElements.map((heroElement, index) => (
                     <div
-                        key={index}
+                        key={heroElement.id}
                         className={cn(
                             "absolute inset-0 transition-all duration-1200 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
                             index === currentIndex ? "scale-100 opacity-100" : "scale-105 opacity-0"
@@ -170,55 +222,27 @@ function MainHeroSection() {
             <Texture texture="grid" />
 
             <div className="relative flex h-full items-center justify-center px-4 md:justify-start md:px-12">
-                <div className="relative min-h-50 w-full max-w-2xl">
+                <div className="relative min-h-50 w-full max-w-3xl">
                     {heroElements.map((heroElement, index) => (
-                        <div
+                        <HeroSlideContent
                             key={heroElement.id}
-                            className={cn(
-                                "absolute inset-0 flex flex-col items-center justify-around gap-2 text-center transition-all duration-500 ease-out md:items-start md:text-start",
-                                index === currentIndex
-                                    ? "translate-y-0 opacity-100"
-                                    : "pointer-events-none translate-y-6 opacity-0"
-                            )}
-                        >
-                            <div className="mb-5 inline-flex items-center gap-2">
-                                <span
-                                    className={cn("h-1.5 w-1.5 rounded-full", heroElement.color)}
-                                />
-                                <span className="text-xs font-medium tracking-widest text-white/70 uppercase">
-                                    {heroElement.tag}
-                                </span>
-                            </div>
-                            <h1 className="text-background text-shadow-lg">{heroElement.title}</h1>
-                            <p className="text-muted text-shadow-lg">{heroElement.subtitle}</p>
-                            <div className="mt-4 inline-flex gap-4">
-                                <Button
-                                    className={cn(
-                                        "rounded-sm rounded-tl-3xl rounded-br-3xl bg-transparent bg-linear-to-br shadow-xl",
-                                        heroElement.ctaClassName
-                                    )}
-                                    size="xl"
-                                    asChild
-                                >
-                                    <Link href={heroElement.ctaHref}>{heroElement.cta}</Link>
-                                </Button>
-                                <Button size="xl" variant="bright" asChild>
-                                    <Link href="/more-about-us">
-                                        More About Us
-                                        <ArrowUpRight />
-                                    </Link>
-                                </Button>
-                            </div>
-                        </div>
+                            heroElement={heroElement}
+                            isActive={index === currentIndex}
+                        />
                     ))}
                 </div>
             </div>
 
-            <div className="absolute bottom-0 left-1/2 mb-8 flex -translate-x-1/2 transform items-center gap-2">
+            <motion.div
+                initial={fadeIn.initial}
+                animate={fadeIn.whileInView}
+                transition={{ ...fadeIn.transition, delay: 0.3 }}
+                className="absolute bottom-0 left-1/2 mb-8 flex -translate-x-1/2 transform items-center gap-2"
+            >
                 <div className="flex items-center gap-2">
                     {heroElements.map((heroElement, index) => (
                         <button
-                            key={index}
+                            key={heroElement.id}
                             type="button"
                             aria-label={`Go to hero ${index + 1}: ${heroElement.title}`}
                             aria-current={index === currentIndex}
@@ -232,26 +256,35 @@ function MainHeroSection() {
                         />
                     ))}
                 </div>
-            </div>
-            <div className="absolute right-0 bottom-0 m-8 flex flex-col items-end gap-4 md:items-start">
+            </motion.div>
+
+            <motion.div
+                initial={fadeIn.initial}
+                animate={fadeIn.whileInView}
+                transition={{ ...fadeIn.transition, delay: 0.4 }}
+                className="absolute right-0 bottom-0 m-8 flex flex-col items-end gap-4 md:items-start"
+            >
                 <div className="flex items-center justify-center gap-4 md:justify-start">
                     <PaginationButton Icon={ArrowLeft} onClick={() => paginate(-1)} />
                     <PaginationButton Icon={ArrowRight} onClick={() => paginate(1)} />
                 </div>
-            </div>
+            </motion.div>
+
             {!isMobile ? (
-                <div className="absolute bottom-0 left-40 mb-4 flex flex-col items-center gap-2">
+                <motion.div
+                    initial={fadeIn.initial}
+                    animate={fadeIn.whileInView}
+                    transition={{ ...fadeIn.transition, delay: 0.5 }}
+                    className="absolute bottom-0 left-40 mb-4 flex flex-col items-center gap-2"
+                >
                     <div className="flex h-10.5 w-6.5 justify-center rounded-sm rounded-br-3xl border-2 border-white/50 p-1.5">
                         <div className="bg-background h-2 w-1 animate-bounce rounded-full" />
                     </div>
-
                     <span className="text-background animate-pulse text-[8px] font-bold tracking-widest uppercase">
                         Scroll to Explore
                     </span>
-                </div>
-            ) : (
-                <></>
-            )}
+                </motion.div>
+            ) : null}
         </section>
     )
 }
