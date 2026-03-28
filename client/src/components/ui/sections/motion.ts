@@ -16,6 +16,13 @@ export const fadeUp = {
     transition: { duration: 0.8, ease: easeBehavior },
 }
 
+export const fadeDown = {
+    initial: { opacity: 0, y: -24 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: homeViewport,
+    transition: { duration: 0.8, ease: easeBehavior },
+}
+
 export const slideInLeft = {
     initial: { opacity: 0, x: -32 },
     whileInView: { opacity: 1, x: 0 },

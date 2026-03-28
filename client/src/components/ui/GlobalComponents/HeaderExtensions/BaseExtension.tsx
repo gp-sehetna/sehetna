@@ -54,7 +54,7 @@ function CloseButton({ onClose }: { onClose: () => void }) {
         <Button
             onClick={onClose}
             variant="tonal"
-            className="absolute top-1 right-1 h-6 w-6 rounded-md px-0 transition hover:scale-110"
+            className="absolute top-1 right-1 h-6 w-6 rounded-md bg-neutral-900/50 px-0 text-neutral-100 transition hover:scale-110 hover:bg-neutral-800/50"
         >
             <X className="stroke-2" />
         </Button>
