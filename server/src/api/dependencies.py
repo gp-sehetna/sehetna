@@ -3,6 +3,7 @@ from typing import Annotated
 
 from fastapi import Depends, Request
 
+from src.application.services.agent_service import AgentService
 from src.application.services.forecast_service import ForecastService
 from src.application.services.prediction_service import PredictionService
 from src.core.container import ServiceContainer
@@ -20,3 +21,6 @@ def get_prediction_service(services: ServiceContainer = Depends(get_services)) -
 
 def get_forecast_service(container: Annotated[ServiceContainer, Depends(get_services)]) -> ForecastService:
     return container.forecast_service
+
+def get_agent_service(container: Annotated[ServiceContainer, Depends(get_services)]) -> AgentService:
+    return container.agent_service

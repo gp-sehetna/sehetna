@@ -5,9 +5,11 @@ from typing import Annotated
 import pandas as pd
 from fastapi import APIRouter, Depends, Query
 
-from src.api.dependencies import get_forecast_service, get_prediction_service
+from src.api.dependencies import get_agent_service, get_forecast_service, get_prediction_service
+from src.application.services.agent_service import AgentService
 from src.application.services.forecast_service import ForecastService
 from src.application.services.prediction_service import PredictionService
+from src.domain.schemas.agent import InterpretationRequest, InterpretationResponse
 from src.domain.schemas.forecasts import ForecastRequest, ForecastResponse
 from src.domain.schemas.predictions import (
     PredictionQueryParams,
@@ -27,8 +29,17 @@ async def simulate(
     query: Annotated[PredictionQueryParams, Query()],
     prediction_service: PredictionService = Depends(get_prediction_service),
 ):
-    _, predictions, explanations = prediction_service.simulate(req, query)
-    return SimulationResponse.build(predictions, query.explainer_method, explanations)
+    environment_df, predictions, explanations = prediction_service.simulate(req, query)
+    # simulationResults =  SimulationResponse.build(predictions, query.explainer_method, explanations)
+    
+    message = interpret_prediction(body=InterpretationRequest(
+        country= req.country_code ,
+        simulation_outcomes = predictions,
+        environmental_data= environment_df.to_dict(orient='records')
+    ))
+    return SimulationResponse.build(predictions, query.explainer_method, explanations , message)
+
+
 
 
 @router.post("/forecast", response_model=ForecastResponse)
@@ -47,3 +58,33 @@ async def forecast(
     logger.info(f"Horizon length: {horizons}, Forecasts: {len(forecasts.keys())}")
 
     return ForecastResponse.build(environment_predictions_df, horizons, forecasts)
+
+
+
+# @router.post(
+#     "/interpret" ,
+#     response_model= InterpretationResponse ,
+#     summary="Interpret prediction results" ,
+#     description=(
+#         "Pass the LGBM prediction results for a country and receive a "
+#         "plain-text human-readable interpretation powered by a Qwen model "
+#         "hosted on Groq."
+#     ),
+# )
+
+
+async def interpret_prediction(
+    body: InterpretationRequest,
+    agent_service: AgentService = Depends(get_agent_service),
+) -> InterpretationResponse:
+
+    message = await agent_service.interpret(
+        country=body.country,
+        simulation_outcomes=body.simulation_outcomes,
+        environmental_data=body.environmental_data
+    )
+    return InterpretationResponse(message=message)
+
+
+
+ 
