@@ -7,6 +7,35 @@ import { usePredictionsStore } from "@/stores/map/use-predictions"
 import AppLink from "../../GlobalControls/AppLink"
 import { MapDashboardProps } from "./MapDashboard"
 
+export const NoPredictionsFallback = ({
+    text,
+    addLink = true,
+}: {
+    text: string
+    addLink?: boolean
+}) => {
+    return (
+        <div className="text-muted-foreground flex h-full flex-col items-center justify-center">
+            <p className="text-center text-sm">
+                {text}
+                {addLink && (
+                    <>
+                        Got a data provider in mind? We’d love your{" "}
+                        <AppLink
+                            className="text-info"
+                            target="_blank"
+                            rel="noopener"
+                            href="https://github.com/gp-sehetna/sehetna"
+                        >
+                            contribution on GitHub.
+                        </AppLink>
+                    </>
+                )}
+            </p>
+        </div>
+    )
+}
+
 export const LiveContent = ({
     onLayerSelect,
     zoneProperties,
@@ -32,20 +61,7 @@ export const LiveContent = ({
                 ) : hasForecasts ? (
                     <ForecastDashboard onCardClick={onLayerSelect} forecasts={predictions} />
                 ) : (
-                    <div className="text-muted-foreground flex h-full flex-col items-center justify-center">
-                        <p className="text-center text-sm">
-                            No prediction timeline is available for this model yet. Got a data
-                            provider in mind? We’d love your{" "}
-                            <AppLink
-                                className="text-info"
-                                target="_blank"
-                                rel="noopener"
-                                href="https://github.com/gp-sehetna/sehetna"
-                            >
-                                contribution on GitHub.
-                            </AppLink>
-                        </p>
-                    </div>
+                    <NoPredictionsFallback text="No prediction timeline is available for this model yet." />
                 )}
             </div>
         </div>

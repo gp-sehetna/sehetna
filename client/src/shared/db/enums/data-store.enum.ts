@@ -7,6 +7,10 @@ enum DataSourcesEnum {
     merra2 = "merra2",
     fluview = "fluview",
     who = "who",
+    openweather = "openweather",
+    world_bank_climate = "world_bank_climate",
+    openaq = "openaq",
+    purpleair = "purpleair",
 }
 
 enum GranularityEnum {

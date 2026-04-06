@@ -5,6 +5,7 @@ import {
     Card,
     CardContent,
     CardDescription,
+    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/shadcn/card"
@@ -12,21 +13,26 @@ import { Skeleton } from "@/components/ui/shadcn/skeleton"
 import { DataStoreClientService } from "@/features/datastores/datastore.service.client"
 import { toProperCase } from "@/lib/utils"
 import { useMemo } from "react"
+import { ScrollArea } from "@/components/ui/shadcn/scroll-area"
 
 import { useQuery } from "@tanstack/react-query"
 import { formatDate } from "@/lib/utils/date"
+import { Layers, Globe, Database, Calendar } from "lucide-react"
+import { StatusEnum } from "@/shared/db/enums/data-store.enum"
 
 const skeletonCards = Array.from({ length: 6 })
 
-const getStatusVariant = (status?: string): "default" | "secondary" | "outline" => {
+const getStatusVariant = (status?: StatusEnum) => {
     // use switch case
+    if (!status) return "default"
+
     switch (status) {
-        case "pending":
-            return "default"
-        case "approved":
+        case "active":
+            return "glassy"
+        case "archived":
             return "secondary"
-        case "rejected":
-            return "outline"
+        case "pending":
+            return "glassy"
         default:
             return "default"
     }
@@ -112,55 +118,128 @@ const DataStoreCardGrid = () => {
                         return (
                             <Card
                                 key={`${alias}-${index}`}
-                                className="transition-shadow hover:shadow-md"
+                                className="group bg-background/60 relative overflow-hidden border shadow-none backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                             >
-                                <CardHeader className="gap-3">
-                                    <div className="flex items-start justify-between gap-4">
-                                        <CardTitle className="text-lg">{alias}</CardTitle>
+                                {/* Top Accent */}
+                                <div className="bg-info-100 absolute inset-x-0 top-0 h-1 bg-linear-to-r opacity-80" />
 
-                                        <Badge variant={getStatusVariant(store.status)}>
+                                <CardHeader className="space-y-3 pb-3">
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div className="space-y-1">
+                                            <CardTitle className="text-xl font-semibold tracking-tight">
+                                                {alias}
+                                            </CardTitle>
+                                            <p className="text-muted-foreground text-xs">
+                                                {toProperCase(store.source)} • v{store.version}
+                                            </p>
+                                        </div>
+
+                                        <Badge
+                                            variant={getStatusVariant(store.status)}
+                                            className="px-3 py-1 text-xs capitalize"
+                                        >
                                             {toProperCase(store.status)}
                                         </Badge>
                                     </div>
 
-                                    <CardDescription className="text-justify whitespace-pre-line">
+                                    <CardDescription className="text-muted-foreground line-clamp-4 text-sm leading-relaxed">
                                         {store.description}
                                     </CardDescription>
                                 </CardHeader>
 
-                                <CardContent className="space-y-2 text-sm">
-                                    <p>
-                                        <span className="text-muted-foreground">Source:</span>{" "}
-                                        {toProperCase(store.source)}
-                                    </p>
+                                <CardContent className="space-y-4 text-sm">
+                                    {/* Metadata Grid */}
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {/* Granularity */}
+                                        <div className="bg-muted/20 flex items-center gap-4 rounded-md p-2">
+                                            <Layers className="text-primary h-4 w-4" />
+                                            <div>
+                                                <p className="text-muted-foreground text-xs uppercase">
+                                                    Granularity
+                                                </p>
+                                                <p className="text-xs font-medium">
+                                                    {toProperCase(store.granularity)}
+                                                </p>
+                                            </div>
+                                        </div>
 
-                                    <p>
-                                        <span className="text-muted-foreground">Version:</span>{" "}
-                                        {store.version}
-                                    </p>
+                                        {/* Geographic */}
+                                        <div className="bg-muted/20 flex items-center gap-4 rounded-md p-2">
+                                            <Globe className="text-primary h-4 w-4" />
+                                            <div>
+                                                <p className="text-muted-foreground text-xs uppercase">
+                                                    Geographic
+                                                </p>
+                                                <p className="text-xs font-medium">
+                                                    {toProperCase(store.geographic_level)}
+                                                </p>
+                                            </div>
+                                        </div>
 
-                                    <p>
-                                        <span className="text-muted-foreground">Granularity:</span>{" "}
-                                        {toProperCase(store.granularity)}
-                                    </p>
+                                        {/* Variables */}
+                                        <div className="bg-muted/20 flex items-center gap-4 rounded-md p-2">
+                                            <Database className="text-primary h-4 w-4" />
+                                            <div>
+                                                <p className="text-muted-foreground text-xs uppercase">
+                                                    Variables
+                                                </p>
+                                                <p className="text-xs font-medium">
+                                                    {store.variables.length}
+                                                </p>
+                                            </div>
+                                        </div>
 
-                                    <p>
-                                        <span className="text-muted-foreground">
-                                            Geographic Level:
-                                        </span>{" "}
-                                        {toProperCase(store.geographic_level)}
-                                    </p>
+                                        {/* Date Range */}
+                                        <div className="bg-muted/20 flex items-center gap-4 rounded-md p-2">
+                                            <Calendar className="text-primary h-4 w-4" />
+                                            <div>
+                                                <p className="text-muted-foreground text-xs uppercase">
+                                                    Date Range
+                                                </p>
+                                                <p className="text-xs font-medium">
+                                                    {dateStart} → {dateEnd}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                    <p>
-                                        <span className="text-muted-foreground">Variables:</span>{" "}
-                                        {store.variables.length}
-                                    </p>
+                                    {/* <Divider /> */}
 
-                                    <p>
-                                        <span className="text-muted-foreground">Date Range:</span>{" "}
-                                        {dateStart} to {dateEnd}
-                                    </p>
+                                    {/* Variables Preview */}
+                                    <div className="space-y-2">
+                                        <p className="text-muted-foreground text-xs font-medium">
+                                            Variables
+                                        </p>
+
+                                        <ScrollArea className="w-full">
+                                            <div className="flex flex-wrap gap-2">
+                                                {store.variables
+                                                    .slice(0, 8)
+                                                    .map((v: string, i: number) => (
+                                                        <Badge
+                                                            key={i}
+                                                            variant="outline"
+                                                            className="rounded-md px-2 py-0.5 text-xs"
+                                                        >
+                                                            {v}
+                                                        </Badge>
+                                                    ))}
+
+                                                {store.variables.length > 8 && (
+                                                    <Badge variant="outline" className="text-xs">
+                                                        +{store.variables.length - 8} more
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                        </ScrollArea>
+                                    </div>
                                 </CardContent>
+
+                                <CardFooter className="text-muted-foreground relative flex justify-end text-xs">
+                                    <span className="opacity-0 transition-opacity group-hover:opacity-100">
+                                        View Details →
+                                    </span>
+                                </CardFooter>
                             </Card>
                         )
                     })}

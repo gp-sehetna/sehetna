@@ -17,19 +17,19 @@ const Divider = ({
     hideDecorations = false, // Default to showing them
 }: DividerProps) => {
     // 1. Simple Divider (No text/children)
-    if (!children) {
-        return (
-            <div
-                data-component="divider"
-                className={cn(
-                    "bg-border shrink-0",
-                    // Changed w-fit to w-full for horizontal
-                    vertical ? "h-1/2 w-px" : "h-[0.5px] w-full",
-                    className
-                )}
-            />
-        )
-    }
+    // if (!children) {
+    //     return (
+    //         <div
+    //             data-component="divider"
+    //             className={cn(
+    //                 "bg-border shrink-0",
+    //                 // Changed w-fit to w-full for horizontal
+    //                 vertical ? "h-1/2 w-px" : "h-[0.5px] w-full",
+    //                 className
+    //             )}
+    //         />
+    //     )
+    // }
 
     // 2. Horizontal Divider with Text
     if (!vertical) {
@@ -37,15 +37,16 @@ const Divider = ({
             <div
                 data-component="divider"
                 className={cn(
-                    "relative flex items-center justify-center gap-4 text-sm text-neutral-500",
+                    "relative flex items-center text-sm text-neutral-500",
                     "w-full",
+                    children && "gap-4",
                     className
                 )}
             >
                 {!hideDecorations && <DividerDecoration side="left" />}
 
                 <span className={cn("bg-border h-[0.5px] flex-1", stripsClassName)} />
-                <span className="text-sm whitespace-nowrap">{children}</span>
+                {children && <span className="text-sm whitespace-nowrap">{children}</span>}
                 <span className={cn("bg-border h-[0.5px] flex-1", stripsClassName)} />
 
                 {!hideDecorations && <DividerDecoration side="right" />}
