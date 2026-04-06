@@ -1,4 +1,5 @@
 # from fastapi import APIRouter, Depends, Query
+import time 
 import logging
 from typing import Annotated
 
@@ -42,21 +43,27 @@ async def simulate(
         heat_related_admissions=int(pred[4]),
     )
     
-    
+    _t_start = time.perf_counter()
+
     interpretation = await interpret_prediction(
         body=InterpretationRequest(
             country=req.country_code,
             simulation_outcomes=simulation_outcomes,
             environmental_data=environment_df.astype(str).to_dict(orient="records"),
         ),
-        agent_service=agent_service, 
+        agent_service=agent_service,
     )
+
+    _t_elapsed = time.perf_counter() - _t_start
+    # ── Timer End ────────────────────────────────────────────
+
+    print(f"[interpret_prediction]   elapsed={_t_elapsed:.3f}s")
 
     return SimulationResponse.build(
         predictions,
         query.explainer_method,
         explanations,
-        interpretation.message, 
+        interpretation.message,
     )
 
 
