@@ -1,5 +1,5 @@
 # from fastapi import APIRouter, Depends, Query
-import time 
+import time
 import logging
 from typing import Annotated
 
@@ -33,40 +33,38 @@ async def simulate(
 ):
     environment_df, predictions, explanations = prediction_service.simulate(req, query)
     # simulationResults =  SimulationResponse.build(predictions, query.explainer_method, explanations)
-    
-    pred = predictions[0]
-    simulation_outcomes = SimulationOutcomes(
-        respiratory_disease_rate=float(pred[0]),
-        cardio_mortality_rate=float(pred[1]),
-        vector_disease_risk_score=float(pred[2]),
-        waterborne_disease_incidents=int(pred[3]),
-        heat_related_admissions=int(pred[4]),
-    )
-    
-    _t_start = time.perf_counter()
 
-    interpretation = await interpret_prediction(
-        body=InterpretationRequest(
-            country=req.country_code,
-            simulation_outcomes=simulation_outcomes,
-            environmental_data=environment_df.astype(str).to_dict(orient="records"),
-        ),
-        agent_service=agent_service,
-    )
+    # pred = predictions[0]
+    # simulation_outcomes = SimulationOutcomes(
+    #     respiratory_disease_rate=float(pred[0]),
+    #     cardio_mortality_rate=float(pred[1]),
+    #     vector_disease_risk_score=float(pred[2]),
+    #     waterborne_disease_incidents=int(pred[3]),
+    #     heat_related_admissions=int(pred[4]),
+    # )
 
-    _t_elapsed = time.perf_counter() - _t_start
-    # ── Timer End ────────────────────────────────────────────
+    # _t_start = time.perf_counter()
 
-    print(f"[interpret_prediction]   elapsed={_t_elapsed:.3f}s")
+    # interpretation = await interpret_prediction(
+    #     body=InterpretationRequest(
+    #         country=req.country_code,
+    #         simulation_outcomes=simulation_outcomes,
+    #         environmental_data=environment_df.astype(str).to_dict(orient="records"),
+    #     ),
+    #     agent_service=agent_service,
+    # )
+
+    # _t_elapsed = time.perf_counter() - _t_start
+    # # ── Timer End ────────────────────────────────────────────
+
+    # print(f"[interpret_prediction]   elapsed={_t_elapsed:.3f}s")
 
     return SimulationResponse.build(
         predictions,
         query.explainer_method,
         explanations,
-        interpretation.message,
+        "",  # interpretation.message,  # <-- Add interpretation to the response
     )
-
-
 
 
 @router.post("/forecast", response_model=ForecastResponse)
@@ -85,7 +83,6 @@ async def forecast(
     logger.info(f"Horizon length: {horizons}, Forecasts: {len(forecasts.keys())}")
 
     return ForecastResponse.build(environment_predictions_df, horizons, forecasts)
-
 
 
 # @router.post(
@@ -110,7 +107,3 @@ async def interpret_prediction(
         environmental_data=body.environmental_data,
     )
     return InterpretationResponse(message=message)
-
-
-
- 
