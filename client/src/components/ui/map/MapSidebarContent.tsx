@@ -3,6 +3,8 @@ import AppLoader from "@/components/ui/GlobalComponents/Loaders/AppLoader"
 import PredictionsViewer from "@/components/ui/map/MapPredictionsViewer"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
 import { useSettingsStore } from "@/stores/use-settings"
+import AppLink from "../GlobalControls/AppLink"
+import { NoPredictionsFallback } from "./view/LiveContent"
 
 const HealthOutcomeCharts = () => {
     const { explanationMethod, contributors } = useSettingsStore()
@@ -13,7 +15,11 @@ const HealthOutcomeCharts = () => {
     if (!hasSimulation)
         return (
             <div className="flex h-full items-center justify-center">
-                {loading ? <AppLoader /> : <p>No data</p>}
+                {loading ? (
+                    <AppLoader />
+                ) : (
+                    <NoPredictionsFallback addLink={false} text="No data is available yet." />
+                )}
             </div>
         )
 
