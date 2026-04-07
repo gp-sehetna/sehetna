@@ -1,6 +1,6 @@
 # from fastapi import APIRouter, Depends, Query
-import time
 import logging
+import time
 from typing import Annotated
 
 import pandas as pd
@@ -10,11 +10,11 @@ from src.api.dependencies import get_agent_service, get_forecast_service, get_pr
 from src.application.services.agent_service import AgentService
 from src.application.services.forecast_service import ForecastService
 from src.application.services.prediction_service import PredictionService
-from src.domain.schemas.agent import InterpretationRequest, InterpretationResponse, SimulationOutcomes
 from src.domain.schemas.forecasts import ForecastRequest, ForecastResponse
 from src.domain.schemas.predictions import (
     PredictionQueryParams,
     PredictionRequest,
+    PredictionResult,
     SimulationResponse,
 )
 
@@ -32,38 +32,22 @@ async def simulate(
     agent_service: AgentService = Depends(get_agent_service),
 ):
     environment_df, predictions, explanations = prediction_service.simulate(req, query)
-    # simulationResults =  SimulationResponse.build(predictions, query.explainer_method, explanations)
 
-    # pred = predictions[0]
-    # simulation_outcomes = SimulationOutcomes(
-    #     respiratory_disease_rate=float(pred[0]),
-    #     cardio_mortality_rate=float(pred[1]),
-    #     vector_disease_risk_score=float(pred[2]),
-    #     waterborne_disease_incidents=int(pred[3]),
-    #     heat_related_admissions=int(pred[4]),
-    # )
+    _t_start = time.perf_counter()
+    interpretation_message = await agent_service.interpret(
+        country=req.country_code,
+        simulation_outcomes=PredictionResult.from_prediction(predictions[0]),
+        environmental_data=environment_df.astype(str).to_dict(orient="records"),
+    )
+    _t_elapsed = time.perf_counter() - _t_start
 
-    # _t_start = time.perf_counter()
-
-    # interpretation = await interpret_prediction(
-    #     body=InterpretationRequest(
-    #         country=req.country_code,
-    #         simulation_outcomes=simulation_outcomes,
-    #         environmental_data=environment_df.astype(str).to_dict(orient="records"),
-    #     ),
-    #     agent_service=agent_service,
-    # )
-
-    # _t_elapsed = time.perf_counter() - _t_start
-    # # ── Timer End ────────────────────────────────────────────
-
-    # print(f"[interpret_prediction]   elapsed={_t_elapsed:.3f}s")
+    logger.info(f"Interpretation completed in {_t_elapsed:.2f} seconds")
 
     return SimulationResponse.build(
         predictions,
         query.explainer_method,
         explanations,
-        "",  # interpretation.message,  # <-- Add interpretation to the response
+        interpretation_message,
     )
 
 
@@ -95,15 +79,3 @@ async def forecast(
 #         "hosted on Groq."
 #     ),
 # )
-
-
-async def interpret_prediction(
-    body: InterpretationRequest,
-    agent_service: AgentService,
-) -> InterpretationResponse:
-    message = await agent_service.interpret(
-        country=body.country,
-        simulation_outcomes=body.simulation_outcomes,
-        environmental_data=body.environmental_data,
-    )
-    return InterpretationResponse(message=message)
