@@ -1,16 +1,17 @@
-import ComingSoon from "@/components/ui/ComingSoon"
 import MainHeroSection from "@/components/ui/heros/MainHeroSection"
+import { CTAGroundSection } from "@/components/ui/sections/CTAGroundSection"
+import { DashboardSection } from "@/components/ui/sections/DashboardSection"
+import { InteractiveScenarioSimulationSection } from "@/components/ui/sections/InteractiveSimulationSection"
+import { ProblemContext } from "@/components/ui/sections/ProblemContext"
 
 export default function Home() {
     return (
         <>
             <MainHeroSection />
-            <section>
-                <ComingSoon
-                    title="Home"
-                    description="A healthcare and data exploration platform by From Masr, built to provide insights, mapping tools, and transparent methodologies."
-                />
-            </section>
+            <ProblemContext />
+            <InteractiveScenarioSimulationSection />
+            <DashboardSection />
+            <CTAGroundSection />
         </>
     )
 }

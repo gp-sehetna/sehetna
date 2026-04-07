@@ -54,10 +54,12 @@ function ComboboxInput({
     disabled = false,
     showTrigger = true,
     showClear = false,
+    prependInnerIcon = undefined,
     ...props
 }: ComboboxPrimitive.Input.Props & {
     showTrigger?: boolean
     showClear?: boolean
+    prependInnerIcon?: React.ReactNode
 }) {
     return (
         <Field>
@@ -66,6 +68,7 @@ function ComboboxInput({
                     render={<InputGroupInput disabled={disabled} />}
                     {...props}
                 />
+                {prependInnerIcon && <InputGroupAddon>{prependInnerIcon}</InputGroupAddon>}
                 <InputGroupAddon align="inline-end">
                     {showTrigger && (
                         <ComboboxTrigger

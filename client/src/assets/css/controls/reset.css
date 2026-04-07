@@ -1,0 +1,22 @@
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+
+    * {
+        @apply border-border outline-ring/50;
+    }
+
+    ::selection {
+        background-color: --alpha(var(--color-primary-400) / 5%);
+        color: var(--color-secondary-300);
+    }
+}

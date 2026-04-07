@@ -1,3 +1,35 @@
+@layer base {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-heading);
+        font-weight: bold;
+        color: var(--color-neutral-1000);
+        @apply tracking-tight text-balance;
+    }
+    h3 {
+        @apply text-xl leading-snug;
+    }
+
+    p,
+    li,
+    blockquote {
+        @apply text-base leading-relaxed;
+    }
+
+    blockquote {
+        @apply text-balance;
+    }
+
+    p {
+        font-size: var(--text-base);
+        line-height: var(--text-base--line-height);
+    }
+}
+
 h1 {
     font-size: clamp(2.25rem, calc(1.5rem + 2vw), 3rem); /* min: 36px, max: 48px */
     line-height: clamp(2.667rem, calc(1.833rem + 1.667vw), 3.5rem); /* min: 32px, max: 42px */

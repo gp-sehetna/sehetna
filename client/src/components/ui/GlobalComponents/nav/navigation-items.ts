@@ -12,7 +12,7 @@ const ALL_ROUTES = {
     explorer: { title: "Data Explorer", href: "/data-explorer", icon: Telescope },
     methodology: { title: "Methodology", href: "/methodology", icon: Waypoints },
     security: { title: "Security", href: "/settings/security", icon: ShieldCheck },
-    support: { title: "Support", href: "/support", icon: Info },
+    contactUs: { title: "Contact Us", href: "/support/contact-us", icon: Info },
     policies: { title: "Services & Policies", href: "/support/services-and-policies" },
     privacyPolicy: {
         title: "Privacy Policy",
@@ -51,14 +51,14 @@ const getGroupedRoutes = (config: Record<string, RouteKey[]>) => {
     )
 }
 
-const compactSidebarItems = getRoutes(["map", "explorer", "methodology", "security", "support"])
+const compactSidebarItems = getRoutes(["map", "explorer", "methodology", "security", "contactUs"])
 const simpleFooterItems = getRoutes([
     "about",
     "methodology",
     "termsOfService",
     "privacyPolicy",
     "cookieUse",
-    "support",
+    "contactUs",
 ])
 const policiesItems = getRoutes(["privacyPolicy", "termsOfService", "cookieUse"])
 
@@ -66,7 +66,7 @@ const groupedNavItems = getGroupedRoutes({
     Data: ["methodology", "explorer"],
     Services: ["map", "explorer"],
     "Use Cases": ["healthMon", "healthPrep", "policyPlan", "research"],
-    Company: ["about", "support", "policies"],
+    Company: ["about", "contactUs", "policies"],
 })
 
 export { compactSidebarItems, groupedNavItems, policiesItems, simpleFooterItems }

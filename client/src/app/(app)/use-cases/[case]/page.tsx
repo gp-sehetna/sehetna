@@ -1,55 +1,55 @@
-import ComingSoon from "@/components/ui/ComingSoon"
+import UseCaseDetailClient from "@/components/ui/sections/UseCaseDetailClient"
+import {
+    extendedUseCases,
+    UseCase,
+    useCases,
+    UseCasesKey,
+} from "@/components/ui/sections/useCases.data"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-const useCaseMap: Record<string, { title: string; description: string }> = {
-    "health-monitoring": {
-        title: "Health Monitoring",
-        description:
-            "Monitor your health and well-being with Sehetna's healthcare analytics and insights.",
-    },
-    "health-preparedness": {
-        title: "Health Preparedness",
-        description:
-            "Prepare for potential health issues with Sehetna's health preparedness tools and resources.",
-    },
-    "policy-planning": {
-        title: "Policy Planning",
-        description:
-            "Plan and implement healthcare policies with Sehetna's policy planning tools and resources.",
-    },
-    "research-insights": {
-        title: "Research Insights",
-        description:
-            "Gain insights into healthcare research and innovations with Sehetna's research insights and resources.",
-    },
-}
-
 type UseCasePageProps = {
-    params: { case: string }
+    params: Promise<{ case: string }>
 }
 
 export async function generateMetadata({ params }: UseCasePageProps): Promise<Metadata> {
-    const { case: useCase } = await params
-    if (!useCase || !useCaseMap?.[useCase]) return {}
+    const { case: slug } = await params
+    const useCase = useCases[slug]
+
+    if (!useCase)
+        return {
+            title: "404",
+            description: "Page not found",
+            robots: { index: false, follow: false },
+        }
 
     return {
-        title: `${useCaseMap[useCase]?.title} · Sehetna`,
-        description: useCaseMap[useCase]?.description,
+        title: useCase.title,
+        description: useCase.description,
         alternates: {
-            canonical: `/use-cases/${useCase}`,
+            canonical: `/use-cases/${slug}`,
         },
     }
 }
 
 export default async function UseCasePage({ params }: UseCasePageProps) {
-    const { case: useCase } = await params
-    if (!useCase || !useCaseMap?.[useCase]) return notFound()
+    const { case: slug } = await params
+    const useCase = useCases[slug]
+    const extended = extendedUseCases[slug]
 
-    return (
-        <ComingSoon
-            title={useCaseMap[useCase].title}
-            description={useCaseMap[useCase].description}
-        />
-    )
+    if (!useCase || !extended) notFound()
+    const useCasesList = Object.entries(useCases)
+
+    if (!useCasesList.length) return undefined
+
+    const currentIndex = useCasesList.findIndex(([key]) => key === slug)
+
+    if (currentIndex === -1) return undefined
+
+    const nextUseCase = useCasesList[(currentIndex + 1) % useCasesList.length] as [
+        UseCasesKey,
+        UseCase,
+    ]
+
+    return <UseCaseDetailClient useCase={useCase} extended={extended} nextUseCase={nextUseCase} />
 }

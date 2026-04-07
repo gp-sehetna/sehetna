@@ -26,12 +26,14 @@ export default function SimpleFooter({ className }: SimpleFooterProps) {
                     <Image
                         width={15}
                         height={10}
+                        unoptimized
                         src="https://media.tenor.com/0-M-_QQY4eQAAAAi/pixel-heart.gif"
                         alt="Red Heart"
                     />
                     <Image
                         width={15}
                         height={15}
+                        unoptimized
                         src="https://media.tenor.com/mvLRHMrHUWwAAAAi/diamond-elegant.gif"
                         alt="Diamond"
                     />

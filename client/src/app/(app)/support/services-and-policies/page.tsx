@@ -1,5 +1,7 @@
-import ComingSoon from "@/components/ui/ComingSoon"
 import { Metadata } from "next"
+import ServicesPoliciesContact from "@/components/ui/sections/ServicesPoliciesContact"
+import ServicesPoliciesHero from "@/components/ui/sections/ServicesPoliciesHero"
+import ServicesPoliciesPolicyTabs from "@/components/ui/sections/ServicesPoliciesPolicyTabs"
 
 export const metadata: Metadata = {
     title: "Services & Policies",
@@ -9,13 +11,12 @@ export const metadata: Metadata = {
     },
 }
 
-const ServicesAndPoliciesPage = () => {
+export default function ServicesAndPoliciesPage() {
     return (
-        <ComingSoon
-            title="Services & Policies"
-            description="Review Sehetna's terms of service, privacy policy, and cookie usage guidelines."
-        />
+        <>
+            <ServicesPoliciesHero />
+            <ServicesPoliciesPolicyTabs />
+            <ServicesPoliciesContact />
+        </>
     )
 }
-
-export default ServicesAndPoliciesPage

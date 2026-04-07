@@ -31,11 +31,14 @@ export default function SettingsAccountClient() {
         location: "Cairo, Egypt",
         bio: "Leading interdisciplinary research at the intersection of climate science and public health. Building decision tools that matter.",
     })
+<<<<<<< HEAD
     // const profile = useUserStore((s) => s.user)
     // const setProfile = useUserStore((s) => s.setUser)
     // // TODO: handle routing when profile is not found
     // if (!profile) return
     // const avatarInitials = getInitials(profile.fullName)
+=======
+>>>>>>> d88a4597b14d03a53f72a3cef60ecc77d06c88ed
 
     const avatarInitials = `${profile.firstName[0]}${profile.lastName[0]}`
 

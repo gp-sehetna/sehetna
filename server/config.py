@@ -28,7 +28,7 @@ Provides health risk predictions based on climate data.\
     # Paths
     resources_path: str
     device: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+    api_key: str
     model_config = SettingsConfigDict(env_file=".env")
 
 

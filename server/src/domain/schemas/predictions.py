@@ -130,6 +130,7 @@ class PredictionRequest(EnvironmentData):
         description="Weekly feature inputs for prediction.",
     )
 
+
     model_config = ConfigDict(json_schema_extra={"examples": prediction_request_examples})
 
 
@@ -177,10 +178,15 @@ class SimulationResponse(PredictionsResult):
     explanations: dict[ExplainerMethod | Literal["method"], ExplainerMethod | dict[str, list] | None] = Field(
         ..., description="Model explanation payload and metadata."
     )
+    message: str | None = Field(
+        None,
+        description="AI-generated interpretation of the simulation."
+    )
 
     @classmethod
-    def build(cls, predictions: np.ndarray[np.ndarray[float]], method: ExplainerMethod, explanations: dict[str, list] | None):
+    def build(cls, predictions: np.ndarray[np.ndarray[float]], method: ExplainerMethod, explanations: dict[str, list] | None , message: str | None = None):
         return cls(
             predictions=PredictionsResult.from_predictions(predictions),
             explanations={"method": method, method: explanations},
+            message=message,
         )

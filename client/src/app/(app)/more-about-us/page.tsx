@@ -1,5 +1,5 @@
-import ComingSoon from "@/components/ui/ComingSoon"
 import { Metadata } from "next"
+import MoreAboutUsClient from "@/components/ui/sections/MoreAboutUsClient"
 
 export const metadata: Metadata = {
     title: "About Us",
@@ -10,8 +10,6 @@ export const metadata: Metadata = {
     },
 }
 
-const page = () => {
-    return <ComingSoon title="About Us" description="Learn about Sehetna and our mission" />
+export default function MoreAboutUsPage() {
+    return <MoreAboutUsClient />
 }
-
-export default page

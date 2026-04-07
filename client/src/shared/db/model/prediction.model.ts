@@ -14,7 +14,7 @@ const IntervalPredictionSchema = new Schema(
 type IIntervalPredictionSchema = InferSchemaType<typeof IntervalPredictionSchema>
 export type IHealthOutcomesWithIntervals = IHealthOutcomes<IIntervalPredictionSchema>
 
-const HealthOutcomesWithIntervalsSchema = new Schema<IHealthOutcomesWithIntervals>(
+const HealthOutcomesWithIntervalsSchema = new Schema(
     mapHealthOutcomes(() => ({ type: IntervalPredictionSchema, required: true })),
     { _id: false }
 )

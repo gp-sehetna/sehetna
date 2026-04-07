@@ -827,5 +827,6 @@
 			"waterborne_disease_incidents": 29,
 			"heat_related_admissions": 12
 		}
-	]
+	],
+	"message": "This is the message coming back from the interpreter"
 }

@@ -45,17 +45,19 @@ export class PredictionService {
             .lean()
             .exec()
 
-        return predictions.length ? predictions[predictions.length - 1].base_date : null
+        return predictions.length
+            ? predictions[predictions.length - 1].base_date
+            : PredictionService.LATEST_HISTORICAL_DATE
     }
 
     private validatePredictionDateDifference = async (
         locationId: Types.ObjectId,
-        horizon: number
+        leastNumberOfWeeks: number = 6 // PatchTST horizon length is 6 weeks which is the minimum number of weeks we need to have between the latest prediction date and the current date to be able to insert the forecasts without having an overlap between predictions and forecasts.
     ) => {
         const date = await this.getLatestPredictionDateForLocation(locationId)
         return (
             differenceInWeeks(new Date(), date ?? PredictionService.LATEST_HISTORICAL_DATE) >=
-            horizon
+            leastNumberOfWeeks
         )
     }
 
@@ -67,10 +69,7 @@ export class PredictionService {
     ) => {
         const forecasts = PredictionService.mapForecasts(response, timeline.forecasts, meta)
 
-        const withPredictions = await this.validatePredictionDateDifference(
-            locationId,
-            response.horizon
-        )
+        const withPredictions = await this.validatePredictionDateDifference(locationId)
         if (!withPredictions) return forecasts
 
         const predictions = PredictionService.mapPredictions(
@@ -201,13 +200,5 @@ export class PredictionService {
 
     // insertMany = async (predictions: Partial<IPrediction>[]) => {
     //     return await this.predictionRepository.insertMany(predictions)
-    // }
-
-    // createPrediction = async (prediction: Partial<IPrediction>) => {
-    //     return await this.predictionRepository.create(prediction)
-    // }
-
-    // findAllPredictions = async () => {
-    //     return await this.predictionRepository.findPredictionsGroupedByLoc()
     // }
 }

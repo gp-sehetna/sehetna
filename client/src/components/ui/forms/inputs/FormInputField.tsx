@@ -1,16 +1,5 @@
-import { Field, FieldError, FieldLabel } from "@/components/ui/shadcn/field"
-import { InputProps } from "@/components/ui/shadcn/input"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/shadcn/input-group"
-import { cn } from "@/lib/utils"
-import RHF from "react-hook-form"
-
-type FormInputProps = {
-    label: string
-    prependInnerIcon?: React.ReactNode
-    appendInnerIcon?: React.ReactNode
-    inlineOptions?: React.ReactNode
-    errors?: Array<RHF.FieldError | undefined>
-} & InputProps
+import { InputFieldFrame, SharedInputFieldProps } from "./InputFieldShared"
 
 export function FormInputField({
     label,
@@ -21,21 +10,24 @@ export function FormInputField({
     errors,
     className,
     ...props
-}: FormInputProps) {
+}: SharedInputFieldProps) {
     return (
-        <Field className={cn(className)}>
-            <FieldLabel className="px-3 text-xs font-bold text-neutral-500" htmlFor={id}>
-                {label}
-                <div className="hover:text-neutral-1000 ml-auto pl-0 font-light italic">
-                    {inlineOptions}
-                </div>
-            </FieldLabel>
+        <InputFieldFrame
+            id={id}
+            label={label}
+            inlineOptions={inlineOptions}
+            errors={errors}
+            className={className}
+            labelClassName="px-3 text-xs font-bold text-neutral-500"
+            inlineOptionsClassName="hover:text-neutral-1000 ml-auto pl-0 font-light italic"
+        >
             <InputGroup rounded="xxl">
                 <InputGroupInput id={id} {...props} />
-                <InputGroupAddon>{prependInnerIcon}</InputGroupAddon>
-                <InputGroupAddon align="inline-end">{appendInnerIcon}</InputGroupAddon>
+                {prependInnerIcon && <InputGroupAddon>{prependInnerIcon}</InputGroupAddon>}
+                {appendInnerIcon && (
+                    <InputGroupAddon align="inline-end">{appendInnerIcon}</InputGroupAddon>
+                )}
             </InputGroup>
-            <FieldError errors={errors} />
-        </Field>
+        </InputFieldFrame>
     )
 }

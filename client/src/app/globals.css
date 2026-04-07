@@ -55,10 +55,17 @@
     --color-warning-100: #ffdb43;
     --color-warning-200: #ea9e06;
 
+    /* ================= Earth ================= */
+    --color-earth-100: #f5f0eb;
+    --color-earth-200: #e8dfd5;
+    --color-earth-300: #c4a882;
+    --color-earth-400: #9b7c57;
+
     /* ================= Success ================= */
-    --color-success-100: #83eb90;
-    --color-success-200: #1fc24c;
-    --color-success-300: #1a903b;
+    --color-success-100: #96e6a0;
+    --color-success-200: #70bc85;
+    --color-success-300: #44945c;
+    --color-success-400: #22753b;
 
     /* ================= Info (Blue) ================= */
     --color-info-100: #dbeafe;
@@ -110,6 +117,7 @@
 
     --color-danger: var(--color-danger-100);
     --color-warning: var(--color-warning-100);
+    --color-earth: var(--color-earth-300);
     --color-success: var(--color-success-300);
     --color-info: var(--color-info-200);
 
@@ -155,51 +163,16 @@
     @apply shadow-neutral-1000/10 text-foreground border border-neutral-100 bg-neutral-100/40 backdrop-blur-lg;
 }
 
+@utility glassy-chip {
+    @apply glassy border-input/70 text-muted-foreground inline-block rounded-full px-4 py-2 text-sm font-medium;
+}
+
 @utility base-transition {
     @apply transition-all duration-300;
 }
 
-@layer base {
-    .lucide {
-        stroke-width: 1;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family: var(--font-heading);
-        font-weight: bold;
-        color: var(--color-neutral-1000);
-    }
-
-    *,
-    ::after,
-    ::before,
-    ::backdrop,
-    ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
-    }
-
-    p {
-        font-size: var(--text-base);
-        line-height: var(--text-base--line-height);
-    }
-
-    ::selection {
-        background-color: --alpha(var(--color-primary-400) / 5%);
-        color: var(--color-secondary-300);
-    }
-
-    .maplibregl-popup-content {
-        @apply rounded-none bg-transparent p-0 shadow-none;
-    }
-
-    .maplibregl-popup-tip {
-        @apply hidden;
-    }
+@utility home-surface {
+    @apply bg-background/60 border border-white/80 shadow-md shadow-black/5 backdrop-blur-xl;
 }
 
 :root {

@@ -1,5 +1,5 @@
-import ComingSoon from "@/components/ui/ComingSoon"
 import { Metadata } from "next"
+import MethodologyClient from "@/components/ui/sections/MethodologyClient"
 
 export const metadata: Metadata = {
     title: "Methodology",
@@ -10,13 +10,6 @@ export const metadata: Metadata = {
     },
 }
 
-const MethodologyPage = () => {
-    return (
-        <ComingSoon
-            title="Methodology"
-            description="Understand the methodology and data sources used by Sehetna to generate healthcare insights."
-        />
-    )
+export default function MethodologyPage() {
+    return <MethodologyClient />
 }
-
-export default MethodologyPage

@@ -19,7 +19,7 @@ import Divider from "../../GlobalControls/Divider"
 
 type MobileNavProps = {
     navigationItems: NavItemsProps["navigationItems"]
-    isScrolled: boolean
+    isScrolled?: boolean
 }
 export default function MobileNav({ isScrolled, navigationItems }: MobileNavProps) {
     return (

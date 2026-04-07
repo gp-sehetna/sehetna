@@ -7,12 +7,15 @@ import {
 } from "@/features/environment/prediction/prediction.validation"
 import { IEnvironmentData } from "@/features/environment/week/week.dto"
 import { externalApi } from "@/shared/api"
+// import { PredictionType } from "@/shared/db/enums/prediction.enum"
 import { MainService } from "@/shared/db/main.service"
+// import { IPrediction } from "@/shared/db/model/prediction.model"
 import { BadRequestException } from "@/shared/http/errors"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 import { userProvider } from "@/shared/http/handlers/user.handler"
 import { format } from "date-fns"
 import { SearchParamsOption } from "ky"
+// import { Types } from "mongoose"
 
 export const GET = globalErrorHandler<ForecastResponse>(async (request) => {
     const params = request.nextUrl.searchParams
@@ -98,13 +101,6 @@ export const POST = globalErrorHandler(
     })
 )
 
-// export const POST = globalErrorHandler(async (request) => {
-//     const prediction = await request.json()
-//     const mainService = await MainService.getInstance()
-//     const _id = await mainService.predictionService.createPrediction(prediction)
-//     return [undefined, "New Prediction created successfully"]
-// })
-
 /**
  * Read CSV file and insert historical data into db
  */
@@ -121,7 +117,7 @@ export const POST = globalErrorHandler(
 //         // get location id from p.country_code
 //         const locationIdMap = new Map<string, Types.ObjectId>()
 //         for (const location of locations) {
-//             locationIdMap.set(location.code!, location._id)
+//             locationIdMap.set(location.code, location._id)
 //         }
 
 //         const predictionsToInsert = predictions.map(

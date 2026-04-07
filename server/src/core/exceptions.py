@@ -45,3 +45,9 @@ class ServiceUnavailable(AppException):
 
     status_code: int = status.HTTP_503_SERVICE_UNAVAILABLE
     code: str = "SERVICE_UNAVAILABLE"
+
+
+class AgentInferenceError(Exception):
+    """Raised when the PydanticAI interpreter agent fails during inference."""
+    status_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR
+    code: str = "AGENT_INFERENCE_ERROR"
