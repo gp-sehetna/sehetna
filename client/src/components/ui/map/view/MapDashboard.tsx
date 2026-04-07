@@ -6,8 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/shadcn
 import { IEnvironmentData } from "@/features/environment/week/week.dto"
 import { GeoJsonProperties } from "@/shared/config/map"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Info } from "lucide-react"
 import { Dispatch } from "react"
+import { InterpreterMessageBanner } from "../simulation/InterpreterMessageBanner"
 
 export type MapDashboardProps = {
     onLayerSelect: Dispatch<string>
@@ -24,6 +25,9 @@ export const MapDashboard = ({
     zoneProperties: GeoJsonProperties
 }) => {
     const isModifying = usePredictionsStore((s) => s.modifying)
+    
+    
+    
     return (
         <Card className="glassy flex h-full min-w-full flex-col overflow-hidden rounded-2xl border bg-neutral-100/40">
             <CardHeader className="flex flex-row items-center gap-2 border-b p-4">
@@ -36,12 +40,12 @@ export const MapDashboard = ({
             <CardContent className="flex h-screen flex-col gap-4 overflow-y-auto p-4">
                 <Tabs className="flex flex-1 flex-col" defaultValue="live">
                     <TabsList className="glassy grid w-full grid-cols-2 bg-transparent">
-                        <TabsTrigger value="live">Live Data</TabsTrigger>
+                        <TabsTrigger value="live">Near Live Data</TabsTrigger>
                         <TabsTrigger value="simulation">Simulation</TabsTrigger>
                     </TabsList>
                     <TabsContent className="flex-1" value="simulation">
-                        {!isModifying ? (
-                            <HealthOutcomeCharts />
+                        {!isModifying  ? (
+                            <HealthOutcomeCharts  />
                         ) : (
                             <MapModifyInputs onSubmitForm={onSubmitForm} />
                         )}

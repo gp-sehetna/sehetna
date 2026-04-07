@@ -273,10 +273,12 @@ const useMapHook = () => {
 
     const onSubmitSimulationForm = useCallback(
         async (data: IEnvironmentData) => {
+            setLoading(true)
             const simulation = await weekService.simulateEnvironment(data, {
                 explainer_method: explanationMethod,
                 top_k_contributions: 25,
             })
+            setLoading(false)
 
             const healthOutcome = unslugify(activeSlug.healthOutcome, "_") as keyof IHealthOutcomes
             if (simulation) setSimulation(simulation, healthOutcome)
