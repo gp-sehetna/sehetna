@@ -4,17 +4,22 @@ import PredictionsViewer from "@/components/ui/map/MapPredictionsViewer"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
 import { useSettingsStore } from "@/stores/use-settings"
 import { InterpreterMessageBanner } from "./simulation/InterpreterMessageBanner"
+import { NoPredictionsFallback } from "./view/LiveContent"
 
 const HealthOutcomeCharts = () => {
     const { explanationMethod, contributors } = useSettingsStore()
     const { loading, simulation, setModifying, explanations, healthOutcome } = usePredictionsStore()
     const hasSimulation = simulation && simulation.predictions.length > 0
-    const interpreterMessage =  hasSimulation && simulation.message ? simulation?.message  : "";
+    const interpreterMessage = hasSimulation && simulation.message ? simulation?.message : ""
 
     if (!hasSimulation)
         return (
             <div className="flex h-full items-center justify-center">
-                {loading ? <AppLoader /> : <p>No data</p>}
+                {loading ? (
+                    <AppLoader />
+                ) : (
+                    <NoPredictionsFallback addLink={false} text="No data is available yet." />
+                )}
             </div>
         )
 
@@ -29,7 +34,6 @@ const HealthOutcomeCharts = () => {
                 </small>
             </div>
             <div className="glassy rounded-2xl">
-
                 <InterpreterMessageBanner loading={loading} message={interpreterMessage} />
                 {explanations?.[explanationMethod] ? (
                     <ChartRenderer

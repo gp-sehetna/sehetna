@@ -34,20 +34,21 @@ const fancyBoxVariants = cva(
 
 export default function ComplexFooter() {
     return (
-        <footer className={cn("bg-primary-50 relative border-t")}>
+        <footer className={cn("bg-neutral-1000 relative border-t")}>
             <div className={cn("mx-auto p-12")}>
                 <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
                     <div
                         className={cn(
                             fancyBoxVariants({ shape: "soft" }),
-                            "items-center border lg:items-start",
-                            "bg-primary text-background flex flex-col gap-6 px-10 py-4 lg:col-span-4"
+                            "items-center lg:items-start",
+                            "text-background bg-foreground/30 flex flex-col gap-6 px-10 py-4 lg:col-span-4"
                         )}
                     >
                         <Logo withText size={22} />
-                        <p className="text-background max-w-sm text-center text-sm leading-relaxed font-light lg:text-start">
-                            Advanced health monitoring and data insights. Empowering policy makers
-                            and researchers with real-time geospatial intelligence.
+                        <p className="max-w-sm text-center text-sm leading-relaxed font-light text-neutral-600 lg:text-start">
+                            An AI-powered analytics system predicting the impact of environmental
+                            factors on public health — bridging the gap between environmental data
+                            and actionable health intelligence.
                         </p>
                         <div className="flex gap-4">
                             <SocialIcon Icon={Twitter} href="#" />
@@ -62,18 +63,20 @@ export default function ComplexFooter() {
                     <div
                         className={cn(
                             fancyBoxVariants({ shape: "jelly" }),
-                            "bg-primary-100 text-background xs:grid-cols-3 grid grid-cols-2 gap-8 p-10 lg:col-span-8"
+                            "bg-foreground/20 text-background xs:grid-cols-3 grid grid-cols-2 gap-8 p-10 lg:col-span-8"
                         )}
                     >
                         {Object.entries(groupedNavItems).map(([category, links]) => (
                             <div key={category} className="flex flex-col gap-2">
-                                <h5 className="text-primary-800 text-xs font-bold">{category}</h5>
+                                <h6 className="text-sm! tracking-widest text-neutral-100 uppercase">
+                                    {category}
+                                </h6>
                                 <ul className="flex flex-col gap-2">
                                     {links.map((link) => (
                                         <li key={link.href}>
                                             <Link
                                                 href={link.href}
-                                                className="group hover:text-primary-500 text-primary-800/60 flex items-center text-sm font-light transition-colors"
+                                                className="group hover:text-primary-500 flex items-center text-sm font-light text-neutral-700 transition-colors"
                                             >
                                                 {link.title}
                                                 <ArrowUpRight className="ml-1 h-3 w-3 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
@@ -86,14 +89,18 @@ export default function ComplexFooter() {
                     </div>
                 </div>
 
-                <div className="border-border mt-8 flex flex-col items-center justify-between gap-6 border-t pt-4 md:flex-row">
-                    <p className="text-xs font-light text-neutral-600">
+                <div className="border-border/10 mt-8 flex flex-col items-center justify-between gap-6 border-t pt-4 md:flex-row">
+                    <p className="text-xs font-light text-neutral-800">
                         © &thinsp;{new Date().getFullYear().toString()}&thinsp; Sehetna Inc. All
                         rights reserved. Built for public health intelligence.
                     </p>
                     <div className="flex gap-8">
                         {policiesItems.map((item) => (
-                            <FooterLink key={item.href} href={item.href}>
+                            <FooterLink
+                                className="text-neutral-800 hover:text-neutral-700"
+                                key={item.href}
+                                href={item.href}
+                            >
                                 {item.title}
                             </FooterLink>
                         ))}
@@ -110,7 +117,7 @@ function SocialIcon({ Icon, href }: { Icon: any; href: string }) {
         <a
             href={href}
             target="_blank"
-            className="border-border hover:border-primary-600 hover:text-primary-800 flex h-9 w-9 items-center justify-center rounded-full border transition-all hover:shadow-sm"
+            className="border-border/10 hover:border-primary hover:text-primary flex h-8 w-8 items-center justify-center rounded-xl border bg-neutral-900/10 text-neutral-800 transition-all hover:shadow-sm"
         >
             <Icon size={20} />
         </a>

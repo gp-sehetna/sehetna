@@ -16,7 +16,7 @@ import {
 import { motion } from "motion/react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../shadcn/accordion"
 import SectionShell from "./SectionShell"
-import { easeBehavior, fadeUp } from "./motion"
+import { easeBehavior, fadeDown, fadeUp } from "./motion"
 
 type TabKey = "tos" | "privacy" | "cookies"
 
@@ -91,8 +91,8 @@ const cookieTypes = [
     {
         name: "Functional",
         required: false,
-        toneClassName: "bg-warning-100/30 text-warning-200",
-        iconClassName: "text-warning-200",
+        toneClassName: "bg-accent/50 text-foreground/80",
+        iconClassName: "text-foreground/80",
         duration: "Up to 90 days",
         description:
             "Remembers user preferences such as language, layout choices, and accessibility settings.",
@@ -100,8 +100,8 @@ const cookieTypes = [
     {
         name: "Analytics",
         required: false,
-        toneClassName: "bg-secondary-100/50 text-secondary",
-        iconClassName: "text-secondary",
+        toneClassName: "bg-accent/50 text-foreground/80",
+        iconClassName: "text-foreground/80",
         duration: "Up to 1 year",
         description:
             "Helps us understand aggregated usage trends and improve platform performance.",
@@ -109,8 +109,8 @@ const cookieTypes = [
     {
         name: "Marketing",
         required: false,
-        toneClassName: "bg-primary-100/50 text-primary",
-        iconClassName: "text-primary",
+        toneClassName: "bg-accent/50 text-foreground/80",
+        iconClassName: "text-foreground/80",
         duration: "Not currently in active use",
         description:
             "Reserved for future outreach experiences and would only be used with appropriate notice.",
@@ -302,7 +302,7 @@ function CookiePolicy() {
             <div className="bg-earth-100/40 flex items-start gap-3 rounded-2xl border p-4">
                 <Cookie size={18} className="text-warning-200 mt-0.5 shrink-0" />
                 <div className="flex flex-col gap-1">
-                    <p className="text-sm font-bold">What are cookies?</p>
+                    <p className="text-xs font-semibold">What are cookies?</p>
                     <p className="text-xs text-neutral-800">
                         Cookies are small text files placed on your device by websites you visit.
                         They are widely used to make websites work efficiently, remember your
@@ -316,7 +316,9 @@ function CookiePolicy() {
                 {cookieTypes.map((type) => (
                     <div key={type.name} className="home-surface rounded-2xl p-4">
                         <div className="mb-3 flex items-center justify-between gap-3">
-                            <h6 className="text-neutral-1000 font-bold">{type.name}</h6>
+                            <h6 className="text-neutral-1000 text-base! font-semibold">
+                                {type.name}
+                            </h6>
                             <span
                                 className={`text-2xs rounded-full px-2 py-0.5 font-semibold ${type.toneClassName}`}
                             >
@@ -348,10 +350,10 @@ export default function ServicesPoliciesPolicyTabs() {
 
     return (
         <SectionShell
-            className="bg-background py-12 pb-0"
+            className="from-primary-50 to-earth-100/5 bg-linear-to-br py-12 pb-0 lg:py-12"
             containerClassName="max-w-4xl gap-8 lg:px-8"
         >
-            <div className="bg-earth-300/15 flex gap-2 rounded-2xl p-1.5">
+            <motion.div {...fadeDown} className="bg-earth-300/15 flex gap-2 rounded-2xl p-1.5">
                 {tabs.map((tab) => {
                     const Icon = tab.icon
                     const active = activeTab === tab.key
@@ -377,7 +379,7 @@ export default function ServicesPoliciesPolicyTabs() {
                         </button>
                     )
                 })}
-            </div>
+            </motion.div>
 
             <motion.div
                 key={activeTab}
