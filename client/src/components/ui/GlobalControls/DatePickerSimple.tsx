@@ -11,6 +11,8 @@ type DatePickerSimpleProps = {
 }
 
 export function DatePickerSimple({ date, setDate }: DatePickerSimpleProps) {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -29,7 +31,13 @@ export function DatePickerSimple({ date, setDate }: DatePickerSimpleProps) {
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="z-1000 w-auto p-0" align="start">
-                <Calendar mode="single" selected={date} onSelect={setDate} defaultMonth={date} />
+                <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    defaultMonth={date}
+                    disabled={{ after: today }}
+                />
             </PopoverContent>
         </Popover>
     )
