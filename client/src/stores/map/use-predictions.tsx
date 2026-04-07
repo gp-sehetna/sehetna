@@ -19,6 +19,7 @@ type PredictionsState = {
     setModifying: (modifying: boolean) => void
     setEnvironment: (environment: IEnvironmentData | null) => void
     onOutcomeSelect: (healthOutcome: keyof IHealthOutcomes) => void
+    resetSimulationMessage: () => void
     reset: () => void
 }
 
@@ -52,6 +53,11 @@ export const usePredictionsStore = create<PredictionsState>((set, get) => {
             set({ simulation })
         },
 
+        resetSimulationMessage: () => {
+            set((state) => ({
+                simulation: state.simulation ? { ...state.simulation, message: "" } : null,
+            }))
+        },
         onOutcomeSelect: (healthOutcome: keyof IHealthOutcomes) => {
             setHealthOutcome(healthOutcome)
 

@@ -3,12 +3,13 @@ import AppLoader from "@/components/ui/GlobalComponents/Loaders/AppLoader"
 import PredictionsViewer from "@/components/ui/map/MapPredictionsViewer"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
 import { useSettingsStore } from "@/stores/use-settings"
+import { InterpreterMessageBanner } from "./simulation/InterpreterMessageBanner"
 
 const HealthOutcomeCharts = () => {
     const { explanationMethod, contributors } = useSettingsStore()
     const { loading, simulation, setModifying, explanations, healthOutcome } = usePredictionsStore()
-
     const hasSimulation = simulation && simulation.predictions.length > 0
+    const interpreterMessage =  hasSimulation && simulation.message ? simulation?.message  : "";
 
     if (!hasSimulation)
         return (
@@ -28,6 +29,8 @@ const HealthOutcomeCharts = () => {
                 </small>
             </div>
             <div className="glassy rounded-2xl">
+
+                <InterpreterMessageBanner loading={loading} message={interpreterMessage} />
                 {explanations?.[explanationMethod] ? (
                     <ChartRenderer
                         method={explanationMethod}

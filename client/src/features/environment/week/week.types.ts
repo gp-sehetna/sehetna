@@ -61,6 +61,7 @@ type Explanations = {
 
 type PredictionsResponse = {
     predictions: IHealthOutcomes[]
+    message: string
 }
 
 type SimulateResponse = {

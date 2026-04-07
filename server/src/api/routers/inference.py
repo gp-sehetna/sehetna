@@ -67,15 +67,3 @@ async def forecast(
     logger.info(f"Horizon length: {horizons}, Forecasts: {len(forecasts.keys())}")
 
     return ForecastResponse.build(environment_predictions_df, horizons, forecasts)
-
-
-# @router.post(
-#     "/interpret" ,
-#     response_model= InterpretationResponse ,
-#     summary="Interpret prediction results" ,
-#     description=(
-#         "Pass the LGBM prediction results for a country and receive a "
-#         "plain-text human-readable interpretation powered by a Qwen model "
-#         "hosted on Groq."
-#     ),
-# )
