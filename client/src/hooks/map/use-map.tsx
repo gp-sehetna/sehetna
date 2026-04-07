@@ -32,7 +32,6 @@ import { toast } from "sonner"
 const useMapHook = () => {
     const router = useRouter()
     const searchParams = useSearchParams()
-    // @ts-expect-error - need to assert type to get proper typings for params
     const params = useParams<MapPageProps["params"]>()
     const centroidCache = useRef(new Map())
     const map = useMapStore((s) => s.map)
@@ -61,7 +60,6 @@ const useMapHook = () => {
     const setSimulation = usePredictionsStore((s) => s.setSimulation)
     const setEnvironment = usePredictionsStore((s) => s.setEnvironment)
 
-    // @ts-expect-error - need to assert type to get proper typings for params
     const activeSlug = parseSlug(params.slug)
 
     const { theme, isInvalid, setTheme } = useThemeStore()
