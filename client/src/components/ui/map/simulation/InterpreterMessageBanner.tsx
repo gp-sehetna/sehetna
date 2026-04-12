@@ -1,148 +1,147 @@
 "use client"
 
-import { useState } from "react"
-import { ChevronDown } from "lucide-react"
+import { Accordion, AccordionItem, AccordionTrigger } from "@/components/ui/shadcn/accordion"
+import { Card, CardContent } from "@/components/ui/shadcn/card"
+import { Skeleton } from "@/components/ui/shadcn/skeleton"
+import { InterpretationResponse } from "@/features/environment/week/week.types"
 import { cn } from "@/lib/utils"
+import {
+    OctagonAlert,
+    ShieldAlert,
+    ShieldCheck,
+    Sparkles,
+    TriangleAlert,
+    type LucideIcon,
+} from "lucide-react"
+import { useState } from "react"
 
 type InterpreterMessageBannerProps = {
     loading: boolean
-    message: string
+} & InterpretationResponse
+
+type SeverityTone = {
+    badgeClassName: string
+    containerClassName: string
+    contentClassName: string
+    icon: LucideIcon
+    label: string
+    metaClassName: string
+}
+
+const INSIGHT_ITEM_VALUE = "simulation-insight"
+
+const severityTones: Record<InterpretationResponse["severity"], SeverityTone> = {
+    low: {
+        label: "Low severity",
+        icon: ShieldCheck,
+        containerClassName:
+            "border-success-200/40 bg-linear-to-br from-success-100/18 via-white/96 to-white shadow-success-300/10",
+        badgeClassName: "border-success-200/40 bg-success-100/65 text-success",
+        contentClassName: "border-success-200/35 bg-success-100/20",
+        metaClassName: "text-success",
+    },
+    medium: {
+        label: "Medium severity",
+        icon: TriangleAlert,
+        containerClassName:
+            "border-warning-100/60 bg-linear-to-br from-warning-100/16 via-white/96 to-white shadow-warning-100/10",
+        badgeClassName: "border-warning-100/70 bg-warning-100/60 text-warning-200",
+        contentClassName: "border-warning-100/55 bg-warning-100/18",
+        metaClassName: "text-warning-200",
+    },
+    high: {
+        label: "High severity",
+        icon: ShieldAlert,
+        containerClassName:
+            "border-primary-200/60 bg-linear-to-br from-primary-100/32 via-white/95 to-white shadow-primary/10",
+        badgeClassName: "border-primary-200/60 bg-primary-100/75 text-primary-700",
+        contentClassName: "border-primary-200/45 bg-primary-50",
+        metaClassName: "text-primary-600",
+    },
+    critical: {
+        label: "Critical severity",
+        icon: OctagonAlert,
+        containerClassName:
+            "border-destructive/25 bg-linear-to-br from-destructive/10 via-white/96 to-white shadow-destructive/10",
+        badgeClassName: "border-destructive/25 bg-destructive/12 text-destructive",
+        contentClassName: "border-destructive/20 bg-destructive/6",
+        metaClassName: "text-destructive",
+    },
 }
 
 export const InterpreterMessageBanner = ({
     loading,
     message,
+    severity,
 }: InterpreterMessageBannerProps) => {
-    const [open, setOpen] = useState(false)
+    const [openItem, setOpenItem] = useState("")
 
-    if (!loading && !message) return null
+    const normalizedMessage = message.replace(/\s+/g, " ").trim()
 
-    return (
-        <div
-            className="mx-6 my-2 overflow-hidden rounded-[10px] border"
-            style={{
-                background: "var(--color-primary-50)",
-                borderColor: "var(--color-primary-200)",
-                borderLeftWidth: "3px",
-                borderLeftColor: "var(--color-primary-400)",
-            }}
-        >
-            {/* Trigger row */}
-            <button
-                onClick={() => !loading && setOpen((o) => !o)}
-                disabled={loading}
-                className={cn(
-                    "flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left cursor-pointer transition-colors",
-                    !loading && "hover:bg-primary-100",
-                    loading && "cursor-default"
-                )}
-            >
-                {/* Brain icon */}
-                <svg
-                    width="16" height="16"
-                    viewBox="0 0 24 24" fill="none"
-                    stroke="var(--color-primary-500)"
-                    strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
-                    className="shrink-0"
-                >
-                    <path d="M9.5 2a2.5 2.5 0 0 1 5 0" />
-                    <path d="M12 4.5C8.5 4.5 5 7 5 11c0 2 .8 3.5 2 4.5-.5 1-.5 2 0 3h10c.5-1 .5-2 0-3 1.2-1 2-2.5 2-4.5 0-4-3.5-6.5-7-6.5z" />
-                    <path d="M8 11h8M10 14h4" />
-                </svg>
+    const tone = severityTones?.[severity] || severityTones.medium
+    const isOpen = openItem === INSIGHT_ITEM_VALUE
 
-                <div className="flex flex-1 items-center gap-2 min-w-0">
-                    <span
-                        className="shrink-0 text-[13px] font-medium"
-                        style={{ color: "var(--color-primary-700)" }}
-                    >
-                        {loading ? "Analysing simulation" : "Simulation insight"}
-                    </span>
+    if (!loading && !normalizedMessage) return null
 
-                    {loading ? (
-                        /* Thinking indicator */
-                        <div className="flex items-center gap-2">
-                            {/* Pulse dot */}
-                            <span
-                                className="block h-2 w-2 shrink-0 rounded-full"
-                                style={{
-                                    background: "var(--color-primary-400)",
-                                    animation: "ip-pulse 1.4s ease-in-out infinite",
-                                }}
-                            />
-                            {/* Sound-wave bars */}
-                            <div className="flex items-center gap-0.75">
-                                {[8, 14, 10, 16, 8, 12, 6].map((h, i) => (
-                                    <span
-                                        key={i}
-                                        className="block w-0.75 rounded-sm"
-                                        style={{
-                                            height: `${h}px`,
-                                            background: "var(--color-primary-400)",
-                                            animation: "ip-wave 1s ease-in-out infinite",
-                                            animationDelay: `${i * 0.08}s`,
-                                        }}
-                                    />
-                                ))}
+    if (loading) {
+        return (
+            <Card className="border-primary-200/55 from-primary-50 m-4 overflow-hidden bg-linear-to-br via-white to-white shadow-sm">
+                <CardContent className="p-0">
+                    <div className="from-primary-200/40 via-primary-100/10 absolute inset-x-6 top-0 h-px bg-linear-to-r to-transparent" />
+
+                    <div className="flex items-start gap-3 px-4 py-4 sm:px-5">
+                        <div className="w-100 space-y-2">
+                            <div className="flex items-center gap-2">
+                                <Sparkles className={cn("size-3", tone.metaClassName)} />
+                                <p className="text-neutral-1000 text-sm font-semibold">
+                                    Analysing simulation...
+                                </p>
                             </div>
-                        </div>
-                    ) : (
-                        /* Collapsed preview */
-                        !open && (
-                            <span
-                                className="truncate text-[12px]"
-                                style={{ color: "var(--color-primary-500)" }}
-                            >
-                                {message}
-                            </span>
-                        )
-                    )}
-                </div>
-
-                {!loading && (
-                    <ChevronDown
-                        size={14}
-                        className={cn(
-                            "shrink-0 transition-transform duration-250",
-                            open && "rotate-180"
-                        )}
-                        style={{ color: "var(--color-primary-500)" }}
-                    />
-                )}
-            </button>
-
-            {/* Expandable body */}
-            {!loading && (
-                <div
-                    className={cn(
-                        "grid transition-all duration-300 ease-in-out",
-                        open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-                    )}
-                >
-                    <div className="overflow-hidden">
-                        <div
-                            className="border-t px-3.5 pb-3 pt-2.5 text-[13px] leading-relaxed"
-                            style={{
-                                borderColor: "var(--color-primary-200)",
-                                color: "var(--color-primary-700)",
-                            }}
-                        >
-                            {message}
+                            <Skeleton className="bg-primary-100/70 h-4 w-full rounded-full" />
                         </div>
                     </div>
-                </div>
-            )}
+                </CardContent>
+            </Card>
+        )
+    }
 
-            {/* Keyframe injection */}
-            <style>{`
-                @keyframes ip-pulse {
-                    0%, 100% { opacity: 1; transform: scale(1); }
-                    50% { opacity: 0.35; transform: scale(0.6); }
-                }
-                @keyframes ip-wave {
-                    0%, 100% { transform: scaleY(0.4); opacity: 0.4; }
-                    50% { transform: scaleY(1); opacity: 1; }
-                }
-            `}</style>
-        </div>
+    return (
+        <Accordion
+            type="single"
+            collapsible
+            value={openItem}
+            onValueChange={setOpenItem}
+            className="m-4"
+        >
+            <AccordionItem
+                value={INSIGHT_ITEM_VALUE}
+                variant="card"
+                className={cn(
+                    "overflow-hidden border shadow-sm backdrop-blur-sm",
+                    tone.containerClassName
+                )}
+            >
+                <AccordionTrigger className="gap-2 sm:px-5">
+                    <div className="flex items-start gap-3">
+                        <div className="space-y-1.5">
+                            <div className="flex items-center gap-2">
+                                <Sparkles className={cn("size-3", tone.metaClassName)} />
+                                <p className="text-neutral-1000 text-sm font-semibold">
+                                    Simulation insight
+                                </p>
+                            </div>
+                            <p
+                                className={cn(
+                                    "text-muted-foreground pr-2 text-sm leading-6",
+                                    !isOpen && "line-clamp-1"
+                                )}
+                            >
+                                {normalizedMessage}
+                            </p>
+                        </div>
+                    </div>
+                </AccordionTrigger>
+            </AccordionItem>
+        </Accordion>
     )
 }

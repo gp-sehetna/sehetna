@@ -1,23 +1,23 @@
+from enum import StrEnum
+
 from pydantic import BaseModel, Field
 
-from src.domain.schemas.predictions import PredictionResult
+
+class SeverityLevel(StrEnum):
+    low = "low"
+    medium = "medium"
+    high = "high"
+    critical = "critical"
 
 
-class InterpretationRequest(BaseModel):
-    """Request schema for the interpreter agent."""
+class InterpretationResult(BaseModel):
+    """Structured public-health interpretation for UI rendering."""
 
-    country: str = Field(..., description="Country name or ISO3 code the simulation was run for.")
-    simulation_outcomes: PredictionResult = Field(..., description="The 5 health-outcome predictions from the LGBM model.")
-
-    environmental_data: list[dict] = Field(
-        ...,
+    message: str = Field(description="A short, plain-language explanation for a non-technical user.")
+    severity: SeverityLevel = Field(
         description=(
-            "List of environmental parameter dictionaries (e.g. multiple scenarios " "with temperature, PM2.5, AQI, humidity…)."
-        ),
+            "Overall UI severity level. "
+            "Use low for manageable conditions, medium for noticeable concern, "
+            "high for serious concern, and critical for urgent risk."
+        )
     )
-
-
-class InterpretationResponse(BaseModel):
-    """Response schema returned by the interpreter agent."""
-
-    message: str = Field(..., description="Human-readable interpretation of the prediction results")

@@ -8,6 +8,7 @@ from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StringConstr
 from src.core.exceptions import BadRequest
 from src.domain.constants.aqi import BREAKPOINTS
 from src.domain.helpers.aqi import aqi_to_pollutant, pollutant_to_aqi
+from src.domain.schemas.agent import InterpretationResult
 from src.domain.types import ExplainerMethod
 
 __all__ = ["PredictionResult", "PredictionRequest", "SimulationResponse", "EnvironmentData", "WeeklyEnvironmentData"]
@@ -130,7 +131,6 @@ class PredictionRequest(EnvironmentData):
         description="Weekly feature inputs for prediction.",
     )
 
-
     model_config = ConfigDict(json_schema_extra={"examples": prediction_request_examples})
 
 
@@ -170,7 +170,7 @@ class PredictionsResult(BaseModel):
         return [PredictionResult.from_prediction(prediction) for prediction in predictions]
 
 
-class SimulationResponse(PredictionsResult):
+class SimulationResponse(PredictionsResult, InterpretationResult):
     """
     Response wrapper for prediction endpoints.
     """
@@ -178,15 +178,18 @@ class SimulationResponse(PredictionsResult):
     explanations: dict[ExplainerMethod | Literal["method"], ExplainerMethod | dict[str, list] | None] = Field(
         ..., description="Model explanation payload and metadata."
     )
-    message: str | None = Field(
-        None,
-        description="AI-generated interpretation of the simulation."
-    )
 
     @classmethod
-    def build(cls, predictions: np.ndarray[np.ndarray[float]], method: ExplainerMethod, explanations: dict[str, list] | None , message: str | None = None):
+    def build(
+        cls,
+        predictions: np.ndarray[np.ndarray[float]],
+        method: ExplainerMethod,
+        interpretation: InterpretationResult,
+        explanations: dict[str, list] | None,
+    ):
         return cls(
             predictions=PredictionsResult.from_predictions(predictions),
             explanations={"method": method, method: explanations},
-            message=message,
+            message=interpretation.message,
+            severity=interpretation.severity,
         )

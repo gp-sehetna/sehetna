@@ -828,5 +828,6 @@
 			"heat_related_admissions": 12
 		}
 	],
-	"message": "This is the message coming back from the interpreter"
+	"message": "Iceland's air is very clean and pollution is low, but cold, damp weather can worsen breathing problems. Respiratory disease rates are the highest health issue. Keep warm, wear masks on windy days, and stay indoors when air feels heavy.",
+	"severity": "low"
 }

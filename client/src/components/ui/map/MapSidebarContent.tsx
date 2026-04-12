@@ -10,7 +10,11 @@ const HealthOutcomeCharts = () => {
     const { explanationMethod, contributors } = useSettingsStore()
     const { loading, simulation, setModifying, explanations, healthOutcome } = usePredictionsStore()
     const hasSimulation = simulation && simulation.predictions.length > 0
-    const interpreterMessage = hasSimulation && simulation.message ? simulation?.message : ""
+
+    const message = hasSimulation
+        ? simulation.message
+        : "Could not retrieve interpretation message for this prediction. Please try again later."
+    const severity = hasSimulation ? simulation.severity : "low"
 
     if (!hasSimulation)
         return (
@@ -34,7 +38,7 @@ const HealthOutcomeCharts = () => {
                 </small>
             </div>
             <div className="glassy rounded-2xl">
-                <InterpreterMessageBanner loading={loading} message={interpreterMessage} />
+                <InterpreterMessageBanner loading={loading} message={message} severity={severity} />
                 {explanations?.[explanationMethod] ? (
                     <ChartRenderer
                         method={explanationMethod}

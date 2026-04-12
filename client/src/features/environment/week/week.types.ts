@@ -61,12 +61,17 @@ type Explanations = {
 
 type PredictionsResponse = {
     predictions: IHealthOutcomes[]
+}
+
+type InterpretationResponse = {
     message: string
+    severity: "low" | "medium" | "high" | "critical"
 }
 
 type SimulateResponse = {
     explanations: Explanations
-} & PredictionsResponse
+} & PredictionsResponse &
+    InterpretationResponse
 
 type ExplanationMethod = "cumulative" | "group"
 interface SimulateQueryParams {
@@ -98,6 +103,7 @@ export type {
     Explanations,
     ExplanationsByMethod,
     GroupExplanationItem,
+    InterpretationResponse,
     Location,
     Reducer,
     SimulateQueryParams,

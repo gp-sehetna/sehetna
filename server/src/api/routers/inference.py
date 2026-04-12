@@ -1,6 +1,5 @@
 # from fastapi import APIRouter, Depends, Query
 import logging
-import time
 from typing import Annotated
 
 import pandas as pd
@@ -33,21 +32,17 @@ async def simulate(
 ):
     environment_df, predictions, explanations = prediction_service.simulate(req, query)
 
-    _t_start = time.perf_counter()
-    interpretation_message = await agent_service.interpret(
+    interpretation = await agent_service.interpret(
         country=req.country_code,
         simulation_outcomes=PredictionResult.from_prediction(predictions[0]),
         environmental_data=environment_df.astype(str).to_dict(orient="records"),
     )
-    _t_elapsed = time.perf_counter() - _t_start
-
-    logger.info(f"Interpretation completed in {_t_elapsed:.2f} seconds")
 
     return SimulationResponse.build(
         predictions,
         query.explainer_method,
+        interpretation,
         explanations,
-        interpretation_message,
     )
 
 
