@@ -90,24 +90,20 @@ export default function SettingsAccountClient() {
                     <SettingsField
                         label="First Name"
                         value={profile.firstName}
-                        onChange={(event) =>
-                            setProfile({ ...profile, firstName: event.target.value })
-                        }
+                        onChange={(value) => setProfile({ ...profile, firstName: value })}
                         icon={User}
                         placeholder="First name"
                     />
                     <SettingsField
                         label="Last Name"
                         value={profile.lastName}
-                        onChange={(event) =>
-                            setProfile({ ...profile, lastName: event.target.value })
-                        }
+                        onChange={(value) => setProfile({ ...profile, lastName: value })}
                         placeholder="Last name"
                     />
                     <SettingsField
                         label="Email Address"
                         value={profile.email}
-                        onChange={(event) => setProfile({ ...profile, email: event.target.value })}
+                        onChange={(value) => setProfile({ ...profile, email: value })}
                         type="email"
                         icon={Mail}
                         placeholder="your@institution.org"
@@ -116,7 +112,7 @@ export default function SettingsAccountClient() {
                     <SettingsField
                         label="Job Title"
                         value={profile.title}
-                        onChange={(event) => setProfile({ ...profile, title: event.target.value })}
+                        onChange={(value) => setProfile({ ...profile, title: value })}
                         icon={FileText}
                         placeholder="Your professional role"
                     />
@@ -149,18 +145,14 @@ export default function SettingsAccountClient() {
                     <SettingsField
                         label="Organization"
                         value={profile.organization}
-                        onChange={(event) =>
-                            setProfile({ ...profile, organization: event.target.value })
-                        }
+                        onChange={(value) => setProfile({ ...profile, organization: value })}
                         icon={Building2}
                         placeholder="Institution or department"
                     />
                     <SettingsField
                         label="Location"
                         value={profile.location}
-                        onChange={(event) =>
-                            setProfile({ ...profile, location: event.target.value })
-                        }
+                        onChange={(value) => setProfile({ ...profile, location: value })}
                         icon={MapPin}
                         placeholder="City, Country"
                     />
@@ -168,9 +160,7 @@ export default function SettingsAccountClient() {
                         <SettingsField
                             label="Website"
                             value={profile.website}
-                            onChange={(event) =>
-                                setProfile({ ...profile, website: event.target.value })
-                            }
+                            onChange={(value) => setProfile({ ...profile, website: value })}
                             icon={Globe}
                             placeholder="https://your-institution.org"
                         />
@@ -187,7 +177,7 @@ export default function SettingsAccountClient() {
                     <SettingsField
                         label="Bio"
                         value={profile.bio}
-                        onChange={(event) => setProfile({ ...profile, bio: event.target.value })}
+                        onChange={(value) => setProfile({ ...profile, bio: value })}
                         multiline
                         rows={4}
                         maxLength={240}

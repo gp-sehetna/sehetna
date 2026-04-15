@@ -10,7 +10,11 @@ import { Input } from "@/components/ui/shadcn/input"
 import { InputGroup, InputGroupTextarea } from "@/components/ui/shadcn/input-group"
 import { Eye, EyeOff } from "lucide-react"
 
-export default function SettingsField(props: SharedInputFieldProps) {
+export default function SettingsField(
+    props: Omit<SharedInputFieldProps, "onChange"> & {
+        onChange: (value: string) => void
+    }
+) {
     const { label, hint, icon: Icon } = props
 
     return (
@@ -50,7 +54,7 @@ export default function SettingsField(props: SharedInputFieldProps) {
                         <Input
                             type={getResolvedInputType(props)}
                             value={props.value}
-                            onChange={props.onChange}
+                            onChange={(event) => props.onChange(event.target.value)}
                             placeholder={props.placeholder}
                             className={`bg-earth-100/30 text-neutral-1000 focus-visible:border-earth/60 focus-visible:ring-earth/10 rounded-xl border-neutral-200 py-2.5 pr-10 text-sm placeholder:text-neutral-400 ${getInputPadding(Boolean(Icon))}`}
                         />
