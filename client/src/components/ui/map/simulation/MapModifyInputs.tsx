@@ -29,7 +29,6 @@ import {
     X,
 } from "lucide-react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
-import WideButton from "../../Authentication/Globals/WideButton"
 
 const FieldRow = ({
     label,
@@ -111,10 +110,9 @@ type MapModifyInputsProps = {
 
 const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
     const setModifying = usePredictionsStore((s) => s.setModifying)
-    const resetSimulationMessage = usePredictionsStore((s) => s.resetSimulationMessage);
     const environment = usePredictionsStore((s) => s.environment)
     const setEnvironment = usePredictionsStore((s) => s.setEnvironment)
-    
+
     const form = useForm<IEnvironmentData>({
         resolver: zodResolver(EnvironmentDataSchema),
         defaultValues: environment ?? undefined,

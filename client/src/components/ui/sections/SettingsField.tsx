@@ -1,16 +1,14 @@
 "use client"
 
-import { Eye, EyeOff } from "lucide-react"
-import { Input } from "../shadcn/input"
-import { Textarea } from "../shadcn/textarea"
 import {
     getInputPadding,
     getResolvedInputType,
     InputFieldFrame,
     SharedInputFieldProps,
-} from "../forms/inputs/InputFieldShared"
-import { register } from "module"
-import { InputGroup, InputGroupTextarea } from "../shadcn/input-group"
+} from "@/components/ui/forms/inputs/InputFieldShared"
+import { Input } from "@/components/ui/shadcn/input"
+import { InputGroup, InputGroupTextarea } from "@/components/ui/shadcn/input-group"
+import { Eye, EyeOff } from "lucide-react"
 
 export default function SettingsField(props: SharedInputFieldProps) {
     const { label, hint, icon: Icon } = props
@@ -52,7 +50,7 @@ export default function SettingsField(props: SharedInputFieldProps) {
                         <Input
                             type={getResolvedInputType(props)}
                             value={props.value}
-                            onChange={(event) => props.onChange(event.target.value)}
+                            onChange={props.onChange}
                             placeholder={props.placeholder}
                             className={`bg-earth-100/30 text-neutral-1000 focus-visible:border-earth/60 focus-visible:ring-earth/10 rounded-xl border-neutral-200 py-2.5 pr-10 text-sm placeholder:text-neutral-400 ${getInputPadding(Boolean(Icon))}`}
                         />
