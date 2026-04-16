@@ -66,15 +66,22 @@ export class AuthService extends OTPService {
 
     getUserAndComparePassword = async (email: string, password: string) => {
         const user = await this.userRepository.findByEmail(email)
-        if (!user) throw new UserNotFoundException()
+        if (!user) {
+            logger.error(`User with email ${email} not found`)
+            throw new UserNotFoundException()
+        }
         const isPasswordValid = await compare(password, user.password)
         return [user, isPasswordValid] as const
     }
 
     login = async ({ email, password }: ILoginInputsDTO) => {
         const [user, isPasswordValid] = await this.getUserAndComparePassword(email, password)
-        if (!isPasswordValid) throw new ValidationException("Invalid credentials")
+        if (!isPasswordValid) {
+            logger.error(`Invalid login attempt with email ${email}`)
+            throw new ValidationException("Invalid credentials")
+        }
         const { password: _p, __v, ...safeUser } = user.toObject()
+        logger.info(`Successful login attempt with email ${email}`)
         return { user: safeUser, tokens: await createTokens(user._id.toString(), user.role) }
     }
 

@@ -64,7 +64,7 @@ const LoginRawPage = () => {
                         }
                     />
                 </Flex>
-                <WideButton variant="black">Log In With Credentials</WideButton>
+                <WideButton variant="black">Log In</WideButton>
                 <Flex direction="col" gap={4}>
                     <p className="text-xs">Don&apos;t have an account?</p>
                     <WideButton asChild size="lg" variant="outline">

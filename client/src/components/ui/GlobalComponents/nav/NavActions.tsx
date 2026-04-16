@@ -1,10 +1,10 @@
 "use client"
 
-import { ProfilePictureAvatar } from "@/components/ui/GlobalComponents/SideBars/CompactSidebar"
 import { Button } from "@/components/ui/shadcn/button"
 import { cn } from "@/lib/utils"
 import { useUserStore } from "@/stores/user/use-user"
 import Link from "next/link"
+import { ProfilePictureAvatar } from "../../GlobalControls/AvatarMenu"
 
 export default function NavActions({ isScrolled }: { isScrolled?: boolean }) {
     const { user } = useUserStore()
