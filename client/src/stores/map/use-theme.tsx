@@ -44,7 +44,7 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
     healthOutcome: DEFAULT_HEALTH_OUTCOME,
     theme: darkBlueTheme,
     isInvalid: false,
-    activeThemeIds: [...DEFAULT_MAP_THEME_IDS],
+    activeThemeIds: [],
     setTheme: (healthOutcome) => {
         const nextTheme = getTheme(healthOutcome)
         logger.debug(nextTheme, `HealthOutcome (${healthOutcome}) Theme: `)
