@@ -1,3 +1,4 @@
+import { ManipulatedUserDataInputsDTO } from "@/features/auth/auth.dto"
 import { IUser, UserModel } from "@/shared/db/model/user.model"
 import { DatabaseRepository } from "@/shared/db/repository/database.repository"
 import { Pagination, PaginationResult } from "@/shared/db/types/pagination.type"
@@ -18,6 +19,33 @@ export class UserRepository extends DatabaseRepository<IUser> {
 
     async updateUserPasswordByEmail(email: string, password: string) {
         return await this.model.findOneAndUpdate({ email }, { password }, { new: true }).exec()
+    }
+
+    async updateUserById(id: string, userData: ManipulatedUserDataInputsDTO) {
+        return this.model
+            .findByIdAndUpdate(
+                id,
+                { $set: userData },
+                {
+                    new: true,
+                    runValidators: true,
+                    omitUndefined: true,
+                }
+            )
+            .exec()
+    }
+
+    async updateUserEmailById(id: string, email: string) {
+        return this.model
+            .findByIdAndUpdate(
+                id,
+                { $set: { email } },
+                {
+                    new: true,
+                    runValidators: true,
+                }
+            )
+            .exec()
     }
 
     async findUsers(

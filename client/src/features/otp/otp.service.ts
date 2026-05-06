@@ -1,3 +1,4 @@
+import { Cookies } from "@/lib/auth/cookies"
 import { generateOtp } from "@/lib/utils"
 import { IOtp } from "@/shared/db/model/otp.model"
 import { OtpRepository } from "@/shared/db/repository/otp.repository"
@@ -50,12 +51,7 @@ export class OTPService {
 
         const res = successResponse(undefined, "OTP generated and stored", 201)
 
-        res.cookies.set("email_token", emailToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 5 * 60, // 5min
-        })
+        res.cookies.set("email_token", emailToken, Cookies.createSecure(5 * 60))
 
         return res
     }

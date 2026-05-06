@@ -7,6 +7,7 @@ import { EmailInputsDTO } from "@/features/auth/auth.dto"
 import { AuthClientService } from "@/features/auth/auth.service.client"
 import { EmailSchema } from "@/features/auth/auth.validation"
 import { hideEmail } from "@/lib/utils/email"
+import { PurposeEnum } from "@/shared/db/enums/auth.enum"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LogIn, Mail } from "lucide-react"
 import Link from "next/link"
@@ -26,7 +27,7 @@ const SignupRawPage = () => {
     const onSubmit = async (fields: EmailInputsDTO) => {
         await authService.generateAndFetchOtp(fields)
         router.push(
-            `/authenticate/verify?purpose=email_verification&mail=${encodeURIComponent(hideEmail(fields.email))}`
+            `/authenticate/verify?purpose=${PurposeEnum.emailVerification}&mail=${encodeURIComponent(hideEmail(fields.email))}`
         )
     }
 

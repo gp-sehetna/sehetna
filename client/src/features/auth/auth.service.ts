@@ -1,12 +1,18 @@
-import { ILoginInputsDTO, PasswordAndNameInputsDTO } from "@/features/auth/auth.dto"
+import {
+    ILoginInputsDTO,
+    ManipulatedUserDataInputsDTO,
+    PasswordAndNameInputsDTO,
+} from "@/features/auth/auth.dto"
 import { OTPService } from "@/features/otp/otp.service"
 import { createTokens } from "@/lib/auth/token"
+import { IUser } from "@/shared/db/model/user.model"
 import { OtpRepository } from "@/shared/db/repository/otp.repository"
 import { UserRepository } from "@/shared/db/repository/user.repository"
 import { EmailService } from "@/shared/email/email.service"
 import { UserNotFoundException, ValidationException } from "@/shared/http/errors"
 import logger from "@/shared/logger"
 import { compare, hash } from "bcrypt"
+import { HydratedDocument } from "mongoose"
 import { NextRequest, userAgent } from "next/server"
 
 export class AuthService extends OTPService {
@@ -38,14 +44,32 @@ export class AuthService extends OTPService {
         return updatedUser
     }
 
+    updateUser = async (id: string, userData: ManipulatedUserDataInputsDTO) => {
+        const updatedUser = await this.userRepository.updateUserById(id, userData)
+        if (!updatedUser) throw new UserNotFoundException()
+        const safeUser = this._extractSafeUser(updatedUser)
+        return safeUser
+    }
+
+    updateUserEmail = async (id: string, email: string) => {
+        const updatedUser = await this.userRepository.updateUserEmailById(id, email)
+        if (!updatedUser) throw new UserNotFoundException()
+        return this._extractSafeUser(updatedUser)
+    }
+
     getUserByEmail = async (email: string) => {
         return await this.userRepository.findByEmail(email)
+    }
+
+    _extractSafeUser = (user: HydratedDocument<IUser>) => {
+        const { password, __v, ...safeUser } = user.toObject()
+        return safeUser
     }
 
     getUserById = async (id: string) => {
         const user = await this.userRepository.findById(id)
         if (!user) throw new UserNotFoundException()
-        const { password: _p, __v, ...safeUser } = user.toObject()
+        const safeUser = this._extractSafeUser(user)
         logger.info(safeUser, "User: ")
         return { user: safeUser }
     }

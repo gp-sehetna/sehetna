@@ -38,7 +38,7 @@ export default function SettingsField(
 
                 {props.multiline ? (
                     <InputGroup
-                        className="bg-earth-100/30 text-neutral-1000 focus-visible:border-earth/60 focus-visible:ring-earth/10 min-h-28 resize-none rounded-xl border-neutral-200 px-4 py-3 text-sm placeholder:text-neutral-400"
+                        className="bg-earth-100/30 text-neutral-1000 focus-visible:border-earth/90 focus-visible:ring-earth/10 min-h-28 resize-none rounded-xl border-neutral-200 px-4 py-3 text-sm placeholder:text-neutral-400"
                         rounded="xxl"
                     >
                         <InputGroupTextarea
@@ -56,7 +56,7 @@ export default function SettingsField(
                             value={props.value}
                             onChange={(event) => props.onChange(event.target.value)}
                             placeholder={props.placeholder}
-                            className={`bg-earth-100/30 text-neutral-1000 focus-visible:border-earth/60 focus-visible:ring-earth/10 rounded-xl border-neutral-200 py-2.5 pr-10 text-sm placeholder:text-neutral-400 ${getInputPadding(Boolean(Icon))}`}
+                            className={`bg-earth-100/30 text-neutral-1000 focus-visible:border-earth/90 focus-visible:ring-earth/10 rounded-xl border-neutral-200 py-2.5 pr-10 text-sm placeholder:text-neutral-400 ${getInputPadding(Boolean(Icon))}`}
                         />
                         {props.showToggle ? (
                             <button

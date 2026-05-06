@@ -13,6 +13,8 @@ import {
 import { OTPInputsDTO } from "@/features/auth/auth.dto"
 import { AuthClientService } from "@/features/auth/auth.service.client"
 import { OtpSchema } from "@/features/auth/auth.validation"
+import { PurposeEnum } from "@/shared/db/enums/auth.enum"
+import { useUserStore } from "@/stores/user/use-user"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
@@ -22,6 +24,7 @@ export default function VerifyPage() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const authService = useMemo(() => new AuthClientService(), [])
+    const setUser = useUserStore((s) => s.setUser)
     const { control, handleSubmit, formState } = useForm<OTPInputsDTO>({
         resolver: zodResolver(OtpSchema),
     })
@@ -29,7 +32,11 @@ export default function VerifyPage() {
     const email = searchParams.get("mail") as string
 
     const onSubmit = async ({ otp }: OTPInputsDTO) => {
-        const destination = await authService.verifyOtp(otp, searchParams.get("purpose"))
+        const { destination, user } = await authService.verifyOtp(otp, searchParams.get("purpose"))
+
+        // TODO: user is not set instantly after email change, maybe we should fetch user data again in the settings page instead of relying on this response
+        if (searchParams.get("purpose") == PurposeEnum.emailChange && user) setUser(user)
+
         router.replace(destination)
     }
 

@@ -1,5 +1,6 @@
 enum PurposeEnum {
     emailVerification = "email_verification",
+    emailChange = "email_change",
     passwordReset = "password_reset",
 }
 

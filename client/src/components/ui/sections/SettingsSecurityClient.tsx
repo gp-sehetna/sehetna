@@ -1,20 +1,26 @@
 "use client"
 
-import { useMemo, useState } from "react"
-import { AnimatePresence, motion } from "motion/react"
+import { EmailInputsDTO } from "@/features/auth/auth.dto"
+import { AuthClientService } from "@/features/auth/auth.service.client"
+import { EmailSchema } from "@/features/auth/auth.validation"
+import { hideEmail } from "@/lib/utils/email"
+import { PurposeEnum } from "@/shared/db/enums/auth.enum"
+import { useUserStore } from "@/stores/user/use-user"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { motion } from "motion/react"
 import {
-    AlertTriangle,
-    CheckCircle2,
     ChevronRight,
     Clock,
-    Key,
-    Lock,
     LogOut,
     Mail,
     Monitor,
     Shield,
     Smartphone,
+    SquareArrowOutUpRight,
 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useEffect, useMemo, useState } from "react"
+import { Controller, useForm } from "react-hook-form"
 import { Button } from "../shadcn/button"
 import { Switch } from "../shadcn/switch"
 import SettingsField from "./SettingsField"
@@ -40,64 +46,19 @@ const activeSessions = [
     },
 ]
 
-function StrengthMeter({ password }: { password: string }) {
-    const strength = useMemo(() => {
-        let score = 0
-        if (password.length >= 8) score++
-        if (password.length >= 12) score++
-        if (/[A-Z]/.test(password)) score++
-        if (/[0-9]/.test(password)) score++
-        if (/[^A-Za-z0-9]/.test(password)) score++
-        return score
-    }, [password])
-
-    const labels = ["", "Very Weak", "Weak", "Fair", "Strong", "Very Strong"]
-    const colorClasses = [
-        "",
-        "bg-danger-100 text-danger-200",
-        "bg-warning-100 text-warning-200",
-        "bg-warning-100 text-warning-200",
-        "bg-success-100 text-success",
-        "bg-success text-white",
-    ]
-
-    if (!password) return null
-
-    return (
-        <div className="flex flex-col gap-1.5">
-            <div className="flex gap-1">
-                {Array.from({ length: 5 }).map((_, index) => (
-                    <div
-                        key={index}
-                        className={
-                            index < strength
-                                ? `h-1 flex-1 rounded-full ${colorClasses[strength].split(" ")[0]}`
-                                : "h-1 flex-1 rounded-full bg-neutral-200"
-                        }
-                    />
-                ))}
-            </div>
-            <span
-                className={`text-2xs w-fit rounded-full px-2 py-0.5 font-medium ${colorClasses[strength] || "text-neutral-500"}`}
-            >
-                {labels[strength]}
-            </span>
-        </div>
-    )
-}
-
 export default function SettingsSecurityClient() {
-    const [currentPassword, setCurrentPassword] = useState("")
-    const [newPassword, setNewPassword] = useState("")
-    const [confirmPassword, setConfirmPassword] = useState("")
-    const [showCurrent, setShowCurrent] = useState(false)
-    const [showNew, setShowNew] = useState(false)
-    const [showConfirm, setShowConfirm] = useState(false)
-    const [passwordSaved, setPasswordSaved] = useState(false)
-    const [passwordError, setPasswordError] = useState("")
-    const [newEmail, setNewEmail] = useState("")
-    const [emailSent, setEmailSent] = useState(false)
     const [twoFactorEnabled, setTwoFactorEnabled] = useState(false)
+    const authService = useMemo(() => new AuthClientService(), [])
+    const router = useRouter()
+    const profile = useUserStore((s) => s.user)
+
+    const { control, handleSubmit, reset, formState } = useForm<EmailInputsDTO>({
+        resolver: zodResolver(EmailSchema),
+        mode: "onSubmit",
+        defaultValues: {
+            email: profile?.email ?? "",
+        },
+    })
 
     const qrPattern = useMemo(
         () =>
@@ -107,33 +68,21 @@ export default function SettingsSecurityClient() {
         []
     )
 
-    const handlePasswordSave = () => {
-        if (!currentPassword || !newPassword || !confirmPassword) {
-            setPasswordError("All password fields are required.")
-            return
-        }
-        if (newPassword !== confirmPassword) {
-            setPasswordError("New passwords do not match.")
-            return
-        }
-        if (newPassword.length < 8) {
-            setPasswordError("Password must be at least 8 characters.")
-            return
-        }
-
-        setPasswordError("")
-        setPasswordSaved(true)
-        setCurrentPassword("")
-        setNewPassword("")
-        setConfirmPassword("")
-        setTimeout(() => setPasswordSaved(false), 3500)
+    const redirectToVerify = async (fields: EmailInputsDTO) => {
+        await authService.generateAndFetchOtp({
+            ...fields,
+            purpose: PurposeEnum.emailChange,
+        })
+        router.push(
+            `/authenticate/verify?purpose=${PurposeEnum.emailChange}&mail=${encodeURIComponent(hideEmail(fields.email))}`
+        )
     }
 
-    const handleEmailChange = () => {
-        if (!newEmail || !newEmail.includes("@")) return
-        setEmailSent(true)
-        setTimeout(() => setEmailSent(false), 5000)
-    }
+    useEffect(() => {
+        if (!profile?.email) return
+
+        reset({ email: profile.email })
+    }, [profile?.email, reset])
 
     return (
         <motion.div
@@ -147,75 +96,13 @@ export default function SettingsSecurityClient() {
                 description="Use a strong, unique password that is not reused elsewhere."
             >
                 <div className="flex flex-col gap-4">
-                    <SettingsField
-                        label="Current Password"
-                        value={currentPassword}
-                        onChange={setCurrentPassword}
-                        placeholder="Enter your current password"
-                        icon={Lock}
-                        showToggle
-                        isVisible={showCurrent}
-                        onToggleVisibility={() => setShowCurrent((value) => !value)}
-                    />
-                    <SettingsField
-                        label="New Password"
-                        value={newPassword}
-                        onChange={setNewPassword}
-                        placeholder="Enter a new strong password"
-                        hint="At least 8 characters, with uppercase, number, and symbol."
-                        icon={Lock}
-                        showToggle
-                        isVisible={showNew}
-                        onToggleVisibility={() => setShowNew((value) => !value)}
-                    />
-                    <StrengthMeter password={newPassword} />
-                    <SettingsField
-                        label="Confirm New Password"
-                        value={confirmPassword}
-                        onChange={setConfirmPassword}
-                        placeholder="Repeat new password"
-                        icon={Lock}
-                        showToggle
-                        isVisible={showConfirm}
-                        onToggleVisibility={() => setShowConfirm((value) => !value)}
-                    />
-
-                    <AnimatePresence>
-                        {passwordError ? (
-                            <motion.div
-                                initial={{ opacity: 0, y: -4 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2, ease: easeBehavior }}
-                                className="border-danger-100/20 bg-danger-100/8 flex items-center gap-2 rounded-xl border p-3"
-                            >
-                                <AlertTriangle
-                                    size={13}
-                                    className="text-danger-200 shrink-0"
-                                    strokeWidth={1.5}
-                                />
-                                <span className="text-danger-200 text-xs">{passwordError}</span>
-                            </motion.div>
-                        ) : null}
-                    </AnimatePresence>
-
-                    <div className="flex items-center justify-between gap-3 pt-1">
-                        {passwordSaved ? (
-                            <motion.div
-                                initial={{ opacity: 0, x: 8 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.25, ease: easeBehavior }}
-                                className="text-success flex items-center gap-1.5 text-xs font-medium"
-                            >
-                                <CheckCircle2 size={14} strokeWidth={1.5} />
-                                Password updated
-                            </motion.div>
-                        ) : (
-                            <div />
-                        )}
-                        <Button variant="bright-primary" onClick={handlePasswordSave}>
-                            <Key size={13} strokeWidth={1.5} />
+                    <div className="flex justify-end">
+                        <Button
+                            variant="bright-primary"
+                            onClick={() => router.push("/authenticate/password/old")}
+                        >
                             Update Password
+                            <SquareArrowOutUpRight size={13} />
                         </Button>
                     </div>
                 </div>
@@ -225,44 +112,43 @@ export default function SettingsSecurityClient() {
                 title="Change Email Address"
                 description="A verification link will be sent before the change takes effect."
             >
-                <div className="flex flex-col gap-4">
-                    <SettingsField
-                        label="New Email Address"
-                        value={newEmail}
-                        onChange={setNewEmail}
-                        type="email"
-                        placeholder="newemail@institution.org"
-                        icon={Mail}
+                <form
+                    className="flex flex-col gap-4"
+                    noValidate
+                    onSubmit={handleSubmit(redirectToVerify)}
+                >
+                    <Controller
+                        control={control}
+                        name="email"
+                        render={({ field }) => (
+                            <SettingsField
+                                id="settings-new-email"
+                                type="email"
+                                label="New Email Address"
+                                value={field.value ?? ""}
+                                onChange={field.onChange}
+                                errors={[formState.errors.email]}
+                                icon={Mail}
+                                placeholder="Enter your new email address"
+                                hint={
+                                    profile?.email
+                                        ? `Current email: ${profile.email}`
+                                        : "Use the email address you want to verify and switch to."
+                                }
+                            />
+                        )}
                     />
-
-                    <AnimatePresence>
-                        {emailSent ? (
-                            <motion.div
-                                initial={{ opacity: 0, y: -4 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2, ease: easeBehavior }}
-                                className="border-success-100/30 bg-success-100/20 flex items-center gap-2 rounded-xl border p-3"
-                            >
-                                <CheckCircle2
-                                    size={13}
-                                    className="text-success shrink-0"
-                                    strokeWidth={1.5}
-                                />
-                                <span className="text-success text-xs">
-                                    Verification email sent to <strong>{newEmail}</strong>.
-                                </span>
-                            </motion.div>
-                        ) : null}
-                    </AnimatePresence>
-
                     <div className="flex justify-end">
-                        <Button variant="bright-primary" onClick={handleEmailChange}>
-                            <Mail size={13} strokeWidth={1.5} />
-                            Send Verification
+                        <Button
+                            type="submit"
+                            variant="bright-primary"
+                            disabled={formState.isSubmitting}
+                        >
+                            {formState.isSubmitting ? "Sending..." : "Send Verification"}
+                            <SquareArrowOutUpRight size={13} />
                         </Button>
                     </div>
-                </div>
+                </form>
             </SettingsPanel>
 
             <SettingsPanel

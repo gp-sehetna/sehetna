@@ -1,4 +1,4 @@
-import { PurposeEnum } from "@/shared/db/enums/auth.enum"
+import { GenderEnum, PurposeEnum } from "@/shared/db/enums/auth.enum"
 import { z } from "zod"
 
 const FIELD_REQUIRED = 2
@@ -18,6 +18,10 @@ const PurposeAndOtpSchema = OtpSchema.extend({
 
 const EmailSchema = z.strictObject({
     email: z.email({ error: "Email address isn't in the expected format, abc@gmail.com" }),
+})
+
+const PurposeAndEmailSchema = EmailSchema.extend({
+    purpose: z.enum(PurposeEnum).optional(),
 })
 
 const PasswordSchema = z.strictObject({
@@ -50,6 +54,11 @@ const LoginSchema = EmailSchema.extend(PasswordSchema.shape)
 const SignupSchema = LoginSchema.extend(NameSchema.shape)
 const PasswordAndNameSchema = NameSchema.extend(PasswordSchema.shape)
 
+const ManipulatedUserDataSchema = NameSchema.partial().extend({
+    gender: z.enum(GenderEnum).optional(),
+    // email: EmailSchema.shape.email.optional(),
+})
+
 export {
     ConfirmPasswordSchema,
     DESC_MAX_LENGTH,
@@ -60,6 +69,8 @@ export {
     OtpSchema,
     PasswordAndNameSchema,
     PasswordSchema,
+    PurposeAndEmailSchema,
     PurposeAndOtpSchema,
     SignupSchema,
+    ManipulatedUserDataSchema,
 }
