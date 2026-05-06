@@ -1,4 +1,5 @@
 import { BadRequestException, UnauthorizedException } from "@/shared/http/errors"
+import logger from "@/shared/logger"
 import { JwtPayload, sign, verify } from "jsonwebtoken"
 
 export const EXPIRE = {
@@ -7,21 +8,31 @@ export const EXPIRE = {
 }
 
 export const createTokens = async (user_id: string, role: string) => {
-    const payload = { role }
+    try {
+        const payload = { role }
 
-    const accessToken = sign(payload, process.env.JWT_ACCESS_SECRET!, {
-        subject: user_id,
-        expiresIn: EXPIRE.access,
-        issuer: "sehetna",
-    })
+        const accessToken = sign(payload, process.env.JWT_ACCESS_SECRET!, {
+            subject: user_id,
+            expiresIn: EXPIRE.access,
+            issuer: "sehetna",
+        })
 
-    const refreshToken = sign({}, process.env.JWT_REFRESH_SECRET!, {
-        subject: user_id,
-        expiresIn: EXPIRE.refresh,
-        issuer: "sehetna",
-    })
+        const refreshToken = sign({}, process.env.JWT_REFRESH_SECRET!, {
+            subject: user_id,
+            expiresIn: EXPIRE.refresh,
+            issuer: "sehetna",
+        })
 
-    return { accessToken, refreshToken }
+        return { accessToken, refreshToken }
+    } catch (error) {
+        logger.error(
+            {
+                error: error instanceof Error ? error.message : error,
+            },
+            "Please check your JWT secrets and ensure they are properly set in the environment variables."
+        )
+        throw error
+    }
 }
 
 export const decodeToken = (authorization: string, secret?: string) => {

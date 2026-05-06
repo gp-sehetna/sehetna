@@ -1,5 +1,5 @@
 import { Cookies } from "@/lib/auth/cookies"
-import { createTokens, decodeToken, EXPIRE } from "@/lib/auth/token"
+import { decodeToken, EXPIRE } from "@/lib/auth/token"
 import { MainService } from "@/shared/db/main.service"
 import { UnauthorizedException } from "@/shared/http/errors"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
@@ -25,8 +25,7 @@ export const GET = globalErrorHandler(async (req: NextRequest) => {
         })
     }
 
-    const { user } = await mainService.authService.getUserById(decoded.sub)
-    const tokens = await createTokens(user._id.toString(), user.role)
+    const tokens = await mainService.authService.refresh(decoded.sub)
 
     const res = successResponse(undefined, "Tokens refreshed successfully")
 

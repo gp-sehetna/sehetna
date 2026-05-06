@@ -10,7 +10,6 @@ import { OtpRepository } from "@/shared/db/repository/otp.repository"
 import { UserRepository } from "@/shared/db/repository/user.repository"
 import { EmailService } from "@/shared/email/email.service"
 import { UserNotFoundException, ValidationException } from "@/shared/http/errors"
-import logger from "@/shared/logger"
 import { compare, hash } from "bcrypt"
 import { HydratedDocument } from "mongoose"
 import { NextRequest, userAgent } from "next/server"
@@ -69,9 +68,7 @@ export class AuthService extends OTPService {
     getUserById = async (id: string) => {
         const user = await this.userRepository.findById(id)
         if (!user) throw new UserNotFoundException()
-        const safeUser = this._extractSafeUser(user)
-        logger.info(safeUser, "User: ")
-        return { user: safeUser }
+        return { user: this._extractSafeUser(user) }
     }
 
     checkUserExistsByEmail = async (email: string) => {
@@ -90,28 +87,21 @@ export class AuthService extends OTPService {
 
     getUserAndComparePassword = async (email: string, password: string) => {
         const user = await this.userRepository.findByEmail(email)
-        if (!user) {
-            logger.error(`User with email ${email} not found`)
-            throw new UserNotFoundException()
-        }
+        if (!user) throw new UserNotFoundException()
         const isPasswordValid = await compare(password, user.password)
         return [user, isPasswordValid] as const
     }
 
     login = async ({ email, password }: ILoginInputsDTO) => {
         const [user, isPasswordValid] = await this.getUserAndComparePassword(email, password)
-        if (!isPasswordValid) {
-            logger.error(`Invalid login attempt with email ${email}`)
-            throw new ValidationException("Invalid credentials")
-        }
+        if (!isPasswordValid) throw new ValidationException("Invalid credentials")
         const { password: _p, __v, ...safeUser } = user.toObject()
-        logger.info(`Successful login attempt with email ${email}`)
         return { user: safeUser, tokens: await createTokens(user._id.toString(), user.role) }
     }
 
     refresh = async (id: string) => {
         const { user } = await this.getUserById(id)
-        return { user, tokens: await createTokens(user._id.toString(), user.role) }
+        return await createTokens(user._id.toString(), user.role)
     }
 
     checkOldPassword = async (userId: string, password: string) => {
