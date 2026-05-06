@@ -14,7 +14,7 @@ export class UserRepository extends DatabaseRepository<IUser> {
     }
 
     async findByEmail(email: string) {
-        return await this.findOne({ email })
+        return await this.model.findOne({ email })
     }
 
     async updateUserPasswordByEmail(email: string, password: string) {
