@@ -1,0 +1,23 @@
+resources/data/*
+!resources/data/indicators/*
+!resources/data/main.csv
+!resources/data/df_processed.csv
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+id_rsa
+secrets.json
+
+# Local package deps
+.venv/
+
+# Caches & Test Coverages
+__pycache__/
+
+
+.vscode/
+
+.qodo/

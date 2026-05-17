@@ -41,16 +41,15 @@ export const metadata: Metadata = {
 
 export default function UseCasesPage() {
     return (
-        <main className="bg-primary-50">
-            <section className="relative overflow-hidden py-24">
+        <>
+            <section className="relative mt-24 overflow-hidden py-12">
                 <Texture texture="dots" />
-                <div className="from-primary-100/50 pointer-events-none absolute -top-32 right-0 h-96 w-136 rounded-full bg-linear-to-bl to-transparent blur-3xl" />
                 <div className="relative mx-auto flex max-w-7xl flex-col gap-10 px-6 lg:px-8">
                     <div className="max-w-3xl">
-                        <p className="text-primary mb-4 text-xs font-semibold tracking-widest uppercase">
+                        <p className="text-foreground mb-4 text-xs font-semibold tracking-widest uppercase">
                             Real-world applications
                         </p>
-                        <h1>Where Sehetna makes a difference</h1>
+                        <h2>Where Sehetna makes a difference</h2>
                         <p className="mt-5 text-lg text-neutral-800">
                             Five disease-environment risk modules, each designed around an
                             institutional decision-making need.
@@ -74,7 +73,7 @@ export default function UseCasesPage() {
                 </div>
             </section>
 
-            <section className="py-8 pb-24">
+            <section className="from-background to-secondary-100/20 bg-linear-to-b py-8 pb-24">
                 <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 lg:px-8">
                     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                         {Object.entries(useCases).map(([slug, useCase]) => {
@@ -96,13 +95,10 @@ export default function UseCasesPage() {
                                         <div className="text-2xs bg-background/10 absolute top-4 left-4 rounded-full border border-white/20 px-3 py-1.5 font-bold tracking-widest text-white uppercase backdrop-blur-sm">
                                             {useCase.label}
                                         </div>
-                                        {/* <div className="bg-background/15 absolute right-4 bottom-4 flex h-10 w-10 items-center justify-center rounded-xl text-white backdrop-blur-sm">
-                                            <Icon size={18} strokeWidth={1.5} />
-                                        </div> */}
                                     </div>
                                     <div className="flex flex-col gap-4 p-6">
                                         <div>
-                                            <h2 className="text-lg">{useCase.title}</h2>
+                                            <h6>{useCase.title}</h6>
                                             <p className="mt-2 text-sm text-neutral-800">
                                                 {useCase.description}
                                             </p>
@@ -146,13 +142,9 @@ export default function UseCasesPage() {
                 </div>
             </section>
 
-            <section className="from-primary-50 to-background bg-linear-to-b py-24">
+            <section className="from-secondary-100/20 to-background bg-linear-to-b py-24">
                 <div className="mx-auto flex max-w-7xl flex-col gap-12 px-6 lg:px-8">
-                    <SectionHeading
-                        label="Institutional Users"
-                        title="Built for decision-makers"
-                        labelClassName="text-success"
-                    />
+                    <SectionHeading label="Institutional Users" title="Built for decision-makers" />
                     <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                         {institutionTypes.map((item) => {
                             const Icon = item.icon
@@ -161,14 +153,14 @@ export default function UseCasesPage() {
                                     key={item.title}
                                     className="bg-background/60 rounded-3xl border border-white/80 p-6 text-center shadow-sm backdrop-blur-xl"
                                 >
-                                    <div className="bg-success-100/20 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl">
+                                    <div className="bg-primary-100/20 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl">
                                         <Icon
                                             size={20}
-                                            className="text-success"
+                                            className="text-primary"
                                             strokeWidth={1.5}
                                         />
                                     </div>
-                                    <h2 className="text-sm">{item.title}</h2>
+                                    <h6 className="text-sm">{item.title}</h6>
                                     <p className="mt-2 text-sm text-neutral-800">
                                         {item.description}
                                     </p>
@@ -178,6 +170,6 @@ export default function UseCasesPage() {
                     </div>
                 </div>
             </section>
-        </main>
+        </>
     )
 }
