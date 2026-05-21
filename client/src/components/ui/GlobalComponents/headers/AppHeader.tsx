@@ -31,6 +31,7 @@ function AppHeader({ isScrolled }: AppHeaderProps) {
                 <div className="flex w-full justify-end gap-6">
                     <NavItems navigationItems={groupedNavItems} />
                     <div className="hidden sm:flex">
+                        {/* TODO: Make NavActions a server component */}
                         <NavActions isScrolled={isScrolled} />
                     </div>
                     <MobileNav isScrolled={isScrolled} navigationItems={groupedNavItems} />

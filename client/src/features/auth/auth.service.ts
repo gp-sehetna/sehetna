@@ -12,6 +12,7 @@ import { EmailService } from "@/shared/email/email.service"
 import { UserNotFoundException, ValidationException } from "@/shared/http/errors"
 import { compare, hash } from "bcrypt"
 import { HydratedDocument } from "mongoose"
+import { Profile } from "next-auth"
 import { NextRequest, userAgent } from "next/server"
 
 export class AuthService extends OTPService {
@@ -81,6 +82,13 @@ export class AuthService extends OTPService {
         const user = { firstName, lastName, email, password: hashedPassword }
         const createdUser = await this.userRepository.create(user)
         this.emailService.sendWelcome(email)
+
+        return createdUser
+    }
+
+    addUserIfNotExists = async (profile: Profile) => {
+        const createdUser = await this.userRepository.upsert(profile)
+        // this.emailService.sendWelcome(profile.email)
 
         return createdUser
     }
