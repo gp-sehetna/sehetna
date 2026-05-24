@@ -1,5 +1,3 @@
-"use client"
-
 import Link from "next/link"
 import { ArrowUpRight, Equal } from "lucide-react"
 
@@ -10,27 +8,18 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/shadcn/sheet"
-import NavActions from "./NavActions"
 import { Button } from "../../shadcn/button"
-import { NavItemsProps } from "./NavItems"
 import { cn } from "@/lib/utils"
 import { navigationMenuTriggerStyle } from "../../shadcn/navigation-menu"
 import Divider from "../../GlobalControls/Divider"
+import { groupedNavItems } from "../nav/navigation-items"
 
-type MobileNavProps = {
-    navigationItems: NavItemsProps["navigationItems"]
-    isScrolled?: boolean
-}
-export default function MobileNav({ isScrolled, navigationItems }: MobileNavProps) {
+export default function MobileNav() {
     return (
         <div className="flex md:hidden">
             <Sheet>
                 <SheetTrigger asChild>
-                    <Button
-                        className={cn(isScrolled ? "" : "text-background")}
-                        size="icon"
-                        variant="text"
-                    >
+                    <Button className="text-inherit" size="icon" variant="text">
                         <Equal />
                     </Button>
                 </SheetTrigger>
@@ -39,7 +28,7 @@ export default function MobileNav({ isScrolled, navigationItems }: MobileNavProp
                         <SheetTitle className="p-0" />
                     </SheetHeader>
                     <div className="grid w-full grid-cols-1 gap-4 p-6 sm:grid-cols-2">
-                        {Object.entries(navigationItems).map(([group, items]) => (
+                        {Object.entries(groupedNavItems).map(([group, items]) => (
                             <div key={group}>
                                 <div className="gap-2 text-center">
                                     <h6 className="text-sm font-medium">{group}</h6>
@@ -62,9 +51,6 @@ export default function MobileNav({ isScrolled, navigationItems }: MobileNavProp
                                 </nav>
                             </div>
                         ))}
-                    </div>
-                    <div className="flex w-full justify-end px-6">
-                        <NavActions />
                     </div>
                 </SheetContent>
             </Sheet>

@@ -7,7 +7,7 @@ import { FormInputField } from "@/components/ui/forms/inputs/FormInputField"
 import { ILoginInputsDTO } from "@/features/auth/auth.dto"
 import { AuthClientService } from "@/features/auth/auth.service.client"
 import { LoginSchema } from "@/features/auth/auth.validation"
-import { toLast } from "@/lib/auth/navigation"
+import { navigateToLastRoute } from "@/lib/auth/navigation"
 import { useUserStore } from "@/stores/user/use-user"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LogIn, Mail } from "lucide-react"
@@ -30,8 +30,7 @@ const LoginRawPage = () => {
     const onSubmit = async (fields: ILoginInputsDTO) => {
         const { data: newUser } = await authService.login(fields)
         setUser(newUser)
-        // TODO: Navigate to the last recent path user was in.
-        toLast(router, params)
+        navigateToLastRoute(router, params)
     }
 
     return (

@@ -25,10 +25,13 @@ export const ProfilePictureAvatar = ({ name }: { name: string }) => {
     const authService = useMemo(() => new AuthClientService(), [])
     const { setUser } = useUserStore()
     const router = useRouter()
+
+    // TODO: Server component caches the old user, so when navigating back to home it shows the old user, need to find a way to invalidate it on logout
     const onSubmit = async () => {
         const { message } = await authService.logout()
         logger.info(message)
         setUser(null)
+        router.refresh()
         router.push("/authenticate/login")
     }
     return (

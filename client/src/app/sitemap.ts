@@ -1,4 +1,5 @@
 // app/sitemap.ts
+import { staticRoutes } from "@/lib/proxies/routes"
 import { slugify } from "@/lib/utils"
 import { HEALTH_OUTCOMES_WITH_HYPHEN } from "@/shared/config/health-outcomes"
 import fs from "fs"
@@ -21,16 +22,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // --------------------
     // Static Public Routes
     // --------------------
-    const staticRoutes = [
-        "",
-        "/methodology",
-        "/more-about-us",
-        "/support",
-        "/support/services-and-policies",
-        "/data-explorer",
-        "/map",
-    ]
-
     staticRoutes.forEach((route) => {
         routes.push({
             url: `${BASE_URL}${route}`,

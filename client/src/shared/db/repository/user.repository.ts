@@ -12,19 +12,6 @@ export class UserRepository extends DatabaseRepository<IUser> {
     async create(data: Partial<IUser>) {
         return await this.model.create(data)
     }
-    async upsert(data: Partial<IUser>) {
-        const filter = { email: data.email }
-        const update = { $set: data }
-        const options = { upsert: true, new: true }
-        // TODO: Remove try/catch logic to be consistent with other repositories, this is just temporary.
-        try {
-            const createdUser = await this.model.findOneAndUpdate(filter, update, options).exec()
-            return createdUser
-        } catch (error) {
-            console.error("Error in upsert user:", error)
-            throw error
-        }
-    }
 
     async findByEmail(email: string) {
         return await this.model.findOne({ email })

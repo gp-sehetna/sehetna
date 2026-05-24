@@ -25,8 +25,5 @@ const AiModelSchema = new Schema(
 
 export type IAiModel = Require_id<InferSchemaType<typeof AiModelSchema>>
 
-// TODO: Ensure search index is correct
-// AiModelSchema.searchIndex({ definition: { display_name: "text", version: "text" }, type: "search" })
-
 export const AiModelModel: Model<IAiModel> =
     models.AiModel || model<IAiModel>("AiModel", AiModelSchema)

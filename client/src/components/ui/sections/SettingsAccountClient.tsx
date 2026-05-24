@@ -49,9 +49,6 @@ export default function SettingsAccountClient() {
         reset(getDefaultValues(profile))
     }, [profile, reset])
 
-    // TODO: handle routing when profile is not found
-    if (!profile) return
-
     const onSubmit = async (fields: ManipulatedUserDataInputsDTO) => {
         const payload: ManipulatedUserDataInputsDTO = {
             ...fields,

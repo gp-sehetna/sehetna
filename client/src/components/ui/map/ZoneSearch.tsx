@@ -14,7 +14,7 @@ import centroid from "@turf/centroid"
 import { GeoJSONFeature } from "maplibre-gl"
 import { ChevronLeftIcon, ChevronRightIcon, Search } from "lucide-react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import CountryFlag from "@/hooks/map/CountryFlag"
 import {
     Combobox,
@@ -31,7 +31,35 @@ type ZoneFeature = GeoJSONFeature & {
 
 const PAGE_SIZE = 8
 
-// TODO: Fix problem with all zones not showing after country selection (only a portion of it)
+let zonesPromise: Promise<ZoneFeature[]> | null = null
+
+const getUniqueSortedZones = (features: ZoneFeature[]) => {
+    const uniqueZones = new Map<string, ZoneFeature>()
+
+    for (const feature of features) {
+        const isoA3 = feature.properties?.isoA3
+        const name = feature.properties?.name
+
+        if (!isoA3 || !name || uniqueZones.has(isoA3)) continue
+        uniqueZones.set(isoA3, feature)
+    }
+
+    return [...uniqueZones.values()].sort((a, b) =>
+        a.properties.name.localeCompare(b.properties.name)
+    )
+}
+
+const loadZones = () => {
+    zonesPromise ??= fetch("/geo/countries.geojson")
+        .then((response) => {
+            if (!response.ok) throw new Error("Unable to load country zones")
+            return response.json() as Promise<{ features: ZoneFeature[] }>
+        })
+        .then((geoJson) => getUniqueSortedZones(geoJson.features))
+
+    return zonesPromise
+}
+
 function ZoneSearch() {
     const router = useRouter()
     const params = useParams<MapPageProps["params"]>()
@@ -45,29 +73,33 @@ function ZoneSearch() {
 
     const [query, setQuery] = useState("")
     const [requestedPage, setRequestedPage] = useState(0)
+    const [zones, setZones] = useState<ZoneFeature[]>([])
 
     const activeSlug = parseSlug(params.slug)
 
-    const zones = useMemo(() => {
-        if (!map) return []
+    useEffect(() => {
+        let isMounted = true
 
-        const uniqueZones = new Map<string, ZoneFeature>()
+        loadZones()
+            .then((loadedZones) => {
+                if (isMounted) setZones(loadedZones)
+            })
+            .catch(() => {
+                if (isMounted && map) {
+                    setZones(
+                        getUniqueSortedZones(
+                            map.querySourceFeatures(COUNTRIES_SOURCE) as ZoneFeature[]
+                        )
+                    )
+                }
+            })
 
-        for (const feature of map.querySourceFeatures(COUNTRIES_SOURCE) as ZoneFeature[]) {
-            const isoA3 = feature.properties?.isoA3
-            const name = feature.properties?.name
-
-            if (!isoA3 || !name || uniqueZones.has(isoA3)) continue
-            uniqueZones.set(isoA3, feature)
+        return () => {
+            isMounted = false
         }
-
-        return [...uniqueZones.values()].sort((a, b) =>
-            a.properties.name.localeCompare(b.properties.name)
-        )
     }, [map])
 
     const filteredZones = useMemo(() => {
-        console.log(query)
         const normalizedQuery = query.trim().toLowerCase()
 
         if (!normalizedQuery) return zones

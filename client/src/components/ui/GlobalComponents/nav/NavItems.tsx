@@ -1,5 +1,3 @@
-"use client"
-
 import Link from "next/link"
 import {
     NavigationMenu,
@@ -13,20 +11,13 @@ import {
 import Divider from "../../GlobalControls/Divider"
 import { ArrowUpRight } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { groupedNavItems } from "../nav/navigation-items"
 
-export type NavItemsProps = {
-    navigationItems: {
-        [group: string]: {
-            title: string
-            href: string
-        }[]
-    }
-}
-export default function NavItems({ navigationItems }: NavItemsProps) {
+export default function NavItems() {
     return (
         <NavigationMenu className="hidden md:flex">
             <NavigationMenuList>
-                {Object.entries(navigationItems).map(([group, items]) => (
+                {Object.entries(groupedNavItems).map(([group, items]) => (
                     <NavigationMenuItem key={group}>
                         <NavigationMenuTrigger>{group}</NavigationMenuTrigger>
                         <NavigationMenuContent className="relative flex flex-col">

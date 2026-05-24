@@ -9,11 +9,18 @@ import Link from "next/link"
 type LogInPageProps = {
     searchParams?: Promise<{
         error?: string
+        dst?: string
     }>
 }
 
 const LogInPage = async ({ searchParams }: LogInPageProps) => {
-    const errorMessage = (await searchParams)?.error
+    const params = await searchParams
+    const errorMessage = params?.error
+    const dst = params?.dst
+    const loginRawHref = dst
+        ? `/authenticate/login/raw?dst=${encodeURIComponent(dst)}`
+        : "/authenticate/login/raw"
+    const signupHref = dst ? `/authenticate/signup?dst=${encodeURIComponent(dst)}` : "signup"
 
     return (
         <>
@@ -31,13 +38,13 @@ const LogInPage = async ({ searchParams }: LogInPageProps) => {
                     <SignInWithGoogle />
                     <Divider>OR</Divider>
                     <WideButton asChild size="lg" variant="gradient">
-                        <Link href="/authenticate/login/raw">Sign in with email address</Link>
+                        <Link href={loginRawHref}>Sign in with email address</Link>
                     </WideButton>
                 </Flex>
                 <Flex direction="col" gap={4}>
                     <p className="text-xs">Don&apos;t have an account?</p>
                     <WideButton asChild size="lg" variant="outline">
-                        <Link href="signup">
+                        <Link href={signupHref}>
                             <LogIn />
                             Sign Up
                         </Link>

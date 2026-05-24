@@ -6,7 +6,7 @@ import Flex from "@/components/ui/Flex"
 import { ConfirmPasswordInputsDTO } from "@/features/auth/auth.dto"
 import { AuthClientService } from "@/features/auth/auth.service.client"
 import { ConfirmPasswordSchema } from "@/features/auth/auth.validation"
-import { toLast } from "@/lib/auth/navigation"
+import { navigateToLastRoute } from "@/lib/auth/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LockIcon } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -25,8 +25,7 @@ const NewPasswordPage = () => {
 
     const onSubmit = async ({ password }: ConfirmPasswordInputsDTO) => {
         await authService.updatePassword({ password })
-
-        toLast(router, params)
+        navigateToLastRoute(router, params)
     }
 
     return (
