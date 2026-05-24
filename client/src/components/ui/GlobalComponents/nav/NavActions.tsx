@@ -3,11 +3,9 @@ import { cn } from "@/lib/utils"
 import { useUserStore } from "@/stores/user/use-user"
 import Link from "next/link"
 import { ProfilePictureAvatar } from "../../GlobalControls/AvatarMenu"
-// import { getServerSession } from "next-auth"
 
 export default function NavActions({ isScrolled }: { isScrolled?: boolean }) {
     const { user } = useUserStore()
-    // const session = await getServerSession()
     if (user) return <ProfilePictureAvatar name={user.fullName} />
 
     return (

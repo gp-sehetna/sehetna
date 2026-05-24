@@ -5,11 +5,12 @@ import {
 } from "@/features/auth/auth.dto"
 import { OTPService } from "@/features/otp/otp.service"
 import { createTokens } from "@/lib/auth/token"
+import { ProviderEnum } from "@/shared/db/enums/auth.enum"
 import { IUser } from "@/shared/db/model/user.model"
 import { OtpRepository } from "@/shared/db/repository/otp.repository"
 import { UserRepository } from "@/shared/db/repository/user.repository"
 import { EmailService } from "@/shared/email/email.service"
-import { UserNotFoundException, ValidationException } from "@/shared/http/errors"
+import { ConflictException, UserNotFoundException, ValidationException } from "@/shared/http/errors"
 import { compare, hash } from "bcrypt"
 import { HydratedDocument } from "mongoose"
 import { Profile } from "next-auth"
@@ -78,24 +79,93 @@ export class AuthService extends OTPService {
 
     signup = async ({ firstName, lastName, password }: PasswordAndNameInputsDTO, otpId: string) => {
         const email = await this.getEmailByOtpId(otpId)
+        const existingUser = await this.userRepository.findByEmail(email)
+        if (existingUser) throw new ConflictException("Email already exists")
+
         const hashedPassword = await hash(password, 10)
-        const user = { firstName, lastName, email, password: hashedPassword }
+        const user = {
+            firstName,
+            lastName,
+            email,
+            password: hashedPassword,
+            provider: ProviderEnum.SYSTEM,
+        }
         const createdUser = await this.userRepository.create(user)
         this.emailService.sendWelcome(email)
 
         return createdUser
     }
 
-    addUserIfNotExists = async (profile: Profile) => {
-        const createdUser = await this.userRepository.upsert(profile)
-        // this.emailService.sendWelcome(profile.email)
+    loginWithGoogle = async (profile: Profile) => {
+        const email = profile.email
+        if (!email) throw new ValidationException("Google profile email is missing")
 
-        return createdUser
+        const existingUser = await this.userRepository.findByEmail(email)
+
+        if (existingUser) {
+            if (existingUser.provider !== ProviderEnum.GOOGLE) {
+                throw new ConflictException(
+                    "The email is already registered. Please sign in with your credentials or use another email for Google sign-in."
+                )
+            }
+
+            const safeUser = this._extractSafeUser(existingUser)
+            return {
+                user: safeUser,
+                tokens: await createTokens(existingUser._id.toString(), existingUser.role),
+            }
+        }
+
+        const user = this._mapGoogleProfileToUser({ ...profile, email })
+        const createdUser = await this.userRepository.create(user)
+        this.emailService.sendWelcome(user.email)
+
+        const safeUser = this._extractSafeUser(createdUser)
+        return {
+            user: safeUser,
+            tokens: await createTokens(createdUser._id.toString(), createdUser.role),
+        }
+    }
+
+    private _mapGoogleProfileToUser = (
+        profile: Profile & { email: string }
+    ): Pick<IUser, "firstName" | "lastName" | "email" | "provider"> => {
+        const googleProfile = profile as Profile & {
+            given_name?: string
+            family_name?: string
+        }
+        const [fallbackFirstName, ...fallbackLastNameParts] = (profile.name || "")
+            .trim()
+            .split(/\s+/)
+        const emailName = profile.email?.split("@")[0] || ""
+        const firstName = this._normalizeGoogleName(
+            googleProfile.given_name || fallbackFirstName || emailName,
+            "Google"
+        )
+        const lastName = this._normalizeGoogleName(
+            googleProfile.family_name || fallbackLastNameParts.join(" "),
+            "User"
+        )
+
+        return {
+            firstName,
+            lastName,
+            email: profile.email,
+            provider: ProviderEnum.GOOGLE,
+        }
+    }
+
+    private _normalizeGoogleName = (name: string | undefined, fallback: string) => {
+        const normalized = name?.trim()
+        return normalized && normalized.length >= 2 ? normalized : fallback
     }
 
     getUserAndComparePassword = async (email: string, password: string) => {
         const user = await this.userRepository.findByEmail(email)
         if (!user) throw new UserNotFoundException()
+        if (user.provider !== ProviderEnum.SYSTEM || !user.password) {
+            throw new ValidationException("Please sign in with Google for this email")
+        }
         const isPasswordValid = await compare(password, user.password)
         return [user, isPasswordValid] as const
     }
@@ -115,6 +185,8 @@ export class AuthService extends OTPService {
     checkOldPassword = async (userId: string, password: string) => {
         const user = await this.userRepository.findById(userId)
         if (!user) throw new UserNotFoundException()
+        if (!user.password)
+            throw new ValidationException("Please sign in with Google for this email")
         return compare(password, user.password)
     }
 }

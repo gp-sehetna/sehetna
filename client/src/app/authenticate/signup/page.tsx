@@ -1,6 +1,6 @@
 import BaseAuthentication from "@/components/ui/Authentication/BaseAuthentication"
-import GoogleIcon from "@/components/ui/Authentication/Globals/GoogleIcon"
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
+import SignInWithGoogle from "@/components/ui/Authentication/SignInWithGoogle"
 import Flex from "@/components/ui/Flex"
 import { policiesItems } from "@/components/ui/GlobalComponents/nav/navigation-items"
 import AppLink from "@/components/ui/GlobalControls/AppLink"
@@ -17,10 +17,7 @@ const SignUpPage = () => {
                 subtitle={<h2 className="text-primary">Sign Up to Sehetna</h2>}
             >
                 <Flex direction="col" gap={4}>
-                    <WideButton size={btnSize} variant="outline">
-                        <GoogleIcon />
-                        Sign up with Google
-                    </WideButton>
+                    <SignInWithGoogle />
                     <Divider>OR</Divider>
                     <Flex direction="col" gap={2}>
                         <WideButton asChild size={btnSize} variant="gradient">

@@ -10,7 +10,12 @@ const userSchema = new Schema(
         firstName: { type: String, required: true, minLength, maxLength },
         lastName: { type: String, required: true, minLength, maxLength },
         email: { type: String, required: true, unique: true },
-        password: { type: String, required: true },
+        password: {
+            type: String,
+            required: function (this: { provider?: ProviderEnum }) {
+                return this.provider === ProviderEnum.SYSTEM
+            },
+        },
         provider: { type: String, enum: ProviderEnum, default: ProviderEnum.SYSTEM },
         gender: { type: String, enum: GenderEnum, default: GenderEnum.Male },
         role: { type: String, enum: RoleEnum, default: RoleEnum.user },

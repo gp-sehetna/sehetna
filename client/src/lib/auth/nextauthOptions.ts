@@ -1,5 +1,8 @@
 import { EXPIRE } from "@/lib/auth/token"
+import { Cookies } from "@/lib/auth/cookies"
 import { MainService } from "@/shared/db/main.service"
+import { ApplicationException } from "@/shared/http/errors"
+import { cookies } from "next/headers"
 import { NextAuthOptions } from "next-auth"
 
 import GoogleProvider from "next-auth/providers/google"
@@ -15,19 +18,39 @@ export const authOptions: NextAuthOptions = {
         strategy: "jwt",
         maxAge: EXPIRE.refresh,
     },
-    // jwt: {
-    // Can handle encryption and decryption of the JWT here if needed
-    // },
+    pages: {
+        signIn: "/authenticate/login",
+        error: "/authenticate/login",
+    },
     callbacks: {
-        async signIn({ account: _, profile }) {
-            if (!profile?.email) {
-                throw new Error("No profile")
-            }
-            // Add user to database if not exist using mainService
-            const mainService = await MainService.getInstance()
+        async signIn({ profile }) {
+            try {
+                if (!profile?.email) {
+                    return "/authenticate/login?error=Google profile email is missing"
+                }
 
-            await mainService.authService.addUserIfNotExists(profile)
-            return true
+                const mainService = await MainService.getInstance()
+                const { tokens } = await mainService.authService.loginWithGoogle(profile)
+                const cookieStore = await cookies()
+
+                cookieStore.set(
+                    "access_token",
+                    tokens.accessToken,
+                    Cookies.createSecure(EXPIRE.access)
+                )
+                cookieStore.set(
+                    "refresh_token",
+                    tokens.refreshToken,
+                    Cookies.createSecure(EXPIRE.refresh)
+                )
+                return true
+            } catch (error) {
+                if (error instanceof ApplicationException) {
+                    return `/authenticate/login?error=${encodeURIComponent(error.message)}`
+                }
+
+                throw error
+            }
         },
     },
 }

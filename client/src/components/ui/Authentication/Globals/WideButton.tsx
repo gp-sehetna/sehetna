@@ -14,8 +14,9 @@ type WideButtonProps = {
 export default function WideButton({
     variant = "default",
     size,
-    asChild,
+    asChild = false,
     children,
+    ...props
 }: WideButtonProps) {
     return (
         <Button
@@ -25,6 +26,7 @@ export default function WideButton({
             className={cn(
                 "base-transition box-border flex w-full cursor-pointer items-center justify-center rounded-full py-3 font-light"
             )}
+            {...props}
         >
             {children}
         </Button>

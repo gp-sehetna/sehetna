@@ -33,7 +33,6 @@ export const ProfilePictureAvatar = ({ name }: { name: string }) => {
     }
     return (
         <DropdownMenu>
-            {/* asChild is important here so the DropdownMenuTrigger doesn't wrap your Avatar in an extra <button> tag */}
             <DropdownMenuTrigger asChild>
                 <Avatar className="base-transition cursor-pointer hover:scale-106">
                     <AvatarFallback
