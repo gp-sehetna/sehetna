@@ -13,7 +13,6 @@ import { EmailService } from "@/shared/email/email.service"
 import { ConflictException, UserNotFoundException, ValidationException } from "@/shared/http/errors"
 import { compare, hash } from "bcrypt"
 import { HydratedDocument } from "mongoose"
-import { Profile } from "next-auth"
 import { NextRequest, userAgent } from "next/server"
 
 export class AuthService extends OTPService {
@@ -94,70 +93,6 @@ export class AuthService extends OTPService {
         this.emailService.sendWelcome(email)
 
         return createdUser
-    }
-
-    loginWithGoogle = async (profile: Profile) => {
-        const email = profile.email
-        if (!email) throw new ValidationException("Google profile email is missing")
-
-        const existingUser = await this.userRepository.findByEmail(email)
-
-        if (existingUser) {
-            if (existingUser.provider !== ProviderEnum.GOOGLE) {
-                throw new ConflictException(
-                    "The email is already registered. Please sign in with your credentials or use another email for Google sign-in."
-                )
-            }
-
-            const safeUser = this._extractSafeUser(existingUser)
-            return {
-                user: safeUser,
-                tokens: await createTokens(existingUser._id.toString(), existingUser.role),
-            }
-        }
-
-        const user = this._mapGoogleProfileToUser({ ...profile, email })
-        const createdUser = await this.userRepository.create(user)
-        this.emailService.sendWelcome(user.email)
-
-        const safeUser = this._extractSafeUser(createdUser)
-        return {
-            user: safeUser,
-            tokens: await createTokens(createdUser._id.toString(), createdUser.role),
-        }
-    }
-
-    private _mapGoogleProfileToUser = (
-        profile: Profile & { email: string }
-    ): Pick<IUser, "firstName" | "lastName" | "email" | "provider"> => {
-        const googleProfile = profile as Profile & {
-            given_name?: string
-            family_name?: string
-        }
-        const [fallbackFirstName, ...fallbackLastNameParts] = (profile.name || "")
-            .trim()
-            .split(/\s+/)
-        const emailName = profile.email?.split("@")[0] || ""
-        const firstName = this._normalizeGoogleName(
-            googleProfile.given_name || fallbackFirstName || emailName,
-            "Google"
-        )
-        const lastName = this._normalizeGoogleName(
-            googleProfile.family_name || fallbackLastNameParts.join(" "),
-            "User"
-        )
-
-        return {
-            firstName,
-            lastName,
-            email: profile.email,
-            provider: ProviderEnum.GOOGLE,
-        }
-    }
-
-    private _normalizeGoogleName = (name: string | undefined, fallback: string) => {
-        const normalized = name?.trim()
-        return normalized && normalized.length >= 2 ? normalized : fallback
     }
 
     getUserAndComparePassword = async (email: string, password: string) => {

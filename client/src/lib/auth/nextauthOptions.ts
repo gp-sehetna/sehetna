@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
                 }
 
                 const mainService = await MainService.getInstance()
-                const { tokens } = await mainService.authService.loginWithGoogle(profile)
+                const { tokens } = await mainService.googleAuthService.login(profile)
                 const cookieStore = await cookies()
 
                 cookieStore.set(

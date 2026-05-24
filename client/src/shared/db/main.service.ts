@@ -1,5 +1,6 @@
 import { AiModelService } from "@/features/aimodels/aimodels.service"
 import { AuthService } from "@/features/auth/auth.service"
+import { GoogleAuthService } from "@/features/auth/google-auth.service"
 import { DataStoreService } from "@/features/datastores/datastore.service"
 import { EngagementsService } from "@/features/engagements/engagements.service"
 import { PredictionService } from "@/features/environment/prediction/prediction.service"
@@ -30,16 +31,18 @@ export class MainService {
     private static instance: MainService | null = null
     private static initialized = false
     private emailService = new EmailService()
+    private userRepository = new UserRepository(UserModel)
 
     private aiModelRepository = new AiModelRepository(AiModelModel)
     private locationRepository = new LocationRepository(LocationModel)
     private predictionRepository = new PredictionRepository(PredictionModel)
 
     public readonly authService = new AuthService(
-        new UserRepository(UserModel),
+        this.userRepository,
         new OtpRepository(OtpModel),
         this.emailService
     )
+    public readonly googleAuthService = new GoogleAuthService(this.userRepository, this.emailService)
     public readonly weekService = new WeekService()
     public readonly engagementService = new EngagementsService(
         new EngagementRepository(EngagementModel),
