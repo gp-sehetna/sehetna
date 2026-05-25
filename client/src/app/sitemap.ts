@@ -2,12 +2,11 @@
 import { staticRoutes } from "@/lib/proxies/routes"
 import { slugify } from "@/lib/utils"
 import { HEALTH_OUTCOMES_WITH_HYPHEN } from "@/shared/config/health-outcomes"
+import BASE_URL from "@/shared/http/base-url"
 import fs from "fs"
 import { GeoJSONFeature } from "maplibre-gl"
 import type { MetadataRoute } from "next"
 import path from "path"
-
-const BASE_URL = "https://sehetna.from-masr.com"
 
 const USE_CASES = [
     "health-monitoring",

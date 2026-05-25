@@ -3,9 +3,10 @@ import { Toaster } from "@/components/ui/shadcn/sonner"
 import { plusJakarta } from "@/fonts/fonts"
 import type { Metadata } from "next"
 import Providers from "@/lib/providers"
+import BASE_URL from "@/shared/http/base-url"
 
 export const metadata: Metadata = {
-    metadataBase: new URL("https://sehetna.from-masr.com"),
+    metadataBase: new URL(BASE_URL),
     title: {
         default: "Sehetna · AI-Powered Public Health Analytics Platform",
         template: "%s · Sehetna",
@@ -46,7 +47,7 @@ export const metadata: Metadata = {
         "From Masr",
     ],
     authors: [
-        { name: "Sehetna Project Team", url: "https://sehetna.from-masr.com" },
+        { name: "Sehetna Project Team", url: BASE_URL },
         {
             name: "Ain Shams University · Faculty of Computer & Information Sciences",
             url: "https://cis.asu.edu.eg",
@@ -74,7 +75,7 @@ export const metadata: Metadata = {
     },
     category: "Healthcare Technology",
     alternates: {
-        canonical: "https://sehetna.from-masr.com",
+        canonical: BASE_URL,
     },
 }
 
