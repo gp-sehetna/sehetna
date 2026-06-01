@@ -22,7 +22,7 @@ import { ProfilePictureAvatar } from "../../GlobalControls/AvatarMenu"
 const CompactSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
     return (
         <>
-            <Sidebar collapsible="icon" {...props} className="relative">
+            <Sidebar collapsible="icon" {...props} className="sticky top-0 h-screen"> 
                 <SidebarHeader>
                     <Logo size={32} />
                 </SidebarHeader>
