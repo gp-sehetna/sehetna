@@ -4,6 +4,10 @@ export type UseCasesKey =
     | "cardiovascular"
     | "vector-borne"
     | "water-borne"
+    | "health-monitoring"
+    | "health-preparedness"
+    | "policy-planning"
+    | "research-insights"
 
 export type UseCase = {
     accent: string
@@ -98,6 +102,70 @@ export const useCases: UseCases = {
             { label: "Model AUC", value: "0.90" },
         ],
         users: ["WASH programmes", "Disaster response units", "Municipal water authorities"],
+    },
+    "health-monitoring": {
+        accent: "var(--color-success-300)",
+        accentSoft: "bg-success-100/20 text-success",
+        label: "Disease tracking",
+        title: "Health Monitoring",
+        description:
+            "Real-time surveillance and tracking of disease patterns, health indicators, and population wellness metrics.",
+        heroImage:
+            "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+        metrics: [
+            { label: "Update frequency", value: "Daily" },
+            { label: "Indicators tracked", value: "50+" },
+            { label: "Accuracy", value: "96%" },
+        ],
+        users: ["Ministry of Health", "Disease surveillance units", "Public health agencies"],
+    },
+    "health-preparedness": {
+        accent: "var(--color-danger-200)",
+        accentSoft: "bg-danger-100/10 text-danger-200",
+        label: "Emergency readiness",
+        title: "Health Preparedness",
+        description:
+            "Strategic planning and resource allocation for epidemic preparedness and emergency response capacity.",
+        heroImage:
+            "https://images.unsplash.com/photo-1584515933487-779824d29309?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+        metrics: [
+            { label: "Response time", value: "< 24hrs" },
+            { label: "Coverage", value: "100%" },
+            { label: "Readiness score", value: "94%" },
+        ],
+        users: ["Emergency management", "Hospital networks", "Public health authorities"],
+    },
+    "policy-planning": {
+        accent: "var(--color-primary)",
+        accentSoft: "bg-primary-100/30 text-primary",
+        label: "Strategy & planning",
+        title: "Policy Planning",
+        description:
+            "Evidence-based policy recommendations and long-term health system strengthening strategies.",
+        heroImage:
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+        metrics: [
+            { label: "Stakeholders", value: "12+" },
+            { label: "Evidence base", value: "Multi-modal" },
+            { label: "Impact", value: "High" },
+        ],
+        users: ["Policy makers", "Ministries", "Government agencies"],
+    },
+    "research-insights": {
+        accent: "var(--color-secondary-300)",
+        accentSoft: "bg-secondary-100/40 text-secondary-300",
+        label: "Scientific research",
+        title: "Research Insights",
+        description:
+            "Advanced analytics and scientific insights supporting research institutions and evidence generation.",
+        heroImage:
+            "https://images.unsplash.com/photo-1532094349884-543bc11b234d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+        metrics: [
+            { label: "Publications", value: "25+" },
+            { label: "Datasets", value: "15+" },
+            { label: "Research areas", value: "8" },
+        ],
+        users: ["Universities", "Research labs", "Academic institutions"],
     },
 }
 
@@ -291,6 +359,150 @@ export const extendedUseCases: ExtendedUseCases = {
             "Estimate contamination transfer risk",
             "Overlay WASH and sanitation access",
             "Flag high-risk catchments",
+        ],
+    },
+    "health-monitoring": {
+        overview:
+            "Comprehensive real-time surveillance system that integrates multiple data sources to provide continuous health monitoring and early detection of disease patterns and health crises.",
+        drivers: [
+            { label: "Syndromic surveillance data", weight: 28 },
+            { label: "Laboratory confirmations", weight: 24 },
+            { label: "Hospital admission rates", weight: 22 },
+            { label: "Population density factors", weight: 16 },
+        ],
+        outputs: [
+            "Daily disease incidence dashboard",
+            "Emerging outbreak alerts",
+            "Geographic risk hotspots",
+            "Trend analysis reports",
+        ],
+        institutionStory: {
+            institution: "Ministry of Health - Disease Surveillance Division",
+            region: "National Level, Multi-region Coverage",
+            outcome:
+                "Real-time monitoring enabled rapid detection of 3 potential outbreaks, reducing response time by 60% and preventing estimated 2,000+ cases.",
+        },
+        chartData: [
+            { month: "Jan", risk: 15, observed: 14 },
+            { month: "Feb", risk: 18, observed: 17 },
+            { month: "Mar", risk: 22, observed: 21 },
+            { month: "Apr", risk: 28, observed: 29 },
+            { month: "May", risk: 35, observed: 36 },
+            { month: "Jun", risk: 32, observed: 31 },
+        ],
+        pipeline: [
+            "Integrate syndromic surveillance feeds",
+            "Aggregate laboratory test results",
+            "Correlate hospital admission data",
+            "Generate real-time dashboards",
+        ],
+    },
+    "health-preparedness": {
+        overview:
+            "Strategic capacity building and resource optimization framework designed to enhance health system readiness for epidemic response and emergency situations.",
+        drivers: [
+            { label: "Healthcare facility capacity", weight: 26 },
+            { label: "Supply chain readiness", weight: 24 },
+            { label: "Healthcare worker availability", weight: 24 },
+            { label: "Infrastructure resilience", weight: 16 },
+        ],
+        outputs: [
+            "Readiness assessment scores",
+            "Resource gap analysis",
+            "Capacity forecasts",
+            "Priority intervention lists",
+        ],
+        institutionStory: {
+            institution: "Regional Hospital Network & Emergency Services",
+            region: "3 Governorates, 45 Health Facilities",
+            outcome:
+                "Preparedness planning improved response capacity by 85% and reduced equipment shortages by 72% during surge events.",
+        },
+        chartData: [
+            { month: "Jan", risk: 65, observed: 68 },
+            { month: "Feb", risk: 70, observed: 72 },
+            { month: "Mar", risk: 75, observed: 78 },
+            { month: "Apr", risk: 82, observed: 85 },
+            { month: "May", risk: 88, observed: 90 },
+            { month: "Jun", risk: 92, observed: 94 },
+        ],
+        pipeline: [
+            "Assess health facility capacity",
+            "Evaluate supply chain status",
+            "Analyze workforce distribution",
+            "Generate readiness scores",
+        ],
+    },
+    "policy-planning": {
+        overview:
+            "Data-driven policy development framework that synthesizes evidence from multiple sources to inform health system strengthening, resource allocation, and strategic health policy.",
+        drivers: [
+            { label: "Disease burden analysis", weight: 26 },
+            { label: "Cost-effectiveness studies", weight: 22 },
+            { label: "Implementation evidence", weight: 24 },
+            { label: "Stakeholder input", weight: 18 },
+        ],
+        outputs: [
+            "Policy briefing documents",
+            "Strategic plans",
+            "Budget allocation guides",
+            "Implementation roadmaps",
+        ],
+        institutionStory: {
+            institution: "National Health Policy Division",
+            region: "Government of Egypt - Multi-sector",
+            outcome:
+                "Evidence-based policies improved health service efficiency by 45% and increased budget allocation to high-impact interventions.",
+        },
+        chartData: [
+            { month: "Jan", risk: 35, observed: 38 },
+            { month: "Feb", risk: 42, observed: 44 },
+            { month: "Mar", risk: 48, observed: 50 },
+            { month: "Apr", risk: 56, observed: 58 },
+            { month: "May", risk: 64, observed: 65 },
+            { month: "Jun", risk: 72, observed: 74 },
+        ],
+        pipeline: [
+            "Collect evidence from multiple sources",
+            "Conduct stakeholder consultations",
+            "Analyze policy options",
+            "Generate recommendations",
+        ],
+    },
+    "research-insights": {
+        overview:
+            "Advanced research platform providing scientists, universities, and research institutions with integrated datasets, analytical tools, and evidence synthesis for health research.",
+        drivers: [
+            { label: "Multi-modal datasets", weight: 28 },
+            { label: "Advanced analytics", weight: 24 },
+            { label: "Publication impact", weight: 22 },
+            { label: "Research collaboration", weight: 16 },
+        ],
+        outputs: [
+            "Research datasets",
+            "Analysis notebooks",
+            "Publication support",
+            "Collaboration network",
+        ],
+        institutionStory: {
+            institution: "Universities & Research Institutes Network",
+            region: "Multi-country, 8 Research Institutions",
+            outcome:
+                "Research platform enabled 25+ peer-reviewed publications and supported 18 doctoral research projects on climate-health relationships.",
+        },
+        chartData: [
+            { month: "Jan", risk: 8, observed: 6 },
+            { month: "Feb", risk: 12, observed: 10 },
+            { month: "Mar", risk: 16, observed: 14 },
+            { month: "Apr", risk: 22, observed: 20 },
+            { month: "May", risk: 28, observed: 26 },
+            { month: "Jun", risk: 34, observed: 32 },
+        ],
+        pipeline: [
+            "Prepare integrated research datasets",
+            "Develop analytical notebooks",
+            "Support research projects",
+            "Facilitate collaboration",
         ],
     },
 }
