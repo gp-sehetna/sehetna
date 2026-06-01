@@ -1,17 +1,12 @@
 import { buildSteps } from "@/lib/utils/array"
-import { IHealthOutcomes, mapHealthOutcomes } from "@/shared/config/health-outcomes"
 import { InferSchemaType, Model, Require_id, Schema, model, models } from "mongoose"
 
 const Binary = [0, 1]
 const WeekDaysCount = buildSteps(0, 7, 1)
 
-const HealthOutcomesSchema = new Schema<IHealthOutcomes>(
-    mapHealthOutcomes(() => ({ type: Number, default: null })),
-    { _id: false }
-)
-
 const ObservationSchema = new Schema(
     {
+        prediction_id: { type: Schema.Types.ObjectId, ref: "Prediction" },
         location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
         base_date: { type: Date, required: true },
         climate: {
@@ -29,9 +24,6 @@ const ObservationSchema = new Schema(
             food_security_index: { type: Number, default: 0 },
             gdp_per_capita_usd: { type: Number, default: 0 },
         },
-        targets: { type: HealthOutcomesSchema, required: true },
-
-        data_source_tags: { type: [String], default: [] },
     },
     { timestamps: { createdAt: true } }
 )
@@ -44,7 +36,6 @@ export type IObservation = Require_id<InferSchemaType<typeof ObservationSchema>>
  * - Temporal range with country filter
  */
 ObservationSchema.index({ location_id: 1, base_date: 1 }, { unique: true })
-ObservationSchema.index({ data_source_tags: 1 })
 
 export const ObservationModel: Model<IObservation> =
     models.Observation || model<IObservation>("Observation", ObservationSchema)

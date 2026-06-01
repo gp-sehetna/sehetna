@@ -1,5 +1,7 @@
+import Divider from "@/components/ui/GlobalControls/Divider"
 import DataStoreCardGrid from "../../components/ui/GlobalComponents/CardGrid/DataStoreCardGrid"
 import { Metadata } from "next"
+import ScenariosDataTable from "@/features/scenarios/components/ScenariosDataTable"
 
 export const metadata: Metadata = {
     title: "Data Explorer",
@@ -19,6 +21,9 @@ const DataExplorerPage = () => {
                     Explore available datastore entries, metadata, and time coverage.
                 </p>
             </div>
+            <Divider hideDecorations />
+            <ScenariosDataTable />
+            <Divider hideDecorations />
             <DataStoreCardGrid />
         </section>
     )

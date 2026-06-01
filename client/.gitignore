@@ -24,6 +24,7 @@ web.config
 
 # misc
 .DS_Store
+
 *.pem
 
 # debug
@@ -42,3 +43,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+/sample_output_data/
