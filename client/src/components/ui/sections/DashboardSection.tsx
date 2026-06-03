@@ -23,6 +23,7 @@ import SectionEyebrow from "./SectionEyebrow"
 import SectionShell from "./SectionShell"
 import { fadeUp, homeViewport, staggerDelay } from "./motion"
 import World from "./World"
+import { PrimarySecondaryDecoration } from "../GlobalComponents/extras/BackgroundDecorations"
 
 const forecastData = [
     { week: "1w", heatstroke: 34, respiratory: 81, cardiovascular: 28, vectorBorne: 12 },
@@ -459,14 +460,7 @@ export function DashboardSection() {
     const [activeTab, setActiveTab] = useState("map")
 
     return (
-        <SectionShell
-            decoration={
-                <>
-                    <div className="from-secondary-300/10 pointer-events-none absolute top-0 right-1/4 h-75 w-125 rounded-full bg-linear-to-bl to-transparent blur-3xl" />
-                    <div className="from-primary/20 pointer-events-none absolute bottom-0 left-1/4 h-75 w-100 rounded-full bg-linear-to-tr to-transparent blur-3xl" />
-                </>
-            }
-        >
+        <SectionShell decoration={<PrimarySecondaryDecoration />}>
             <div ref={ref} className="flex flex-col gap-6">
                 <motion.div
                     initial={fadeUp.initial}

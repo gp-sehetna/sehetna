@@ -21,6 +21,7 @@ import {
     SeverityBadge,
 } from "@/features/scenarios/scenario.formatters"
 import type { ScenarioObservation } from "@/features/scenarios/scenario.types"
+import { formatDate } from "@/lib/utils/date"
 import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
 import type { ColumnDef } from "@tanstack/react-table"
 import { FileText, MoreHorizontal, PencilLine, Trash2 } from "lucide-react"
@@ -38,7 +39,9 @@ const healthOutcomeSummary = (row: ScenarioObservation) => {
     const respiratory = formatNumber(row.healthOutcomes.respiratory_disease_rate, "%")
     const cardio = formatNumber(row.healthOutcomes.cardio_mortality_rate, "%")
 
-    return respiratory || cardio ? `${respiratory ?? "N/A"} resp. / ${cardio ?? "N/A"} cardio` : null
+    return respiratory || cardio
+        ? `${respiratory ?? "N/A"} resp. / ${cardio ?? "N/A"} cardio`
+        : null
 }
 
 const createScenarioColumns = ({
@@ -51,11 +54,7 @@ const createScenarioColumns = ({
         accessorKey: "baseDate",
         header: "Base Date",
         cell: ({ row }) =>
-            new Date(row.original.baseDate).toLocaleDateString("en-US", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-            }),
+            formatDate(row.original.baseDate, { day: "2-digit", month: "short", year: "numeric" }),
     },
     {
         accessorKey: "locationName",
@@ -66,7 +65,8 @@ const createScenarioColumns = ({
         accessorFn: (row) => row.climate.temperatureCelsius,
         id: "temperatureCelsius",
         header: "Temperature",
-        cell: ({ row }) => valueOrMissing(formatNumber(row.original.climate.temperatureCelsius, "°C")),
+        cell: ({ row }) =>
+            valueOrMissing(formatNumber(row.original.climate.temperatureCelsius, "°C")),
     },
     {
         accessorFn: (row) => row.climate.precipitationMm,
@@ -84,7 +84,9 @@ const createScenarioColumns = ({
         accessorFn: (row) => row.climate.floodIndicator,
         id: "floodIndicator",
         header: "Flood Indicator",
-        cell: ({ row }) => <SeverityBadge severity={getFloodSeverity(row.original.climate.floodIndicator)} />,
+        cell: ({ row }) => (
+            <SeverityBadge severity={getFloodSeverity(row.original.climate.floodIndicator)} />
+        ),
     },
     {
         accessorFn: (row) => row.airQuality.pm25Ugm3,
@@ -102,24 +104,45 @@ const createScenarioColumns = ({
         accessorFn: (row) => row.socioeconomic.healthcareAccessIndex,
         id: "healthcareAccessIndex",
         header: "Healthcare Access Index",
-        cell: ({ row }) => valueOrMissing(formatNumber(row.original.socioeconomic.healthcareAccessIndex)),
+        cell: ({ row }) =>
+            valueOrMissing(formatNumber(row.original.socioeconomic.healthcareAccessIndex)),
     },
     {
         accessorFn: (row) => row.socioeconomic.foodSecurityIndex,
         id: "foodSecurityIndex",
         header: "Food Security Index",
-        cell: ({ row }) => valueOrMissing(formatNumber(row.original.socioeconomic.foodSecurityIndex)),
+        cell: ({ row }) =>
+            valueOrMissing(formatNumber(row.original.socioeconomic.foodSecurityIndex)),
     },
     {
         accessorFn: (row) => row.socioeconomic.gdpPerCapitaUsd,
         id: "gdpPerCapitaUsd",
         header: "GDP Per Capita",
-        cell: ({ row }) => valueOrMissing(formatCurrency(row.original.socioeconomic.gdpPerCapitaUsd)),
+        cell: ({ row }) =>
+            valueOrMissing(formatCurrency(row.original.socioeconomic.gdpPerCapitaUsd)),
+    },
+    {
+        id: "notes",
+        header: "Notes",
+        enableSorting: false,
+        cell: ({ row }) =>
+            row.original.note ? (
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <FileText className="text-primary size-4" aria-label="Note present" />
+                    </TooltipTrigger>
+                    <TooltipContent>{row.original.note}</TooltipContent>
+                </Tooltip>
+            ) : (
+                missingValue()
+            ),
     },
     {
         id: "healthOutcomes",
         header: "Health Outcomes",
+        enablePinning: true,
         enableSorting: false,
+        size: 220,
         cell: ({ row }) => {
             const summary = healthOutcomeSummary(row.original)
             if (!summary) return missingValue()
@@ -143,26 +166,13 @@ const createScenarioColumns = ({
             )
         },
     },
-    {
-        id: "notes",
-        header: "Notes",
-        enableSorting: false,
-        cell: ({ row }) =>
-            row.original.note ? (
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <FileText className="text-primary size-4" aria-label="Note present" />
-                    </TooltipTrigger>
-                    <TooltipContent>{row.original.note}</TooltipContent>
-                </Tooltip>
-            ) : (
-                missingValue()
-            ),
-    },
+
     {
         id: "actions",
         header: "Actions",
+        enablePinning: true,
         enableSorting: false,
+        size: 72,
         cell: ({ row }) => (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild onClick={(event) => event.stopPropagation()}>

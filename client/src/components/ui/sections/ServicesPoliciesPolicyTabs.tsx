@@ -17,6 +17,7 @@ import { motion } from "motion/react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../shadcn/accordion"
 import SectionShell from "./SectionShell"
 import { easeBehavior, fadeDown, fadeUp } from "./motion"
+import { Button } from "../shadcn/button"
 
 type TabKey = "tos" | "privacy" | "cookies"
 
@@ -350,19 +351,19 @@ export default function ServicesPoliciesPolicyTabs() {
 
     return (
         <SectionShell
-            className="from-primary-50 to-earth-100/5 bg-linear-to-br py-12 pb-0 lg:py-12"
-            containerClassName="max-w-4xl gap-8 lg:px-8"
+            className="from-primary-50 to-earth-100/5 bg-linear-to-br"
+            containerClassName="max-w-5xl"
         >
-            <motion.div {...fadeDown} className="bg-earth-300/15 flex gap-2 rounded-2xl p-1.5">
+            <motion.div {...fadeDown} className="bg-earth-300/10 flex gap-2 rounded-2xl p-1.5">
                 {tabs.map((tab) => {
                     const Icon = tab.icon
                     const active = activeTab === tab.key
 
                     return (
-                        <button
+                        <Button
                             key={tab.key}
-                            type="button"
                             onClick={() => setActiveTab(tab.key)}
+                            variant="text"
                             className={
                                 active
                                     ? "bg-background text-neutral-1000 flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium shadow-md shadow-black/5"
@@ -376,7 +377,7 @@ export default function ServicesPoliciesPolicyTabs() {
                             />
                             <span className="hidden sm:inline">{tab.label}</span>
                             <span className="sm:hidden">{tab.shortLabel}</span>
-                        </button>
+                        </Button>
                     )
                 })}
             </motion.div>

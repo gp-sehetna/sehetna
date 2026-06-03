@@ -8,6 +8,7 @@ import { useCounter } from "@/hooks/use-counter"
 import SectionEyebrow from "./SectionEyebrow"
 import SectionShell from "./SectionShell"
 import { fadeUp, slideInLeft, slideInRight, staggerDelay } from "./motion"
+import { PrimarySecondaryDecoration } from "../GlobalComponents/extras/BackgroundDecorations"
 
 type StatElement = {
     icon: LucideIcon
@@ -91,15 +92,7 @@ export function ProblemContext() {
     const inView = useInView(ref, { once: true, margin: "-80px" })
 
     return (
-        <SectionShell
-            texture="dots"
-            decoration={
-                <>
-                    <div className="from-primary/10 via-earth-300/10 pointer-events-none absolute top-0 right-0 h-150 w-150 rounded-full bg-linear-to-bl to-transparent blur-3xl" />
-                    <div className="from-secondary/12 via-success/10 pointer-events-none absolute bottom-0 left-0 h-125 w-125 rounded-full bg-linear-to-tr to-transparent blur-3xl" />
-                </>
-            }
-        >
+        <SectionShell texture="dots" decoration={<PrimarySecondaryDecoration />}>
             <div ref={ref} className="flex flex-col gap-12">
                 <motion.div
                     initial={fadeUp.initial}

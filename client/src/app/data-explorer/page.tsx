@@ -1,7 +1,9 @@
 import Divider from "@/components/ui/GlobalControls/Divider"
-import DataStoreCardGrid from "../../components/ui/GlobalComponents/CardGrid/DataStoreCardGrid"
+// import DataStoreCardGrid from "../../components/ui/GlobalComponents/CardGrid/DataStoreCardGrid"
 import { Metadata } from "next"
 import ScenariosDataTable from "@/features/scenarios/components/ScenariosDataTable"
+import Image from "next/image"
+import DataExplorerCrumb from "@/components/ui/GlobalComponents/Breadcrumbs/DataExplorerCrumb"
 
 export const metadata: Metadata = {
     title: "Data Explorer",
@@ -14,17 +16,24 @@ export const metadata: Metadata = {
 
 const DataExplorerPage = () => {
     return (
-        <section className="flex w-full flex-col gap-4 p-8">
-            <div className="space-y-2">
-                <h2 className="font-semibold">Data Explorer</h2>
-                <p className="text-muted-foreground">
-                    Explore available datastore entries, metadata, and time coverage.
-                </p>
+        <section className="flex min-w-0 flex-1 flex-col">
+            <div className="flex items-center justify-between p-6">
+                <div className="space-y-2">
+                    <h4 className="font-semibold">Data Explorer</h4>
+                    <p className="text-muted-foreground text-sm">
+                        Explore available datastore entries, metadata, and time coverage.
+                    </p>
+                </div>
+                <div>
+                    <Image src="/images/cubes.svg" alt="Cubes" width={75} height={75} />
+                </div>
             </div>
             <Divider hideDecorations />
-            <ScenariosDataTable />
-            <Divider hideDecorations />
-            <DataStoreCardGrid />
+            <div className="flex flex-col gap-6 px-6 py-4">
+                <DataExplorerCrumb />
+                <ScenariosDataTable />
+                {/* <DataStoreCardGrid /> */}
+            </div>
         </section>
     )
 }

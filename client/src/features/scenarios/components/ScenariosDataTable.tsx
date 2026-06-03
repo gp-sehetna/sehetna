@@ -1,5 +1,5 @@
 "use client"
-
+import { ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/shadcn/button"
 import {
     Dialog,
@@ -43,19 +43,22 @@ import type {
     ScenarioObservationSortBy,
 } from "@/features/scenarios/scenario.types"
 import { createScenarioColumns } from "@/features/scenarios/components/scenarioColumns"
+import { cn } from "@/lib/utils"
 import { useUserStore } from "@/stores/user/use-user"
 import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
 import { RoleEnum } from "@/shared/db/enums/auth.enum"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
+    type Column,
     flexRender,
     getCoreRowModel,
     type SortingState,
     useReactTable,
 } from "@tanstack/react-table"
 import { format } from "date-fns"
-import { ArrowDown, ArrowUp, ChevronsLeft, ChevronsRight, Download, RotateCcw } from "lucide-react"
+import { ArrowDown, ArrowUp, Download, RotateCcw } from "lucide-react"
 import Link from "next/link"
+import type { CSSProperties } from "react"
 import type { ReactNode } from "react"
 import { useCallback, useMemo, useState } from "react"
 import { toast } from "sonner"
@@ -88,6 +91,26 @@ const downloadCsv = (csv: string, filename: string) => {
     URL.revokeObjectURL(url)
 }
 
+const getPinnedColumnStyles = (column: Column<ScenarioObservation>): CSSProperties => {
+    const isPinned = column.getIsPinned()
+
+    if (!isPinned) return {}
+    return {
+        left: isPinned === "left" ? `${column.getStart("left")}px` : undefined,
+        right: isPinned === "right" ? `${column.getAfter("right")}px` : undefined,
+        position: "sticky",
+        width: column.getSize(),
+        zIndex: 20,
+    }
+}
+
+const getPinnedColumnClassName = (column: Column<ScenarioObservation>) =>
+    cn(
+        column.getIsPinned() && "bg-background",
+        column.getIsPinned() === "left" && column.getIsLastColumn("left") && "border-r",
+        column.getIsPinned() === "right" && column.getIsFirstColumn("right") && "border-l"
+    )
+
 const DetailRow = ({ label, value }: { label: string; value: ReactNode }) => (
     <div className="flex items-center justify-between gap-4 border-b py-2 text-sm last:border-b-0">
         <dt className="text-muted-foreground">{label}</dt>
@@ -95,13 +118,7 @@ const DetailRow = ({ label, value }: { label: string; value: ReactNode }) => (
     </div>
 )
 
-const DetailSection = ({
-    children,
-    title,
-}: {
-    children: ReactNode
-    title: string
-}) => (
+const DetailSection = ({ children, title }: { children: ReactNode; title: string }) => (
     <section>
         <h3 className="mb-2 text-sm font-semibold">{title}</h3>
         <dl className="rounded-lg border px-3">{children}</dl>
@@ -129,48 +146,80 @@ const ScenarioDetailsDialog = ({
                 <div className="grid gap-4 md:grid-cols-2">
                     <DetailSection title="General">
                         <DetailRow label="Date" value={formatScenarioDate(observation.baseDate)} />
-                        <DetailRow label="Location" value={observation.locationName || missingValue("Unknown")} />
+                        <DetailRow
+                            label="Location"
+                            value={observation.locationName || missingValue("Unknown")}
+                        />
                     </DetailSection>
                     <DetailSection title="Climate">
                         <DetailRow
                             label="Temperature"
-                            value={formatNumber(observation.climate.temperatureCelsius, "°C") ?? missingValue()}
+                            value={
+                                formatNumber(observation.climate.temperatureCelsius, "°C") ??
+                                missingValue()
+                            }
                         />
                         <DetailRow
                             label="Precipitation"
-                            value={formatNumber(observation.climate.precipitationMm, "mm") ?? missingValue()}
+                            value={
+                                formatNumber(observation.climate.precipitationMm, "mm") ??
+                                missingValue()
+                            }
                         />
                         <DetailRow
                             label="Heat Wave Days"
-                            value={formatInteger(observation.climate.heatWaveDays, "days") ?? missingValue()}
+                            value={
+                                formatInteger(observation.climate.heatWaveDays, "days") ??
+                                missingValue()
+                            }
                         />
                         <DetailRow
                             label="Flood Indicator"
-                            value={<SeverityBadge severity={getFloodSeverity(observation.climate.floodIndicator)} />}
+                            value={
+                                <SeverityBadge
+                                    severity={getFloodSeverity(observation.climate.floodIndicator)}
+                                />
+                            }
                         />
                     </DetailSection>
                     <DetailSection title="Air Quality">
                         <DetailRow
                             label="PM2.5"
-                            value={formatNumber(observation.airQuality.pm25Ugm3, "µg/m³") ?? missingValue()}
+                            value={
+                                formatNumber(observation.airQuality.pm25Ugm3, "µg/m³") ??
+                                missingValue()
+                            }
                         />
                         <DetailRow
                             label="AQI"
-                            value={<SeverityBadge severity={getAqiSeverity(observation.airQuality.aqi)} />}
+                            value={
+                                <SeverityBadge
+                                    severity={getAqiSeverity(observation.airQuality.aqi)}
+                                />
+                            }
                         />
                     </DetailSection>
                     <DetailSection title="Socioeconomic">
                         <DetailRow
                             label="Healthcare Access Index"
-                            value={formatNumber(observation.socioeconomic.healthcareAccessIndex) ?? missingValue()}
+                            value={
+                                formatNumber(observation.socioeconomic.healthcareAccessIndex) ??
+                                missingValue()
+                            }
                         />
                         <DetailRow
                             label="Food Security Index"
-                            value={formatNumber(observation.socioeconomic.foodSecurityIndex) ?? missingValue()}
+                            value={
+                                formatNumber(observation.socioeconomic.foodSecurityIndex) ??
+                                missingValue()
+                            }
                         />
                         <DetailRow
                             label="GDP Per Capita"
-                            value={formatCurrency(observation.socioeconomic.gdpPerCapitaUsd) ?? missingValue()}
+                            value={
+                                formatCurrency(observation.socioeconomic.gdpPerCapitaUsd) ??
+                                missingValue()
+                            }
                         />
                     </DetailSection>
                     <DetailSection title="Health Outcomes">
@@ -178,12 +227,17 @@ const ScenarioDetailsDialog = ({
                             <DetailRow
                                 key={key}
                                 label={key.replaceAll("_", " ")}
-                                value={formatNumber(observation.healthOutcomes[key]) ?? missingValue()}
+                                value={
+                                    formatNumber(observation.healthOutcomes[key]) ?? missingValue()
+                                }
                             />
                         ))}
                     </DetailSection>
                     <DetailSection title="Notes">
-                        <DetailRow label="Current Note" value={observation.note || missingValue()} />
+                        <DetailRow
+                            label="Current Note"
+                            value={observation.note || missingValue()}
+                        />
                     </DetailSection>
                 </div>
             )}
@@ -243,7 +297,8 @@ const ScenariosDataTable = () => {
         () =>
             createScenarioColumns({
                 canDelete,
-                onAddNote: () => toast.info("Notes are ready for the API and will be editable soon."),
+                onAddNote: () =>
+                    toast.info("Notes are ready for the API and will be editable soon."),
                 onDelete: setObservationToDelete,
                 onViewDetails: setSelectedObservation,
             }),
@@ -263,6 +318,11 @@ const ScenariosDataTable = () => {
             setSorting((current) => (typeof updater === "function" ? updater(current) : updater))
         },
         pageCount: observationsQuery.data?.totalPages ?? -1,
+        initialState: {
+            columnPinning: {
+                right: ["healthOutcomes", "actions"],
+            },
+        },
         state: { sorting },
     })
 
@@ -276,22 +336,27 @@ const ScenariosDataTable = () => {
 
     return (
         <TooltipProvider>
-            <div className="space-y-4 rounded-lg border bg-background p-4">
-                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="bg-background rounded-2xl border">
+                <div className="flex flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                        <h3 className="font-semibold">Scenario Observations</h3>
+                        <p className="text-lg font-semibold">Scenario Observations</p>
                         <p className="text-muted-foreground text-sm">
-                            Paginated scenario records with climate, air quality, socioeconomic, and health signals.
+                            Paginated scenario records with climate, air quality, socioeconomic, and
+                            health signals.
                         </p>
                     </div>
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                        <div className="text-muted-foreground flex min-h-9 items-center rounded-lg border border-dashed px-3 text-sm">
+                        {/* <div className="text-muted-foreground flex min-h-9 items-center rounded-lg border border-dashed px-3 text-sm">
                             Filters: date range, location, thresholds
-                        </div>
+                        </div> */}
                         <Button
                             variant="bright"
                             onClick={() => exportMutation.mutate()}
-                            disabled={exportMutation.isPending}
+                            disabled={
+                                exportMutation.isPending ||
+                                observationsQuery.isLoading ||
+                                observationsQuery.isError
+                            }
                         >
                             <Download className="size-4" />
                             Export CSV
@@ -300,96 +365,120 @@ const ScenariosDataTable = () => {
                 </div>
 
                 {observationsQuery.isError ? (
-                    <div className="flex min-h-56 flex-col items-center justify-center gap-3 rounded-lg border border-dashed text-center">
-                        <p className="font-medium">Unable to load observations.</p>
+                    <div className="flex min-h-56 flex-col items-center justify-center gap-4 border-t text-center">
+                        <p className="text-muted-foreground font-medium">
+                            Unable to load observations.
+                        </p>
                         <Button variant="outline" onClick={() => observationsQuery.refetch()}>
                             <RotateCcw className="size-4" />
                             Retry
                         </Button>
                     </div>
                 ) : (
-                    <div className="rounded-lg border">
-                        <Table>
-                            <TableHeader>
-                                {table.getHeaderGroups().map((headerGroup) => (
-                                    <TableRow key={headerGroup.id}>
-                                        {headerGroup.headers.map((header) => {
-                                            const sorted = header.column.getIsSorted()
+                    <Table>
+                        <TableHeader>
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <TableRow key={headerGroup.id}>
+                                    {headerGroup.headers.map((header) => {
+                                        const sorted = header.column.getIsSorted()
 
-                                            return (
-                                                <TableHead key={header.id} className="whitespace-nowrap">
-                                                    {header.isPlaceholder ? null : header.column.getCanSort() ? (
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            className="-ml-3"
-                                                            onClick={header.column.getToggleSortingHandler()}
-                                                        >
-                                                            {flexRender(
-                                                                header.column.columnDef.header,
-                                                                header.getContext()
-                                                            )}
-                                                            {sorted === "asc" && <ArrowUp className="size-3" />}
-                                                            {sorted === "desc" && <ArrowDown className="size-3" />}
-                                                        </Button>
-                                                    ) : (
-                                                        flexRender(
+                                        return (
+                                            <TableHead
+                                                key={header.id}
+                                                className={cn(
+                                                    "bg-muted! whitespace-nowrap",
+                                                    getPinnedColumnClassName(header.column)
+                                                )}
+                                                style={getPinnedColumnStyles(header.column)}
+                                            >
+                                                {header.isPlaceholder ? null : (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="-ml-3 max-w-48"
+                                                        onClick={header.column.getToggleSortingHandler()}
+                                                    >
+                                                        {flexRender(
                                                             header.column.columnDef.header,
                                                             header.getContext()
-                                                        )
-                                                    )}
-                                                </TableHead>
-                                            )
-                                        })}
-                                    </TableRow>
-                                ))}
-                            </TableHeader>
-                            <TableBody>
-                                {observationsQuery.isLoading
-                                    ? Array.from({ length: 6 }, (_, rowIndex) => (
-                                          <TableRow key={rowIndex}>
-                                              {columns.map((column) => (
-                                                  <TableCell key={column.id ?? String(column.header)}>
-                                                      <Skeleton className="h-5 w-full" />
-                                                  </TableCell>
-                                              ))}
-                                          </TableRow>
-                                      ))
-                                    : table.getRowModel().rows.map((row) => (
-                                          <TableRow
-                                              key={row.id}
-                                              className="cursor-pointer"
-                                              tabIndex={0}
-                                              onClick={() => setSelectedObservation(row.original)}
-                                              onKeyDown={(event) => {
-                                                  if (event.key === "Enter") setSelectedObservation(row.original)
-                                              }}
-                                          >
-                                              {row.getVisibleCells().map((cell) => (
-                                                  <TableCell key={cell.id} className="whitespace-nowrap">
-                                                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                  </TableCell>
-                                              ))}
-                                          </TableRow>
-                                      ))}
-                                {!observationsQuery.isLoading && table.getRowModel().rows.length === 0 && (
+                                                        )}
+                                                        {sorted === "asc" && <ArrowUp />}
+                                                        {sorted === "desc" && <ArrowDown />}
+                                                    </Button>
+                                                )}
+                                            </TableHead>
+                                        )
+                                    })}
+                                </TableRow>
+                            ))}
+                        </TableHeader>
+                        <TableBody>
+                            {observationsQuery.isLoading
+                                ? Array.from({ length: 6 }, (_, rowIndex) => (
+                                      <TableRow className="hover:bg-transparent" key={rowIndex}>
+                                          <TableCell colSpan={3}>
+                                              <Skeleton className="h-4" />
+                                          </TableCell>
+                                          <TableCell colSpan={columns.length - 4}>
+                                              <Skeleton className="h-4" />
+                                          </TableCell>
+                                          <TableCell>
+                                              <Skeleton className="size-6 rounded-lg" />
+                                          </TableCell>
+                                      </TableRow>
+                                  ))
+                                : table.getRowModel().rows.map((row) => (
+                                      <TableRow
+                                          key={row.id}
+                                          className="cursor-pointer"
+                                          tabIndex={0}
+                                          onClick={() => setSelectedObservation(row.original)}
+                                          onKeyDown={(event) => {
+                                              if (event.key === "Enter")
+                                                  setSelectedObservation(row.original)
+                                          }}
+                                      >
+                                          {row.getVisibleCells().map((cell) => (
+                                              <TableCell
+                                                  key={cell.id}
+                                                  className={cn(
+                                                      "whitespace-nowrap",
+                                                      getPinnedColumnClassName(cell.column)
+                                                  )}
+                                                  style={getPinnedColumnStyles(cell.column)}
+                                              >
+                                                  {flexRender(
+                                                      cell.column.columnDef.cell,
+                                                      cell.getContext()
+                                                  )}
+                                              </TableCell>
+                                          ))}
+                                      </TableRow>
+                                  ))}
+                            {!observationsQuery.isLoading &&
+                                table.getRowModel().rows.length === 0 && (
                                     <TableRow>
                                         <TableCell colSpan={columns.length}>
-                                            <div className="flex min-h-40 flex-col items-center justify-center gap-2 text-center">
-                                                <p className="font-medium">No observations found.</p>
-                                                <Link className="text-primary text-sm underline" href="/map">
-                                                    Go to Live Map to create one.
-                                                </Link>
+                                            <div className="flex min-h-40 flex-col items-center justify-center gap-4 text-center">
+                                                <p className="text-muted-foreground max-w-64 font-medium">
+                                                    No observations found. Go to Live Map page to
+                                                    create one.
+                                                </p>
+                                                <Button asChild variant="black">
+                                                    <Link href="/map">
+                                                        Live Map
+                                                        <ArrowUpRight />
+                                                    </Link>
+                                                </Button>
                                             </div>
                                         </TableCell>
                                     </TableRow>
                                 )}
-                            </TableBody>
-                        </Table>
-                    </div>
+                        </TableBody>
+                    </Table>
                 )}
 
-                <div className="flex flex-col gap-3 text-sm md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-col gap-3 p-4 text-sm md:flex-row md:items-center md:justify-between">
                     <div className="text-muted-foreground">
                         Page {page} of {totalPages}. Showing {start}-{end} of {total}.
                     </div>
@@ -412,10 +501,6 @@ const ScenariosDataTable = () => {
                                 ))}
                             </SelectContent>
                         </Select>
-                        <Button variant="outline" size="icon" disabled={page === 1} onClick={() => setPage(1)}>
-                            <ChevronsLeft className="size-4" />
-                            <span className="sr-only">First page</span>
-                        </Button>
                         <Button
                             variant="outline"
                             size="sm"
@@ -430,7 +515,7 @@ const ScenariosDataTable = () => {
                                     <span className="text-muted-foreground">...</span>
                                 )}
                                 <Button
-                                    variant={pageNumber === page ? "default" : "outline"}
+                                    variant={pageNumber === page ? "bright" : "tonal"}
                                     size="sm"
                                     onClick={() => setPage(pageNumber)}
                                 >
@@ -446,15 +531,6 @@ const ScenariosDataTable = () => {
                         >
                             Next
                         </Button>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            disabled={page >= totalPages}
-                            onClick={() => setPage(totalPages)}
-                        >
-                            <ChevronsRight className="size-4" />
-                            <span className="sr-only">Last page</span>
-                        </Button>
                     </div>
                 </div>
             </div>
@@ -464,23 +540,28 @@ const ScenariosDataTable = () => {
                 onOpenChange={(open) => !open && setSelectedObservation(null)}
             />
 
-            <Dialog open={!!observationToDelete} onOpenChange={(open) => !open && setObservationToDelete(null)}>
+            <Dialog
+                open={!!observationToDelete}
+                onOpenChange={(open) => !open && setObservationToDelete(null)}
+            >
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Delete observation?</DialogTitle>
                         <DialogDescription>
-                            This removes the mock observation from the current workflow. Backend deletion can replace this
-                            endpoint without changing the table API.
+                            Are you sure you want to delete the current observation with its
+                            prediction values?
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setObservationToDelete(null)}>
+                        <Button variant="tonal" onClick={() => setObservationToDelete(null)}>
                             Cancel
                         </Button>
                         <Button
                             variant="destructive"
                             disabled={!observationToDelete || deleteMutation.isPending}
-                            onClick={() => observationToDelete && deleteMutation.mutate(observationToDelete.id)}
+                            onClick={() =>
+                                observationToDelete && deleteMutation.mutate(observationToDelete.id)
+                            }
                         >
                             Delete
                         </Button>

@@ -5,7 +5,7 @@ import SectionShell from "./SectionShell"
 
 export default function ServicesPoliciesContact() {
     return (
-        <SectionShell className="py-12 lg:py-12" containerClassName="max-w-4xl gap-8 lg:px-8">
+        <SectionShell containerClassName="max-w-5xl">
             <div className="glassy from-primary-50/40 via-muted/50 to-success-100/20 border-muted flex flex-col gap-4 rounded-3xl border bg-linear-to-r p-6 sm:flex-row sm:items-end sm:justify-between">
                 <div className="flex flex-col gap-3">
                     <div className="flex items-start gap-3">

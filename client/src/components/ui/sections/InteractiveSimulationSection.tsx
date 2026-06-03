@@ -313,7 +313,6 @@ export function InteractiveScenarioSimulationSection() {
             decoration={
                 <div className="from-earth-200/40 absolute inset-0 bg-linear-to-b via-transparent to-transparent" />
             }
-            containerClassName="gap-8 px-4 md:px-6"
         >
             <motion.div
                 initial={fadeUp.initial}

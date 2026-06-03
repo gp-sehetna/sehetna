@@ -18,12 +18,12 @@ export default function SectionShell({
     decoration,
 }: SectionShellProps) {
     return (
-        <section className={cn("bg-background relative overflow-hidden py-16 lg:py-24", className)}>
+        <section className={cn("bg-background relative overflow-hidden py-12 lg:py-24", className)}>
             {texture ? <Texture texture={texture} /> : null}
             {decoration}
             <div
                 className={cn(
-                    "relative mx-auto flex max-w-7xl flex-col gap-12 px-6",
+                    "relative mx-auto flex max-w-7xl flex-col gap-12",
                     containerClassName
                 )}
             >

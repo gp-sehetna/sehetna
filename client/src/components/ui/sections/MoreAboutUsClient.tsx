@@ -104,11 +104,6 @@ export default function MoreAboutUsClient() {
         <main className="bg-primary-50">
             <section className="relative overflow-hidden py-24">
                 <Texture texture="dots" />
-                <Gradient
-                    where="top"
-                    className="opacity-20"
-                    tint="from-primary-200 to-transparent"
-                />
                 <div className="from-primary-100/50 via-warning-100/40 pointer-events-none absolute -top-32 -right-16 h-96 w-136 rounded-full bg-linear-to-bl to-transparent blur-3xl" />
                 <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
                     <div className="flex flex-col gap-6">

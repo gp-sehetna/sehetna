@@ -87,7 +87,7 @@ const heroElements: HeroElement[] = [
         cta: "View Methodology",
         ctaHref: "/methodology",
         image: {
-            src: "/images/bw-dust-landscape.jfif",
+            src: "/images/effect-of-climate-change.jpg",
             alt: "B&W landscape representing local field documentation",
         },
         tint: "via-foreground/40",
