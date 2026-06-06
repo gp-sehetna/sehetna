@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import MethodologyClient from "@/components/ui/sections/MethodologyClient"
+import ComingSoon from "@/components/ui/ComingSoon"
 
 export const metadata: Metadata = {
     title: "Methodology",
@@ -11,5 +11,10 @@ export const metadata: Metadata = {
 }
 
 export default function MethodologyPage() {
-    return <MethodologyClient />
+    return (
+        <ComingSoon
+            title="Our Methodology"
+            description="This section will detail our research methodology and data sources."
+        />
+    )
 }

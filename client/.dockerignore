@@ -1,0 +1,18 @@
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+id_rsa
+secrets.json
+
+
+# Local package deps
+.next/
+node_modules/
+.qodo/
+.prettierignore
+.prettierrc
+
+
+.vscode/
