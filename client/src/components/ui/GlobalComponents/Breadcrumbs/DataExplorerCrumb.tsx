@@ -10,7 +10,7 @@ import {
 
 const DataExplorerCrumb = () => {
     return (
-        <Breadcrumb>
+        <Breadcrumb className="pl-2">
             <BreadcrumbList>
                 <BreadcrumbItem>
                     <BreadcrumbLink href="/">Home</BreadcrumbLink>

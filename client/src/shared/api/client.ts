@@ -1,8 +1,10 @@
 import { handleErrors, handleUnauthorized } from "@/shared/api/hooks"
 import ky from "ky"
 
+const isProduction = process.env.NODE_ENV === "production"
+
 const core = ky.create({
-    timeout: process.env.NODE_ENV !== "production" ? 5 * 60 * 1000 * 1000 : 2 * 60 * 1000,
+    timeout: isProduction ? 5 * 60 * 1000 : 2 * 60 * 1000 * 1000,
     hooks: {
         afterResponse: [handleErrors, handleUnauthorized],
     },

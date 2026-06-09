@@ -1,10 +1,14 @@
+import { EnvironmentDataSchema } from "@/features/environment/week/week.validation"
 import { getMockScenarioObservations } from "@/features/scenarios/scenario.mock"
 import type {
     ScenarioObservationQueryParams,
     ScenarioObservationSortBy,
 } from "@/features/scenarios/scenario.types"
+import { IHealthOutcomes } from "@/shared/config/health-outcomes"
+import { MainService } from "@/shared/db/main.service"
 import type { SortType } from "@/shared/db/types/pagination.type"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
+import { userProvider } from "@/shared/http/handlers/user.handler"
 
 const sortFields = new Set<ScenarioObservationSortBy>([
     "baseDate",
@@ -36,7 +40,21 @@ const parseQuery = (request: Request): ScenarioObservationQueryParams => {
 }
 
 export const GET = globalErrorHandler(async (request) => {
-    const observations = getMockScenarioObservations(parseQuery(request))
+    const scenarios = getMockScenarioObservations(parseQuery(request))
 
-    return [{ data: observations }, "Scenario observations retrieved successfully"]
+    return [{ data: scenarios }, "Scenarios retrieved successfully"]
 })
+
+export const POST = globalErrorHandler(
+    userProvider(async (request, user) => {
+        const json = await request.json()
+        const environment = EnvironmentDataSchema.parse(json.environment)
+        // TODO: add validation later
+        const prediction = json.prediction as IHealthOutcomes
+
+        const mainService = await MainService.getInstance()
+        await mainService.predictionService.createScenario(environment, prediction, user._id)
+
+        return [undefined, "Scenario created successfully"]
+    })
+)

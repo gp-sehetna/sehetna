@@ -7,7 +7,6 @@ import {
     DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/shadcn/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/shadcn/tooltip"
@@ -24,7 +23,7 @@ import type { ScenarioObservation } from "@/features/scenarios/scenario.types"
 import { formatDate } from "@/lib/utils/date"
 import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
 import type { ColumnDef } from "@tanstack/react-table"
-import { FileText, MoreHorizontal, PencilLine, Trash2 } from "lucide-react"
+import { FileText, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
 
 type ScenarioColumnActions = {
     canDelete: (row: ScenarioObservation) => boolean
@@ -134,7 +133,16 @@ const createScenarioColumns = ({
                     <TooltipContent>{row.original.note}</TooltipContent>
                 </Tooltip>
             ) : (
-                missingValue()
+                <Button
+                    variant="outline"
+                    size="xs"
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        onAddNote(row.original)
+                    }}
+                >
+                    Add Note
+                </Button>
             ),
     },
     {
@@ -180,7 +188,11 @@ const createScenarioColumns = ({
                         <MoreHorizontal className="size-4" />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" onClick={(event) => event.stopPropagation()}>
+                <DropdownMenuContent
+                    className="min-w-64"
+                    align="end"
+                    onClick={(event) => event.stopPropagation()}
+                >
                     <DropdownMenuLabel>Observation</DropdownMenuLabel>
                     <DropdownMenuGroup>
                         <DropdownMenuItem onClick={() => onViewDetails(row.original)}>
@@ -188,7 +200,7 @@ const createScenarioColumns = ({
                             View Details
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => onAddNote(row.original)}>
-                            <PencilLine />
+                            <Pencil />
                             Add Note
                         </DropdownMenuItem>
                         <DropdownMenuItem
@@ -200,10 +212,6 @@ const createScenarioColumns = ({
                             Delete
                         </DropdownMenuItem>
                     </DropdownMenuGroup>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
-                        More actions coming soon
-                    </DropdownMenuLabel>
                 </DropdownMenuContent>
             </DropdownMenu>
         ),

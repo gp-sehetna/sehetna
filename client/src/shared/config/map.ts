@@ -62,7 +62,7 @@ const parseSlug = (slug: string[] = []): Slug => {
     let healthOutcome = slugify(DEFAULT_HEALTH_OUTCOME) as string
 
     if (slug.length === 1) {
-        if (HEALTH_OUTCOMES_WITH_HYPHEN.includes(slug[0])) healthOutcome = slug[0]
+        if (HEALTH_OUTCOMES_WITH_HYPHEN.includes(slug[0] as any)) healthOutcome = slug[0]
         else country = slug[0]
     }
 

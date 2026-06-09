@@ -26,7 +26,6 @@ const PredictionSchema = new Schema(
         location_id: { type: Schema.Types.ObjectId, ref: "Location", required: true },
         base_date: { type: Date, default: new Date() },
         prediction_type: { type: String, enum: PredictionType, default: PredictionType.forecasted },
-        features_snapshot: { type: Schema.Types.Mixed, required: false },
         health_outcomes: { type: HealthOutcomesWithIntervalsSchema, required: true },
     },
     { timestamps: { createdAt: true } }

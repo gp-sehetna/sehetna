@@ -5,9 +5,7 @@ import { base } from "@/shared/http/handlers/base.handler"
 import { ProtectedHandler } from "@/shared/http/types"
 import { NextRequest, NextResponse } from "next/server"
 
-export function userProvider<T = any, Args extends any[] = any[]>(
-    handler: ProtectedHandler<T, Args>
-) {
+export function userProvider<Args extends any[] = any[]>(handler: ProtectedHandler<any, Args>) {
     return async (req: NextRequest, ...args: Args): Promise<NextResponse> => {
         const mainService = await MainService.getInstance()
 

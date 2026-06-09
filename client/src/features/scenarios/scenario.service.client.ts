@@ -5,6 +5,8 @@ import type {
     ScenarioObservationListResult,
     ScenarioObservationQueryParams,
 } from "@/features/scenarios/scenario.types"
+import { IEnvironmentData } from "../environment/week/week.dto"
+import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 
 type ScenarioObservationListResponse = {
     data: ScenarioObservationListResult
@@ -14,7 +16,7 @@ type ScenarioObservationListResponse = {
 class ScenarioClientService {
     listObservations = async (params: ScenarioObservationQueryParams) => {
         const response = await api
-            .get<ScenarioObservationListResponse>("api/scenarios/observations", {
+            .get<ScenarioObservationListResponse>("api/scenarios", {
                 searchParams: {
                     page: params.page,
                     pageSize: params.pageSize,
@@ -30,7 +32,7 @@ class ScenarioClientService {
 
     exportObservations = async (params: ScenarioObservationQueryParams) => {
         return await api
-            .get("api/scenarios/observations/export", {
+            .get("api/scenarios/export", {
                 searchParams: {
                     page: params.page,
                     pageSize: params.pageSize,
@@ -42,12 +44,23 @@ class ScenarioClientService {
             .text()
     }
 
+    saveScenario = async (environment: IEnvironmentData, prediction: IHealthOutcomes) => {
+        await api
+            .post("api/scenario", {
+                json: {
+                    environment,
+                    prediction: prediction,
+                },
+            })
+            .json()
+    }
+
     deleteObservation = async (id: string) => {
-        await api.delete(`api/scenarios/observations/${id}`).json()
+        await api.delete(`api/scenarios/${id}`).json()
     }
 
     addObservationNote = async (id: string, note: string) => {
-        await api.post(`api/scenarios/observations/${id}`, { json: { note } }).json()
+        await api.post(`api/scenarios/${id}`, { json: { note } }).json()
     }
 }
 

@@ -4,6 +4,7 @@ import BaseAuthentication from "@/components/ui/Authentication/BaseAuthenticatio
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
 import { FormInputField } from "@/components/ui/forms/inputs/FormInputField"
+import { Spinner } from "@/components/ui/shadcn/spinner"
 import { ILoginInputsDTO } from "@/features/auth/auth.dto"
 import { AuthClientService } from "@/features/auth/auth.service.client"
 import { LoginSchema } from "@/features/auth/auth.validation"
@@ -63,10 +64,13 @@ const LoginRawPage = () => {
                         }
                     />
                 </Flex>
-                <WideButton variant="black">Log In</WideButton>
+                <WideButton disabled={formState.isSubmitting} type="submit" variant="black">
+                    Log In
+                    {formState.isSubmitting && <Spinner />}
+                </WideButton>
                 <Flex direction="col" gap={4}>
                     <p className="text-xs">Don&apos;t have an account?</p>
-                    <WideButton asChild size="lg" variant="outline">
+                    <WideButton asChild size="lg" variant="black-outline">
                         <Link href="/authenticate/signup">
                             <LogIn />
                             Sign Up

@@ -51,16 +51,14 @@ export const ProfilePictureAvatar = ({ name }: { name: string }) => {
                 side={isMobile ? "left" : "top"}
                 align="start"
             >
-                <DropdownMenuLabel className="font-normal">
+                <DropdownMenuLabel className="text-foreground font-normal">
                     <div className="flex flex-col space-y-1">
                         <p className="text-sm leading-none font-medium">{name}</p>
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuLabel className="text-muted-foreground text-xs">
-                        My Profile
-                    </DropdownMenuLabel>
+                    <DropdownMenuLabel>My Profile</DropdownMenuLabel>
                     <DropdownMenuItem asChild>
                         <a href="/settings/account" className="cursor-pointer">
                             <User className="mr-2 h-4 w-4" />

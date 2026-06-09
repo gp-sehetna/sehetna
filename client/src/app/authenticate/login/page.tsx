@@ -43,7 +43,7 @@ const LogInPage = async ({ searchParams }: LogInPageProps) => {
                 </Flex>
                 <Flex direction="col" gap={4}>
                     <p className="text-xs">Don&apos;t have an account?</p>
-                    <WideButton asChild size="lg" variant="outline">
+                    <WideButton asChild size="lg" variant="black-outline">
                         <Link href={signupHref}>
                             <LogIn />
                             Sign Up

@@ -16,8 +16,13 @@ const buttonVariants = cva(
                 destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
 
                 outline: cn(
-                    "disabled:text-muted-foreground/50 border border-neutral-200 bg-neutral-100 disabled:border-neutral-200/20",
-                    "hover:bg-neutral-200",
+                    "disabled:text-muted-foreground/50 border border-neutral-200 disabled:border-neutral-200/20",
+                    "bg-neutral-100 hover:bg-neutral-200/20 active:bg-neutral-300",
+                    "hover:text-neutral-1000 text-neutral-900 shadow-xs"
+                ),
+                "black-outline": cn(
+                    "border border-neutral-900 bg-neutral-100",
+                    "hover:bg-neutral-200/40",
                     "active:bg-neutral-300"
                 ),
                 bright: cn(
@@ -45,7 +50,7 @@ const buttonVariants = cva(
             },
             size: {
                 default: "h-9 px-4 py-2 [&_svg]:size-4",
-                xs: "h-6 rounded-md px-2 text-xs [&_svg]:size-2",
+                xs: "h-6 rounded-md px-2 text-xs [&_svg]:size-3",
                 sm: "h-8 rounded-md px-3 text-xs [&_svg]:size-4",
                 lg: "h-10 rounded-xl px-8 [&_svg]:size-4",
                 xl: "h-12 rounded-2xl px-6 text-sm font-semibold md:h-14 md:px-10",

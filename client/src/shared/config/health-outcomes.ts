@@ -8,10 +8,18 @@ const HEALTH_OUTCOMES_KEYS = [
     "heat_related_admissions",
 ] as const
 
+type _Slugify<S extends string> = S extends `${infer T}_${infer U}` ? `${T}-${_Slugify<U>}` : S
+type _MapSlugs<T extends readonly string[]> = {
+    [K in keyof T]: T[K] extends string ? _Slugify<T[K]> : T[K]
+}
+
 type HealthOutcomesKeys = (typeof HEALTH_OUTCOMES_KEYS)[number]
 type IHealthOutcomes<T = number> = Record<HealthOutcomesKeys, T>
 
-const HEALTH_OUTCOMES_WITH_HYPHEN = HEALTH_OUTCOMES_KEYS.map((key) => slugify(key))
+const HEALTH_OUTCOMES_WITH_HYPHEN = HEALTH_OUTCOMES_KEYS.map((key) =>
+    slugify(key)
+) as unknown as _MapSlugs<typeof HEALTH_OUTCOMES_KEYS>
+
 const DEFAULT_HEALTH_OUTCOME = HEALTH_OUTCOMES_KEYS[0]
 
 const mapHealthOutcomes = <T>(factory: (key: HealthOutcomesKeys) => T) =>

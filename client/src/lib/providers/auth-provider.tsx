@@ -26,8 +26,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (user) setUser(user)
-        else if (isError || isAuthRoute) setUser(null)
-    }, [user, isError, isAuthRoute, setUser])
+        else if (isError) setUser(null)
+    }, [user, isError, setUser])
 
     return children
 }

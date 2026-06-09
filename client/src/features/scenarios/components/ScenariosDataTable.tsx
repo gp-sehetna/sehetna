@@ -16,6 +16,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/shadcn/select"
+import Image from "next/image"
 import { Skeleton } from "@/components/ui/shadcn/skeleton"
 import {
     Table,
@@ -46,7 +47,6 @@ import { createScenarioColumns } from "@/features/scenarios/components/scenarioC
 import { cn } from "@/lib/utils"
 import { useUserStore } from "@/stores/user/use-user"
 import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
-import { RoleEnum } from "@/shared/db/enums/auth.enum"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
     type Column,
@@ -56,7 +56,7 @@ import {
     useReactTable,
 } from "@tanstack/react-table"
 import { format } from "date-fns"
-import { ArrowDown, ArrowUp, Download, RotateCcw } from "lucide-react"
+import { ArrowDown, ArrowUp, RotateCcw } from "lucide-react"
 import Link from "next/link"
 import type { CSSProperties } from "react"
 import type { ReactNode } from "react"
@@ -269,7 +269,7 @@ const ScenariosDataTable = () => {
         queryFn: () => scenarioClientService.listObservations(queryParams),
     })
 
-    const canDelete = useCallback(() => user?.role === RoleEnum.admin, [user?.role])
+    const canDelete = useCallback(() => true, [])
 
     const deleteMutation = useMutation({
         mutationFn: (id: string) => scenarioClientService.deleteObservation(id),
@@ -341,8 +341,8 @@ const ScenariosDataTable = () => {
                     <div>
                         <p className="text-lg font-semibold">Scenario Observations</p>
                         <p className="text-muted-foreground text-sm">
-                            Paginated scenario records with climate, air quality, socioeconomic, and
-                            health signals.
+                            Scenario records with climate, air quality, socioeconomic, and health
+                            signals.
                         </p>
                     </div>
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -350,7 +350,7 @@ const ScenariosDataTable = () => {
                             Filters: date range, location, thresholds
                         </div> */}
                         <Button
-                            variant="bright"
+                            variant="outline"
                             onClick={() => exportMutation.mutate()}
                             disabled={
                                 exportMutation.isPending ||
@@ -358,7 +358,7 @@ const ScenariosDataTable = () => {
                                 observationsQuery.isError
                             }
                         >
-                            <Download className="size-4" />
+                            <Image src="/icons/excel-csv.svg" width={16} height={16} alt="csv" />
                             Export CSV
                         </Button>
                     </div>
@@ -386,7 +386,7 @@ const ScenariosDataTable = () => {
                                             <TableHead
                                                 key={header.id}
                                                 className={cn(
-                                                    "bg-muted! whitespace-nowrap",
+                                                    "bg-muted! text-center whitespace-nowrap",
                                                     getPinnedColumnClassName(header.column)
                                                 )}
                                                 style={getPinnedColumnStyles(header.column)}
@@ -442,7 +442,7 @@ const ScenariosDataTable = () => {
                                               <TableCell
                                                   key={cell.id}
                                                   className={cn(
-                                                      "whitespace-nowrap",
+                                                      "place-items-center text-center whitespace-nowrap",
                                                       getPinnedColumnClassName(cell.column)
                                                   )}
                                                   style={getPinnedColumnStyles(cell.column)}

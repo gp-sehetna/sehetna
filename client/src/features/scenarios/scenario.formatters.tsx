@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils"
 import { formatDate } from "@/lib/utils/date"
 import type { FloodIndicator } from "@/features/scenarios/scenario.types"
 
-const missingValue = (label = "N/A") => <span className="text-muted-foreground">{label}</span>
+const missingValue = (label = "–") => <span className="text-muted-foreground">{label}</span>
 
 const numberFormatter = new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 1,
@@ -39,7 +39,8 @@ const formatCurrency = (value?: number | null) => {
 
 const getAqiSeverity = (value?: number | null) => {
     if (value == null || Number.isNaN(value)) return null
-    if (value <= 50) return { label: "Good", className: "border-green-200 bg-green-50 text-green-700" }
+    if (value <= 50)
+        return { label: "Good", className: "border-green-200 bg-green-50 text-green-700" }
     if (value <= 100)
         return { label: "Moderate", className: "border-yellow-200 bg-yellow-50 text-yellow-700" }
     if (value <= 150)
@@ -47,7 +48,8 @@ const getAqiSeverity = (value?: number | null) => {
             label: "Unhealthy (Sensitive)",
             className: "border-orange-200 bg-orange-50 text-orange-700",
         }
-    if (value <= 200) return { label: "Unhealthy", className: "border-red-200 bg-red-50 text-red-700" }
+    if (value <= 200)
+        return { label: "Unhealthy", className: "border-red-200 bg-red-50 text-red-700" }
 
     return {
         label: "Very Unhealthy",

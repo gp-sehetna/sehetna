@@ -36,7 +36,7 @@ const SignUpPage = () => {
                 </Flex>
                 <Flex direction="col" gap={4}>
                     <p className="text-xs">Aleady have an account?</p>
-                    <WideButton asChild size={btnSize} variant="outline">
+                    <WideButton asChild size={btnSize} variant="black-outline">
                         <Link href="/authenticate/login">
                             <LogIn />
                             Log In

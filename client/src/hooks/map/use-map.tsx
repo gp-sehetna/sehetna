@@ -19,7 +19,6 @@ import { MapLibreEvent } from "maplibre-gl"
 import { MapLayerMouseEvent } from "react-map-gl/maplibre"
 
 import { IEnvironmentData } from "@/features/environment/week/week.dto"
-import { SimulateResponse } from "@/features/environment/week/week.types"
 import { useDateUrlSync } from "@/hooks/map/use-date"
 import usePredictions from "@/hooks/map/use-predictions"
 import { IHealthOutcomes } from "@/shared/config/health-outcomes"
@@ -190,21 +189,18 @@ const useMapHook = () => {
             try {
                 setLoading(true)
 
-                const simulation =
-                    process.env.NODE_ENV != "development"
-                        ? await weekService.fetchEnvironmentAndSimulate(location, date, 1, {
-                              top_k_contributions: 25,
-                              explainer_method: explanationMethod,
-                          })
-                        : await fetch(`/simulation/examples/${explanationMethod}.json`).then(
-                              (res) => res.json() as Promise<SimulateResponse>
-                          )
+                // process.env.NODE_ENV != "development"
+                //     ?
+                await weekService.fetchEnvironmentWithToast(location, date, 1)
+                // : await fetch(`/simulation/examples/${explanationMethod}.json`).then(
+                //       (res) => res.json() as Promise<SimulateResponse>
+                //   )
 
-                const healthOutcome = unslugify(
-                    activeSlug.healthOutcome,
-                    "_"
-                ) as keyof IHealthOutcomes
-                if (simulation) setSimulation(simulation, healthOutcome)
+                // const healthOutcome = unslugify(
+                //     activeSlug.healthOutcome,
+                //     "_"
+                // ) as keyof IHealthOutcomes
+                // if (simulation) setSimulation(simulation, healthOutcome)
             } finally {
                 setLoading(false)
             }
@@ -212,13 +208,11 @@ const useMapHook = () => {
         [
             date,
             activeSlug,
-            explanationMethod,
             router,
             searchParams,
             setClickedZone,
             setLoading,
             setMarkerCoords,
-            setSimulation,
             weekService,
         ]
     )

@@ -239,7 +239,7 @@ const Sidebar = React.forwardRef<
                 />
                 <div
                     className={cn(
-                        "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-all duration-400 ease-in-out md:flex",
+                        "sticky inset-y-0 z-10 hidden h-screen w-(--sidebar-width) transition-[width] duration-400 ease-in-out md:flex",
                         side === "left"
                             ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
                             : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -323,7 +323,7 @@ const SidebarRail = React.forwardRef<HTMLButtonElement, React.ComponentProps<"bu
                 onClick={toggleSidebar}
                 title="Toggle Sidebar"
                 className={cn(
-                    "hover:after:bg-sidebar-border/60 absolute inset-y-0 hidden w-4 -translate-x-1/2 transition-all ease-in-out group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-1 sm:flex",
+                    "hover:after:bg-sidebar-border/20 absolute inset-y-0 hidden w-4 -translate-x-1/2 transition-all ease-in-out group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-1 active:after:bg-blue-700/20 sm:flex",
                     "in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize",
                     "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
                     "group-data-[collapsible=offcanvas]:hover:bg-sidebar group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full",

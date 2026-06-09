@@ -66,7 +66,7 @@ const Slider = React.forwardRef<
                     sliderVariants({ variant }),
                     color,
                     thumbClassName,
-                    "border-primary ring-ring/50 flex size-4 shrink-0 items-center justify-center rounded-full border bg-white shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+                    "border-primary ring-ring/50 flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full border bg-white shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
                 )}
             >
                 <div

@@ -9,6 +9,10 @@ export class PredictionRepository extends DatabaseRepository<IPrediction> {
         super(model)
     }
 
+    async insertOne(data: Partial<IPrediction>, session?: ClientSession) {
+        return await this.model.insertOne(data, { session })
+    }
+
     findPredictions(
         filter: QueryFilter<IPrediction> = {},
         projection?: ProjectionType<IPrediction>

@@ -22,6 +22,8 @@ import { OtpRepository } from "@/shared/db/repository/otp.repository"
 import { PredictionRepository } from "@/shared/db/repository/prediction.repository"
 import { UserRepository } from "@/shared/db/repository/user.repository"
 import { EmailService } from "@/shared/email/email.service"
+import { ObservationRepository } from "./repository/observation.repository"
+import { ObservationModel } from "./model/observation.model"
 
 type MainServiceOptions = {
     db?: boolean
@@ -36,13 +38,17 @@ export class MainService {
     private aiModelRepository = new AiModelRepository(AiModelModel)
     private locationRepository = new LocationRepository(LocationModel)
     private predictionRepository = new PredictionRepository(PredictionModel)
+    private observationRepository = new ObservationRepository(ObservationModel)
 
     public readonly authService = new AuthService(
         this.userRepository,
         new OtpRepository(OtpModel),
         this.emailService
     )
-    public readonly googleAuthService = new GoogleAuthService(this.userRepository, this.emailService)
+    public readonly googleAuthService = new GoogleAuthService(
+        this.userRepository,
+        this.emailService
+    )
     public readonly weekService = new WeekService()
     public readonly engagementService = new EngagementsService(
         new EngagementRepository(EngagementModel),
@@ -54,7 +60,8 @@ export class MainService {
     public readonly predictionService = new PredictionService(
         this.predictionRepository,
         this.aiModelRepository,
-        this.locationRepository
+        this.locationRepository,
+        this.observationRepository
     )
 
     public readonly locationService = new LocationService(this.locationRepository)

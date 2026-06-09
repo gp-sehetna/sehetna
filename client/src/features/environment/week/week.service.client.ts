@@ -5,8 +5,8 @@ import {
     SimulateQueryParams,
     SimulateResponse,
 } from "@/features/environment/week/week.types"
+import { scenarioClientService } from "@/features/scenarios/scenario.service.client"
 import { toProperCase } from "@/lib/utils"
-import { confirmIncompleteEnvironment } from "@/lib/utils/toast"
 import { api } from "@/shared/api"
 import { MissingDataError } from "@/shared/http/errors"
 import { format } from "date-fns"
@@ -33,40 +33,32 @@ export class WeekClientService {
         return Array.from(nullKeys)
     }
 
-    public fetchEnvironment = async (
+    public getEnvironment = async (
         location: Location,
-        date: string,
+        date: Date,
         weeks: number
     ): Promise<IEnvironmentData> => {
+        const formattedDate = format(date, "yyyy-MM-dd")
         const { lat, lng, iso } = location,
             coords = `${lat},${lng}`,
-            isNotSimulation = !date || weeks == 0,
+            isNotSimulation = !formattedDate || weeks == 0,
             searchParams: SearchParamsOption = isNotSimulation
                 ? { coords, iso }
-                : { coords, iso, date, weeks },
+                : { coords, iso, date: formattedDate, weeks },
             environmentData = await api
                 .get<IEnvironmentData | null>("api/environment/week", { searchParams })
                 .json()
 
-        // Validate Environment Data and ensure non-null values.
+        // Validate Environment Data
         if (!environmentData || !environmentData.data?.length) {
             toast.error("No data found for this location", {
                 description: "Modify your inputs or try another location/date.",
             })
             throw new MissingDataError(null)
         }
-
         this.setEnvironment(environmentData)
-        // Check if any of the data objects keys is null and retreive this key for logging.
-        const nullKeys = this.getNullEnvironmentDataKeys(environmentData)
-        // If any of the data objects keys is null and this is not a simulation,
-        // notify the user for intermediate action.
-        if (!nullKeys.length || isNotSimulation) return environmentData
-
-        const result = await confirmIncompleteEnvironment(environmentData)
-        if (!result) throw new MissingDataError(environmentData)
-
         this.setModifying(true)
+
         return environmentData
     }
 
@@ -82,48 +74,46 @@ export class WeekClientService {
 
     simulateEnvironment = async (environment: IEnvironmentData, params: SimulateQueryParams) => {
         return await toast
-            .promise<SimulateResponse>(() => this.simulate(environment, params), {
-                loading: "Simulating...",
-                success: () => {
-                    return { message: "Predictions loaded!", type: "info" }
+            .promise<SimulateResponse>(
+                async () => {
+                    const simulationResult = await this.simulate(environment, params)
+                    const prediction = simulationResult.predictions[0]
+                    // TODO: if flag is enabled, call save scenario to db endpoint here
+                    // get save-scenario flag value from local storage, and check if it's true
+                    scenarioClientService.saveScenario(environment, prediction)
+                    return simulationResult
                 },
-                error: "Error occurred",
-            })
+                {
+                    loading: "Simulating...",
+                    success: () => {
+                        return { message: "Predictions loaded!", type: "info" }
+                    },
+                    error: "Error occurred",
+                }
+            )
             .unwrap()
     }
 
-    fetchEnvironmentAndSimulate = async (
-        loc: Location,
-        date: Date,
-        weeks: number,
-        params: SimulateQueryParams
-    ) => {
+    fetchEnvironmentWithToast = async (loc: Location, date: Date, weeks: number) => {
         return await toast
-            .promise<SimulateResponse | null>(
+            .promise(
                 async () => {
-                    const formattedDate = format(date, "yyyy-MM-dd")
                     try {
-                        const environment = await this.fetchEnvironment(loc, formattedDate, weeks)
-                        return await this.simulate(environment, params)
+                        await this.getEnvironment(loc, date, weeks)
                     } catch (error) {
                         if (!(error instanceof MissingDataError)) throw error
-                        this.setEnvironment(
-                            error.err_details ?? new Environment(loc, formattedDate)
-                        )
-                        this.setModifying(true)
+                        this.setEnvironment(error.err_details ?? new Environment(loc, date))
                         return null
                     }
                 },
                 {
-                    loading: "Simulating...",
-                    success: (predictions) => {
-                        if (!predictions)
-                            return {
-                                message: "Modify your inputs at the side bar to get predictions.",
-                                type: "warning",
-                            }
-
-                        return { message: "Predictions loaded!", type: "info" }
+                    loading: "Extracting environment...",
+                    success: () => {
+                        this.setModifying(true)
+                        return {
+                            message: "Modify your inputs at the side bar to get predictions.",
+                            type: "warning",
+                        }
                     },
                     error: "Error occurred",
                 }

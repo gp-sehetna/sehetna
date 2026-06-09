@@ -17,6 +17,7 @@ export type SharedInputFieldProps = {
     maxLength?: number
     showToggle?: boolean
     isVisible?: boolean
+    groupClassName?: string
     onToggleVisibility?: () => void
 } & InputProps
 

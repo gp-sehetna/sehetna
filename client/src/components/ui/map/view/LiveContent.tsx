@@ -15,7 +15,7 @@ export const NoPredictionsFallback = ({
     addLink?: boolean
 }) => {
     return (
-        <div className="text-muted-foreground flex h-full flex-col items-center justify-center">
+        <div className="text-muted-foreground flex h-full max-w-120 flex-col items-center justify-center">
             <p className="text-center text-sm">
                 {text}
                 {addLink && (
@@ -61,7 +61,7 @@ export const LiveContent = ({
                 ) : hasForecasts ? (
                     <ForecastDashboard onCardClick={onLayerSelect} forecasts={predictions} />
                 ) : (
-                    <NoPredictionsFallback text="No prediction timeline is available for this model yet." />
+                    <NoPredictionsFallback text="No prediction timeline available for this model yet." />
                 )}
             </div>
         </div>

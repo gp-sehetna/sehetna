@@ -22,7 +22,10 @@ const HealthOutcomeCharts = () => {
                 {loading ? (
                     <AppLoader />
                 ) : (
-                    <NoPredictionsFallback addLink={false} text="No data is available yet." />
+                    <NoPredictionsFallback
+                        addLink={false}
+                        text="No data is available yet. Click on a country/zone to start a simulation."
+                    />
                 )}
             </div>
         )

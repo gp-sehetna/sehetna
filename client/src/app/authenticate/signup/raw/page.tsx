@@ -3,6 +3,7 @@ import BaseAuthentication from "@/components/ui/Authentication/BaseAuthenticatio
 import WideButton from "@/components/ui/Authentication/Globals/WideButton"
 import Flex from "@/components/ui/Flex"
 import { FormInputField } from "@/components/ui/forms/inputs/FormInputField"
+import { Spinner } from "@/components/ui/shadcn/spinner"
 import { EmailInputsDTO } from "@/features/auth/auth.dto"
 import { AuthClientService } from "@/features/auth/auth.service.client"
 import { EmailSchema } from "@/features/auth/auth.validation"
@@ -50,12 +51,13 @@ const SignupRawPage = () => {
                 />
                 <WideButton type="submit" variant="black" disabled={formState.isSubmitting}>
                     Verify Email
+                    {formState.isSubmitting && <Spinner />}
                 </WideButton>
             </Flex>
 
             <Flex direction="col" gap={4}>
                 <p className="text-xs">Already have an account?</p>
-                <WideButton asChild size="lg" variant="outline">
+                <WideButton asChild size="lg" variant="black-outline">
                     <Link href="/authenticate/login">
                         <LogIn />
                         Log In

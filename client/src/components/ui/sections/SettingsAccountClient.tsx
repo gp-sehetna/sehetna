@@ -1,8 +1,8 @@
 "use client"
 
-import { CheckCircle2, Save, Trash2, User } from "lucide-react"
+import { Save, Trash2, User } from "lucide-react"
 import { motion } from "motion/react"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -14,7 +14,8 @@ import { useUserStore } from "@/stores/user/use-user"
 import { Button } from "../shadcn/button"
 import SettingsField from "./SettingsField"
 import SettingsPanel from "./SettingsPanel"
-import { easeBehavior, fadeUp } from "./motion"
+import { fadeUp } from "./motion"
+import { Spinner } from "../shadcn/spinner"
 
 const getDefaultValues = (profile: {
     firstName?: string
@@ -28,7 +29,6 @@ const getDefaultValues = (profile: {
 
 export default function SettingsAccountClient() {
     const authService = useMemo(() => new AuthClientService(), [])
-    const [saved, setSaved] = useState(false)
 
     const profile = useUserStore((s) => s.user)
     const setProfile = useUserStore((s) => s.setUser)
@@ -58,7 +58,6 @@ export default function SettingsAccountClient() {
         const { user, message } = await authService.updateUserData(payload)
 
         setProfile(user)
-        setSaved(true)
         reset(getDefaultValues(user))
         toast.success(message)
     }
@@ -85,7 +84,6 @@ export default function SettingsAccountClient() {
                                     label="First Name"
                                     value={field.value ?? ""}
                                     onChange={(value) => {
-                                        setSaved(false)
                                         field.onChange(value)
                                     }}
                                     errors={[formState.errors.firstName]}
@@ -103,7 +101,6 @@ export default function SettingsAccountClient() {
                                     label="Last Name"
                                     value={field.value ?? ""}
                                     onChange={(value) => {
-                                        setSaved(false)
                                         field.onChange(value)
                                     }}
                                     errors={[formState.errors.lastName]}
@@ -120,7 +117,6 @@ export default function SettingsAccountClient() {
                                     label="Gender"
                                     value={field.value ?? ""}
                                     onChange={(value) => {
-                                        setSaved(false)
                                         field.onChange(value as GenderEnum)
                                     }}
                                     errors={[formState.errors.gender]}
@@ -139,11 +135,7 @@ export default function SettingsAccountClient() {
                                 Sehetna. This action cannot be undone.
                             </p>
                         </div>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="border-danger-100/30 bg-danger-100/8 text-danger-200 hover:bg-danger-100/12"
-                        >
+                        <Button type="button" variant="destructive">
                             <Trash2 size={14} strokeWidth={1.5} />
                             Delete Account
                         </Button>
@@ -151,24 +143,13 @@ export default function SettingsAccountClient() {
                 </SettingsPanel>
 
                 <div className="flex items-center justify-end gap-3 pt-1">
-                    {saved ? (
-                        <motion.div
-                            initial={{ opacity: 0, x: 8 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.25, ease: easeBehavior }}
-                            className="text-success flex items-center gap-1.5 text-xs font-medium"
-                        >
-                            <CheckCircle2 size={14} />
-                            Changes saved
-                        </motion.div>
-                    ) : null}
                     <Button
                         type="submit"
                         variant="bright-primary"
                         size="lg"
                         disabled={formState.isSubmitting}
                     >
-                        <Save size={14} />
+                        {formState.isSubmitting ? <Spinner /> : <Save size={14} />}
                         {formState.isSubmitting ? "Saving..." : "Save Changes"}
                     </Button>
                 </div>

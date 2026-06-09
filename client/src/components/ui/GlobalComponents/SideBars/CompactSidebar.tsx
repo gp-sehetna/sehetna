@@ -22,9 +22,9 @@ import { ProfilePictureAvatar } from "../../GlobalControls/AvatarMenu"
 const CompactSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
     return (
         <>
-            <Sidebar collapsible="icon" {...props} className="sticky top-0 h-screen"> 
+            <Sidebar collapsible="icon" {...props}>
                 <SidebarHeader>
-                    <Logo size={32} />
+                    <Logo withText size={32} />
                 </SidebarHeader>
                 <SidebarTrigger />
                 <SidebarContent>
@@ -76,7 +76,10 @@ export const AuthenticatedUserButton = ({ user }: { user: UserWithoutPassword })
                 <div className="w-24">
                     <p className="min-w-0 truncate text-xs">{user.fullName}</p>
                 </div>
-                <a className="base-transition bg-background shrink-0 rounded-xl border px-3 py-1 text-xs font-bold hover:scale-103 hover:shadow-2xl">
+                <a
+                    href="/settings/account"
+                    className="base-transition bg-background shrink-0 rounded-xl border px-3 py-1 text-xs font-bold hover:scale-103 hover:shadow-2xl"
+                >
                     Settings
                 </a>
             </div>

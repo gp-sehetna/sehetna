@@ -14,7 +14,7 @@ function SignInWithGoogle() {
     }
 
     return (
-        <WideButton type="button" onClick={handleGoogleSignIn} size="lg" variant="outline">
+        <WideButton type="button" onClick={handleGoogleSignIn} size="lg" variant="black-outline">
             <GoogleIcon />
             Sign in with Google
         </WideButton>

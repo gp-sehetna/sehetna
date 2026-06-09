@@ -60,26 +60,27 @@ const BottomRightContent = ({ slug, onLayerSelect }: BottomRightProps) => {
 const LayerSelectorTrigger = ({ healthOutcome, onLayerSelect, className }: LayerSelectorProps) => {
     const [isOpen, setIsOpen] = useState(false)
     return (
-        <>
-            <div
+        <div
+            className={cn(
+                "base-transition flex w-full flex-col items-center",
+                isOpen ? "mb-0" : "-mb-48"
+            )}
+        >
+            <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
-                    "bg-muted text-muted-foreground hover:text-foreground mx-auto w-10/12 cursor-pointer rounded-t-xl border border-b-0 text-center",
-                    isOpen ? "-mb-2" : "-mb-4"
+                    "bg-muted text-muted-foreground hover:text-foreground mx-auto w-10/12 cursor-pointer rounded-t-xl border border-b-0 text-center"
                 )}
             >
-                <small>Visualization Layers</small>
-            </div>
+                <small>Health Layers</small>
+            </button>
             <MapLayerSelector
-                className={cn(
-                    className,
-                    "base-transition! overflow-hidden",
-                    isOpen ? "max-h-full p-2" : "max-h-0 border-0 p-0"
-                )}
+                isOpen={isOpen}
+                className={cn(className, "overflow-hidden p-2")}
                 healthOutcome={healthOutcome}
                 onLayerSelect={onLayerSelect}
             />
-        </>
+        </div>
     )
 }
 const BottomLeftContent = (props: BottomLeftProps) => {

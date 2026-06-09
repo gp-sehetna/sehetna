@@ -21,6 +21,8 @@ import {
     Flame,
     Globe2,
     MapPin,
+    RotateCcw,
+    Sparkles,
     Thermometer,
     TrendingDown,
     Waves,
@@ -29,6 +31,7 @@ import {
     X,
 } from "lucide-react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
+import Beta from "../../GlobalComponents/extras/beta"
 
 const FieldRow = ({
     label,
@@ -142,8 +145,8 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
             <div className="glassy flex items-center justify-between rounded-2xl pl-4">
                 <div className="flex items-center gap-2">
                     <div className="flex h-2 w-2">
-                        <span className="absolute inline-flex h-2 w-2 animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+                        <span className="bg-success-100 absolute inline-flex h-2 w-2 animate-ping rounded-full opacity-75"></span>
+                        <span className="bg-success-200 relative inline-flex h-2 w-2 rounded-full"></span>
                     </div>
                     <span className="text-sm font-semibold tracking-tight">Scenario Editor</span>
                 </div>
@@ -313,10 +316,10 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
                                                 type="button"
                                                 onClick={() => f.onChange(d)}
                                                 className={cn(
-                                                    "flex h-8 flex-1 items-center justify-center rounded-lg text-xs font-semibold transition-all",
+                                                    "flex h-8 flex-1 cursor-pointer items-center justify-center rounded-lg text-xs font-semibold transition-all",
                                                     f.value === d
-                                                        ? "text-background bg-primary shadow-md"
-                                                        : "text-muted-foreground hover:bg-background/70 bg-background/40"
+                                                        ? "text-background bg-primary"
+                                                        : "text-muted-foreground hover:bg-background/80 bg-background/60"
                                                 )}
                                             >
                                                 {d}
@@ -332,7 +335,7 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
                             control={form.control}
                             name={`data.${i}.flood_indicator`}
                             render={({ field: f }) => (
-                                <div className="glassy flex items-center justify-between rounded-lg border px-3 py-2.5">
+                                <div className="glassy flex items-center justify-between rounded-2xl border px-3 py-2.5">
                                     <div className="flex items-center gap-2">
                                         <Waves
                                             className={cn(
@@ -377,6 +380,7 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
                         type="number"
                         label="GDP per Capita ($)"
                         placeholder="e.g. 12400$"
+                        groupClassName="bg-background/40"
                         className="text-sm"
                         prependInnerIcon={<DollarSign />}
                         errors={[form.formState.errors.indicators?.gdp_per_capita_usd]}
@@ -430,24 +434,39 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
                     />
                 </CardContent>
             </Card>
-            <div className="glassy sticky bottom-0 flex items-center gap-2 rounded-2xl p-3">
-                <Button
-                    className="rounded-full"
-                    form="simulation-modify-form"
-                    variant="glassy"
-                    size="xs"
-                    onClick={() => form.reset()}
-                >
-                    Reset
-                </Button>
-                <Button
-                    className="w-full rounded-full"
-                    size="xs"
-                    type="submit"
-                    form="simulation-modify-form"
-                >
-                    Predict
-                </Button>
+            <div className="glassy sticky bottom-0 flex flex-col items-center gap-2 rounded-2xl p-3">
+                <div className="flex w-full items-center justify-between gap-2">
+                    <div className="flex flex-col">
+                        <p className="text-xs font-semibold tracking-tight">Save Scenario</p>
+                        <small className="text-muted-foreground truncate">
+                            Save scenario on submitting for future reports
+                        </small>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Beta />
+                        <Switch className="data-[state=checked]:bg-success-200" />
+                    </div>
+                </div>
+                <div className="flex w-full gap-2">
+                    <Button
+                        className="w-1/4 rounded-lg font-semibold"
+                        variant="outline"
+                        size="xs"
+                        onClick={() => form.reset()}
+                    >
+                        <RotateCcw />
+                        Reset
+                    </Button>
+                    <Button
+                        variant="bright-primary"
+                        className="w-3/4 rounded-lg font-semibold"
+                        type="submit"
+                        size="xs"
+                    >
+                        <Sparkles />
+                        Predict
+                    </Button>
+                </div>
             </div>
         </form>
     )

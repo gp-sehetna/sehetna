@@ -203,7 +203,7 @@ function RiskTimeline({ risks }: { risks: Risks }) {
                         />
                         <YAxis hide domain={[0, 100]} />
                         <Tooltip
-                            formatter={(value: number) => `${value}% risk`}
+                            formatter={(value) => `${value}% risk`}
                             labelFormatter={(label) => (label === 0 ? "Now" : `${label}d`)}
                         />
                         <Area

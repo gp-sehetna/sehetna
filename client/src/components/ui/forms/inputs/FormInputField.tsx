@@ -9,6 +9,7 @@ export function FormInputField({
     inlineOptions,
     errors,
     className,
+    groupClassName,
     ...props
 }: SharedInputFieldProps) {
     return (
@@ -21,7 +22,7 @@ export function FormInputField({
             labelClassName="px-3 text-xs font-bold text-neutral-500"
             inlineOptionsClassName="hover:text-neutral-1000 ml-auto pl-0 font-light italic"
         >
-            <InputGroup rounded="xxl">
+            <InputGroup className={groupClassName} rounded="xxl">
                 <InputGroupInput id={id} {...props} />
                 {prependInnerIcon && <InputGroupAddon>{prependInnerIcon}</InputGroupAddon>}
                 {appendInnerIcon && (

@@ -3,6 +3,7 @@ import {
     EnvironmentDataSchema,
     WeekEnvironmentQuerySchema,
 } from "@/features/environment/week/week.validation"
+import { format } from "date-fns"
 import { z } from "zod"
 
 type SingleWeekEnvironmentParams = z.infer<typeof WeekEnvironmentQuerySchema>
@@ -13,13 +14,13 @@ class Environment implements IEnvironmentData {
     data: IEnvironmentData["data"]
     indicators: IEnvironmentData["indicators"]
 
-    constructor(location: Location, date: string) {
+    constructor(location: Location, date: Date) {
         const { lat, lng, iso } = location
         this.coords = `${lat},${lng}`
         this.country_code = iso
         this.data = [
             {
-                date,
+                date: format(date, "yyyy-MM-dd"),
                 aqi_pm: 0,
                 pm25_ugm3: 0,
                 temperature_celsius: 0,

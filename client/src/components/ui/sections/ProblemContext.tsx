@@ -182,7 +182,7 @@ export function ProblemContext() {
                     >
                         <Image
                             alt="Environmental health dashboard snapshot"
-                            src="/images/snapshot-1.JPG"
+                            src="/images/platform-snapshot.png"
                             fill
                             className="object-cover"
                         />

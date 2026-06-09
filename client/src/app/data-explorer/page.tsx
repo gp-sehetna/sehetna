@@ -29,7 +29,7 @@ const DataExplorerPage = () => {
                 </div>
             </div>
             <Divider hideDecorations />
-            <div className="flex flex-col gap-6 px-6 py-4">
+            <div className="flex flex-col gap-4 p-4">
                 <DataExplorerCrumb />
                 <ScenariosDataTable />
                 {/* <DataStoreCardGrid /> */}

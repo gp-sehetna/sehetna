@@ -13,7 +13,7 @@ const SelectGroup = SelectPrimitive.Group
 
 const SelectValue = SelectPrimitive.Value
 const SelectTriggerVariants = cva(
-    "data-[placeholder]:text-muted-foreground focus:ring-accent flex h-9 w-full items-center justify-between rounded-xl border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-none outline-none hover:border-white/20 focus:ring-0 focus:ring-1 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+    "data-[placeholder]:text-muted-foreground focus:ring-accent flex h-9 w-full cursor-pointer items-center justify-between rounded-xl border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-none outline-none hover:border-white/20 focus:ring-0 focus:ring-1 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
     {
         variants: {
             variant: {
@@ -25,7 +25,7 @@ const SelectTriggerVariants = cva(
 
                 outline: cn(
                     "border border-neutral-200 bg-neutral-100",
-                    "hover:bg-neutral-200",
+                    "hover:bg-neutral-200/20",
                     "active:bg-neutral-300"
                 ),
                 black: cn(

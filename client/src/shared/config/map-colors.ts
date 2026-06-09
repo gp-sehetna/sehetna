@@ -152,7 +152,7 @@ const darkBlue = {
 }
 
 const mix = {
-    oceanColor: "#FFFFDE",
+    oceanColor: "#FFFFEF",
     colors: [
         "#FCFEA4",
         "#F2E45E",

@@ -34,14 +34,14 @@ const fancyBoxVariants = cva(
 
 export default function ComplexFooter() {
     return (
-        <footer className={cn("bg-neutral-1000 relative border-t")}>
+        <footer className={cn("bg-neutral-1025 relative border-t")}>
             <div className={cn("mx-auto p-12")}>
                 <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
                     <div
                         className={cn(
                             fancyBoxVariants({ shape: "soft" }),
                             "items-center lg:items-start",
-                            "text-background bg-foreground/30 flex flex-col gap-6 px-10 py-4 lg:col-span-4"
+                            "text-background bg-neutral-1050 flex flex-col gap-6 px-10 py-4 lg:col-span-4"
                         )}
                     >
                         <Logo withText size={22} />
@@ -63,7 +63,7 @@ export default function ComplexFooter() {
                     <div
                         className={cn(
                             fancyBoxVariants({ shape: "jelly" }),
-                            "bg-foreground/20 text-background xs:grid-cols-3 grid grid-cols-2 gap-8 p-10 lg:col-span-8"
+                            "bg-neutral-1050 text-background xs:grid-cols-3 grid grid-cols-2 gap-8 p-10 lg:col-span-8"
                         )}
                     >
                         {Object.entries(groupedNavItems).map(([category, links]) => (

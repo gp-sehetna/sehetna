@@ -16,6 +16,11 @@ import { PredictionRepository } from "@/shared/db/repository/prediction.reposito
 import { NotFoundException } from "@/shared/http/errors"
 import { addWeeks, differenceInWeeks, startOfWeek } from "date-fns"
 import { QueryFilter, startSession, Types } from "mongoose"
+import { IEnvironmentData } from "../week/week.dto"
+import { ObservationRepository } from "@/shared/db/repository/observation.repository"
+import withDbTransaction from "@/shared/http/handlers/transaction.handler"
+import { IObservation } from "@/shared/db/model/observation.model"
+import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 
 interface TimelineRange {
     predictions: Date
@@ -27,8 +32,42 @@ export class PredictionService {
     constructor(
         private readonly predictionRepository: PredictionRepository,
         private readonly aiModelRepository: AiModelRepository,
-        private readonly locationRepository: LocationRepository
+        private readonly locationRepository: LocationRepository,
+        private readonly observationRepository: ObservationRepository
     ) {}
+
+    async createScenario(
+        environment: IEnvironmentData,
+        prediction: IHealthOutcomes,
+        userId: Types.ObjectId
+    ) {
+        const location = await this.locationRepository.findByCode(environment.country_code)
+
+        if (!environment || !prediction || !location)
+            throw new NotFoundException("No environment, prediction or location data found")
+
+        const newPrediction: Partial<IPrediction> = {
+            user_id: userId,
+            location_id: location._id,
+            prediction_type: "predicted",
+            base_date: new Date(environment.data[0].date),
+            health_outcomes: { ...prediction },
+        }
+
+        await withDbTransaction(async (session) => {
+            const insertedPrediction = await this.predictionRepository.insertOne(
+                newPrediction,
+                session
+            )
+            const newEnv: Partial<IObservation> = {
+                prediction_id: insertedPrediction._id,
+                location_id: location._id,
+                base_date: new Date(environment.data[0].date),
+                // TODO: Add environment main fields like climate and air_quality
+            }
+            await this.observationRepository.insertOne(newEnv, session)
+        })
+    }
 
     getLatestPredictionDateForCountry = async (iso: string) => {
         const location = await this.locationRepository.findByCode(iso)
@@ -159,7 +198,6 @@ export class PredictionService {
             .filter(({ date }) => new Date(date) >= start) // TODO: This should be deleted after the environment API calling is fixed for redundancy.
             .map((record) => ({
                 ...meta,
-                features_snapshot: null,
                 prediction_type: PredictionType.predicted,
                 base_date: new Date(record.date),
                 health_outcomes: {
@@ -181,7 +219,6 @@ export class PredictionService {
             { length: response.horizon },
             (_, index): Partial<IPrediction> => ({
                 ...meta,
-                features_snapshot: null,
                 prediction_type: PredictionType.forecasted,
                 base_date: addWeeks(start, index),
                 health_outcomes: Object.fromEntries(
