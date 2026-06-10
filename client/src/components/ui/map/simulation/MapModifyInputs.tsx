@@ -14,6 +14,7 @@ import { cn, formatCoords } from "@/lib/utils"
 import { usePredictionsStore } from "@/stores/map/use-predictions"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
+import { useState } from "react"
 import {
     Calendar,
     DollarSign,
@@ -32,6 +33,7 @@ import {
 } from "lucide-react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import Beta from "../../GlobalComponents/extras/beta"
+import storageKeys from "@/lib/storage"
 
 const FieldRow = ({
     label,
@@ -115,6 +117,16 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
     const setModifying = usePredictionsStore((s) => s.setModifying)
     const environment = usePredictionsStore((s) => s.environment)
     const setEnvironment = usePredictionsStore((s) => s.setEnvironment)
+
+    // TODO: A scalable approach is to store a global state of it personalized for each profile
+    const [isSaveScenario, setIsSaveScenario] = useState<boolean>(
+        localStorage.getItem(storageKeys.saveScenario) === "true" || false
+    )
+
+    const toggleSaveScenario = (newValue: boolean) => {
+        setIsSaveScenario(newValue)
+        localStorage.setItem(storageKeys.saveScenario, String(newValue))
+    }
 
     const form = useForm<IEnvironmentData>({
         resolver: zodResolver(EnvironmentDataSchema),
@@ -444,7 +456,11 @@ const MapModifyInputs = ({ onSubmitForm }: MapModifyInputsProps) => {
                     </div>
                     <div className="flex items-center gap-2">
                         <Beta />
-                        <Switch className="data-[state=checked]:bg-success-200" />
+                        <Switch
+                            checked={isSaveScenario}
+                            onCheckedChange={toggleSaveScenario}
+                            className="data-[state=checked]:bg-info"
+                        />
                     </div>
                 </div>
                 <div className="flex w-full gap-2">

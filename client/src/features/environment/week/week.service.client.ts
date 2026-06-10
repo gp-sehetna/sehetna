@@ -6,6 +6,7 @@ import {
     SimulateResponse,
 } from "@/features/environment/week/week.types"
 import { scenarioClientService } from "@/features/scenarios/scenario.service.client"
+import storageKeys from "@/lib/storage"
 import { toProperCase } from "@/lib/utils"
 import { api } from "@/shared/api"
 import { MissingDataError } from "@/shared/http/errors"
@@ -72,15 +73,21 @@ export class WeekClientService {
         return result
     }
 
+    _getSaveScenario = () => {
+        return localStorage.getItem(storageKeys.saveScenario) === "true" || false
+    }
+
     simulateEnvironment = async (environment: IEnvironmentData, params: SimulateQueryParams) => {
         return await toast
             .promise<SimulateResponse>(
                 async () => {
                     const simulationResult = await this.simulate(environment, params)
                     const prediction = simulationResult.predictions[0]
-                    // TODO: if flag is enabled, call save scenario to db endpoint here
-                    // get save-scenario flag value from local storage, and check if it's true
-                    scenarioClientService.saveScenario(environment, prediction)
+
+                    const isSaveScenario = this._getSaveScenario()
+                    // TODO: ensure to check the correct value of `date` the is sent to save Scenario
+                    if (isSaveScenario)
+                        await scenarioClientService.saveScenario(environment, prediction)
                     return simulationResult
                 },
                 {

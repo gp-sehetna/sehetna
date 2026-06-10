@@ -20,9 +20,10 @@ const airQualitySchema = new Schema(
 
 const healthIndicatorsSchema = new Schema(
     {
-        healthcare_access_index: { type: Number, default: 0 },
-        food_security_index: { type: Number, default: 0 },
         gdp_per_capita_usd: { type: Number, default: 0 },
+        food_production_index: { type: Number, default: null },
+        undernourishment: { type: Number, default: null },
+        // healthcare_access_index
     },
     { _id: false }
 )
@@ -35,20 +36,16 @@ const ObservationSchema = new Schema(
         climate: { type: climateSchema, required: true },
         air_quality: { type: airQualitySchema, required: true },
         health_indicators: { type: healthIndicatorsSchema, required: true },
+        note: { type: String, default: null },
     },
-    { timestamps: { createdAt: true } }
+    { timestamps: true }
 )
 
 export type Binary = 0 | 1
 export type WeekDaysCount = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
 export type IObservation = Require_id<InferSchemaType<typeof ObservationSchema>>
 
-/**
- * Indexes
- * - Primary pattern: fetch a country's full timeline in order
- * - Temporal range with country filter
- */
-ObservationSchema.index({ location_id: 1, base_date: 1 }, { unique: true })
+ObservationSchema.index({ location_id: 1 })
 
 export const ObservationModel: Model<IObservation> =
     models.Observation || model<IObservation>("Observation", ObservationSchema)

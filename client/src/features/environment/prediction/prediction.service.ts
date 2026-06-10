@@ -20,7 +20,7 @@ import { IEnvironmentData } from "../week/week.dto"
 import { ObservationRepository } from "@/shared/db/repository/observation.repository"
 import withDbTransaction from "@/shared/http/handlers/transaction.handler"
 import { IObservation } from "@/shared/db/model/observation.model"
-import { IHealthOutcomes } from "@/shared/config/health-outcomes"
+import { IHealthOutcomes, mapHealthOutcomes } from "@/shared/config/health-outcomes"
 
 interface TimelineRange {
     predictions: Date
@@ -42,16 +42,21 @@ export class PredictionService {
         userId: Types.ObjectId
     ) {
         const location = await this.locationRepository.findByCode(environment.country_code)
+        const observation = environment.data[0]
 
-        if (!environment || !prediction || !location)
+        if (!environment || !prediction || !location || !observation)
             throw new NotFoundException("No environment, prediction or location data found")
 
         const newPrediction: Partial<IPrediction> = {
             user_id: userId,
             location_id: location._id,
-            prediction_type: "predicted",
-            base_date: new Date(environment.data[0].date),
-            health_outcomes: { ...prediction },
+            prediction_type: PredictionType.predicted,
+            base_date: new Date(observation.date),
+            health_outcomes: mapHealthOutcomes((key) => ({
+                point: prediction[key],
+                lower: null,
+                upper: null,
+            })) as IHealthOutcomesWithIntervals,
         }
 
         await withDbTransaction(async (session) => {
@@ -59,13 +64,27 @@ export class PredictionService {
                 newPrediction,
                 session
             )
-            const newEnv: Partial<IObservation> = {
+            const newEnvironment: Partial<IObservation> = {
                 prediction_id: insertedPrediction._id,
                 location_id: location._id,
-                base_date: new Date(environment.data[0].date),
-                // TODO: Add environment main fields like climate and air_quality
+                base_date: new Date(observation.date),
+                climate: {
+                    temperature_celsius: observation.temperature_celsius ?? 0,
+                    precipitation_mm: observation.precipitation_mm ?? 0,
+                    heat_wave_days: observation.heat_wave_days ?? 0,
+                    flood_indicator: observation.flood_indicator ?? 0,
+                },
+                air_quality: {
+                    pm25_ugm3: observation.pm25_ugm3 ?? 0,
+                    aqi_pm: observation.aqi_pm ?? 0,
+                },
+                health_indicators: {
+                    undernourishment: 0,
+                    food_production_index: environment.indicators?.food_production_index ?? 0,
+                    gdp_per_capita_usd: environment.indicators?.gdp_per_capita_usd ?? 0,
+                },
             }
-            await this.observationRepository.insertOne(newEnv, session)
+            await this.observationRepository.insertOne(newEnvironment, session)
         })
     }
 

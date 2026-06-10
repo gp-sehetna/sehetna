@@ -35,7 +35,6 @@ const useMapHook = () => {
     const centroidCache = useRef(new Map())
     const map = useMapStore((s) => s.map)
     const setMap = useMapStore((s) => s.setMap)
-
     const { predictionsMap, isLoading: isPredictionsLoading } = usePredictions()
 
     // more focused states to prevent unnecessary re-renders...
@@ -58,6 +57,7 @@ const useMapHook = () => {
     const onOutcomeSelect = usePredictionsStore((s) => s.onOutcomeSelect)
     const setSimulation = usePredictionsStore((s) => s.setSimulation)
     const setEnvironment = usePredictionsStore((s) => s.setEnvironment)
+    const setIsModifying = usePredictionsStore((s) => s.setModifying)
 
     const activeSlug = parseSlug(params.slug)
 
@@ -260,10 +260,11 @@ const useMapHook = () => {
     )
 
     const closeSidebar = useCallback(() => {
+        setIsModifying(false)
         setClickedZone(null)
         setMarkerCoords(null)
         router.push(`/map/${activeSlug.healthOutcome}`, { scroll: false })
-    }, [router, activeSlug.healthOutcome, setClickedZone, setMarkerCoords])
+    }, [router, activeSlug.healthOutcome, setClickedZone, setMarkerCoords, setIsModifying])
 
     const onSubmitSimulationForm = useCallback(
         async (data: IEnvironmentData) => {

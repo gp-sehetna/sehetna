@@ -8,15 +8,17 @@ import { format } from "date-fns"
 type DatePickerSimpleProps = {
     date: Date | undefined
     setDate: (date: Date | undefined) => void
+    disabled?: boolean
 }
 
-export function DatePickerSimple({ date, setDate }: DatePickerSimpleProps) {
+export function DatePickerSimple({ date, setDate, disabled }: DatePickerSimpleProps) {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     return (
         <Popover>
             <PopoverTrigger asChild>
                 <Button
+                    disabled={disabled}
                     variant="glassy"
                     className="text-neutral-1000 justify-start px-2.5 font-normal"
                     id="date-picker-simple"

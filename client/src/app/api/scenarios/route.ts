@@ -1,5 +1,5 @@
 import { EnvironmentDataSchema } from "@/features/environment/week/week.validation"
-import { getMockScenarioObservations } from "@/features/scenarios/scenario.mock"
+import { getMockScenarioObservations as getMockScenarios } from "@/features/scenarios/scenario.mock"
 import type {
     ScenarioObservationQueryParams,
     ScenarioObservationSortBy,
@@ -40,7 +40,7 @@ const parseQuery = (request: Request): ScenarioObservationQueryParams => {
 }
 
 export const GET = globalErrorHandler(async (request) => {
-    const scenarios = getMockScenarioObservations(parseQuery(request))
+    const scenarios = getMockScenarios(parseQuery(request))
 
     return [{ data: scenarios }, "Scenarios retrieved successfully"]
 })
@@ -58,3 +58,4 @@ export const POST = globalErrorHandler(
         return [undefined, "Scenario created successfully"]
     })
 )
+// post /api/scenarios {"environment": {}, "prediction": {}}

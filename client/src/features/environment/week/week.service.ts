@@ -22,6 +22,7 @@ import { fetchWeatherApi } from "openmeteo"
 export class WeekService {
     async getWeeklyEnvironmentData(query: WeekParams): Promise<IEnvironmentData | null> {
         try {
+            // TODO: Check if its `query.date` is today's week then subtract 1 week, else don't subtract
             const { startDate, endDate } = getWeekRange(subWeeks(query.date, 1), query.weeks)
             const endOfWeekOfEndDate = endOfWeek(subDays(endDate, 1))
 

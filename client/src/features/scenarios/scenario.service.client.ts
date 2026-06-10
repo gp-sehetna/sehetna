@@ -46,7 +46,7 @@ class ScenarioClientService {
 
     saveScenario = async (environment: IEnvironmentData, prediction: IHealthOutcomes) => {
         await api
-            .post("api/scenario", {
+            .post("api/scenarios", {
                 json: {
                     environment,
                     prediction: prediction,
