@@ -26,9 +26,14 @@ export const MapDashboard = ({
     const isModifying = usePredictionsStore((s) => s.modifying)
 
     return (
-        <Card className="glassy flex h-full min-w-full flex-col overflow-hidden rounded-2xl border bg-neutral-100/40">
+        <Card className="glassy bg-background/40 flex h-full min-w-full flex-col overflow-hidden rounded-2xl shadow-none">
             <CardHeader className="flex flex-row items-center gap-2 border-b p-4">
-                <ArrowLeft className="cursor-pointer" onClick={closeSidebar} />
+                <div
+                    title="Close Main Sidebar"
+                    className="base-transition cursor-pointer hover:scale-110"
+                >
+                    <ArrowLeft onClick={closeSidebar} />
+                </div>
                 <CardTitle>
                     <h5>{zoneProperties.name}</h5>
                 </CardTitle>
