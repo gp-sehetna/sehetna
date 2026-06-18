@@ -5,7 +5,7 @@ export class ObservationService {
     constructor(private readonly observationRepository: ObservationRepository) {}
 
     async getObservations() {
-        return (await this.observationRepository.findAll()).map(toScenarioObservation)
+        return (await this.observationRepository.findAllObservations()).map(toScenarioObservation)
     }
 
     async findByLocation(locationId: string) {

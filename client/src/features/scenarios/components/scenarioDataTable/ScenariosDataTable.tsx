@@ -177,7 +177,7 @@ const ScenarioDetailsDialog = ({
                             label="Flood Indicator"
                             value={
                                 <SeverityBadge
-                                    severity={getFloodSeverity("low")} // observation.climate.floodIndicator ?? 0 TODO
+                                    severity={getFloodSeverity(observation.climate.floodIndicator)} // observation.climate.floodIndicator ?? 0 TODO
                                 />
                             }
                         />
@@ -208,7 +208,7 @@ const ScenarioDetailsDialog = ({
                             }
                         /> */}
                         <DetailRow
-                            label="Food Security Index"
+                            label="Food Production Index"
                             value={
                                 formatNumber(observation.healthIndicators.foodProductionIndex) ??
                                 missingValue()

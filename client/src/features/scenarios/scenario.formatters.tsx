@@ -3,6 +3,13 @@ import { cn } from "@/lib/utils"
 import { formatDate } from "@/lib/utils/date"
 import type { FloodIndicator } from "@/features/scenarios/scenario.types"
 
+
+const floodMap: Record<number, FloodIndicator> = {
+    1: "low",
+    2: "moderate",
+    3: "high",
+}
+
 const missingValue = (label = "–") => <span className="text-muted-foreground">{label}</span>
 
 const numberFormatter = new Intl.NumberFormat("en-US", {
@@ -57,26 +64,47 @@ const getAqiSeverity = (value?: number | null) => {
     }
 }
 
-const getFloodSeverity = (value?: FloodIndicator | null) => {
-    if (!value) return null
+const getFloodSeverity = (
+    value?: FloodIndicator | number | null
+) => {
+    if (value == null) return null
 
     const severity = {
-        low: { label: "Low", className: "border-green-200 bg-green-50 text-green-700" },
+        low: {
+            label: "Low",
+            className: "border-green-200 bg-green-50 text-green-700",
+        },
         moderate: {
             label: "Moderate",
             className: "border-yellow-200 bg-yellow-50 text-yellow-700",
         },
-        high: { label: "High", className: "border-red-200 bg-red-50 text-red-700" },
+        high: {
+            label: "High",
+            className: "border-red-200 bg-red-50 text-red-700",
+        },
     } satisfies Record<FloodIndicator, { label: string; className: string }>
 
-    return severity[value]
-}
+    const indicator =
+        typeof value === "number"
+            ? floodMap[value]
+            : value
 
-const SeverityBadge = ({ severity }: { severity: { label: string; className: string } | null }) => {
+    return indicator ? severity[indicator] : null
+}
+type Severity = ReturnType<typeof getFloodSeverity>
+
+const SeverityBadge = ({
+    severity,
+}: {
+    severity: Severity
+}) => {
     if (!severity) return missingValue()
 
     return (
-        <Badge variant="outline" className={cn("whitespace-nowrap", severity.className)}>
+        <Badge
+            variant="outline"
+            className={cn("whitespace-nowrap", severity.className)}
+        >
             {severity.label}
         </Badge>
     )

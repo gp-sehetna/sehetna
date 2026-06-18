@@ -5,12 +5,15 @@ type FloodIndicator = "low" | "moderate" | "high"
 
 interface ScenarioObservation {
     id: string
-    baseDate: string
+    baseDate: string,
+    locationName: string | null   // 👈 ADD THIS
+    healthOutcomes: any // (or proper type)
+
     climate: {
         temperatureCelsius: number | null
         precipitationMm: number | null
         heatWaveDays: number | null
-        floodIndicator: number | null
+        floodIndicator: FloodIndicator | number | null
     }
     airQuality: {
         pm25Ugm3: number | null

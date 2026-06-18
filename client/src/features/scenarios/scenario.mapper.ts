@@ -1,11 +1,13 @@
 import { IObservation } from "@/shared/db/model/observation.model"
 import { ScenarioObservation } from "./scenario.types"
+import { ostring } from "zod/v3"
 
 export function toScenarioObservation(observation: IObservation): ScenarioObservation {
     return {
         id: observation._id.toString(),
         baseDate: observation.base_date.toISOString(),
-
+        locationName: observation.location_id?.name ?? null,
+        healthOutcomes: observation.prediction_id?.health_outcomes ?? all,
         climate: {
             temperatureCelsius: observation.climate.temperature_celsius,
             precipitationMm: observation.climate.precipitation_mm,

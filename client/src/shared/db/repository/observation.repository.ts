@@ -10,7 +10,10 @@ export class ObservationRepository extends DatabaseRepository<IObservation> {
     async insertOne(data: Partial<IObservation>, session?: ClientSession) {
         return await this.model.insertOne(data, { session })
     }
-    async findAll() {
-        return await this.model.find().lean().exec()
+    // async findAll() {
+    //     return await this.model.find().lean().exec()
+    // }
+    async findAllObservations(){
+        return await this.model.find().populate("location_id" , "name").populate("prediction_id", "health_outcomes").lean().exec();
     }
 }
