@@ -73,7 +73,7 @@ const isScenarioSortBy = (id: string): id is ScenarioObservationSortBy =>
         "precipitationMm",
         "heatWaveDays",
         "floodIndicator",
-        "pm25Ugm3",
+        "pm25_ugm3",
         "aqi",
         "healthcareAccessIndex",
         "foodSecurityIndex",
@@ -138,7 +138,7 @@ const ScenarioDetailsDialog = ({
                 <DialogTitle>Observation Details</DialogTitle>
                 <DialogDescription>
                     {observation
-                        ? `${observation.locationName} on ${formatScenarioDate(observation.baseDate)}`
+                        ? `Location Name on ${formatScenarioDate(observation.baseDate)}`
                         : "Scenario observation details"}
                 </DialogDescription>
             </DialogHeader>
@@ -148,7 +148,7 @@ const ScenarioDetailsDialog = ({
                         <DetailRow label="Date" value={formatScenarioDate(observation.baseDate)} />
                         <DetailRow
                             label="Location"
-                            value={observation.locationName || missingValue("Unknown")}
+                            value={ missingValue("Unknown")}
                         />
                     </DetailSection>
                     <DetailSection title="Climate">
@@ -177,7 +177,7 @@ const ScenarioDetailsDialog = ({
                             label="Flood Indicator"
                             value={
                                 <SeverityBadge
-                                    severity={getFloodSeverity(observation.climate.floodIndicator)}
+                                    severity={getFloodSeverity("low")} // observation.climate.floodIndicator ?? 0 TODO
                                 />
                             }
                         />
@@ -194,35 +194,35 @@ const ScenarioDetailsDialog = ({
                             label="AQI"
                             value={
                                 <SeverityBadge
-                                    severity={getAqiSeverity(observation.airQuality.aqi)}
+                                    severity={getAqiSeverity(observation.airQuality.aqiPm)}
                                 />
                             }
                         />
                     </DetailSection>
                     <DetailSection title="Socioeconomic">
-                        <DetailRow
+                        {/* <DetailRow
                             label="Healthcare Access Index"
                             value={
-                                formatNumber(observation.socioeconomic.healthcareAccessIndex) ??
+                                formatNumber(observation.healthIndicators.healthcareAccessIndex) ??
                                 missingValue()
                             }
-                        />
+                        /> */}
                         <DetailRow
                             label="Food Security Index"
                             value={
-                                formatNumber(observation.socioeconomic.foodSecurityIndex) ??
+                                formatNumber(observation.healthIndicators.foodProductionIndex) ??
                                 missingValue()
                             }
                         />
                         <DetailRow
                             label="GDP Per Capita"
                             value={
-                                formatCurrency(observation.socioeconomic.gdpPerCapitaUsd) ??
+                                formatCurrency(observation.healthIndicators.gdpPerCapitaUsd) ??
                                 missingValue()
                             }
                         />
                     </DetailSection>
-                    <DetailSection title="Health Outcomes">
+                    {/* <DetailSection title="Health Outcomes">
                         {HEALTH_OUTCOMES_KEYS.map((key) => (
                             <DetailRow
                                 key={key}
@@ -232,7 +232,7 @@ const ScenarioDetailsDialog = ({
                                 }
                             />
                         ))}
-                    </DetailSection>
+                    </DetailSection> */}
                     <DetailSection title="Notes">
                         <DetailRow
                             label="Current Note"
@@ -325,7 +325,7 @@ const ScenariosDataTable = () => {
         },
         state: { sorting },
     })
-
+    console.log("OBSERVATIONS", observationsQuery.data)
     const total = observationsQuery.data?.total ?? 0
     const totalPages = observationsQuery.data?.totalPages ?? 1
     const start = total === 0 ? 0 : (page - 1) * pageSize + 1
@@ -438,21 +438,24 @@ const ScenariosDataTable = () => {
                                                   setSelectedObservation(row.original)
                                           }}
                                       >
-                                          {row.getVisibleCells().map((cell) => (
-                                              <TableCell
-                                                  key={cell.id}
-                                                  className={cn(
-                                                      "place-items-center text-center whitespace-nowrap",
-                                                      getPinnedColumnClassName(cell.column)
-                                                  )}
-                                                  style={getPinnedColumnStyles(cell.column)}
-                                              >
-                                                  {flexRender(
-                                                      cell.column.columnDef.cell,
-                                                      cell.getContext()
-                                                  )}
-                                              </TableCell>
-                                          ))}
+                                          {row.getVisibleCells().map((cell) => {
+                                            console.log("CELL", cell)
+                                              return (
+                                                  <TableCell
+                                                      key={cell.id}
+                                                      className={cn(
+                                                          "place-items-center text-center whitespace-nowrap",
+                                                          getPinnedColumnClassName(cell.column)
+                                                      )}
+                                                      style={getPinnedColumnStyles(cell.column)}
+                                                  >
+                                                      {flexRender(
+                                                          cell.column.columnDef.cell,
+                                                          cell.getContext()
+                                                      )}
+                                                  </TableCell>
+                                              )
+                                          })}
                                       </TableRow>
                                   ))}
                             {!observationsQuery.isLoading &&

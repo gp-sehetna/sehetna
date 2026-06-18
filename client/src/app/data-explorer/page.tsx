@@ -1,7 +1,7 @@
 import Divider from "@/components/ui/GlobalControls/Divider"
 // import DataStoreCardGrid from "../../components/ui/GlobalComponents/CardGrid/DataStoreCardGrid"
 import { Metadata } from "next"
-import ScenariosDataTable from "@/features/scenarios/components/ScenariosDataTable"
+import ScenariosDataTable from "@/features/scenarios/components/scenarioDataTable/ScenariosDataTable"
 import Image from "next/image"
 import DataExplorerCrumb from "@/components/ui/GlobalComponents/Breadcrumbs/DataExplorerCrumb"
 

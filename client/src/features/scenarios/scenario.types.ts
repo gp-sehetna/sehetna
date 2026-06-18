@@ -6,23 +6,21 @@ type FloodIndicator = "low" | "moderate" | "high"
 interface ScenarioObservation {
     id: string
     baseDate: string
-    locationName: string
     climate: {
         temperatureCelsius: number | null
         precipitationMm: number | null
         heatWaveDays: number | null
-        floodIndicator: FloodIndicator | null
+        floodIndicator: number | null
     }
     airQuality: {
         pm25Ugm3: number | null
-        aqi: number | null
+        aqiPm: number
     }
-    socioeconomic: {
-        healthcareAccessIndex: number | null
-        foodSecurityIndex: number | null
+    healthIndicators: {
+        undernourishment: number | null | undefined
+        foodProductionIndex: number | null | undefined
         gdpPerCapitaUsd: number | null
     }
-    healthOutcomes: IHealthOutcomes<number | null>
     note?: string | null
 }
 

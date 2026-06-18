@@ -10,4 +10,7 @@ export class ObservationRepository extends DatabaseRepository<IObservation> {
     async insertOne(data: Partial<IObservation>, session?: ClientSession) {
         return await this.model.insertOne(data, { session })
     }
+    async findAll() {
+        return await this.model.find().lean().exec()
+    }
 }

@@ -89,36 +89,36 @@ const createScenarioColumns = ({
     },
     {
         accessorFn: (row) => row.airQuality.pm25Ugm3,
-        id: "pm25Ugm3",
+        id: "pm25_ugm3",
         header: "PM2.5",
         cell: ({ row }) => valueOrMissing(formatNumber(row.original.airQuality.pm25Ugm3, "µg/m³")),
     },
     {
-        accessorFn: (row) => row.airQuality.aqi,
+        accessorFn: (row) => row.airQuality.aqiPm,
         id: "aqi",
         header: "AQI",
-        cell: ({ row }) => <SeverityBadge severity={getAqiSeverity(row.original.airQuality.aqi)} />,
+        cell: ({ row }) => <SeverityBadge severity={getAqiSeverity(row.original.airQuality.aqiPm)} />,
     },
+    // {
+    //     accessorFn: (row) => row.healthIndicators.healthcareAccessIndex,
+    //     id: "healthcareAccessIndex",
+    //     header: "Healthcare Access Index",
+    //     cell: ({ row }) =>
+    //         valueOrMissing(formatNumber(row.original.healthIndicators.healthcareAccessIndex)),
+    // },
     {
-        accessorFn: (row) => row.socioeconomic.healthcareAccessIndex,
-        id: "healthcareAccessIndex",
-        header: "Healthcare Access Index",
-        cell: ({ row }) =>
-            valueOrMissing(formatNumber(row.original.socioeconomic.healthcareAccessIndex)),
-    },
-    {
-        accessorFn: (row) => row.socioeconomic.foodSecurityIndex,
+        accessorFn: (row) => row.healthIndicators.foodProductionIndex,
         id: "foodSecurityIndex",
         header: "Food Security Index",
         cell: ({ row }) =>
-            valueOrMissing(formatNumber(row.original.socioeconomic.foodSecurityIndex)),
+            valueOrMissing(formatNumber(row.original.healthIndicators.foodProductionIndex)),
     },
     {
-        accessorFn: (row) => row.socioeconomic.gdpPerCapitaUsd,
+        accessorFn: (row) => row.healthIndicators.gdpPerCapitaUsd,
         id: "gdpPerCapitaUsd",
         header: "GDP Per Capita",
         cell: ({ row }) =>
-            valueOrMissing(formatCurrency(row.original.socioeconomic.gdpPerCapitaUsd)),
+            valueOrMissing(formatCurrency(row.original.healthIndicators.gdpPerCapitaUsd)),
     },
     {
         id: "notes",

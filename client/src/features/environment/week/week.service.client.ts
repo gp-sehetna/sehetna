@@ -83,7 +83,6 @@ export class WeekClientService {
                 async () => {
                     const simulationResult = await this.simulate(environment, params)
                     const prediction = simulationResult.predictions[0]
-
                     const isSaveScenario = this._getSaveScenario()
                     // TODO: ensure to check the correct value of `date` the is sent to save Scenario
                     if (isSaveScenario)

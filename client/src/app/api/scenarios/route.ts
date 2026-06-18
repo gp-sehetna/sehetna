@@ -6,6 +6,8 @@ import type {
 } from "@/features/scenarios/scenario.types"
 import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 import { MainService } from "@/shared/db/main.service"
+import { ObservationModel } from "@/shared/db/model/observation.model"
+import { ObservationRepository } from "@/shared/db/repository/observation.repository"
 import type { SortType } from "@/shared/db/types/pagination.type"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 import { userProvider } from "@/shared/http/handlers/user.handler"
@@ -40,9 +42,12 @@ const parseQuery = (request: Request): ScenarioObservationQueryParams => {
 }
 
 export const GET = globalErrorHandler(async (request) => {
-    const scenarios = getMockScenarios(parseQuery(request))
-
-    return [{ data: scenarios }, "Scenarios retrieved successfully"]
+    // const scenarios = getMockScenarios(parseQuery(request))
+    // use observationRepo directly : 
+    const mainService = await MainService.getInstance()
+    const scenarios =  await mainService.observationService.getObservations()
+    console.log("scenarios",scenarios)
+    return [{ data: {data: scenarios} }, "Scenarios retrieved successfully"]
 })
 
 export const POST = globalErrorHandler(

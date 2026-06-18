@@ -36,7 +36,7 @@ let MOCK_SCENARIO_OBSERVATIONS: ScenarioObservation[] = Array.from({ length: 84 
             floodIndicator: floodIndicators[index % floodIndicators.length],
         },
         airQuality: {
-            pm25Ugm3: index % 11 === 0 ? null : 8 + ((base * 4.4) % 82),
+            pm25_ugm3: index % 11 === 0 ? null : 8 + ((base * 4.4) % 82),
             aqi: index % 23 === 0 ? null : 28 + ((base * 13) % 220),
         },
         socioeconomic: {
@@ -63,7 +63,7 @@ const sortValue = (row: ScenarioObservation, sortBy: ScenarioObservationSortBy) 
         precipitationMm: row.climate.precipitationMm,
         heatWaveDays: row.climate.heatWaveDays,
         floodIndicator: row.climate.floodIndicator,
-        pm25Ugm3: row.airQuality.pm25Ugm3,
+        pm25_ugm3: row.airQuality.pm25_ugm3,
         aqi: row.airQuality.aqi,
         healthcareAccessIndex: row.socioeconomic.healthcareAccessIndex,
         foodSecurityIndex: row.socioeconomic.foodSecurityIndex,
@@ -161,7 +161,7 @@ const mockScenarioObservationToCsvRows = (rows: ScenarioObservation[]) => [
         row.climate.precipitationMm,
         row.climate.heatWaveDays,
         row.climate.floodIndicator,
-        row.airQuality.pm25Ugm3,
+        row.airQuality.pm25_ugm3,
         row.airQuality.aqi,
         row.socioeconomic.healthcareAccessIndex,
         row.socioeconomic.foodSecurityIndex,
