@@ -23,7 +23,7 @@ const MapSidebar = ({ slug, closeSidebar, onSubmitForm, onLayerSelect }: MapSide
                 />
             )}
 
-            <div className="glassy flex min-w-full shrink-0 flex-col rounded-2xl border p-4">
+            <div className="glassy flex min-w-full shrink-0 flex-col rounded-2xl p-4">
                 <DatePickerSimple disabled={isModifying} date={date} setDate={setDate} />
                 <DateRangeSlider />
             </div>

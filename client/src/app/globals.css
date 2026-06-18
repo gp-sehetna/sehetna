@@ -163,7 +163,7 @@
 }
 
 @utility glassy {
-    @apply shadow-neutral-1000/10 text-foreground border border-neutral-100 bg-neutral-100/40 backdrop-blur-lg;
+    @apply shadow-neutral-1000/10 text-foreground border border-neutral-100 bg-background/40 backdrop-blur-lg;
 }
 
 @utility glassy-chip {

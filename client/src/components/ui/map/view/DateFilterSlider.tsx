@@ -68,7 +68,7 @@ const DateRangeSlider = ({ onChange, className }: DateRangeSliderProps) => {
                         <SelectTrigger size="sm" className="w-35" variant="glassy">
                             <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="border-white/10">
+                        <SelectContent className="border-background/10">
                             {Object.values(rangePreset).map((p) => (
                                 <SelectItem key={p} value={p}>
                                     {p}
@@ -85,7 +85,7 @@ const DateRangeSlider = ({ onChange, className }: DateRangeSliderProps) => {
                         <SelectTrigger size="sm" className="w-27.5" variant="glassy">
                             <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="border-white/10">
+                        <SelectContent className="border-background/10">
                             {ALLOWED_GRANULARITIES[preset].map((g) => (
                                 <SelectItem key={g} value={g} className="">
                                     {GRANULARITY_LABELS[g]}
