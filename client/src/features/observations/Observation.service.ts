@@ -1,5 +1,5 @@
 import { ObservationRepository } from "@/shared/db/repository/observation.repository"
-import { toScenarioObservation } from "./scenario.mapper"
+import { toScenarioObservation } from "./Observation.mapper"
 
 export class ObservationService {
     constructor(private readonly observationRepository: ObservationRepository) {}
@@ -7,6 +7,7 @@ export class ObservationService {
     async getObservations() {
         return (await this.observationRepository.findAllObservations()).map(toScenarioObservation)
     }
+
 
     async findByLocation(locationId: string) {
         return this.observationRepository.find({

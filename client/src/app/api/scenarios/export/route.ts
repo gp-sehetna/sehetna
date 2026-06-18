@@ -5,7 +5,7 @@ import {
 import type {
     ScenarioObservationQueryParams,
     ScenarioObservationSortBy,
-} from "@/features/scenarios/scenario.types"
+} from "@/features/observations/Observation.types"
 import type { SortType } from "@/shared/db/types/pagination.type"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 import { NextResponse } from "next/server"
@@ -49,7 +49,9 @@ const parseQuery = (request: Request): ScenarioObservationQueryParams => {
 }
 
 export const GET = globalErrorHandler(async (request) => {
-    const rows = mockScenarioObservationToCsvRows(getMockScenarioObservations(parseQuery(request)).data)
+    const rows = mockScenarioObservationToCsvRows(
+        getMockScenarioObservations(parseQuery(request)).data
+    )
     const csv = rows.map((row) => row.map(escapeCsvCell).join(",")).join("\n")
 
     return new NextResponse(csv, {

@@ -1,13 +1,10 @@
 import { EnvironmentDataSchema } from "@/features/environment/week/week.validation"
-import { getMockScenarioObservations as getMockScenarios } from "@/features/scenarios/scenario.mock"
 import type {
-    ScenarioObservationQueryParams,
+    ObservationQueryParams,
     ScenarioObservationSortBy,
-} from "@/features/scenarios/scenario.types"
+} from "@/features/observations/Observation.types"
 import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 import { MainService } from "@/shared/db/main.service"
-import { ObservationModel } from "@/shared/db/model/observation.model"
-import { ObservationRepository } from "@/shared/db/repository/observation.repository"
 import type { SortType } from "@/shared/db/types/pagination.type"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 import { userProvider } from "@/shared/http/handlers/user.handler"
@@ -26,7 +23,7 @@ const sortFields = new Set<ScenarioObservationSortBy>([
     "gdpPerCapitaUsd",
 ])
 
-const parseQuery = (request: Request): ScenarioObservationQueryParams => {
+const parseQuery = (request: Request): ObservationQueryParams => {
     const searchParams = new URL(request.url).searchParams
     const sortBy = searchParams.get("sortBy") as ScenarioObservationSortBy | null
     const sortDirection = searchParams.get("sortDirection") as SortType | null
@@ -42,12 +39,9 @@ const parseQuery = (request: Request): ScenarioObservationQueryParams => {
 }
 
 export const GET = globalErrorHandler(async (request) => {
-    // const scenarios = getMockScenarios(parseQuery(request))
-    // use observationRepo directly : 
     const mainService = await MainService.getInstance()
-    const scenarios =  await mainService.observationService.getObservations()
-    console.log("scenarios",scenarios)
-    return [{ data: {data: scenarios} }, "Scenarios retrieved successfully"]
+    const scenarios = await mainService.observationService.getObservations()
+    return [{ data: { data: scenarios } }, "Scenarios retrieved successfully"]
 })
 
 export const POST = globalErrorHandler(

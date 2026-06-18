@@ -18,14 +18,14 @@ import {
     getFloodSeverity,
     missingValue,
     SeverityBadge,
-} from "@/features/scenarios/scenario.formatters"
-import type { ScenarioObservation } from "@/features/scenarios/scenario.types"
+} from "@/features/observations/Observation.formatters"
+import type { ScenarioObservation } from "@/features/observations/Observation.types"
 import { formatDate } from "@/lib/utils/date"
 import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
 import type { ColumnDef } from "@tanstack/react-table"
 import { FileText, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
 
-type ScenarioColumnActions = {
+type ObservationColumnActions = {
     canDelete: (row: ScenarioObservation) => boolean
     onAddNote: (row: ScenarioObservation) => void
     onDelete: (row: ScenarioObservation) => void
@@ -35,20 +35,20 @@ type ScenarioColumnActions = {
 const valueOrMissing = (value: string | null) => value ?? missingValue()
 
 const healthOutcomeSummary = (row: ScenarioObservation) => {
-    const respiratory = formatNumber(row.healthOutcomes.respiratory_disease_rate, "%")
-    const cardio = formatNumber(row.healthOutcomes.cardio_mortality_rate, "%")
+    const respiratory = formatNumber(row.healthOutcomes!.respiratory_disease_rate, "%")
+    const cardio = formatNumber(row.healthOutcomes!.cardio_mortality_rate, "%")
 
     return respiratory || cardio
         ? `${respiratory ?? "N/A"} resp. / ${cardio ?? "N/A"} cardio`
         : null
 }
 
-const createScenarioColumns = ({
+const createObservationColumns = ({
     canDelete,
     onAddNote,
     onDelete,
     onViewDetails,
-}: ScenarioColumnActions): ColumnDef<ScenarioObservation>[] => [
+}: ObservationColumnActions): ColumnDef<ScenarioObservation>[] => [
     {
         accessorKey: "baseDate",
         header: "Base Date",
@@ -97,7 +97,9 @@ const createScenarioColumns = ({
         accessorFn: (row) => row.airQuality.aqiPm,
         id: "aqi",
         header: "AQI",
-        cell: ({ row }) => <SeverityBadge severity={getAqiSeverity(row.original.airQuality.aqiPm)} />,
+        cell: ({ row }) => (
+            <SeverityBadge severity={getAqiSeverity(row.original.airQuality.aqiPm)} />
+        ),
     },
     // {
     //     accessorFn: (row) => row.healthIndicators.healthcareAccessIndex,
@@ -165,7 +167,7 @@ const createScenarioColumns = ({
                             {HEALTH_OUTCOMES_KEYS.map((key) => (
                                 <p key={key}>
                                     {key.replaceAll("_", " ")}:{" "}
-                                    {formatNumber(row.original.healthOutcomes[key]) ?? "N/A"}
+                                    {formatNumber(row.original.healthOutcomes![key]) ?? "N/A"}
                                 </p>
                             ))}
                         </div>
@@ -218,5 +220,5 @@ const createScenarioColumns = ({
     },
 ]
 
-export { createScenarioColumns }
-export type { ScenarioColumnActions }
+export { createObservationColumns }
+export type { ObservationColumnActions }

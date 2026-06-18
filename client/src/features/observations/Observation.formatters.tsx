@@ -1,14 +1,7 @@
 import { Badge } from "@/components/ui/shadcn/badge"
 import { cn } from "@/lib/utils"
 import { formatDate } from "@/lib/utils/date"
-import type { FloodIndicator } from "@/features/scenarios/scenario.types"
 
-
-const floodMap: Record<number, FloodIndicator> = {
-    1: "low",
-    2: "moderate",
-    3: "high",
-}
 
 const missingValue = (label = "–") => <span className="text-muted-foreground">{label}</span>
 
@@ -64,46 +57,39 @@ const getAqiSeverity = (value?: number | null) => {
     }
 }
 
-const getFloodSeverity = (
-    value?: FloodIndicator | number | null
-) => {
-    if (value == null) return null
 
-    const severity = {
-        low: {
-            label: "Low",
+type FloodIndicator = 0 | 1
+
+const getFloodSeverity = (value?: FloodIndicator | null) => {
+    // Handle null, undefined, or invalid inputs safely
+    if (value === null || value === undefined) return null
+
+    const statusMap = {
+        0: {
+            label: "Normal",
             className: "border-green-200 bg-green-50 text-green-700",
         },
-        moderate: {
-            label: "Moderate",
-            className: "border-yellow-200 bg-yellow-50 text-yellow-700",
-        },
-        high: {
-            label: "High",
+        1: {
+            label: "Flooded",
             className: "border-red-200 bg-red-50 text-red-700",
         },
     } satisfies Record<FloodIndicator, { label: string; className: string }>
 
-    const indicator =
-        typeof value === "number"
-            ? floodMap[value]
-            : value
-
-    return indicator ? severity[indicator] : null
+    return statusMap[value] ?? null
 }
+
+// 2. Extract the return type for the component props
 type Severity = ReturnType<typeof getFloodSeverity>
 
-const SeverityBadge = ({
-    severity,
-}: {
-    severity: Severity
-}) => {
-    if (!severity) return missingValue()
+// 3. Your Badge Component
+const SeverityBadge = ({ severity }: { severity: Severity }) => {
+    // If severity is null, call your fallback function
+    if (!severity) return missingValue() 
 
     return (
         <Badge
             variant="outline"
-            className={cn("whitespace-nowrap", severity.className)}
+            className={cn("whitespace-nowrap font-medium", severity.className)}
         >
             {severity.label}
         </Badge>

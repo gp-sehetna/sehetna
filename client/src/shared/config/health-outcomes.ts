@@ -22,6 +22,14 @@ const HEALTH_OUTCOMES_WITH_HYPHEN = HEALTH_OUTCOMES_KEYS.map((key) =>
 
 const DEFAULT_HEALTH_OUTCOME = HEALTH_OUTCOMES_KEYS[0]
 
+export type HealthOutcomePoints = {
+    cardio_mortality_rate: number
+    heat_related_admissions: number
+    respiratory_disease_rate: number
+    vector_disease_risk_score: number
+    waterborne_disease_incidents: number
+}
+
 const mapHealthOutcomes = <T>(factory: (key: HealthOutcomesKeys) => T) =>
     Object.fromEntries(HEALTH_OUTCOMES_KEYS.map((key) => [key, factory(key)])) as Record<
         HealthOutcomesKeys,

@@ -1,19 +1,19 @@
-import type { IHealthOutcomes } from "@/shared/config/health-outcomes"
+import type { HealthOutcomePoints, IHealthOutcomes } from "@/shared/config/health-outcomes"
 import type { PaginationResult, SortType } from "@/shared/db/types/pagination.type"
 
-type FloodIndicator = "low" | "moderate" | "high"
+type FloodIndicator = 0 | 1
 
 interface ScenarioObservation {
     id: string
     baseDate: string,
-    locationName: string | null   // 👈 ADD THIS
-    healthOutcomes: any // (or proper type)
+    locationName: string | null
+    healthOutcomes: HealthOutcomePoints | null
 
     climate: {
         temperatureCelsius: number | null
         precipitationMm: number | null
         heatWaveDays: number | null
-        floodIndicator: FloodIndicator | number | null
+        floodIndicator: FloodIndicator | null
     }
     airQuality: {
         pm25Ugm3: number | null
@@ -46,7 +46,7 @@ interface ScenarioObservationFilters {
     aqiThreshold?: number
 }
 
-interface ScenarioObservationQueryParams {
+interface ObservationQueryParams {
     page: number
     pageSize: number
     sortBy: ScenarioObservationSortBy
@@ -54,13 +54,13 @@ interface ScenarioObservationQueryParams {
     filters?: ScenarioObservationFilters
 }
 
-type ScenarioObservationListResult = PaginationResult<ScenarioObservation>
+type ObservationListResult = PaginationResult<ScenarioObservation>
 
 export type {
     FloodIndicator,
     ScenarioObservation,
     ScenarioObservationFilters,
-    ScenarioObservationListResult,
-    ScenarioObservationQueryParams,
+    ObservationListResult,
+    ObservationQueryParams,
     ScenarioObservationSortBy,
 }

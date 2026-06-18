@@ -1,5 +1,4 @@
 "use client"
-import { ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/shadcn/button"
 import {
     Dialog,
@@ -16,7 +15,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/shadcn/select"
-import Image from "next/image"
 import { Skeleton } from "@/components/ui/shadcn/skeleton"
 import {
     Table,
@@ -27,26 +25,15 @@ import {
     TableRow,
 } from "@/components/ui/shadcn/table"
 import { TooltipProvider } from "@/components/ui/shadcn/tooltip"
-import {
-    formatCurrency,
-    formatInteger,
-    formatNumber,
-    formatScenarioDate,
-    getAqiSeverity,
-    getFloodSeverity,
-    missingValue,
-    SeverityBadge,
-} from "@/features/scenarios/scenario.formatters"
-import { scenarioClientService } from "@/features/scenarios/scenario.service.client"
+import { createObservationColumns } from "@/features/observations/components/ObservationColumns"
+import { scenarioClientService } from "@/features/observations/Observation.service.client"
 import type {
+    ObservationQueryParams,
     ScenarioObservation,
-    ScenarioObservationQueryParams,
     ScenarioObservationSortBy,
-} from "@/features/scenarios/scenario.types"
-import { createScenarioColumns } from "@/features/scenarios/components/scenarioColumns"
+} from "@/features/observations/Observation.types"
 import { cn } from "@/lib/utils"
 import { useUserStore } from "@/stores/user/use-user"
-import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
     type Column,
@@ -56,12 +43,13 @@ import {
     useReactTable,
 } from "@tanstack/react-table"
 import { format } from "date-fns"
-import { ArrowDown, ArrowUp, RotateCcw } from "lucide-react"
+import { ArrowDown, ArrowUp, ArrowUpRight, RotateCcw } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import type { CSSProperties } from "react"
-import type { ReactNode } from "react"
 import { useCallback, useMemo, useState } from "react"
 import { toast } from "sonner"
+import ObservationDetailsDialog from "./ObservationDetailsDialog"
 
 const pageSizes = [10, 25, 50, 100]
 
@@ -111,141 +99,7 @@ const getPinnedColumnClassName = (column: Column<ScenarioObservation>) =>
         column.getIsPinned() === "right" && column.getIsFirstColumn("right") && "border-l"
     )
 
-const DetailRow = ({ label, value }: { label: string; value: ReactNode }) => (
-    <div className="flex items-center justify-between gap-4 border-b py-2 text-sm last:border-b-0">
-        <dt className="text-muted-foreground">{label}</dt>
-        <dd className="text-right font-medium">{value}</dd>
-    </div>
-)
-
-const DetailSection = ({ children, title }: { children: ReactNode; title: string }) => (
-    <section>
-        <h3 className="mb-2 text-sm font-semibold">{title}</h3>
-        <dl className="rounded-lg border px-3">{children}</dl>
-    </section>
-)
-
-const ScenarioDetailsDialog = ({
-    observation,
-    onOpenChange,
-}: {
-    observation: ScenarioObservation | null
-    onOpenChange: (open: boolean) => void
-}) => (
-    <Dialog open={!!observation} onOpenChange={onOpenChange}>
-        <DialogContent className="max-h-[88vh] max-w-3xl overflow-y-auto">
-            <DialogHeader>
-                <DialogTitle>Observation Details</DialogTitle>
-                <DialogDescription>
-                    {observation
-                        ? `Location Name on ${formatScenarioDate(observation.baseDate)}`
-                        : "Scenario observation details"}
-                </DialogDescription>
-            </DialogHeader>
-            {observation && (
-                <div className="grid gap-4 md:grid-cols-2">
-                    <DetailSection title="General">
-                        <DetailRow label="Date" value={formatScenarioDate(observation.baseDate)} />
-                        <DetailRow
-                            label="Location"
-                            value={ missingValue("Unknown")}
-                        />
-                    </DetailSection>
-                    <DetailSection title="Climate">
-                        <DetailRow
-                            label="Temperature"
-                            value={
-                                formatNumber(observation.climate.temperatureCelsius, "°C") ??
-                                missingValue()
-                            }
-                        />
-                        <DetailRow
-                            label="Precipitation"
-                            value={
-                                formatNumber(observation.climate.precipitationMm, "mm") ??
-                                missingValue()
-                            }
-                        />
-                        <DetailRow
-                            label="Heat Wave Days"
-                            value={
-                                formatInteger(observation.climate.heatWaveDays, "days") ??
-                                missingValue()
-                            }
-                        />
-                        <DetailRow
-                            label="Flood Indicator"
-                            value={
-                                <SeverityBadge
-                                    severity={getFloodSeverity(observation.climate.floodIndicator)} // observation.climate.floodIndicator ?? 0 TODO
-                                />
-                            }
-                        />
-                    </DetailSection>
-                    <DetailSection title="Air Quality">
-                        <DetailRow
-                            label="PM2.5"
-                            value={
-                                formatNumber(observation.airQuality.pm25Ugm3, "µg/m³") ??
-                                missingValue()
-                            }
-                        />
-                        <DetailRow
-                            label="AQI"
-                            value={
-                                <SeverityBadge
-                                    severity={getAqiSeverity(observation.airQuality.aqiPm)}
-                                />
-                            }
-                        />
-                    </DetailSection>
-                    <DetailSection title="Socioeconomic">
-                        {/* <DetailRow
-                            label="Healthcare Access Index"
-                            value={
-                                formatNumber(observation.healthIndicators.healthcareAccessIndex) ??
-                                missingValue()
-                            }
-                        /> */}
-                        <DetailRow
-                            label="Food Production Index"
-                            value={
-                                formatNumber(observation.healthIndicators.foodProductionIndex) ??
-                                missingValue()
-                            }
-                        />
-                        <DetailRow
-                            label="GDP Per Capita"
-                            value={
-                                formatCurrency(observation.healthIndicators.gdpPerCapitaUsd) ??
-                                missingValue()
-                            }
-                        />
-                    </DetailSection>
-                    {/* <DetailSection title="Health Outcomes">
-                        {HEALTH_OUTCOMES_KEYS.map((key) => (
-                            <DetailRow
-                                key={key}
-                                label={key.replaceAll("_", " ")}
-                                value={
-                                    formatNumber(observation.healthOutcomes[key]) ?? missingValue()
-                                }
-                            />
-                        ))}
-                    </DetailSection> */}
-                    <DetailSection title="Notes">
-                        <DetailRow
-                            label="Current Note"
-                            value={observation.note || missingValue()}
-                        />
-                    </DetailSection>
-                </div>
-            )}
-        </DialogContent>
-    </Dialog>
-)
-
-const ScenariosDataTable = () => {
+const ObservationsDataTable = () => {
     const queryClient = useQueryClient()
     const user = useUserStore((state) => state.user)
     const [page, setPage] = useState(1)
@@ -257,7 +111,7 @@ const ScenariosDataTable = () => {
     const sortId = sorting[0]?.id ?? ""
     const sortBy: ScenarioObservationSortBy = isScenarioSortBy(sortId) ? sortId : "baseDate"
     const sortDirection = sorting[0]?.desc === false ? "asc" : "desc"
-    const queryParams: ScenarioObservationQueryParams = {
+    const queryParams: ObservationQueryParams = {
         page,
         pageSize,
         sortBy,
@@ -295,7 +149,7 @@ const ScenariosDataTable = () => {
 
     const columns = useMemo(
         () =>
-            createScenarioColumns({
+            createObservationColumns({
                 canDelete,
                 onAddNote: () =>
                     toast.info("Notes are ready for the API and will be editable soon."),
@@ -304,9 +158,7 @@ const ScenariosDataTable = () => {
             }),
         [canDelete]
     )
-
-    // TanStack Table intentionally returns function-bearing instances; this is the library's standard hook API.
-    // eslint-disable-next-line react-hooks/incompatible-library
+    
     const table = useReactTable({
         columns,
         data: observationsQuery.data?.data ?? [],
@@ -325,7 +177,6 @@ const ScenariosDataTable = () => {
         },
         state: { sorting },
     })
-    console.log("OBSERVATIONS", observationsQuery.data)
     const total = observationsQuery.data?.total ?? 0
     const totalPages = observationsQuery.data?.totalPages ?? 1
     const start = total === 0 ? 0 : (page - 1) * pageSize + 1
@@ -439,7 +290,6 @@ const ScenariosDataTable = () => {
                                           }}
                                       >
                                           {row.getVisibleCells().map((cell) => {
-                                            console.log("CELL", cell)
                                               return (
                                                   <TableCell
                                                       key={cell.id}
@@ -538,7 +388,7 @@ const ScenariosDataTable = () => {
                 </div>
             </div>
 
-            <ScenarioDetailsDialog
+            <ObservationDetailsDialog
                 observation={selectedObservation}
                 onOpenChange={(open) => !open && setSelectedObservation(null)}
             />
@@ -575,4 +425,4 @@ const ScenariosDataTable = () => {
     )
 }
 
-export default ScenariosDataTable
+export default ObservationsDataTable

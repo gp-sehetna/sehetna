@@ -1,18 +1,25 @@
-import { IObservation } from "@/shared/db/model/observation.model"
-import { ScenarioObservation } from "./scenario.types"
-import { ostring } from "zod/v3"
+import { IObservationPopulated } from "@/shared/db/model/observation.model"
+import { FloodIndicator, ScenarioObservation } from "./Observation.types"
+import { HealthOutcomePoints, IHealthOutcomes } from "@/shared/config/health-outcomes"
 
-export function toScenarioObservation(observation: IObservation): ScenarioObservation {
+export function toScenarioObservation(observation: IObservationPopulated): ScenarioObservation {
     return {
         id: observation._id.toString(),
         baseDate: observation.base_date.toISOString(),
         locationName: observation.location_id?.name ?? null,
-        healthOutcomes: observation.prediction_id?.health_outcomes ?? all,
+        healthOutcomes: observation.prediction_id
+            ? (Object.fromEntries(
+                  Object.entries(observation.prediction_id.health_outcomes).map(([key, value]) => [
+                      key,
+                      value.point,
+                  ])
+              ) as HealthOutcomePoints)
+            : null,
         climate: {
             temperatureCelsius: observation.climate.temperature_celsius,
             precipitationMm: observation.climate.precipitation_mm,
             heatWaveDays: observation.climate.heat_wave_days,
-            floodIndicator: observation.climate.flood_indicator,
+            floodIndicator: observation.climate.flood_indicator as 0 | 1 as FloodIndicator,
         },
 
         airQuality: {

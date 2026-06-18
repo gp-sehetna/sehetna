@@ -1,5 +1,5 @@
-import { InferSchemaType, Model, Require_id, Schema, model, models } from "mongoose"
-
+import { HealthOutcomesKeys } from "@/shared/config/health-outcomes"
+import { InferSchemaType, Model, ObjectId, Require_id, Schema, model, models } from "mongoose"
 const climateSchema = new Schema(
     {
         temperature_celsius: { type: Number, default: 0 },
@@ -41,9 +41,26 @@ const ObservationSchema = new Schema(
     { timestamps: true }
 )
 
+type ILocation = {
+    _id: ObjectId
+    name: string
+}
+
+type IPrediction = {
+    _id: ObjectId
+    health_outcomes: Record<HealthOutcomesKeys, {point: Number}>
+}
+
 export type Binary = 0 | 1
 export type WeekDaysCount = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
 export type IObservation = Require_id<InferSchemaType<typeof ObservationSchema>>
+export type IObservationPopulated = Omit<
+    IObservation,
+    "location_id" | "prediction_id"
+> & {
+    location_id: ILocation | null
+    prediction_id: IPrediction | null
+}
 
 ObservationSchema.index({ location_id: 1 })
 
