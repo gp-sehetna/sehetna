@@ -1,9 +1,8 @@
 import Divider from "@/components/ui/GlobalControls/Divider"
-// import DataStoreCardGrid from "../../components/ui/GlobalComponents/CardGrid/DataStoreCardGrid"
 import { Metadata } from "next"
-import ScenariosDataTable from "@/features/observations/components/scenarioDataTable/ObservationsDataTable"
 import Image from "next/image"
 import DataExplorerCrumb from "@/components/ui/GlobalComponents/Breadcrumbs/DataExplorerCrumb"
+import ObservationsDataTable from "@/features/observations/components/ObservationsDataTable"
 
 export const metadata: Metadata = {
     title: "Data Explorer",
@@ -31,7 +30,7 @@ const DataExplorerPage = () => {
             <Divider hideDecorations />
             <div className="flex flex-col gap-4 p-4">
                 <DataExplorerCrumb />
-                <ScenariosDataTable />
+                <ObservationsDataTable />
                 {/* <DataStoreCardGrid /> */}
             </div>
         </section>
