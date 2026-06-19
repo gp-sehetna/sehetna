@@ -1,11 +1,6 @@
-import type {
-    ScenarioObservation,
-    ScenarioObservationSortBy
-} from "@/features/observations/Observation.types"
+import type { ScenarioObservation } from "@/features/observations/Observation.types"
 import { cn } from "@/lib/utils"
-import {
-    type Column
-} from "@tanstack/react-table"
+import { type Column } from "@tanstack/react-table"
 import type { CSSProperties } from "react"
 
 export const getPinnedColumnStyles = (column: Column<ScenarioObservation>): CSSProperties => {
@@ -28,20 +23,24 @@ export const getPinnedColumnClassName = (column: Column<ScenarioObservation>) =>
         column.getIsPinned() === "right" && column.getIsFirstColumn("right") && "border-l"
     )
 
-export const isScenarioSortBy = (id: string): id is ScenarioObservationSortBy =>
-    [
-        "baseDate",
-        "locationName",
-        "temperatureCelsius",
-        "precipitationMm",
-        "heatWaveDays",
-        "floodIndicator",
-        "pm25_ugm3",
-        "aqi",
-        "healthcareAccessIndex",
-        "foodSecurityIndex",
-        "gdpPerCapitaUsd",
-    ].includes(id)
+const SCENARIO_SORT_FIELDS = [
+    "base_date",
+    "location_id.name",
+    "climate.temperature_celsius",
+    "climate.precipitation_mm",
+    "climate.heat_wave_days",
+    "climate.flood_indicator",
+    "air_quality.pm25_ugm3",
+    "air_quality.aqi_pm",
+    "health_indicators.gdp_per_capita_usd",
+    "health_indicators.food_production_index",
+] as const
+
+export type ScenarioObservationSortBy = (typeof SCENARIO_SORT_FIELDS)[number]
+
+export const isScenarioSortBy = (id: string): id is ScenarioObservationSortBy => {
+    return SCENARIO_SORT_FIELDS.includes(id as ScenarioObservationSortBy)
+}
 
 export const downloadCsv = (csv: string, filename: string) => {
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" })
@@ -56,7 +55,7 @@ export const downloadCsv = (csv: string, filename: string) => {
 
 export function scenarioObservationToCsvRows(
     observations: ScenarioObservation[]
-): (string | number | null | undefined)[][] {
+): (string | number | Date | null | undefined)[][] {
     return [
         [
             "Base Date",
@@ -79,26 +78,25 @@ export function scenarioObservationToCsvRows(
         ],
 
         ...observations.map((observation) => [
-            observation.baseDate,
-            observation.locationName,
+            observation.base_date,
+            observation.location_id.name,
 
-            observation.healthOutcomes?.cardio_mortality_rate,
-            observation.healthOutcomes?.heat_related_admissions,
-            observation.healthOutcomes?.respiratory_disease_rate,
-            observation.healthOutcomes?.vector_disease_risk_score,
-            observation.healthOutcomes?.waterborne_disease_incidents,
+            observation.prediction_id.health_outcomes?.cardio_mortality_rate.point,
+            observation.prediction_id.health_outcomes?.heat_related_admissions.point,
+            observation.prediction_id.health_outcomes?.respiratory_disease_rate.point,
+            observation.prediction_id.health_outcomes?.vector_disease_risk_score.point,
+            observation.prediction_id.health_outcomes?.waterborne_disease_incidents.point,
 
-            observation.climate.temperatureCelsius,
-            observation.climate.precipitationMm,
-            observation.climate.heatWaveDays,
-            observation.climate.floodIndicator,
+            observation.climate.temperature_celsius,
+            observation.climate.precipitation_mm,
+            observation.climate.heat_wave_days,
+            observation.climate.flood_indicator,
 
-            observation.airQuality.pm25Ugm3,
-            observation.airQuality.aqiPm,
+            observation.air_quality.pm25_ugm3,
+            observation.air_quality.aqi_pm,
 
-            observation.healthIndicators.gdpPerCapitaUsd,
-            observation.healthIndicators.foodProductionIndex,
-            observation.healthIndicators.undernourishment,
+            observation.health_indicators.gdp_per_capita_usd,
+            observation.health_indicators.food_production_index,
 
             observation.note,
         ]),
@@ -113,12 +111,8 @@ const escapeCsvCell = (value: unknown) => {
     return `"${cell.replaceAll('"', '""')}"`
 }
 
-export function observationsToCsv(
-    observations: ScenarioObservation[]
-) {
+export function observationsToCsv(observations: ScenarioObservation[]) {
     const rows = scenarioObservationToCsvRows(observations)
 
-    return rows
-        .map((row) => row.map(escapeCsvCell).join(","))
-        .join("\n")
+    return rows.map((row) => row.map(escapeCsvCell).join(",")).join("\n")
 }

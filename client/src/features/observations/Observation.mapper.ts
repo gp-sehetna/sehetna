@@ -2,7 +2,7 @@ import { IObservationPopulated } from "@/shared/db/model/observation.model"
 import { FloodIndicator, ScenarioObservation } from "./Observation.types"
 import { HealthOutcomePoints, IHealthOutcomes } from "@/shared/config/health-outcomes"
 
-export function toScenarioObservation(observation: IObservationPopulated): ScenarioObservation {
+export function toScenarioObservation(observation: IObservationPopulated): any {
     return {
         id: observation._id.toString(),
         baseDate: observation.base_date.toISOString(),
@@ -30,7 +30,6 @@ export function toScenarioObservation(observation: IObservationPopulated): Scena
         healthIndicators: {
             gdpPerCapitaUsd: observation.health_indicators.gdp_per_capita_usd,
             foodProductionIndex: observation.health_indicators.food_production_index,
-            undernourishment: observation.health_indicators.undernourishment,
         },
 
         note: observation.note,

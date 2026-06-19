@@ -19,12 +19,12 @@ const useObservationTable = () => {
     const user = useUserStore((state) => state.user)
     const [page, setPage] = useState(1)
     const [pageSize, setPageSize] = useState(10)
-    const [sorting, setSorting] = useState<SortingState>([{ id: "baseDate", desc: true }])
+    const [sorting, setSorting] = useState<SortingState>([{ id: "base_date", desc: true }])
     const [selectedObservation, setSelectedObservation] = useState<ScenarioObservation | null>(null)
     const [observationToDelete, setObservationToDelete] = useState<ScenarioObservation | null>(null)
 
     const sortId = sorting[0]?.id ?? ""
-    const sortBy: ScenarioObservationSortBy = isScenarioSortBy(sortId) ? sortId : "baseDate"
+    const sortBy: ScenarioObservationSortBy = isScenarioSortBy(sortId) ? sortId : "base_date"
     const sortDirection = sorting[0]?.desc === false ? "asc" : "desc"
     const queryParams: ObservationQueryParams = {
         page,

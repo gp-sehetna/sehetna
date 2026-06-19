@@ -60,7 +60,7 @@ const getAqiSeverity = (value?: number | null) => {
 
 type FloodIndicator = 0 | 1
 
-const getFloodSeverity = (value?: FloodIndicator | null) => {
+const getFloodSeverity = (value: FloodIndicator) => {
     // Handle null, undefined, or invalid inputs safely
     if (value === null || value === undefined) return null
 

@@ -1,3 +1,4 @@
+import { ObservationQueryParams } from "@/features/observations/Observation.types"
 import {
     IObservation,
     IObservationPopulated,
@@ -19,12 +20,15 @@ export class ObservationRepository extends DatabaseRepository<IObservation> {
         return this.model.updateOne({ _id: new Types.ObjectId(id) }, { $set: { note } })
     }
 
-    async findAllObservations() {
-        return await this.model
+    async findAllObservations(query: ObservationQueryParams) {
+        return this.model
             .find()
+            .sort({
+                [query.sortBy]: query.sortDirection === "asc" ? 1 : -1,
+            })
             .populate("location_id", "name")
             .populate("prediction_id", "health_outcomes")
-            .lean<IObservationPopulated[]>()
+            .lean()
             .exec()
     }
 }

@@ -10,17 +10,17 @@ import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 import { userProvider } from "@/shared/http/handlers/user.handler"
 
 const sortFields = new Set<ScenarioObservationSortBy>([
-    "baseDate",
-    "locationName",
-    "temperatureCelsius",
-    "precipitationMm",
-    "heatWaveDays",
-    "floodIndicator",
-    "pm25Ugm3",
-    "aqi",
-    "healthcareAccessIndex",
-    "foodSecurityIndex",
-    "gdpPerCapitaUsd",
+    "base_date",
+    "location_id.name",
+    "climate.temperature_celsius",
+    "climate.precipitation_mm",
+    "climate.heat_wave_days",
+    "climate.flood_indicator",
+    "air_quality.pm25_ugm3",
+    "air_quality.aqi_pm",
+    "health_indicators.gdp_per_capita_usd",
+    "health_indicators.food_production_index",
+    "health_indicators.undernourishment",
 ])
 
 const parseQuery = (request: Request): ObservationQueryParams => {
@@ -32,7 +32,7 @@ const parseQuery = (request: Request): ObservationQueryParams => {
     return {
         page: Number(searchParams.get("page") ?? 1),
         pageSize: Number(searchParams.get("pageSize") ?? 10),
-        sortBy: sortBy && sortFields.has(sortBy) ? sortBy : "baseDate",
+        sortBy: sortBy && sortFields.has(sortBy) ? sortBy : "base_date",
         sortDirection: sortDirection === "asc" ? "asc" : "desc",
         filters: filtersParam ? JSON.parse(filtersParam) : undefined,
     }
@@ -40,7 +40,8 @@ const parseQuery = (request: Request): ObservationQueryParams => {
 
 export const GET = globalErrorHandler(async (request) => {
     const mainService = await MainService.getInstance()
-    const scenarios = await mainService.observationService.getObservations()
+    const query = parseQuery(request)
+    const scenarios = await mainService.observationService.getObservations(query)
     return [{ data: { data: scenarios } }, "Scenarios retrieved successfully"]
 })
 
@@ -57,4 +58,3 @@ export const POST = globalErrorHandler(
         return [undefined, "Scenario created successfully"]
     })
 )
-// post /api/scenarios {"environment": {}, "prediction": {}}

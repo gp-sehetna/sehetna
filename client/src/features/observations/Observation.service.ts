@@ -1,11 +1,11 @@
 import { ObservationRepository } from "@/shared/db/repository/observation.repository"
-import { toScenarioObservation } from "./Observation.mapper"
+import { ObservationQueryParams } from "./Observation.types"
 
 export class ObservationService {
     constructor(private readonly observationRepository: ObservationRepository) {}
 
-    async getObservations() {
-        return (await this.observationRepository.findAllObservations()).map(toScenarioObservation)
+    async getObservations(query: ObservationQueryParams) {
+        return this.observationRepository.findAllObservations(query)
     }
 
     async deleteObservation(id: string) {

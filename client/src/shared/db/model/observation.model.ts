@@ -22,7 +22,6 @@ const healthIndicatorsSchema = new Schema(
     {
         gdp_per_capita_usd: { type: Number, default: 0 },
         food_production_index: { type: Number, default: null },
-        undernourishment: { type: Number, default: null },
         // healthcare_access_index
     },
     { _id: false }
@@ -48,7 +47,7 @@ type ILocation = {
 
 type IPrediction = {
     _id: ObjectId
-    health_outcomes: Record<HealthOutcomesKeys, {point: Number}>
+    health_outcomes: Record<HealthOutcomesKeys, {point: number}>
 }
 
 export type Binary = 0 | 1
@@ -58,8 +57,8 @@ export type IObservationPopulated = Omit<
     IObservation,
     "location_id" | "prediction_id"
 > & {
-    location_id: ILocation | null
-    prediction_id: IPrediction | null
+    location_id: ILocation
+    prediction_id: IPrediction
 }
 
 ObservationSchema.index({ location_id: 1 })

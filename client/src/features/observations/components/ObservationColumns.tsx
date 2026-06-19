@@ -19,7 +19,7 @@ import {
     missingValue,
     SeverityBadge,
 } from "@/features/observations/Observation.formatters"
-import type { ScenarioObservation } from "@/features/observations/Observation.types"
+import type { FloodIndicator, ScenarioObservation } from "@/features/observations/Observation.types"
 import { formatDate } from "@/lib/utils/date"
 import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
 import type { ColumnDef } from "@tanstack/react-table"
@@ -35,8 +35,11 @@ type ObservationColumnActions = {
 const valueOrMissing = (value: string | null) => value ?? missingValue()
 
 const healthOutcomeSummary = (row: ScenarioObservation) => {
-    const respiratory = formatNumber(row.healthOutcomes!.respiratory_disease_rate, "%")
-    const cardio = formatNumber(row.healthOutcomes!.cardio_mortality_rate, "%")
+    const respiratory = formatNumber(
+        row.prediction_id.health_outcomes.respiratory_disease_rate.point,
+        "%"
+    )
+    const cardio = formatNumber(row.prediction_id.health_outcomes.cardio_mortality_rate.point, "%")
 
     return respiratory || cardio
         ? `${respiratory ?? "N/A"} resp. / ${cardio ?? "N/A"} cardio`
@@ -53,74 +56,67 @@ const createObservationColumns = ({
         accessorKey: "baseDate",
         header: "Base Date",
         cell: ({ row }) =>
-            formatDate(row.original.baseDate, { day: "2-digit", month: "short", year: "numeric" }),
+            formatDate(row.original.base_date, { day: "2-digit", month: "short", year: "numeric" }),
     },
     {
-        accessorKey: "locationName",
+        accessorKey: "location_id.name",
         header: "Location",
-        cell: ({ row }) => row.original.locationName || missingValue("Unknown"),
+        cell: ({ row }) => row.original.location_id.name || missingValue("Unknown"),
     },
     {
-        accessorFn: (row) => row.climate.temperatureCelsius,
-        id: "temperatureCelsius",
+        accessorFn: (row) => row.climate.temperature_celsius,
+        id: "climate.temperature_celsius",
         header: "Temperature",
         cell: ({ row }) =>
-            valueOrMissing(formatNumber(row.original.climate.temperatureCelsius, "°C")),
+            valueOrMissing(formatNumber(row.original.climate.temperature_celsius, "°C")),
     },
     {
-        accessorFn: (row) => row.climate.precipitationMm,
-        id: "precipitationMm",
+        accessorFn: (row) => row.climate.precipitation_mm,
+        id: "climate.precipitation_mm",
         header: "Precipitation",
-        cell: ({ row }) => valueOrMissing(formatNumber(row.original.climate.precipitationMm, "mm")),
+        cell: ({ row }) => valueOrMissing(formatNumber(row.original.climate.precipitation_mm, "mm")),
     },
     {
-        accessorFn: (row) => row.climate.heatWaveDays,
-        id: "heatWaveDays",
+        accessorFn: (row) => row.climate.heat_wave_days,
+        id: "climate.heat_wave_days",
         header: "Heat Wave Days",
-        cell: ({ row }) => valueOrMissing(formatInteger(row.original.climate.heatWaveDays, "days")),
+        cell: ({ row }) => valueOrMissing(formatInteger(row.original.climate.heat_wave_days, "days")),
     },
     {
-        accessorFn: (row) => row.climate.floodIndicator,
-        id: "floodIndicator",
+        accessorFn: (row) => row.climate.flood_indicator,
+        id: "climate.flood_indicator",
         header: "Flood Indicator",
         cell: ({ row }) => (
-            <SeverityBadge severity={getFloodSeverity(row.original.climate.floodIndicator)} />
+            <SeverityBadge severity={getFloodSeverity(row.original.climate.flood_indicator as FloodIndicator)} />
         ),
     },
     {
-        accessorFn: (row) => row.airQuality.pm25Ugm3,
-        id: "pm25_ugm3",
+        accessorFn: (row) => row.air_quality.pm25_ugm3,
+        id: "air_quality.pm25_ugm3",
         header: "PM2.5",
-        cell: ({ row }) => valueOrMissing(formatNumber(row.original.airQuality.pm25Ugm3, "µg/m³")),
+        cell: ({ row }) => valueOrMissing(formatNumber(row.original.air_quality.pm25_ugm3, "µg/m³")),
     },
     {
-        accessorFn: (row) => row.airQuality.aqiPm,
-        id: "aqi",
+        accessorFn: (row) => row.air_quality.aqi_pm,
+        id: "air_quality.aqi_pm",
         header: "AQI",
         cell: ({ row }) => (
-            <SeverityBadge severity={getAqiSeverity(row.original.airQuality.aqiPm)} />
+            <SeverityBadge severity={getAqiSeverity(row.original.air_quality.aqi_pm)} />
         ),
     },
-    // {
-    //     accessorFn: (row) => row.healthIndicators.healthcareAccessIndex,
-    //     id: "healthcareAccessIndex",
-    //     header: "Healthcare Access Index",
-    //     cell: ({ row }) =>
-    //         valueOrMissing(formatNumber(row.original.healthIndicators.healthcareAccessIndex)),
-    // },
     {
-        accessorFn: (row) => row.healthIndicators.foodProductionIndex,
-        id: "foodSecurityIndex",
+        accessorFn: (row) => row.health_indicators.food_production_index,
+        id: "health_indicators.food_production_index",
         header: "Food Security Index",
         cell: ({ row }) =>
-            valueOrMissing(formatNumber(row.original.healthIndicators.foodProductionIndex)),
+            valueOrMissing(formatNumber(row.original.health_indicators.food_production_index)),
     },
     {
-        accessorFn: (row) => row.healthIndicators.gdpPerCapitaUsd,
-        id: "gdpPerCapitaUsd",
+        accessorFn: (row) => row.health_indicators.gdp_per_capita_usd,
+        id: "health_indicators.gdp_per_capita_usd",
         header: "GDP Per Capita",
         cell: ({ row }) =>
-            valueOrMissing(formatCurrency(row.original.healthIndicators.gdpPerCapitaUsd)),
+            valueOrMissing(formatCurrency(row.original.health_indicators.gdp_per_capita_usd)),
     },
     {
         id: "notes",
@@ -148,7 +144,7 @@ const createObservationColumns = ({
             ),
     },
     {
-        id: "healthOutcomes",
+        id: "prediction_id.health_outcomes",
         header: "Health Outcomes",
         enablePinning: true,
         enableSorting: false,
@@ -167,7 +163,7 @@ const createObservationColumns = ({
                             {HEALTH_OUTCOMES_KEYS.map((key) => (
                                 <p key={key}>
                                     {key.replaceAll("_", " ")}:{" "}
-                                    {formatNumber(row.original.healthOutcomes![key]) ?? "N/A"}
+                                    {formatNumber(row.original.prediction_id.health_outcomes[key].point) ?? "N/A"}
                                 </p>
                             ))}
                         </div>

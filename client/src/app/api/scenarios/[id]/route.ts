@@ -1,14 +1,11 @@
-
-import { ObservationService } from "@/features/observations/Observation.service"
-import { ObservationModel } from "@/shared/db/model/observation.model"
-import { ObservationRepository } from "@/shared/db/repository/observation.repository"
+import { MainService } from "@/shared/db/main.service"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 
 export const DELETE = globalErrorHandler(
     async (_request, { params }: { params: Promise<{ id: string }> }) => {
         const { id } = await params
-        const observation = new ObservationService(new ObservationRepository(ObservationModel))
-        const isDeleted = await observation.deleteObservation(id)
+        const mainService = await MainService.getInstance()
+        const isDeleted = await mainService.observationService.deleteObservation(id)
 
         if (!isDeleted) {
             return [undefined, "Scenario observation not found"]
@@ -18,16 +15,13 @@ export const DELETE = globalErrorHandler(
     }
 )
 
+// TODO: This endpoint needs to be handled from the client (READY FOR USE YA BODAAA BEH !!!)
 export const POST = globalErrorHandler(
     async (request, { params }: { params: Promise<{ id: string }> }) => {
         const { id } = await params
         const { note } = (await request.json()) as { note?: string }
-        const observation = new ObservationService(new ObservationRepository(ObservationModel))
-
-        const isSaved = await observation.updateNote(
-            id,
-            note ?? ""
-        )
+        const mainService = await MainService.getInstance()
+        const isSaved = await mainService.observationService.updateNote(id, note ?? "")
 
         if (!isSaved) {
             return [undefined, "Scenario observation not found"]

@@ -16,7 +16,7 @@ import {
     missingValue,
     SeverityBadge,
 } from "@/features/observations/Observation.formatters"
-import type { ScenarioObservation } from "@/features/observations/Observation.types"
+import type { FloodIndicator, ScenarioObservation } from "@/features/observations/Observation.types"
 import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
 import DetailSection from "./DetailSection"
 import DetailRow from "./DetailRow"
@@ -33,39 +33,39 @@ const ObservationDetailsDialog = ({
             <DialogHeader>
                 <DialogTitle>Observation Details</DialogTitle>
                 <DialogDescription>
-                    {observation && observation.locationName
-                        ? `${observation.locationName} on ${formatScenarioDate(observation.baseDate)}`
+                    {observation && observation.location_id.name
+                        ? `${observation.location_id.name} on ${formatScenarioDate(observation.base_date)}`
                         : "Scenario observation details"}
                 </DialogDescription>
             </DialogHeader>
             {observation && (
                 <div className="grid gap-4 md:grid-cols-2">
                     <DetailSection title="General">
-                        <DetailRow label="Date" value={formatScenarioDate(observation.baseDate)} />
+                        <DetailRow label="Date" value={formatScenarioDate(observation.base_date)} />
                         <DetailRow
                             label="Location"
-                            value={observation.locationName ?? missingValue("Unknown")}
+                            value={observation.location_id.name ?? missingValue("Unknown")}
                         />
                     </DetailSection>
                     <DetailSection title="Climate">
                         <DetailRow
                             label="Temperature"
                             value={
-                                formatNumber(observation.climate.temperatureCelsius, "°C") ??
+                                formatNumber(observation.climate.temperature_celsius, "°C") ??
                                 missingValue()
                             }
                         />
                         <DetailRow
                             label="Precipitation"
                             value={
-                                formatNumber(observation.climate.precipitationMm, "mm") ??
+                                formatNumber(observation.climate.precipitation_mm, "mm") ??
                                 missingValue()
                             }
                         />
                         <DetailRow
                             label="Heat Wave Days"
                             value={
-                                formatInteger(observation.climate.heatWaveDays, "days") ??
+                                formatInteger(observation.climate.heat_wave_days, "days") ??
                                 missingValue()
                             }
                         />
@@ -73,7 +73,7 @@ const ObservationDetailsDialog = ({
                             label="Flood Indicator"
                             value={
                                 <SeverityBadge
-                                    severity={getFloodSeverity(observation.climate.floodIndicator)}
+                                    severity={getFloodSeverity(observation.climate.flood_indicator as FloodIndicator)}
                                 />
                             }
                         />
@@ -82,7 +82,7 @@ const ObservationDetailsDialog = ({
                         <DetailRow
                             label="PM2.5"
                             value={
-                                formatNumber(observation.airQuality.pm25Ugm3, "µg/m³") ??
+                                formatNumber(observation.air_quality.pm25_ugm3, "µg/m³") ??
                                 missingValue()
                             }
                         />
@@ -90,7 +90,7 @@ const ObservationDetailsDialog = ({
                             label="AQI"
                             value={
                                 <SeverityBadge
-                                    severity={getAqiSeverity(observation.airQuality.aqiPm)}
+                                    severity={getAqiSeverity(observation.air_quality.aqi_pm)}
                                 />
                             }
                         />
@@ -99,27 +99,27 @@ const ObservationDetailsDialog = ({
                         <DetailRow
                             label="Food Production Index"
                             value={
-                                formatNumber(observation.healthIndicators.foodProductionIndex) ??
+                                formatNumber(observation.health_indicators.food_production_index) ??
                                 missingValue()
                             }
                         />
                         <DetailRow
                             label="GDP Per Capita"
                             value={
-                                formatCurrency(observation.healthIndicators.gdpPerCapitaUsd) ??
+                                formatCurrency(observation.health_indicators.gdp_per_capita_usd) ??
                                 missingValue()
                             }
                         />
                     </DetailSection>
                     <DetailSection title="Health Outcomes">
                         {HEALTH_OUTCOMES_KEYS.map((key) => {
-                            console.log("KEY", key, observation.healthOutcomes)
+                            console.log("KEY", key, observation.prediction_id.health_outcomes[key])
                             return (
                                 <DetailRow
                                     key={key}
                                     label={key.replaceAll("_", " ")}
                                     value={
-                                        formatNumber(observation.healthOutcomes![key]) ??
+                                        formatNumber(observation.prediction_id.health_outcomes[key].point) ??
                                         missingValue()
                                     }
                                 />

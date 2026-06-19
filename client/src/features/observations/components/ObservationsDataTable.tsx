@@ -15,25 +15,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/shadcn/select"
-import { Skeleton } from "@/components/ui/shadcn/skeleton"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/shadcn/table"
 import { TooltipProvider } from "@/components/ui/shadcn/tooltip"
 import useObservationTable from "@/hooks/useObservationTable"
-import { cn } from "@/lib/utils"
-import {
-    flexRender
-} from "@tanstack/react-table"
-import { ArrowDown, ArrowUp, ArrowUpRight, RotateCcw } from "lucide-react"
+import { RotateCcw } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
-import { getPinnedColumnClassName, getPinnedColumnStyles } from "../Observation.helpers"
 import ObservationDetailsDialog from "./ObservationDetailsDialog"
 import ObservationsTableContent from "./ObservationTableContent"
 
@@ -184,7 +169,7 @@ const ObservationsDataTable = () => {
                             variant="destructive"
                             disabled={!observationToDelete || deleteMutation.isPending}
                             onClick={() =>
-                                observationToDelete && deleteMutation.mutate(observationToDelete.id)
+                                observationToDelete && deleteMutation.mutate(String(observationToDelete._id))
                             }
                         >
                             Delete
