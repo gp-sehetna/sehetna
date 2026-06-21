@@ -1,4 +1,4 @@
-import { ScenarioQueryParams } from "@/features/observations/Observation.types"
+import { ScenarioQueryParams } from "@/features/scenarios/scenario.types"
 import { IObservation, ObservationModel } from "@/shared/db/model/observation.model"
 import { DatabaseRepository } from "@/shared/db/repository/database.repository"
 import { ClientSession, Types } from "mongoose"
@@ -16,7 +16,7 @@ export class ObservationRepository extends DatabaseRepository<IObservation> {
         return this.model.updateOne({ _id: new Types.ObjectId(id) }, { $set: { note } })
     }
 
-    async findAllObservations(query: ScenarioQueryParams) {
+    async findAllScenarios(query: ScenarioQueryParams) {
         return (
             this.model
                 .find()
@@ -31,5 +31,15 @@ export class ObservationRepository extends DatabaseRepository<IObservation> {
                 .lean()
                 .exec()
         )
+        //! Critical: Paginate the result of the Scenarios. use reference in `prediction.repository.ts`
+        // return this.paginate({
+        //     filter: {},
+        //     sort: { [query.sortBy]: query.sortDirection },
+        //     populate: [
+        //         { path: "location_id", select: { name: 1 } },
+        //         { path: "prediction_id", select: { health_outcomes: 1 } },
+        //     ],
+        //     lean: true,
+        // })
     }
 }

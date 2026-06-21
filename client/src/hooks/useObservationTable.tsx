@@ -1,16 +1,16 @@
 "use client"
-import { createObservationColumns } from "@/features/observations/components/ObservationColumns"
+import { createScenarioColumns } from "@/features/scenarios/components/ScenarioColumns"
 import {
     downloadCsv,
     isScenarioSortBy,
     observationsToCsv,
-} from "@/features/observations/Observation.helpers"
-import { scenarioClientService } from "@/features/observations/Observation.service.client"
+} from "@/features/scenarios/scenario.helpers"
+import { scenarioClientService } from "@/features/scenarios/scenario.service.client"
 import type {
     ScenarioQueryParams,
     Scenario,
     ScenarioSortBy,
-} from "@/features/observations/Observation.types"
+} from "@/features/scenarios/scenario.types"
 import { useUserStore } from "@/stores/user/use-user"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { getCoreRowModel, type SortingState, useReactTable } from "@tanstack/react-table"
@@ -39,14 +39,14 @@ const useObservationTable = () => {
 
     const observationsQuery = useQuery({
         queryKey: ["scenario-observations", queryParams],
-        queryFn: () => scenarioClientService.listObservations(queryParams),
+        queryFn: () => scenarioClientService.listScenarios(queryParams),
     })
 
     // TODO: update this when RBAC is added
     const canDelete = useCallback(() => true, [])
 
     const deleteMutation = useMutation({
-        mutationFn: (id: string) => scenarioClientService.deleteObservation(id),
+        mutationFn: (id: string) => scenarioClientService.deleteScenario(id),
         onSuccess: async () => {
             toast.success("Scenario observation deleted")
             setObservationToDelete(null)
@@ -57,7 +57,7 @@ const useObservationTable = () => {
 
     const exportMutation = useMutation({
         mutationFn: async () => {
-            const result = await scenarioClientService.listObservations(queryParams)
+            const result = await scenarioClientService.listScenarios(queryParams)
 
             return observationsToCsv(result.data)
         },
@@ -73,7 +73,7 @@ const useObservationTable = () => {
 
     const columns = useMemo(
         () =>
-            createObservationColumns({
+            createScenarioColumns({
                 canDelete,
                 onAddNote: () =>
                     toast.info("Notes are ready for the API and will be editable soon."),

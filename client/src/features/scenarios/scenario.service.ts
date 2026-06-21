@@ -1,11 +1,11 @@
 import { ObservationRepository } from "@/shared/db/repository/observation.repository"
-import { ScenarioQueryParams } from "./Observation.types"
+import { ScenarioQueryParams } from "./scenario.types"
 
 export class ObservationService {
     constructor(private readonly observationRepository: ObservationRepository) {}
 
     async getObservations(query: ScenarioQueryParams) {
-        return this.observationRepository.findAllObservations(query)
+        return this.observationRepository.findAllScenarios(query)
     }
 
     async deleteObservation(id: string) {

@@ -1,6 +1,6 @@
 import { EnvironmentDataSchema } from "@/features/environment/week/week.validation"
-import type { ScenarioQueryParams, ScenarioSortBy } from "@/features/observations/Observation.types"
-import { SCENARIO_SORT_FIELDS } from "@/features/observations/Observation.types"
+import type { ScenarioQueryParams, ScenarioSortBy } from "@/features/scenarios/scenario.types"
+import { SCENARIO_SORT_FIELDS } from "@/features/scenarios/scenario.types"
 import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 import { MainService } from "@/shared/db/main.service"
 import type { SortType } from "@/shared/db/types/pagination.type"

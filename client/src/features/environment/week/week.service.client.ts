@@ -5,7 +5,7 @@ import {
     SimulateQueryParams,
     SimulateResponse,
 } from "@/features/environment/week/week.types"
-import { scenarioClientService } from "@/features/observations/Observation.service.client"
+import { scenarioClientService } from "@/features/scenarios/scenario.service.client"
 import storageKeys from "@/lib/storage"
 import { toProperCase } from "@/lib/utils"
 import { api } from "@/shared/api"

@@ -15,13 +15,13 @@ import {
     getFloodSeverity,
     missingValue,
     SeverityBadge,
-} from "@/features/observations/Observation.formatters"
-import type { Scenario } from "@/features/observations/Observation.types"
+} from "@/features/scenarios/scenario.formatters"
+import type { Scenario } from "@/features/scenarios/scenario.types"
 import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
 import DetailSection from "./DetailSection"
 import DetailRow from "./DetailRow"
 
-const ObservationDetailsDialog = ({
+const ScenarioDetailsDialog = ({
     observation,
     onOpenChange,
 }: {
@@ -139,4 +139,4 @@ const ObservationDetailsDialog = ({
     </Dialog>
 )
 
-export default ObservationDetailsDialog
+export default ScenarioDetailsDialog

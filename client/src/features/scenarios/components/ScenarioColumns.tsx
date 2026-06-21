@@ -18,8 +18,8 @@ import {
     getFloodSeverity,
     missingValue,
     SeverityBadge,
-} from "@/features/observations/Observation.formatters"
-import type { Scenario } from "@/features/observations/Observation.types"
+} from "@/features/scenarios/scenario.formatters"
+import type { Scenario } from "@/features/scenarios/scenario.types"
 import { formatDate } from "@/lib/utils/date"
 import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
 import type { ColumnDef } from "@tanstack/react-table"
@@ -46,7 +46,7 @@ const healthOutcomeSummary = (row: Scenario) => {
         : null
 }
 // TODO: columns like `undernourishment`, `food_production_index` are missing @Mahmoudamin11
-const createObservationColumns = ({
+const createScenarioColumns = ({
     canDelete,
     onAddNote,
     onDelete,
@@ -221,4 +221,4 @@ const createObservationColumns = ({
     },
 ]
 
-export { createObservationColumns }
+export { createScenarioColumns }

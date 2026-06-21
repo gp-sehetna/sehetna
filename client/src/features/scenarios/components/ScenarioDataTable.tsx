@@ -19,12 +19,12 @@ import { TooltipProvider } from "@/components/ui/shadcn/tooltip"
 import useObservationTable from "@/hooks/useObservationTable"
 import { RotateCcw } from "lucide-react"
 import Image from "next/image"
-import ObservationDetailsDialog from "./ObservationDetailsDialog"
-import ObservationsTableContent from "./ObservationTableContent"
+import ScenarioDetailsDialog from "./ScenarioDetailsDialog"
+import ObservationsTableContent from "./ScenarioTableContent"
 
 const pageSizes = [10, 25, 50, 100]
 
-const ObservationsDataTable = () => {
+const ScenariosDataTable = () => {
     const {
         table,
         start,
@@ -84,7 +84,12 @@ const ObservationsDataTable = () => {
                         </Button>
                     </div>
                 ) : (
-                    <ObservationsTableContent table={table} observationsQuery={observationsQuery} columns={columns} setSelectedObservation={setSelectedObservation} />
+                    <ObservationsTableContent
+                        table={table}
+                        observationsQuery={observationsQuery}
+                        columns={columns}
+                        setSelectedObservation={setSelectedObservation}
+                    />
                 )}
 
                 <div className="flex flex-col gap-3 p-4 text-sm md:flex-row md:items-center md:justify-between">
@@ -144,7 +149,7 @@ const ObservationsDataTable = () => {
                 </div>
             </div>
 
-            <ObservationDetailsDialog
+            <ScenarioDetailsDialog
                 observation={selectedObservation}
                 onOpenChange={(open) => !open && setSelectedObservation(null)}
             />
@@ -169,7 +174,8 @@ const ObservationsDataTable = () => {
                             variant="destructive"
                             disabled={!observationToDelete || deleteMutation.isPending}
                             onClick={() =>
-                                observationToDelete && deleteMutation.mutate(String(observationToDelete._id))
+                                observationToDelete &&
+                                deleteMutation.mutate(String(observationToDelete._id))
                             }
                         >
                             Delete
@@ -181,4 +187,4 @@ const ObservationsDataTable = () => {
     )
 }
 
-export default ObservationsDataTable
+export default ScenariosDataTable

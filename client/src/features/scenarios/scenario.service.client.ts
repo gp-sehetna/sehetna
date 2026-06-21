@@ -1,10 +1,7 @@
 "use client"
 
 import { api } from "@/shared/api"
-import type {
-    ScenarioListResult,
-    ScenarioQueryParams,
-} from "@/features/observations/Observation.types"
+import type { ScenarioListResult, ScenarioQueryParams } from "@/features/scenarios/scenario.types"
 import { IEnvironmentData } from "../environment/week/week.dto"
 import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 import { SuccessResponseWithData } from "@/shared/http/response"
@@ -12,7 +9,7 @@ import { SuccessResponseWithData } from "@/shared/http/response"
 type ScenarioListResponse = SuccessResponseWithData<ScenarioListResult>
 
 class ScenarioClientService {
-    listObservations = async (params: ScenarioQueryParams) => {
+    listScenarios = async (params: ScenarioQueryParams) => {
         const response = await api
             .get<ScenarioListResponse>("api/scenarios", {
                 searchParams: {
@@ -28,7 +25,7 @@ class ScenarioClientService {
         return response.data
     }
 
-    exportObservations = async (params: ScenarioQueryParams) => {
+    exportScenarios = async (params: ScenarioQueryParams) => {
         return await api
             .get("api/scenarios/export", {
                 searchParams: {
@@ -53,11 +50,11 @@ class ScenarioClientService {
             .json()
     }
 
-    deleteObservation = async (id: string) => {
+    deleteScenario = async (id: string) => {
         await api.delete(`api/scenarios/${id}`).json()
     }
 
-    addObservationNote = async (id: string, note: string) => {
+    addScenarioNote = async (id: string, note: string) => {
         await api.post(`api/scenarios/${id}`, { json: { note } }).json()
     }
 }

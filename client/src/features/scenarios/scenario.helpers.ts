@@ -2,7 +2,7 @@ import {
     SCENARIO_SORT_FIELDS,
     type Scenario,
     type ScenarioSortBy,
-} from "@/features/observations/Observation.types"
+} from "@/features/scenarios/scenario.types"
 import { cn } from "@/lib/utils"
 import { type Column } from "@tanstack/react-table"
 import type { CSSProperties } from "react"
