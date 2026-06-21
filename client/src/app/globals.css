@@ -52,10 +52,14 @@
     /* ================= Danger ================= */
     --color-danger-100: #fb3748;
     --color-danger-200: #d00416;
+    --color-danger-300: #9d0915;
+    --color-danger-400: #5a030b;
 
     /* ================= Warning ================= */
     --color-warning-100: #ffdb43;
     --color-warning-200: #ea9e06;
+    --color-warning-300: #a16600;
+    --color-warning-400: #513504;
 
     /* ================= Earth ================= */
     --color-earth-100: #f5f0eb;
@@ -163,7 +167,7 @@
 }
 
 @utility glassy {
-    @apply shadow-neutral-1000/10 text-foreground border border-neutral-100 bg-background/40 backdrop-blur-lg;
+    @apply shadow-neutral-1000/10 text-foreground bg-background/40 border border-neutral-100 backdrop-blur-lg;
 }
 
 @utility glassy-chip {

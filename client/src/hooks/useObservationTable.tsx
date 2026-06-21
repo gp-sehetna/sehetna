@@ -1,11 +1,15 @@
 "use client"
 import { createObservationColumns } from "@/features/observations/components/ObservationColumns"
-import { downloadCsv, isScenarioSortBy, observationsToCsv } from "@/features/observations/Observation.helpers"
+import {
+    downloadCsv,
+    isScenarioSortBy,
+    observationsToCsv,
+} from "@/features/observations/Observation.helpers"
 import { scenarioClientService } from "@/features/observations/Observation.service.client"
 import type {
-    ObservationQueryParams,
-    ScenarioObservation,
-    ScenarioObservationSortBy,
+    ScenarioQueryParams,
+    Scenario,
+    ScenarioSortBy,
 } from "@/features/observations/Observation.types"
 import { useUserStore } from "@/stores/user/use-user"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -20,13 +24,13 @@ const useObservationTable = () => {
     const [page, setPage] = useState(1)
     const [pageSize, setPageSize] = useState(10)
     const [sorting, setSorting] = useState<SortingState>([{ id: "base_date", desc: true }])
-    const [selectedObservation, setSelectedObservation] = useState<ScenarioObservation | null>(null)
-    const [observationToDelete, setObservationToDelete] = useState<ScenarioObservation | null>(null)
+    const [selectedObservation, setSelectedObservation] = useState<Scenario | null>(null)
+    const [observationToDelete, setObservationToDelete] = useState<Scenario | null>(null)
 
     const sortId = sorting[0]?.id ?? ""
-    const sortBy: ScenarioObservationSortBy = isScenarioSortBy(sortId) ? sortId : "base_date"
+    const sortBy: ScenarioSortBy = isScenarioSortBy(sortId) ? sortId : "base_date"
     const sortDirection = sorting[0]?.desc === false ? "asc" : "desc"
-    const queryParams: ObservationQueryParams = {
+    const queryParams: ScenarioQueryParams = {
         page,
         pageSize,
         sortBy,
@@ -38,6 +42,7 @@ const useObservationTable = () => {
         queryFn: () => scenarioClientService.listObservations(queryParams),
     })
 
+    // TODO: update this when RBAC is added
     const canDelete = useCallback(() => true, [])
 
     const deleteMutation = useMutation({

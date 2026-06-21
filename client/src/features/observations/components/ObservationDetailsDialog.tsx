@@ -16,7 +16,7 @@ import {
     missingValue,
     SeverityBadge,
 } from "@/features/observations/Observation.formatters"
-import type { FloodIndicator, ScenarioObservation } from "@/features/observations/Observation.types"
+import type { Scenario } from "@/features/observations/Observation.types"
 import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
 import DetailSection from "./DetailSection"
 import DetailRow from "./DetailRow"
@@ -25,7 +25,7 @@ const ObservationDetailsDialog = ({
     observation,
     onOpenChange,
 }: {
-    observation: ScenarioObservation | null
+    observation: Scenario | null
     onOpenChange: (open: boolean) => void
 }) => (
     <Dialog open={!!observation} onOpenChange={onOpenChange}>
@@ -73,7 +73,7 @@ const ObservationDetailsDialog = ({
                             label="Flood Indicator"
                             value={
                                 <SeverityBadge
-                                    severity={getFloodSeverity(observation.climate.flood_indicator as FloodIndicator)}
+                                    severity={getFloodSeverity(observation.climate.flood_indicator)}
                                 />
                             }
                         />
@@ -119,8 +119,9 @@ const ObservationDetailsDialog = ({
                                     key={key}
                                     label={key.replaceAll("_", " ")}
                                     value={
-                                        formatNumber(observation.prediction_id.health_outcomes[key].point) ??
-                                        missingValue()
+                                        formatNumber(
+                                            observation.prediction_id.health_outcomes[key].point
+                                        ) ?? missingValue()
                                     }
                                 />
                             )

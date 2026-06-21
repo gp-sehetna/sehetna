@@ -19,22 +19,22 @@ import {
     missingValue,
     SeverityBadge,
 } from "@/features/observations/Observation.formatters"
-import type { FloodIndicator, ScenarioObservation } from "@/features/observations/Observation.types"
+import type { Scenario } from "@/features/observations/Observation.types"
 import { formatDate } from "@/lib/utils/date"
 import { HEALTH_OUTCOMES_KEYS } from "@/shared/config/health-outcomes"
 import type { ColumnDef } from "@tanstack/react-table"
 import { FileText, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
 
-type ObservationColumnActions = {
-    canDelete: (row: ScenarioObservation) => boolean
-    onAddNote: (row: ScenarioObservation) => void
-    onDelete: (row: ScenarioObservation) => void
-    onViewDetails: (row: ScenarioObservation) => void
+type ScenarioColumnActions = {
+    canDelete: (row: Scenario) => boolean
+    onAddNote: (row: Scenario) => void
+    onDelete: (row: Scenario) => void
+    onViewDetails: (row: Scenario) => void
 }
 
 const valueOrMissing = (value: string | null) => value ?? missingValue()
 
-const healthOutcomeSummary = (row: ScenarioObservation) => {
+const healthOutcomeSummary = (row: Scenario) => {
     const respiratory = formatNumber(
         row.prediction_id.health_outcomes.respiratory_disease_rate.point,
         "%"
@@ -45,13 +45,13 @@ const healthOutcomeSummary = (row: ScenarioObservation) => {
         ? `${respiratory ?? "N/A"} resp. / ${cardio ?? "N/A"} cardio`
         : null
 }
-
+// TODO: columns like `undernourishment`, `food_production_index` are missing @Mahmoudamin11
 const createObservationColumns = ({
     canDelete,
     onAddNote,
     onDelete,
     onViewDetails,
-}: ObservationColumnActions): ColumnDef<ScenarioObservation>[] => [
+}: ScenarioColumnActions): ColumnDef<Scenario>[] => [
     {
         accessorKey: "baseDate",
         header: "Base Date",
@@ -74,27 +74,30 @@ const createObservationColumns = ({
         accessorFn: (row) => row.climate.precipitation_mm,
         id: "climate.precipitation_mm",
         header: "Precipitation",
-        cell: ({ row }) => valueOrMissing(formatNumber(row.original.climate.precipitation_mm, "mm")),
+        cell: ({ row }) =>
+            valueOrMissing(formatNumber(row.original.climate.precipitation_mm, "mm")),
     },
     {
         accessorFn: (row) => row.climate.heat_wave_days,
         id: "climate.heat_wave_days",
         header: "Heat Wave Days",
-        cell: ({ row }) => valueOrMissing(formatInteger(row.original.climate.heat_wave_days, "days")),
+        cell: ({ row }) =>
+            valueOrMissing(formatInteger(row.original.climate.heat_wave_days, "days")),
     },
     {
         accessorFn: (row) => row.climate.flood_indicator,
         id: "climate.flood_indicator",
         header: "Flood Indicator",
         cell: ({ row }) => (
-            <SeverityBadge severity={getFloodSeverity(row.original.climate.flood_indicator as FloodIndicator)} />
+            <SeverityBadge severity={getFloodSeverity(row.original.climate.flood_indicator)} />
         ),
     },
     {
         accessorFn: (row) => row.air_quality.pm25_ugm3,
         id: "air_quality.pm25_ugm3",
         header: "PM2.5",
-        cell: ({ row }) => valueOrMissing(formatNumber(row.original.air_quality.pm25_ugm3, "µg/m³")),
+        cell: ({ row }) =>
+            valueOrMissing(formatNumber(row.original.air_quality.pm25_ugm3, "µg/m³")),
     },
     {
         accessorFn: (row) => row.air_quality.aqi_pm,
@@ -163,7 +166,9 @@ const createObservationColumns = ({
                             {HEALTH_OUTCOMES_KEYS.map((key) => (
                                 <p key={key}>
                                     {key.replaceAll("_", " ")}:{" "}
-                                    {formatNumber(row.original.prediction_id.health_outcomes[key].point) ?? "N/A"}
+                                    {formatNumber(
+                                        row.original.prediction_id.health_outcomes[key].point
+                                    ) ?? "N/A"}
                                 </p>
                             ))}
                         </div>
@@ -217,4 +222,3 @@ const createObservationColumns = ({
 ]
 
 export { createObservationColumns }
-export type { ObservationColumnActions }

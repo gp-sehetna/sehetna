@@ -1,31 +1,17 @@
 import { EnvironmentDataSchema } from "@/features/environment/week/week.validation"
-import type {
-    ObservationQueryParams,
-    ScenarioObservationSortBy,
-} from "@/features/observations/Observation.types"
+import type { ScenarioQueryParams, ScenarioSortBy } from "@/features/observations/Observation.types"
+import { SCENARIO_SORT_FIELDS } from "@/features/observations/Observation.types"
 import { IHealthOutcomes } from "@/shared/config/health-outcomes"
 import { MainService } from "@/shared/db/main.service"
 import type { SortType } from "@/shared/db/types/pagination.type"
 import { globalErrorHandler } from "@/shared/http/handlers/error.handler"
 import { userProvider } from "@/shared/http/handlers/user.handler"
 
-const sortFields = new Set<ScenarioObservationSortBy>([
-    "base_date",
-    "location_id.name",
-    "climate.temperature_celsius",
-    "climate.precipitation_mm",
-    "climate.heat_wave_days",
-    "climate.flood_indicator",
-    "air_quality.pm25_ugm3",
-    "air_quality.aqi_pm",
-    "health_indicators.gdp_per_capita_usd",
-    "health_indicators.food_production_index",
-    "health_indicators.undernourishment",
-])
+const sortFields = new Set<ScenarioSortBy>(SCENARIO_SORT_FIELDS)
 
-const parseQuery = (request: Request): ObservationQueryParams => {
+const parseQuery = (request: Request): ScenarioQueryParams => {
     const searchParams = new URL(request.url).searchParams
-    const sortBy = searchParams.get("sortBy") as ScenarioObservationSortBy | null
+    const sortBy = searchParams.get("sortBy") as ScenarioSortBy | null
     const sortDirection = searchParams.get("sortDirection") as SortType | null
     const filtersParam = searchParams.get("filters")
 

@@ -14,15 +14,15 @@ import { ColumnDef, flexRender, Table as TanstackTable } from "@tanstack/react-t
 import { ArrowDown, ArrowUp, ArrowUpRight } from "lucide-react"
 import Link from "next/link"
 import { getPinnedColumnClassName, getPinnedColumnStyles } from "../Observation.helpers"
-import { ObservationListResult, ScenarioObservation } from "../Observation.types"
+import { ScenarioListResult, Scenario } from "../Observation.types"
 import { UseQueryResult } from "@tanstack/react-query"
 import { Dispatch, SetStateAction } from "react"
 
 type TableProps = {
-    table: TanstackTable<ScenarioObservation>
-    observationsQuery: UseQueryResult<NoInfer<ObservationListResult>, Error>
-    columns: ColumnDef<ScenarioObservation>[]
-    setSelectedObservation: Dispatch<SetStateAction<ScenarioObservation | null>>
+    table: TanstackTable<Scenario>
+    observationsQuery: UseQueryResult<NoInfer<ScenarioListResult>, Error>
+    columns: ColumnDef<Scenario>[]
+    setSelectedObservation: Dispatch<SetStateAction<Scenario | null>>
 }
 
 const ObservationsTableContent = ({

@@ -2,21 +2,19 @@
 
 import { api } from "@/shared/api"
 import type {
-    ObservationListResult,
-    ObservationQueryParams,
+    ScenarioListResult,
+    ScenarioQueryParams,
 } from "@/features/observations/Observation.types"
 import { IEnvironmentData } from "../environment/week/week.dto"
 import { IHealthOutcomes } from "@/shared/config/health-outcomes"
+import { SuccessResponseWithData } from "@/shared/http/response"
 
-type ObservationListResponse = {
-    data: ObservationListResult
-    message: string
-}
+type ScenarioListResponse = SuccessResponseWithData<ScenarioListResult>
 
 class ScenarioClientService {
-    listObservations = async (params: ObservationQueryParams) => {
+    listObservations = async (params: ScenarioQueryParams) => {
         const response = await api
-            .get<ObservationListResponse>("api/scenarios", {
+            .get<ScenarioListResponse>("api/scenarios", {
                 searchParams: {
                     page: params.page,
                     pageSize: params.pageSize,
@@ -30,7 +28,7 @@ class ScenarioClientService {
         return response.data
     }
 
-    exportObservations = async (params: ObservationQueryParams) => {
+    exportObservations = async (params: ScenarioQueryParams) => {
         return await api
             .get("api/scenarios/export", {
                 searchParams: {

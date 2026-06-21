@@ -2,7 +2,6 @@ import { Badge } from "@/components/ui/shadcn/badge"
 import { cn } from "@/lib/utils"
 import { formatDate } from "@/lib/utils/date"
 
-
 const missingValue = (label = "–") => <span className="text-muted-foreground">{label}</span>
 
 const numberFormatter = new Intl.NumberFormat("en-US", {
@@ -40,16 +39,25 @@ const formatCurrency = (value?: number | null) => {
 const getAqiSeverity = (value?: number | null) => {
     if (value == null || Number.isNaN(value)) return null
     if (value <= 50)
-        return { label: "Good", className: "border-green-200 bg-green-50 text-green-700" }
+        return {
+            label: "Good",
+            className: "border-success-100/40 bg-success-100/5 text-success-300",
+        }
     if (value <= 100)
-        return { label: "Moderate", className: "border-yellow-200 bg-yellow-50 text-yellow-700" }
+        return {
+            label: "Moderate",
+            className: "border-warning-200/20 bg-warning-100/5 text-warning-300",
+        }
     if (value <= 150)
         return {
             label: "Unhealthy (Sensitive)",
             className: "border-orange-200 bg-orange-50 text-orange-700",
         }
     if (value <= 200)
-        return { label: "Unhealthy", className: "border-red-200 bg-red-50 text-red-700" }
+        return {
+            label: "Unhealthy",
+            className: "border-danger-100/10 bg-danger-100/5 text-danger-300",
+        }
 
     return {
         label: "Very Unhealthy",
@@ -57,25 +65,21 @@ const getAqiSeverity = (value?: number | null) => {
     }
 }
 
-
-type FloodIndicator = 0 | 1
-
-const getFloodSeverity = (value: FloodIndicator) => {
-    // Handle null, undefined, or invalid inputs safely
-    if (value === null || value === undefined) return null
-
-    const statusMap = {
+const getFloodSeverity = (value: number | null) => {
+    if (value == null || Number.isNaN(value)) return null
+    const statusMap: Record<number, { label: string; className: string }> = {
         0: {
             label: "Normal",
-            className: "border-green-200 bg-green-50 text-green-700",
+            className: "border-success-100/40 bg-success-100/5 text-success-300",
         },
         1: {
             label: "Flooded",
-            className: "border-red-200 bg-red-50 text-red-700",
+            // className: "border-warning-200/20 bg-warning-100/5 text-warning-300",
+            className: "border-danger-100/10 bg-danger-100/5 text-danger-300",
         },
-    } satisfies Record<FloodIndicator, { label: string; className: string }>
+    }
 
-    return statusMap[value] ?? null
+    return statusMap[1] ?? null
 }
 
 // 2. Extract the return type for the component props
@@ -84,12 +88,12 @@ type Severity = ReturnType<typeof getFloodSeverity>
 // 3. Your Badge Component
 const SeverityBadge = ({ severity }: { severity: Severity }) => {
     // If severity is null, call your fallback function
-    if (!severity) return missingValue() 
+    if (!severity) return missingValue()
 
     return (
         <Badge
             variant="outline"
-            className={cn("whitespace-nowrap font-medium", severity.className)}
+            className={cn("font-medium whitespace-nowrap", severity.className)}
         >
             {severity.label}
         </Badge>

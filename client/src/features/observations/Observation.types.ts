@@ -1,44 +1,49 @@
-import { IObservationPopulated } from "@/shared/db/model/observation.model"
+import { HealthOutcomesKeys } from "@/shared/config/health-outcomes"
+import { IObservation } from "@/shared/db/model/observation.model"
 import type { PaginationResult, SortType } from "@/shared/db/types/pagination.type"
+import { ObjectId } from "mongoose"
 
-type FloodIndicator = 0 | 1
+type Scenario = Omit<IObservation, "location_id" | "prediction_id"> & {
+    location_id: {
+        _id: ObjectId
+        name: string
+    }
+    prediction_id: {
+        _id: ObjectId
+        health_outcomes: Record<HealthOutcomesKeys, { point: number }>
+    }
+}
 
-interface ScenarioObservation extends IObservationPopulated {}
+const SCENARIO_SORT_FIELDS = [
+    "base_date",
+    "location_id.name",
+    "climate.temperature_celsius",
+    "climate.precipitation_mm",
+    "climate.heat_wave_days",
+    "climate.flood_indicator",
+    "air_quality.pm25_ugm3",
+    "air_quality.aqi_pm",
+    "health_indicators.gdp_per_capita_usd",
+    "health_indicators.food_production_index",
+    "health_indicators.undernourishment",
+] as const
 
-type ScenarioObservationSortBy =
-    | "base_date"
-    | "location_id.name"
-    | "climate.temperature_celsius"
-    | "climate.precipitation_mm"
-    | "climate.heat_wave_days"
-    | "climate.flood_indicator"
-    | "air_quality.pm25_ugm3"
-    | "air_quality.aqi_pm"
-    | "health_indicators.gdp_per_capita_usd"
-    | "health_indicators.food_production_index"
-    | "health_indicators.undernourishment"
+type ScenarioSortBy = (typeof SCENARIO_SORT_FIELDS)[number]
 
-interface ScenarioObservationFilters {
+interface ScenarioFilters {
     dateRange?: { from?: string; to?: string }
     location?: string
     aqiThreshold?: number
 }
 
-interface ObservationQueryParams {
+interface ScenarioQueryParams {
     page: number
     pageSize: number
-    sortBy: ScenarioObservationSortBy
+    sortBy: ScenarioSortBy
     sortDirection: SortType
-    filters?: ScenarioObservationFilters
+    filters?: ScenarioFilters
 }
 
-type ObservationListResult = PaginationResult<ScenarioObservation>
-
-export type {
-    FloodIndicator,
-    ObservationListResult,
-    ObservationQueryParams,
-    ScenarioObservation,
-    ScenarioObservationFilters,
-    ScenarioObservationSortBy,
-}
+type ScenarioListResult = PaginationResult<Scenario>
+export { SCENARIO_SORT_FIELDS }
+export type { Scenario, ScenarioListResult, ScenarioQueryParams, ScenarioFilters, ScenarioSortBy }

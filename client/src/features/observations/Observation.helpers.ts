@@ -1,9 +1,13 @@
-import type { ScenarioObservation } from "@/features/observations/Observation.types"
+import {
+    SCENARIO_SORT_FIELDS,
+    type Scenario,
+    type ScenarioSortBy,
+} from "@/features/observations/Observation.types"
 import { cn } from "@/lib/utils"
 import { type Column } from "@tanstack/react-table"
 import type { CSSProperties } from "react"
 
-export const getPinnedColumnStyles = (column: Column<ScenarioObservation>): CSSProperties => {
+export const getPinnedColumnStyles = (column: Column<Scenario>): CSSProperties => {
     const isPinned = column.getIsPinned()
 
     if (!isPinned) return {}
@@ -16,30 +20,15 @@ export const getPinnedColumnStyles = (column: Column<ScenarioObservation>): CSSP
     }
 }
 
-export const getPinnedColumnClassName = (column: Column<ScenarioObservation>) =>
+export const getPinnedColumnClassName = (column: Column<Scenario>) =>
     cn(
         column.getIsPinned() && "bg-background",
         column.getIsPinned() === "left" && column.getIsLastColumn("left") && "border-r",
         column.getIsPinned() === "right" && column.getIsFirstColumn("right") && "border-l"
     )
 
-const SCENARIO_SORT_FIELDS = [
-    "base_date",
-    "location_id.name",
-    "climate.temperature_celsius",
-    "climate.precipitation_mm",
-    "climate.heat_wave_days",
-    "climate.flood_indicator",
-    "air_quality.pm25_ugm3",
-    "air_quality.aqi_pm",
-    "health_indicators.gdp_per_capita_usd",
-    "health_indicators.food_production_index",
-] as const
-
-export type ScenarioObservationSortBy = (typeof SCENARIO_SORT_FIELDS)[number]
-
-export const isScenarioSortBy = (id: string): id is ScenarioObservationSortBy => {
-    return SCENARIO_SORT_FIELDS.includes(id as ScenarioObservationSortBy)
+export const isScenarioSortBy = (id: string): id is ScenarioSortBy => {
+    return SCENARIO_SORT_FIELDS.includes(id as ScenarioSortBy)
 }
 
 export const downloadCsv = (csv: string, filename: string) => {
@@ -54,7 +43,7 @@ export const downloadCsv = (csv: string, filename: string) => {
 }
 
 export function scenarioObservationToCsvRows(
-    observations: ScenarioObservation[]
+    observations: Scenario[]
 ): (string | number | Date | null | undefined)[][] {
     return [
         [
@@ -111,7 +100,7 @@ const escapeCsvCell = (value: unknown) => {
     return `"${cell.replaceAll('"', '""')}"`
 }
 
-export function observationsToCsv(observations: ScenarioObservation[]) {
+export function observationsToCsv(observations: Scenario[]) {
     const rows = scenarioObservationToCsvRows(observations)
 
     return rows.map((row) => row.map(escapeCsvCell).join(",")).join("\n")

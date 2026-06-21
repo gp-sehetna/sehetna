@@ -1,9 +1,5 @@
-import { ObservationQueryParams } from "@/features/observations/Observation.types"
-import {
-    IObservation,
-    IObservationPopulated,
-    ObservationModel,
-} from "@/shared/db/model/observation.model"
+import { ScenarioQueryParams } from "@/features/observations/Observation.types"
+import { IObservation, ObservationModel } from "@/shared/db/model/observation.model"
 import { DatabaseRepository } from "@/shared/db/repository/database.repository"
 import { ClientSession, Types } from "mongoose"
 
@@ -20,15 +16,20 @@ export class ObservationRepository extends DatabaseRepository<IObservation> {
         return this.model.updateOne({ _id: new Types.ObjectId(id) }, { $set: { note } })
     }
 
-    async findAllObservations(query: ObservationQueryParams) {
-        return this.model
-            .find()
-            .sort({
-                [query.sortBy]: query.sortDirection === "asc" ? 1 : -1,
-            })
-            .populate("location_id", "name")
-            .populate("prediction_id", "health_outcomes")
-            .lean()
-            .exec()
+    async findAllObservations(query: ScenarioQueryParams) {
+        return (
+            this.model
+                .find()
+                .sort({
+                    [query.sortBy]: query.sortDirection === "asc" ? 1 : -1,
+                })
+                // When populating, rename location_id to location
+                .populate([
+                    { path: "location_id", select: { name: 1 } },
+                    { path: "prediction_id", select: { health_outcomes: 1 } },
+                ])
+                .lean()
+                .exec()
+        )
     }
 }
