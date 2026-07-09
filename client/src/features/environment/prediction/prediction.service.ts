@@ -50,7 +50,7 @@ export class PredictionService {
         const newPrediction: Partial<IPrediction> = {
             user_id: userId,
             location_id: location._id,
-            prediction_type: PredictionType.predicted,
+            prediction_type: PredictionType.simulation,
             base_date: new Date(observation.date),
             health_outcomes: mapHealthOutcomes((key) => ({
                 point: prediction[key],
@@ -178,7 +178,6 @@ export class PredictionService {
         const orConditions: QueryFilter<IPrediction>[] = [
             { prediction_type: { $in: [PredictionType.historical, PredictionType.predicted] } },
         ]
-
         const model = await this.aiModelRepository.findByType(query.modelId)
         if (model)
             orConditions.unshift({

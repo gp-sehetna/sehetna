@@ -1,6 +1,7 @@
 const PredictionType = {
     forecasted: "forecasted",
     predicted: "predicted",
+    simulation: "simulation",
     historical: "historical",
 } as const
 

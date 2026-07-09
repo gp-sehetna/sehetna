@@ -79,7 +79,7 @@ const getFloodSeverity = (value: number | null) => {
         },
     }
 
-    return statusMap[1] ?? null
+    return statusMap[value] ?? null
 }
 
 // 2. Extract the return type for the component props
