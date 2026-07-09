@@ -24,12 +24,14 @@ const parseQuery = (request: Request): ScenarioQueryParams => {
     }
 }
 
-export const GET = globalErrorHandler(async (request) => {
-    const mainService = await MainService.getInstance()
-    const query = parseQuery(request)
-    const scenarios = await mainService.observationService.getObservations(query)
-    return [{ data: { data: scenarios } }, "Scenarios retrieved successfully"]
-})
+export const GET = globalErrorHandler(
+    userProvider(async (request, user) => {
+        const mainService = await MainService.getInstance()
+        const query = parseQuery(request)
+        const scenarios = await mainService.observationService.getObservations(query, user._id)
+        return [{ data: { data: scenarios } }, "Scenarios retrieved successfully"]
+    })
+)
 
 export const POST = globalErrorHandler(
     userProvider(async (request, user) => {

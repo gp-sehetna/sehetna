@@ -1,11 +1,12 @@
 import { ObservationRepository } from "@/shared/db/repository/observation.repository"
 import { ScenarioQueryParams } from "./scenario.types"
+import { Types } from "mongoose"
 
 export class ObservationService {
     constructor(private readonly observationRepository: ObservationRepository) {}
 
-    async getObservations(query: ScenarioQueryParams) {
-        return this.observationRepository.findAllScenarios(query)
+    async getObservations(query: ScenarioQueryParams, userId: Types.ObjectId) {
+        return this.observationRepository.findUserScenarios(query, userId)
     }
 
     async deleteObservation(id: string) {

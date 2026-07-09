@@ -2,6 +2,7 @@ import { ScenarioQueryParams } from "@/features/scenarios/scenario.types"
 import { IObservation, ObservationModel } from "@/shared/db/model/observation.model"
 import { DatabaseRepository } from "@/shared/db/repository/database.repository"
 import { ClientSession, Types } from "mongoose"
+import { PredictionModel } from "../model/prediction.model"
 
 export class ObservationRepository extends DatabaseRepository<IObservation> {
     constructor(protected override readonly model: typeof ObservationModel) {
@@ -16,21 +17,22 @@ export class ObservationRepository extends DatabaseRepository<IObservation> {
         return this.model.updateOne({ _id: new Types.ObjectId(id) }, { $set: { note } })
     }
 
-    async findAllScenarios(query: ScenarioQueryParams) {
-        return (
-            this.model
-                .find()
-                .sort({
-                    [query.sortBy]: query.sortDirection === "asc" ? 1 : -1,
-                })
-                // When populating, rename location_id to location
-                .populate([
-                    { path: "location_id", select: { name: 1 } },
-                    { path: "prediction_id", select: { health_outcomes: 1 } },
-                ])
-                .lean()
-                .exec()
-        )
+    async findUserScenarios(query: ScenarioQueryParams, userId: Types.ObjectId) {
+        const predictionIds = await PredictionModel.find({ user_id: userId }).distinct("_id")
+
+        return this.model
+            .find({
+                prediction_id: { $in: predictionIds },
+            })
+            .sort({
+                [query.sortBy]: query.sortDirection === "asc" ? 1 : -1,
+            })
+            .populate([
+                { path: "location_id", select: { name: 1 } },
+                { path: "prediction_id", select: { health_outcomes: 1 } },
+            ])
+            .lean()
+            .exec()
         //! Critical: Paginate the result of the Scenarios. use reference in `prediction.repository.ts`
         // return this.paginate({
         //     filter: {},
