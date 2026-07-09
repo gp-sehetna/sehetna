@@ -5,7 +5,7 @@ services:
             - ./server/.env
         ports:
             - "8000:8000"
-        image: sehetna/ai-server:latest
+        image: abdelrahman104/ai-server:latest
         restart: no
 
     client-app:
@@ -15,7 +15,7 @@ services:
             - ./client/.env.production
         ports:
             - "5000:5000"
-        image: sehetna/client:latest
+        image: abdelrahman104/client:latest
         depends_on:
             - ai-server-app
         restart: no

@@ -1,7 +1,7 @@
 import { __DEV_AI_SERVER_BASE_URL } from "@/shared/http/base-url"
 import type { NextConfig } from "next"
 
-// Use: http://ai-server-app:8000 when running in docker, and http://127.0.0.1:8000 when running locally
+//? Use: http://ai-server-app:8000 when running in docker, and http://127.0.0.1:8000 when running locally
 const nextConfig: NextConfig = {
     /* config options here */
     allowedDevOrigins: ["127.0.0.1"],
