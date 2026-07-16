@@ -1,11 +1,6 @@
 import { InternalServerException } from "@/shared/http/errors"
 import { connect } from "mongoose"
 
-const MONGODB_URI = process.env.CONNECTION_STRING!
-
-if (!MONGODB_URI) {
-    throw new InternalServerException("Missing CONNECTION_STRING environment variable.")
-}
 
 let cached = global.mongoClient
 
@@ -14,6 +9,11 @@ if (!cached) {
 }
 
 export async function connectMongodb() {
+    const MONGODB_URI = process.env.CONNECTION_STRING!
+    
+    if (!MONGODB_URI) {
+        throw new InternalServerException("Missing CONNECTION_STRING environment variable.")
+    }
     if (cached.conn) return cached.conn
 
     if (!cached.promise) {
