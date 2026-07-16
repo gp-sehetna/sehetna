@@ -3,10 +3,11 @@ services:
         build: ./server
         env_file:
             - ./server/.env
+            - ./server/.env.production
         ports:
-            - "8000:8000"
+            - "1001:8000"
         image: abdelrahman104/ai-server:latest
-        restart: no
+        restart: unless-stopped
 
     client-app:
         build: ./client
@@ -14,11 +15,11 @@ services:
             - ./client/.env
             - ./client/.env.production
         ports:
-            - "5000:5000"
+            - "1000:5000"
         image: abdelrahman104/client:latest
         depends_on:
             - ai-server-app
-        restart: no
+        restart: unless-stopped
 
     # db:
     #     image: mongo:7.0-jammy

@@ -9,9 +9,9 @@ RUN pip install --no-cache-dir uv
 COPY pyproject.toml uv.lock ./
 
 
-RUN uv sync
+RUN uv sync --frozen --no-dev
 COPY . .
 
 
 ENTRYPOINT ["uv", "run", "uvicorn", "main:app"]
-CMD ["--host", "0.0.0.0", "--port", "8000"]
+CMD ["--port", "8000", "--host", "0.0.0.0"]

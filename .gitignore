@@ -12,6 +12,7 @@ wheels/
 .qodo/
 .postman/
 
+web.config
 # Project Private Directories
 papers/
 Other Files/
